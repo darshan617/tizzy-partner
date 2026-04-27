@@ -1,0 +1,13 @@
+.signupFormContainer {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.btn {
+  background: rgb(87, 87, 228);
+}
+.btn:disabled {
+  background: #cdcdcd;
+  cursor: not-allowed;
+}

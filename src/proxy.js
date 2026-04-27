@@ -11,9 +11,9 @@ export function proxy(request) {
   const isLoginAuthRoute = pathname === "/auth/login";
   const isSignupAuthRoute = pathname === "/auth/signup";
 
-  // if (!token && isHomeRoute) {
-  //   return NextResponse.redirect(new URL("/auth/login", request.url));
-  // }
+  if (!token && isHomeRoute) {
+    return NextResponse.redirect(new URL("/auth/login", request.url));
+  }
 
   if (token && isLoginAuthRoute) {
     return NextResponse.redirect(new URL("/", request.url));
