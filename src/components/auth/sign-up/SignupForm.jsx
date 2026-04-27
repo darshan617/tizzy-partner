@@ -46,7 +46,6 @@ const SignupForm = () => {
     trade_name: "",
     legal_name: "",
   });
-  console.log(userDetails);
 
   const [isValidGstIn, setIsValidGstIn] = useState(false);
 
@@ -73,7 +72,7 @@ const SignupForm = () => {
       if (res?.data?.success) {
         // Cookies.set("userData", JSON.stringify(userDetails));
         dispatch(setUserData(userDetails));
-        router?.push("/auth/otp-verification");
+        router?.push("/auth/otp-verification?type=signup");
       }
     } catch (error) {
       console.log("error", error);
@@ -101,7 +100,6 @@ const SignupForm = () => {
           gstin: userDetails?.gstin,
         },
       });
-      console.log("res", res);
 
       if (res?.data?.success) {
         const compnayName = res?.data?.data?.company_name;

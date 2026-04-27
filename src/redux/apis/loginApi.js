@@ -2,10 +2,20 @@ import { apiSlice } from "../apiSlice";
 
 const loginApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation({
+    sendOtp: builder.mutation({
       query: ({ body }) => {
         return {
-          url: "/user-login-validation",
+          url: "/send-otp",
+          method: "POST",
+          body: body,
+        };
+      },
+      providesTags: ["login"],
+    }),
+    verifyOtp: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: "/verify-otp",
           method: "POST",
           body: body,
         };
@@ -15,5 +25,4 @@ const loginApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useLoginMutation } = loginApi;
-s;
+export const { useSendOtpMutation, useVerifyOtpMutation } = loginApi;
