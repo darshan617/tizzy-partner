@@ -24,7 +24,7 @@ const VerifyOtp = () => {
       });
 
       if (res?.data?.success) {
-        Cookies.set("userData", JSON.stringify(res?.data?.data?.user));
+        Cookies.set("userData", JSON.stringify(res?.data?.data?.partner));
         router?.push("/");
         setOtpDetails((prev) => ({
           ...prev,

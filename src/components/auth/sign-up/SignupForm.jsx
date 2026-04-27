@@ -44,6 +44,7 @@ const SignupForm = () => {
     pincode: "",
     registration_date: "",
     trade_name: "",
+    legal_name: "",
   });
   console.log(userDetails);
 
@@ -116,23 +117,25 @@ const SignupForm = () => {
         const nature_of_business = res?.data?.data?.nature_of_business;
         const registration_date = res?.data?.data?.registration_date;
         const trade_name = res?.data?.data?.trade_name;
+        const legal_name = res?.data?.data?.legal_name;
 
         setIsValidGstIn(true);
         setUserDetails((prev) => ({
           ...prev,
-          company_name: compnayName,
-          company_address: companyAddress,
-          city: city,
-          country: country,
-          state: state,
-          pincode: pincode,
-          pan_no: pan_no,
-          constitution: constitution,
-          gst_status: gst_status,
-          last_updated: last_updated,
-          nature_of_business: nature_of_business,
-          registration_date: registration_date,
-          trade_name: trade_name,
+          company_name: compnayName || "",
+          company_address: companyAddress || "",
+          city: city || "",
+          country: country || "",
+          state: state || "",
+          pincode: pincode || "",
+          pan_no: pan_no || "",
+          constitution: constitution || "",
+          gst_status: gst_status || "",
+          last_updated: last_updated || "",
+          nature_of_business: nature_of_business || [],
+          registration_date: registration_date || "",
+          trade_name: trade_name || "",
+          legal_name: legal_name || "",
         }));
         // dispatch(setUserData(res?.data?.data));
       } else {
