@@ -1,0 +1,9 @@
+.sectionCard {
+    margin: auto;
+    background: #fff;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 1100px;
+    min-height: 100px;
+    box-shadow: 0 2px 1px #0000001a;
+}

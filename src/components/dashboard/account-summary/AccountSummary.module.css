@@ -1,0 +1,396 @@
+:root {
+    --primaryColor: #0355AC;
+    --primarySubtleColor: #B5D9FF;
+    --secondaryColor: #7B70EF;
+    --secondarySubtleColor: #e7e5fd;
+    --successColor: #02BC9C;
+    --successSubtleColor: #D9F5F0;
+    --infoColor: #5BC3E1;
+    --infoSubtleColor: #E6F6FB;
+    --warningColor: #F9BF59;
+    --warningSubtleColor: #FEF5E6;
+    --dangerColor: #F7577E;
+    --dangerSubtleColor: #FEE6EC;
+    --whiteColor: #FFFFFF;
+    --subtleBg: #fafafa;
+    --blackColor: #000000;
+    --darkColor: #313A46;
+    --grayColor: #fafafa;
+    --textBody: #444444;
+    --textBodySecondary: #666666;
+    --textLight: #CCCCCC;
+    --borderColor: #E9E9E9;
+    --fs10: 0.75rem;
+    --fs11: 0.8rem;
+    --fs12: 0.85rem;
+    --fs14: 1rem;
+    --fs16: 1.143rem;
+    --fs18: 1.286rem;
+    --fs20: 1.5rem;
+    --fs22: 1.65rem;
+    --fs24: 1.75rem;
+}
+
+
+.primaryColor {
+    color: var(--primaryColor)
+}
+
+.secondaryColor {
+    color: var(--secondaryColor)
+}
+
+.successColor {
+    color: var(--successColor)
+}
+
+.infoColor {
+    color: var(--infoColor)
+}
+
+.warningColor {
+    color: var(--warningColor)
+}
+
+.dangerColor {
+    color: var(--dangerColor)
+}
+
+.darkColor {
+    color: var(--darkColor)
+}
+
+.primaryBg {
+    background: var(--primaryColor) !important
+}
+
+.secondaryBg {
+    background: var(--secondaryColor) !important
+}
+
+.successBg {
+    background: var(--successColor) !important
+}
+
+.infoBg {
+    background: var(--infoColor) !important
+}
+
+.warningBg {
+    background: var(--warningColor) !important
+}
+
+.dangerBg {
+    background: var(--dangerColor) !important
+}
+
+.subtleBg {
+    background: var(--subtleBg)
+}
+
+.textBody {
+    color: var(--textBody)
+}
+
+.textSecondary {
+    color: var(--textBodySecondary)
+}
+
+.textLight {
+    color: var(--textLight)
+}
+
+.fs10 {
+    font-size: var(--fs10)
+}
+
+.fs11 {
+    font-size: var(--fs11)
+}
+
+.fs12 {
+    font-size: var(--fs12)
+}
+
+.fs14 {
+    font-size: var(--fs14)
+}
+
+.fs16 {
+    font-size: var(--fs16)
+}
+
+.fs18 {
+    font-size: var(--fs18)
+}
+
+.fs20 {
+    font-size: var(--fs20)
+}
+
+.fs22 {
+    font-size: var(--fs22)
+}
+
+.fs24 {
+    font-size: var(--fs24)
+}
+
+.icon {
+    width: 100%;
+    height: 100%;
+    color: inherit;
+    line-height: 0;
+    display: block;
+}
+
+/* ── Breadcrumb ── */
+.breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+
+.breadcrumb-item {
+    font-size: var(--fs12);
+    color: var(--textBody);
+}
+
+.breadcrumb-item.active,
+.active.breadcrumb-item {
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin-bottom: 0;
+    font-size: var(--fs20);
+    font-weight: 600;
+    color: var(--textBody);
+}
+
+.breadcrumb-item.active::before,
+.active.breadcrumb-item::before {
+    display: none;
+}
+
+/* ── Status Badge ── */
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0.28rem 0.35rem;
+    font-size: var(--fs11);
+    line-height: 1;
+    font-weight: 500;
+    border-radius: 4px;
+    background: #666;
+    color: var(--whiteColor);
+    white-space: nowrap;
+}
+
+.statusBadge .icon {
+    width: 14px;
+    aspect-ratio: 1;
+    stroke-width: 2;
+    display: inline-block;
+}
+
+.statusBadge.up {
+    color: var(--successColor);
+    background: var(--successSubtleColor);
+}
+
+.statusBadge.down {
+    color: var(--dangerColor);
+    background: var(--dangerSubtleColor);
+}
+
+.statusBadge.down .icon {
+    transform: rotate(180deg);
+}
+
+/* ── Stat Icon ── */
+.statIcon {
+    width: 36px;
+    height: auto;
+    aspect-ratio: 1;
+    display: block;
+    margin-top: -25px;
+}
+
+.infoColor {
+    color: var(--infoColor);
+}
+
+.successColor {
+    color: var(--successColor);
+}
+
+.warningColor {
+    color: var(--warningColor);
+}
+
+.secondaryColor {
+    color: var(--secondaryColor);
+}
+
+.dangerColor {
+    color: var(--dangerColor);
+}
+
+/* ── Stat Box ── */
+.statBox {
+    width: 100%;
+    height: 100%;
+    background: var(--subtleBg);
+    border-radius: 10px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, .06);
+    padding: 10px;
+    position: relative;
+}
+
+.statBox::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: linear-gradient(135deg, #ebebeb 0%, var(--subtleBg) 15%);
+    border-radius: 10px;
+    pointer-events: none;
+}
+
+.statBox.infoGrad::before {
+    background: linear-gradient(135deg, var(--infoSubtleColor) 0%, var(--subtleBg) 20%);
+}
+
+.statBox.dangerGrad::before {
+    background: linear-gradient(135deg, var(--dangerSubtleColor) 0%, var(--subtleBg) 20%);
+}
+
+.statBox.successGrad::before {
+    background: linear-gradient(135deg, var(--successSubtleColor) 0%, var(--subtleBg) 20%);
+}
+
+.statBox.secondaryGrad::before {
+    background: linear-gradient(135deg, var(--secondarySubtleColor) 0%, var(--subtleBg) 20%);
+}
+
+.statBox.warningGrad::before {
+    background: linear-gradient(135deg, var(--warningSubtleColor) 0%, var(--subtleBg) 20%);
+}
+
+.statBox.infoGrad:hover::before {
+    background: linear-gradient(160deg, var(--infoSubtleColor) 0%, var(--whiteColor) 50%);
+}
+
+.statBox.dangerGrad:hover::before {
+    background: linear-gradient(160deg, var(--dangerSubtleColor) 0%, var(--whiteColor) 50%);
+}
+
+.statBox.successGrad:hover::before {
+    background: linear-gradient(160deg, var(--successSubtleColor) 0%, var(--whiteColor) 50%);
+}
+
+.statBox.secondaryGrad:hover::before {
+    background: linear-gradient(160deg, var(--secondarySubtleColor) 0%, var(--whiteColor) 50%);
+}
+
+.statBox.warningGrad:hover::before {
+    background: linear-gradient(160deg, var(--warningSubtleColor) 0%, var(--whiteColor) 50%);
+}
+
+.statBox * {
+    position: relative;
+    z-index: 1;
+}
+
+.statBox .statusBadge {
+    margin-left: 8px;
+    font-size: var(--fs12);
+}
+
+/* ── Stat Text / Label / Value ── */
+.statText {
+    display: block;
+}
+
+.statLabel {
+    font-size: var(--fs14);
+    color: var(--darkColor);
+}
+
+.statValue {
+    font-size: var(--fs20);
+    font-weight: 600;
+    color: var(--textBody);
+    line-height: 1;
+    text-decoration: none !important;
+}
+
+/* ── Stat Anchor (+ button) ── */
+.statAnchor {
+    width: 2rem;
+    height: 2rem;
+    padding: 2px;
+    display: block;
+    position: absolute;
+    right: 1rem;
+    bottom: -15px;
+    background: var(--primaryColor);
+    border-radius: 50%;
+    color: var(--whiteColor);
+    transition: all .1s ease-out;
+    transform: scale(1);
+}
+
+.statAnchor:hover {
+    transform: scale(1.1);
+}
+
+/* ── Section Card ── */
+.sectionCard {
+    width: 100%;
+    min-height: 100px;
+    background: #fff;
+    box-shadow: 0 2px 1px rgba(0, 0, 0, .1);
+    border-radius: 10px;
+}
+
+.sectionCardHead {
+    font-size: var(--fs14);
+    line-height: 1.5;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--darkColor);
+    display: inline;
+    margin-bottom: 0;
+}
+
+/* ── Container ── */
+.containerMain {
+    width: 100%;
+    max-width: 1100px;
+}
+
+.containerMain a:not([class]):hover {
+    color: var(--primaryColor);
+}
+
+/* ── Responsive ── */
+@media (min-width: 768px) {
+    .statBox {
+        padding: 15px;
+    }
+
+    .statIcon {
+        margin-top: -30px;
+    }
+
+    .statValue {
+        font-size: var(--fs24);
+    }
+}
