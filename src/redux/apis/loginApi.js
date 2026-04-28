@@ -22,7 +22,21 @@ const loginApi = apiSlice.injectEndpoints({
       },
       providesTags: ["login"],
     }),
+    resendOtp: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: "/partner-resend-otp",
+          method: "POST",
+          body: body,
+        };
+      },
+      providesTags: ["login"],
+    }),
   }),
 });
 
-export const { useSendOtpMutation, useVerifyOtpMutation } = loginApi;
+export const {
+  useSendOtpMutation,
+  useVerifyOtpMutation,
+  useResendOtpMutation,
+} = loginApi;

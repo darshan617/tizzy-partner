@@ -4,7 +4,10 @@ import { useSelector } from "react-redux";
 import { selectUserData } from "@/redux/slices/userSlice";
 import { useGetOtpVerifiedMutation } from "@/redux/apis/signupApi";
 import { useRouter } from "next/router";
-import { useVerifyOtpMutation } from "@/redux/apis/loginApi";
+import {
+  useResendOtpMutation,
+  useVerifyOtpMutation,
+} from "@/redux/apis/loginApi";
 import styles from "@/components/auth/verify-otp/VerifyOtp.module.css";
 import AuthLayout from "../authLayout/AuthLayout";
 
@@ -20,10 +23,13 @@ const VerifyOtp = () => {
   const [otpArray, setOtpArray] = useState(["", "", "", "", "", ""]);
 
   const userData = useSelector(selectUserData);
+  console.log("userData", userData);
   const [getOtpVerified, { isLoading: isGetOtpVerifiedLoading }] =
     useGetOtpVerifiedMutation();
   const [verifyOtp, { isLoading: isVerifyOtpLoading }] = useVerifyOtpMutation();
+  const [resendOtp] = useResendOtpMutation();
   const [errors, setErrors] = useState({});
+
   const validateOtp = () => {
     const newErrors = {};
 
@@ -68,13 +74,6 @@ const VerifyOtp = () => {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    setOtpDetails((prev) => ({
-      ...prev,
-      email: userData?.email,
-    }));
-  }, []);
 
   const handleChange = (value, index) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -123,6 +122,31 @@ const VerifyOtp = () => {
     });
   };
 
+  const handleResend = async () => {
+    try {
+      const res = await resendOtp({
+        body: { email: otpDetails.email },
+      });
+      if (res?.data?.success) {
+        setOtpArray(["", "", "", "", "", ""]);
+        setOtpDetails((prev) => ({
+          ...prev,
+          otp: "",
+        }));
+        inputsRef.current[0].focus();
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  useEffect(() => {
+    setOtpDetails((prev) => ({
+      ...prev,
+      email: userData?.email,
+    }));
+  }, []);
+
   return (
     <AuthLayout>
       <div className={styles.otpWrapper}>
@@ -160,12 +184,15 @@ const VerifyOtp = () => {
         </button>
 
         <p className={styles.resend}>
-          Didn’t receive a code? <span className={styles.link}>Resend</span>
+          Didn’t receive a code?{" "}
+          <button className={styles.resendBtn} onClick={handleResend}>
+            Resend
+          </button>
         </p>
 
-        <p className={styles.back}>
+        {/* <p className={styles.back}>
           Back to <span className={styles.link}>Forgot Password</span>
-        </p>
+        </p> */}
       </div>
     </AuthLayout>
   );

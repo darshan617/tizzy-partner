@@ -106,6 +106,12 @@
   margin-top: -10px;
   margin-bottom: 10px;
 }
+.resendBtn {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--primaryColor);
+}
 @media (max-width: 480px) {
   .otpInput {
     width: 40px;
