@@ -10,11 +10,12 @@ import {
 } from "@/redux/apis/loginApi";
 import styles from "@/components/auth/verify-otp/VerifyOtp.module.css";
 import AuthLayout from "../authLayout/AuthLayout";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
 
 const VerifyOtp = () => {
   const router = useRouter();
   const inputsRef = useRef([]);
-
+  const { showToast } = useToast();
   const [otpDetails, setOtpDetails] = useState({
     email: "",
     otp: "",
@@ -23,11 +24,10 @@ const VerifyOtp = () => {
   const [otpArray, setOtpArray] = useState(["", "", "", "", "", ""]);
 
   const userData = useSelector(selectUserData);
-  console.log("userData", userData);
   const [getOtpVerified, { isLoading: isGetOtpVerifiedLoading }] =
     useGetOtpVerifiedMutation();
   const [verifyOtp, { isLoading: isVerifyOtpLoading }] = useVerifyOtpMutation();
-  const [resendOtp] = useResendOtpMutation();
+  const [resendOtp, { isLoading: isResendOtpLoading }] = useResendOtpMutation();
   const [errors, setErrors] = useState({});
 
   const validateOtp = () => {
@@ -134,8 +134,12 @@ const VerifyOtp = () => {
           otp: "",
         }));
         inputsRef.current[0].focus();
+        showToast("OTP resent successfully", "success");
+      } else {
+        showToast("Failed to resend OTP", "error");
       }
     } catch (error) {
+      showToast("Failed to resend OTP", "error");
       console.log("error", error);
     }
   };
@@ -185,8 +189,12 @@ const VerifyOtp = () => {
 
         <p className={styles.resend}>
           Didn’t receive a code?{" "}
-          <button className={styles.resendBtn} onClick={handleResend}>
-            Resend
+          <button
+            className={styles.resendBtn}
+            onClick={handleResend}
+            disabled={isResendOtpLoading}
+          >
+            {isResendOtpLoading ? "Resending..." : "Resend"}
           </button>
         </p>
 

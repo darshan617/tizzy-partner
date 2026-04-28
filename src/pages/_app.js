@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { useEffect } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
+import { ToastProvider } from "@/custom-hooks/toast/ToastProvider";
 
 export default function App({ Component, pageProps, ...rest }) {
   const { store } = storeWrapper.useWrappedStore(rest);
@@ -17,7 +18,9 @@ export default function App({ Component, pageProps, ...rest }) {
   }, []);
   return (
     <Provider store={store}>
-      <Component {...pageProps} />
+      <ToastProvider>
+        <Component {...pageProps} />
+      </ToastProvider>
     </Provider>
   );
 }
