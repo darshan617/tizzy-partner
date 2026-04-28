@@ -50,7 +50,11 @@ const LoginForm = () => {
   };
   return (
     <AuthLayout>
-      <div className={styles.loginWrapper}>
+      <div
+        className={styles.loginWrapper}
+        data-aos="fade-up"
+        data-aos-duration="900"
+      >
         <h2 className={styles.title}>Great to see you here 👋</h2>
 
         <p className={styles.subtitle}>Sign in to continue.</p>

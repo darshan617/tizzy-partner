@@ -153,7 +153,11 @@ const VerifyOtp = () => {
 
   return (
     <AuthLayout>
-      <div className={styles.otpWrapper}>
+      <div
+        className={styles.otpWrapper}
+        data-aos="fade-up"
+        data-aos-duration="900"
+      >
         <h2 className={styles.title}>Verify Your Email</h2>
         <p className={styles.subtitle}>
           We've emailed you a 6-digit verification code.

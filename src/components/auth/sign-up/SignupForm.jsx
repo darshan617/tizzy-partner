@@ -220,7 +220,11 @@ const SignupForm = () => {
   return (
     <>
       <AuthLayout>
-        <div className={styles.formContent}>
+        <div
+          className={styles.formContent}
+          data-aos="fade-up"
+          data-aos-duration="900"
+        >
           <h1 className={styles.heading}>Ready to become a Partner?</h1>
           <p className={styles.subheading}>
             Join 2000+ partners already scaling with Tizzy.
