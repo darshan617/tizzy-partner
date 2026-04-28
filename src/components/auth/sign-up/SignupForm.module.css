@@ -1,0 +1,121 @@
+.heading {
+  font-size: 18px;
+  font-weight: 500;
+  color: #4c4c5c;
+  text-align: center;
+}
+
+.subheading {
+  font-size: 13px;
+  color: #9ba6b7;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.formGroup {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.required {
+  color: red;
+}
+
+.input,
+.gstinInput,
+.mobileInput,
+.countryCode {
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 13px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: white;
+}
+
+.mobileInputWrapper {
+  display: flex;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.countryCode {
+  width: 70px;
+  border: none;
+  border-right: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.gstinInputWrapper {
+  display: flex;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.gstinInput,
+.mobileInput {
+  flex: 1;
+  border: none;
+}
+
+.input:focus,
+.gstinInput:focus,
+.mobileInput:focus {
+  border: 1px solid var(--primaryColor);
+  outline: none !important;
+}
+
+.searchBtn {
+  padding: 6px 16px;
+  border: none;
+  border-left: 1px solid #ddd;
+  background: transparent;
+  cursor: pointer;
+}
+
+.registerBtn {
+  width: 100%;
+  padding: 8px;
+  border-radius: 30px;
+  background: var(--primaryColor);
+  color: white;
+  border: none;
+}
+.registerBtn:hover {
+  background: #1260b8;
+  transition: 0.3s;
+}
+
+.registerBtn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.termsWrapper {
+  font-size: 12px;
+  margin: 20px 0;
+}
+
+.link {
+  color: var(--primaryColor);
+  font-weight: 600;
+}
+
+.signinLink {
+  text-align: center;
+  font-size: 12px;
+  margin-top: 10px;
+}
+.errorMessage {
+  color: red;
+  font-size: 11px;
+}

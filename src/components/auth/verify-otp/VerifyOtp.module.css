@@ -1,0 +1,121 @@
+.otpWrapper {
+  text-align: center;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #4c4c5c;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #9ba6b7;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.email {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primaryColor);
+  margin-bottom: 20px;
+}
+
+.label {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.label span {
+  color: red;
+}
+
+.otpContainer {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.otpInput {
+  width: 45px;
+  height: 45px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.otpInput:focus {
+  border-color: var(--primaryColor);
+}
+
+.confirmBtn {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--primaryColor);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: 0.3s;
+}
+
+.confirmBtn:hover {
+  background: #0e63be;
+}
+.confirmBtn:disabled {
+  background: #9ba6b7;
+  cursor: not-allowed;
+}
+
+.resend {
+  font-size: 13px;
+  color: #9ba6b7;
+  margin-bottom: 15px;
+}
+
+.back {
+  font-size: 13px;
+  color: #9ba6b7;
+}
+
+.link {
+  color: var(--primaryColor);
+  cursor: pointer;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.errorMessage {
+  color: red;
+  font-size: 12px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+.resendBtn {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--primaryColor);
+}
+@media (max-width: 480px) {
+  .otpInput {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+}

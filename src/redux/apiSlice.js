@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://goyalinfotech.in/tizzy/api/v1",
+    baseUrl: "https://goyalinfotech.in/tizzy/api/v1/partner",
   }),
   tagTypes: ["login", "signup"],
   endpoints: (builder) => ({}),
