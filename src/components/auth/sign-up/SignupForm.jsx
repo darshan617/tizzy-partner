@@ -16,6 +16,11 @@ import {
   FaUser,
 } from "react-icons/fa";
 import Link from "next/link";
+import Image from "next/image";
+import signupImage from "@/assets/signup/signupImg.png";
+import signupLogo from "@/assets/signup/signupLogo.png";
+import AuthLayout from "../authLayout/AuthLayout";
+
 const SignupForm = () => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -48,6 +53,39 @@ const SignupForm = () => {
   });
 
   const [isValidGstIn, setIsValidGstIn] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!userDetails.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+
+    if (!userDetails.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userDetails.email)) {
+      newErrors.email = "Please enter a valid email";
+    }
+
+    if (!userDetails.mobile.trim()) {
+      newErrors.mobile = "Mobile number is required";
+    } else if (!/^\d{10}$/.test(userDetails.mobile)) {
+      newErrors.mobile = "Mobile number must be 10 digits";
+    }
+
+    if (!userDetails.gstin.trim()) {
+      newErrors.gstin = "GSTIN is required";
+    } else if (
+      !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(
+        userDetails.gstin.toUpperCase(),
+      )
+    ) {
+      newErrors.gstin = "Invalid GSTIN format";
+    }
+
+    return newErrors;
+  };
 
   const handleChange = (e) => {
     const { name, value, checked } = e?.target;
@@ -62,9 +100,22 @@ const SignupForm = () => {
         [name]: value,
       }));
     }
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
   };
 
   const handleRegister = async () => {
+    const formErrors = validateForm();
+
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
+    setErrors({});
+
     try {
       const res = await register({
         body: userDetails,
@@ -73,187 +124,239 @@ const SignupForm = () => {
         // Cookies.set("userData", JSON.stringify(userDetails));
         dispatch(setUserData(userDetails));
         router?.push("/auth/otp-verification?type=signup");
+
+        setUserDetails({
+          name: "",
+          email: "",
+          mobile: "",
+          gstin: "",
+          company_name: "",
+          company_address: "",
+          terms_and_conditions: false,
+
+          country: "",
+          state: "",
+          city: "",
+          zip_code: "",
+          pan_no: "",
+        });
       }
     } catch (error) {
       console.log("error", error);
     }
-    setUserDetails({
-      name: "",
-      email: "",
-      mobile: "",
-      gstin: "",
-      company_name: "",
-      company_address: "",
-      terms_and_conditions: false,
-
-      country: "",
-      state: "",
-      city: "",
-      zip_code: "",
-      pan_no: "",
-    });
   };
   const handleSearchGstin = async () => {
+    const gstin = userDetails?.gstin?.toUpperCase().trim();
+
+    if (!gstin) {
+      setErrors((prev) => ({
+        ...prev,
+        gstin: "GSTIN is required",
+      }));
+      return;
+    }
+
+    if (
+      !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(gstin)
+    ) {
+      setErrors((prev) => ({
+        ...prev,
+        gstin: "Invalid GSTIN format",
+      }));
+      return;
+    }
+
+    setErrors((prev) => ({
+      ...prev,
+      gstin: "",
+    }));
+
     try {
       const res = await searchGstin({
-        body: {
-          gstin: userDetails?.gstin,
-        },
+        body: { gstin },
       });
 
       if (res?.data?.success) {
-        const compnayName = res?.data?.data?.company_name;
-        const companyAddress = res?.data?.data?.company_address;
-        const city = res?.data?.data?.city;
-        const country = res?.data?.data?.country;
-        const state = res?.data?.data?.state;
-        const pincode = res?.data?.data?.pincode;
-        const pan_no = res?.data?.data?.pan_no;
-        const constitution = res?.data?.data?.constitution;
-        const gst_status = res?.data?.data?.gst_status;
-        const last_updated = res?.data?.data?.last_updated;
-        const nature_of_business = res?.data?.data?.nature_of_business;
-        const registration_date = res?.data?.data?.registration_date;
-        const trade_name = res?.data?.data?.trade_name;
-        const legal_name = res?.data?.data?.legal_name;
+        const data = res?.data?.data;
 
         setIsValidGstIn(true);
+
         setUserDetails((prev) => ({
           ...prev,
-          company_name: compnayName || "",
-          company_address: companyAddress || "",
-          city: city || "",
-          country: country || "",
-          state: state || "",
-          pincode: pincode || "",
-          pan_no: pan_no || "",
-          constitution: constitution || "",
-          gst_status: gst_status || "",
-          last_updated: last_updated || "",
-          nature_of_business: nature_of_business || [],
-          registration_date: registration_date || "",
-          trade_name: trade_name || "",
-          legal_name: legal_name || "",
+          company_name: data?.company_name || "",
+          company_address: data?.company_address || "",
+          city: data?.city || "",
+          country: data?.country || "",
+          state: data?.state || "",
+          pincode: data?.pincode || "",
+          pan_no: data?.pan_no || "",
+          constitution: data?.constitution || "",
+          gst_status: data?.gst_status || "",
+          last_updated: data?.last_updated || "",
+          nature_of_business: data?.nature_of_business || [],
+          registration_date: data?.registration_date || "",
+          trade_name: data?.trade_name || "",
+          legal_name: data?.legal_name || "",
         }));
-        // dispatch(setUserData(res?.data?.data));
       } else {
         setIsValidGstIn(false);
+
+        setErrors((prev) => ({
+          ...prev,
+          gstin: "GSTIN not found",
+        }));
       }
     } catch (error) {
       console.log("error", error);
       setIsValidGstIn(false);
+
+      setErrors((prev) => ({
+        ...prev,
+        gstin: "Error validating GSTIN",
+      }));
     }
   };
   return (
     <>
-      <div className="auth-wrapper">
-        <div className="container">
-          <div className="row justify-content-center">
-            <div className="col-lg-11 col-xl-10">
-              <div className="auth-card d-flex flex-column flex-md-row">
-                {/* LEFT */}
-                <div className="col-md-6 auth-left" data-aos="fade-right">
-                  <h2 className="p-content mb-0">Create Account</h2>
-                  <p className="text-muted mb-4">
-                    Sign up quickly and start managing your cloud services
-                  </p>
-
-                  <div className={styles.signupFormContainer}>
-                    <input
-                      name="name"
-                      type="text"
-                      placeholder="Enter your name"
-                      value={userDetails?.name}
-                      onChange={handleChange}
-                    />
-                    <input
-                      name="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={userDetails?.email}
-                      onChange={handleChange}
-                    />
-                    <input
-                      name="mobile"
-                      type="text"
-                      placeholder="Enter your mobile number"
-                      value={userDetails?.mobile}
-                      onChange={handleChange}
-                    />
-                    <div>
-                      <input
-                        name="gstin"
-                        type="text"
-                        placeholder="Enter your GSTIN"
-                        value={userDetails?.gstin}
-                        onChange={handleChange}
-                      />
-                      <button onClick={handleSearchGstin}>Search</button>
-                    </div>
-                    {isValidGstIn && (
-                      <>
-                        <input
-                          name="company_name"
-                          type="text"
-                          placeholder="Enter your company name"
-                          value={userDetails?.company_name}
-                          onChange={handleChange}
-                        />
-                        <input
-                          name="company_address"
-                          type="text"
-                          placeholder="Enter your company address"
-                          value={userDetails?.company_address}
-                          onChange={handleChange}
-                        />
-                      </>
-                    )}
-                    <input
-                      type="checkbox"
-                      name="terms_and_conditions"
-                      checked={userDetails?.terms_and_conditions}
-                      onChange={handleChange}
-                    />
-
-                    <button
-                      onClick={handleRegister}
-                      className={styles.btn}
-                      disabled={!isValidGstIn}
-                    >
-                      Register
-                    </button>
-                  </div>
-                  <div className="text-center mt-3">
-                    <p>
-                      Already have an account?{" "}
-                      <Link href="/user-login">Login</Link>
-                    </p>
-                  </div>
-                </div>
-
-                {/* RIGHT */}
-                <div className="col-md-6 auth-right d-flex align-items-center justify-content-center">
-                  <div>
-                    <h3>Access your account securely</h3>
-
-                    <ul className="list-unstyled mt-3">
-                      <li>
-                        <FaCheckCircle /> Manage Cloud Server
-                      </li>
-                      <li>
-                        <FaCheckCircle /> Access Cloud Storage
-                      </li>
-                      <li>
-                        <FaCheckCircle /> 24/7 Support
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <AuthLayout>
+        <div className={styles.formContent}>
+          <h1 className={styles.heading}>Ready to become a Partner?</h1>
+          <p className={styles.subheading}>
+            Join 2000+ partners already scaling with Tizzy.
+          </p>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              Name<span className={styles.required}>*</span>
+            </label>
+            <input
+              name="name"
+              type="text"
+              value={userDetails?.name}
+              onChange={handleChange}
+              className={`${styles.input} ${errors.name ? styles.inputError : ""}`}
+              placeholder="Enter your full name"
+            />
+            {errors.name && (
+              <span className={styles.errorMessage}>{errors.name}</span>
+            )}
           </div>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              Email<span className={styles.required}>*</span>
+            </label>
+            <input
+              name="email"
+              type="email"
+              placeholder="Enter your email address"
+              value={userDetails?.email}
+              onChange={handleChange}
+              className={`${styles.input} ${errors.email ? styles.inputError : ""}`}
+            />
+            {errors.email && (
+              <span className={styles.errorMessage}>{errors.email}</span>
+            )}
+          </div>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              Mobile No.<span className={styles.required}>*</span>
+            </label>
+            <div className={styles.mobileInputWrapper}>
+              <select className={styles.countryCode}>
+                <option>+91</option>
+              </select>
+              <input
+                name="mobile"
+                type="text"
+                placeholder="Enter your mobile number"
+                value={userDetails?.mobile}
+                onChange={handleChange}
+                className={`${styles.mobileInput} ${errors.mobile ? styles.inputError : ""}`}
+              />
+            </div>
+            {errors.mobile && (
+              <span className={styles.errorMessage}>{errors.mobile}</span>
+            )}
+          </div>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              GSTIN<span className={styles.required}>*</span>
+            </label>
+            <div className={styles.gstinInputWrapper}>
+              <input
+                name="gstin"
+                type="text"
+                placeholder="Enter your GSTIN"
+                value={userDetails?.gstin}
+                onChange={handleChange}
+                className={`${styles.gstinInput} ${errors.gstin ? styles.inputError : ""}`}
+              />
+              <button onClick={handleSearchGstin} className={styles.searchBtn}>
+                Search
+              </button>
+            </div>
+            {errors.gstin && (
+              <span className={styles.errorMessage}>{errors.gstin}</span>
+            )}
+          </div>
+          {isValidGstIn && (
+            <>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>
+                  Company Name<span className={styles.required}>*</span>
+                </label>
+                <input
+                  name="company_name"
+                  type="text"
+                  placeholder=""
+                  value={userDetails?.company_name}
+                  onChange={handleChange}
+                  className={styles.input}
+                  readOnly
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>
+                  Company Address<span className={styles.required}>*</span>
+                </label>
+                <input
+                  name="company_address"
+                  type="text"
+                  placeholder=""
+                  value={userDetails?.company_address}
+                  onChange={handleChange}
+                  className={styles.input}
+                  readOnly
+                />
+              </div>
+            </>
+          )}
+          <div className={styles.termsWrapper}>
+            <label htmlFor="terms" className={styles.termsLabel}>
+              By clicking 'Register' below, you agree to our{" "}
+              <Link href="/terms-of-services" className={styles.link}>
+                Terms of Services
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy-policy" className={styles.link}>
+                Privacy Policy
+              </Link>
+            </label>
+          </div>
+          <button
+            onClick={handleRegister}
+            className={styles.registerBtn}
+            disabled={!isValidGstIn}
+          >
+            Register
+          </button>
+          <p className={styles.signinLink}>
+            Already a partner?{" "}
+            <Link href="/auth/login" className={styles.link}>
+              Sign in
+            </Link>
+          </p>
         </div>
-      </div>
+      </AuthLayout>
     </>
   );
 };

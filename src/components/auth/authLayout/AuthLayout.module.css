@@ -1,0 +1,87 @@
+/* AuthLayout.module.css */
+
+.authWrapper {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  overflow: hidden;
+}
+
+.authContainer {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background: white;
+  overflow: hidden;
+}
+
+/* LEFT */
+.formSection {
+  flex: 0.3;
+  padding: 40px 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  gap: 20px;
+}
+
+/* Logo */
+.logoWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: auto;
+  overflow: hidden;
+}
+
+.logoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  height: 55px;
+  object-fit: contain;
+}
+
+/* Content slot */
+.formContent {
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Footer */
+.copyright {
+  text-align: center;
+  font-size: 11px;
+  color: #999;
+  margin-top: auto;
+}
+
+/* RIGHT IMAGE */
+.imageSection {
+  flex: 0.7;
+  position: relative;
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+  .imageSection {
+    display: none;
+  }
+
+  .formSection {
+    flex: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .formSection {
+    padding: 20px;
+  }
+}
