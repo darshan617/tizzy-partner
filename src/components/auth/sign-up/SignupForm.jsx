@@ -59,27 +59,27 @@ const SignupForm = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!userDetails.name.trim()) {
+    if (!userDetails?.name?.trim()) {
       newErrors.name = "Name is required";
     }
 
-    if (!userDetails.email.trim()) {
+    if (!userDetails?.email?.trim()) {
       newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userDetails.email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userDetails?.email)) {
       newErrors.email = "Please enter a valid email";
     }
 
-    if (!userDetails.mobile.trim()) {
+    if (!userDetails?.mobile?.trim()) {
       newErrors.mobile = "Mobile number is required";
-    } else if (!/^\d{10}$/.test(userDetails.mobile)) {
+    } else if (!/^\d{10}$/.test(userDetails?.mobile)) {
       newErrors.mobile = "Mobile number must be 10 digits";
     }
 
-    if (!userDetails.gstin.trim()) {
+    if (!userDetails?.gstin?.trim()) {
       newErrors.gstin = "GSTIN is required";
     } else if (
       !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(
-        userDetails.gstin.toUpperCase(),
+        userDetails?.gstin?.toUpperCase(),
       )
     ) {
       newErrors.gstin = "Invalid GSTIN format";

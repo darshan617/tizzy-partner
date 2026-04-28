@@ -91,7 +91,6 @@
   cursor: pointer;
 }
 
-/* Button */
 .registerBtn {
   width: 100%;
   padding: 8px;
@@ -102,6 +101,7 @@
 }
 .registerBtn:hover {
   background: #1260b8;
+  transition: 0.3s;
 }
 
 .registerBtn:disabled {
@@ -109,18 +109,16 @@
   cursor: not-allowed;
 }
 
-/* Terms */
 .termsWrapper {
   font-size: 12px;
   margin: 20px 0;
 }
 
 .link {
-  color: #5757e4;
+  color: var(--primaryColor);
   font-weight: 600;
 }
 
-/* Footer */
 .signinLink {
   text-align: center;
   font-size: 12px;

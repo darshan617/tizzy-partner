@@ -74,7 +74,11 @@
 }
 
 .confirmBtn:hover {
-  background: #0d4c91;
+  background: #0e63be;
+}
+.confirmBtn:disabled {
+  background: #9ba6b7;
+  cursor: not-allowed;
 }
 
 .resend {

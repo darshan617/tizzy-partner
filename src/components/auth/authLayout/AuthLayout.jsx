@@ -2,8 +2,12 @@ import styles from "@/components/auth/authLayout/AuthLayout.module.css";
 import Image from "next/image";
 import signupImage from "@/assets/signup/signupImg.png";
 import signupLogo from "@/assets/signup/signupLogo.png";
+import { useRouter } from "next/router";
+import MascotBodyImg from "@/assets/login/mascotBodyImg.png";
+import MascothandImg from "@/assets/login/mascothandImg.png";
 
 export default function AuthLayout({ children }) {
+  const router = useRouter();
   return (
     <div className={styles.authWrapper}>
       <div className={styles.authContainer}>
@@ -28,6 +32,23 @@ export default function AuthLayout({ children }) {
             fill
             style={{ objectFit: "cover" }}
           />
+
+          {router.pathname === "/auth/login" && (
+            <>
+              <Image
+                src={MascotBodyImg}
+                alt="Mascot Body"
+                className={styles.mascotBody}
+                draggable={false}
+              />
+              <Image
+                src={MascothandImg}
+                alt="Mascot Hand"
+                className={styles.mascotHand}
+                draggable={false}
+              />
+            </>
+          )}
         </div>
       </div>
     </div>
