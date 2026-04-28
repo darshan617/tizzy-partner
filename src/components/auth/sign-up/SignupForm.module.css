@@ -100,9 +100,13 @@
   color: white;
   border: none;
 }
+.registerBtn:hover {
+  background: #1260b8;
+}
 
 .registerBtn:disabled {
   background: #ccc;
+  cursor: not-allowed;
 }
 
 /* Terms */
@@ -120,6 +124,7 @@
 .signinLink {
   text-align: center;
   font-size: 12px;
+  margin-top: 10px;
 }
 .errorMessage {
   color: red;

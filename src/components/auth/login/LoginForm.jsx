@@ -18,7 +18,7 @@ const LoginForm = () => {
       if (res?.data?.success) {
         router?.push("/auth/otp-verification?type=login");
         setEmail("");
-        dispatch(setUserData(email));
+        dispatch(setUserData({ email: email }));
       }
     } catch (error) {
       console.log(error);

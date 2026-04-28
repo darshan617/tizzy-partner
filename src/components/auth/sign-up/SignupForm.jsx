@@ -24,8 +24,9 @@ import AuthLayout from "../authLayout/AuthLayout";
 const SignupForm = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [register] = useRegisterMutation();
-  const [searchGstin] = useSearchGstinMutation();
+  const [register, { isLoading }] = useRegisterMutation();
+  const [searchGstin, { isLoading: isSearchingGstinLoading }] =
+    useSearchGstinMutation();
   const [userDetails, setUserDetails] = useState({
     name: "",
     email: "",
@@ -291,7 +292,7 @@ const SignupForm = () => {
                 className={`${styles.gstinInput} ${errors.gstin ? styles.inputError : ""}`}
               />
               <button onClick={handleSearchGstin} className={styles.searchBtn}>
-                Search
+                {isSearchingGstinLoading ? "Searching..." : "Search"}
               </button>
             </div>
             {errors.gstin && (
@@ -347,7 +348,7 @@ const SignupForm = () => {
             className={styles.registerBtn}
             disabled={!isValidGstIn}
           >
-            Register
+            {isLoading ? "Registering..." : "Register"}
           </button>
           <p className={styles.signinLink}>
             Already a partner?{" "}
