@@ -1004,6 +1004,8 @@ strong {
 }
 
 .dbdTabs .dbdNavtab {
+   background: none;
+   border: none;
    opacity: .4;
 }
 
@@ -1017,8 +1019,9 @@ strong {
    transition: all .1s ease-in-out;
    transform: scale(1);
    overflow: hidden;
-   padding-left: calc(.5 * var(--bs-gutter-x));
-   padding-right: calc(.5 * var(--bs-gutter-x))
+   /* padding-left: calc(.5 * var(--bs-gutter-x)); */
+   /* padding-right: calc(.5 * var(--bs-gutter-x)) */
+   padding: 10px;
 }
 
 .contentRow:not(.noHover):hover {
@@ -1640,4 +1643,8 @@ strong {
     box-shadow: 0 2px 1px #0000001a;
     max-width: 1100px;
     margin: auto;
+}
+.rotate-180 {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
 }
