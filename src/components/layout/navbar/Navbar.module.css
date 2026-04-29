@@ -1,0 +1,303 @@
+.pageHeader {
+  width: 100%;
+  background: var(--whiteColor);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 10px 10px;
+  position: sticky;
+  top: 0;
+}
+
+.pageLogoBox {
+  width: 120px;
+  height: auto;
+}
+
+.pageLogoImg {
+  width: 100%;
+  max-width: 200px;
+  max-height: 54px;
+  object-fit: contain;
+}
+
+.pageSearchBox {
+  width: 100%;
+  height: 40px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 50rem;
+}
+
+.pageSearch {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--borderColor);
+  background-color: #f9f9f9;
+  border-radius: 50rem;
+  padding-right: 40px;
+  padding-left: 15px;
+}
+
+.searchBtn {
+  width: 30px;
+  height: 30px;
+  background: #f9f9f9;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 5px;
+  margin: auto;
+  border: 0;
+  border-radius: 50%;
+  padding: 5px;
+}
+
+.navBtns {
+  width: 25px;
+  height: 25px;
+  padding: 4px;
+  display: block;
+  background: transparent;
+  border: 0;
+  position: relative;
+}
+
+.navLabel {
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50rem;
+  background: var(--dangerColor);
+  color: var(--whiteColor);
+  font-size: var(--fs10);
+  line-height: 16px;
+  position: absolute;
+  right: -10%;
+  bottom: 60%;
+  display: block;
+  padding: 0 3px;
+}
+
+.pgSearchWrap {
+  /* default styles for pgSearchWrap */
+}
+
+/* Profile Dropdown Styles */
+.profHolder {
+  max-width: 180px;
+  cursor: pointer;
+  position: relative;
+}
+
+.profAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ccc;
+  font-size: var(--fs20);
+  font-weight: 600;
+  color: var(--whiteColor);
+  line-height: 24px;
+  text-align: center;
+}
+
+.profUser {
+  line-height: 1.1;
+}
+
+.profName {
+  font-size: var(--fs16);
+  font-weight: 500;
+  max-width: 100px;
+  line-height: 1;
+}
+
+.profComp {
+  font-size: var(--fs12);
+}
+
+.profDesg {
+  font-size: var(--fs10);
+}
+
+.profID {
+  color: var(--textLight);
+  line-height: 1;
+}
+
+.profDesg .statusBadge {
+  font-size: 8px;
+  margin-left: 5px;
+}
+
+.profArw {
+  /* arrow styles */
+}
+
+.profArw .icon {
+  width: 16px;
+  color: var(--darkColor);
+  stroke-width: 2;
+}
+
+.avatarColor_0 {
+  background-color: var(--darkColor);
+}
+
+.avatarColor_1 {
+  background-color: var(--primaryColor);
+}
+
+.avatarColor_2 {
+  background-color: var(--secondaryColor);
+}
+
+.avatarColor_3 {
+  background-color: var(--infoColor);
+}
+
+.avatarColor_4 {
+  background-color: var(--successColor);
+}
+
+.avatarColor_5 {
+  background-color: var(--warningColor);
+}
+
+.avatarColor_6 {
+  background-color: var(--dangerColor);
+}
+
+.dropdownMenu {
+  width: 250px;
+  overflow: hidden;
+  --bs-dropdown-link-color: var(--textBody);
+  --bs-dropdown-link-active-bg: var(--grayColor);
+  --bs-dropdown-link-active-color: var(--textBody);
+  --bs-dropdown-border-color: var(--borderColor);
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  min-width: 10rem;
+  padding: 0.5rem 0;
+  margin: 0.125rem 0 0;
+  font-size: 1rem;
+  color: var(--textBody);
+  text-align: left;
+  list-style: none;
+  background-color: var(--whiteColor);
+  background-clip: padding-box;
+  border: 1px solid var(--borderColor);
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  display: none;
+}
+
+.dropdownMenu.show {
+  display: block;
+}
+
+.dropdownMenu li {
+  margin-bottom: 1px;
+}
+
+.dropdownMenu a {
+  font-weight: 400;
+  padding: 0.5rem 1rem;
+  clear: both;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
+.dropdownMenu a:hover {
+  background-color: var(--grayColor);
+  color: var(--textBody);
+}
+
+.dropdownMenu li a {
+  color: var(--textBody);
+}
+
+.dropdownMenu li a:hover {
+  background-color: var(--grayColor);
+  color: var(--textBody);
+}
+
+.dropdownMenu .icon {
+  width: 16px;
+  aspect-ratio: 1;
+  display: inline-block;
+  stroke-width: 1.5;
+  color: inherit;
+}
+
+.profDropdownToggle {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Media Queries */
+@media (min-width: 576px) {
+  .pageHeader {
+    padding: 10px 15px;
+  }
+
+  .navBtns {
+    width: 30px;
+    height: 30px;
+    padding: 5px;
+  }
+
+  .pageLogoBox {
+    width: 200px;
+    height: 47px;
+  }
+
+  .pageLogoImg {
+    width: 100%;
+    height: 100%;
+    max-width: 200px;
+    max-height: 47px;
+  }
+}
+
+@media (min-width: 768px) {
+  .pageHeader {
+    padding: 10px 30px;
+  }
+
+  .pageSearchBox {
+    width: 300px;
+  }
+}
+
+@media (min-width: 992px) {
+  .pageLogoBox {
+    width: 230px;
+    height: 54px;
+  }
+
+  .pageLogoImg {
+    width: 100%;
+    height: 100%;
+    max-width: 200px;
+    max-height: 54px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .pgSearchWrap {
+    --bs-offcanvas-height: 63px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+}

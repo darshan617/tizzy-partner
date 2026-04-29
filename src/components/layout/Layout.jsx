@@ -1,14 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "./navbar/Navbar";
 import Footer from "./footer/Footer";
+import Sidebar from "./sidebar/Sidebar";
 
 const Layout = ({ children }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
-    <div>
-      <Navbar />
-      {children}
-      <Footer />
-    </div>
+    <>
+      <div style={{ position: "sticky", top: 0, zIndex: 100 }}>
+        <Navbar
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+        />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          overflow: "hidden",
+          height: "calc(100vh - 75px)",
+        }}
+      >
+        <div>
+          <Sidebar
+            isSidebarOpen={isSidebarOpen}
+            setIsSidebarOpen={setIsSidebarOpen}
+          />
+        </div>
+        <div style={{ flex: 1, padding: "20px", overflowY: "auto" }}>
+          {children}
+        </div>
+      </div>
+    </>
   );
 };
 

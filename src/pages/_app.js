@@ -19,7 +19,7 @@ export default function App({ Component, pageProps, ...rest }) {
   return (
     <Provider store={store}>
       <ToastProvider>
-        <Component {...pageProps} />
+          <Component {...pageProps} />
       </ToastProvider>
     </Provider>
   );

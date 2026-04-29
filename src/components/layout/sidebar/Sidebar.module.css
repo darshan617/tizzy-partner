@@ -1,0 +1,254 @@
+.sideBar {
+  width: 280px !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border-radius: 5px 0 0 5px;
+  z-index: 1050;
+  height: calc(100vh - 75px);
+  overflow-y: auto;
+}
+
+
+.sidebarOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1049;
+  animation: fadeIn 0.3s ease-in-out;
+  display: none;
+}
+
+.sidebarOverlay.show {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.closeButtonWrapper {
+  border-bottom: 1px solid var(--borderColor);
+  background-color: var(--subtleBg);
+}
+
+.sideMenu {
+  width: 100%;
+  height: 100%;
+  color: var(--textBodySecondary);
+  position: relative;
+  overflow-y: auto;
+  padding: 20px 30px;
+}
+
+.sideMenu::-webkit-scrollbar {
+  width: 2px;
+  background-color: transparent;
+}
+
+.sideMenuHead {
+  font-size: var(--fs12);
+  font-weight: 600;
+  color: var(--textBody);
+}
+
+.sideMenuItem {
+  width: 100%;
+  height: 40px;
+  padding: 2px;
+  border-radius: 50rem;
+  display: flex;
+  transition: all 0.5s ease;
+  color: var(--darkColor);
+}
+
+.sideMenuItem.active {
+  background: var(--primaryColor);
+  color: var(--whiteColor);
+  font-weight: 500;
+}
+
+.sideMenuItem > a {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  color: var(--darkColor);
+}
+
+.sideMenuItem .iconCircle {
+  width: 30px;
+  height: auto;
+  border-radius: 50%;
+  background: var(--whiteColor);
+  color: var(--textBody);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+
+.sideMenuItem .icon {
+  width: 20px;
+  aspect-ratio: 1;
+}
+
+.creditBox {
+  width: 97%;
+  background: url(../../../assets/sidebar/creditCard.png) center no-repeat;
+  background-size: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  margin: 0 auto 5px;
+}
+
+.creditBox .titleBar {
+  font-size: var(--fs12);
+  font-weight: 600;
+  color: var(--darkColor);
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 0.05) 60%
+  );
+}
+
+.creditBox a {
+  font-size: var(--fs11);
+  color: var(--primaryColor);
+  text-decoration: underline;
+}
+
+.credBaln {
+  font-size: var(--fs11);
+  line-height: 1.3;
+}
+
+.credBalnvalue {
+  font-size: var(--fs16);
+  font-weight: 600;
+  color: var(--darkColor);
+}
+
+.credScale {
+  width: 100%;
+  height: 4px;
+  background: #ffffff;
+  border-radius: 50rem;
+  position: relative;
+}
+
+.credscaleBar {
+  width: auto;
+  height: 100%;
+  display: block;
+  border-radius: 50rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    var(--primaryColor) 0%,
+    var(--successColor) 100%
+  );
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+.credscaleBar:after {
+  content: "";
+  height: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--successColor);
+  position: absolute;
+  top: 0;
+  right: 0;
+  box-shadow: 0 0 6px 2px var(--successColor);
+}
+
+.credLimits {
+  font-size: var(--fs11);
+  line-height: 1.1;
+}
+
+.credLimits span {
+  color: var(--darkColor);
+  font-weight: 600;
+}
+.menuLink {
+  background: none;
+  border: none;
+  outline: none;
+  width: 100%;
+  border-radius: 30px;
+  color: var(--darkColor);
+  padding: 5px;
+}
+.menuLink:hover .menuLabel,
+.menuLink:hover .iconWrapper {
+  color: #73a2d5 !important;
+}
+.iconWrapper {
+  width: 30px;
+  height: 30px;
+  background: var(--whiteColor);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sideBar:after {
+  content: "";
+  width: 1px;
+  height: 80%;
+  background: #333;
+  position: absolute;
+  right: 0;
+  top: 30px;
+  background: linear-gradient(
+    0deg,
+    #ffffff00 0%,
+    #dedede 15%,
+    #fff 40%,
+    #fff 60%,
+    #dedede 85%,
+    #ffffff00 100%
+  );
+}
+@media (max-width: 991px) {
+  .sideBar {
+    position: fixed;
+    top: 0;
+    right: -280px;
+    left: auto;
+    width: 280px;
+    transition: right 0.3s ease-in-out;
+    z-index: 1050;
+    background: var(--whiteColor);
+    height: 100vh;
+  }
+
+  .sideBar.open {
+    right: 0;
+  }
+
+  .sidebarOverlay {
+    display: none;
+  }
+
+  .sidebarOverlay.show {
+    display: block;
+  }
+}
