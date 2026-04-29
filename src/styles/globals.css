@@ -326,7 +326,7 @@ strong {
   aspect-ratio: 1;
   margin-right: 5px;
   display: inline-flex;
-  stroke-width: 1.5;
+  /* stroke-width: 1.5; */
   color: inherit;
 }
 

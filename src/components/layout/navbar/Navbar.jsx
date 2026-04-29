@@ -1,22 +1,21 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
-  BiBell,
   BiChevronDown,
   BiKey,
-  BiPalette,
+  BiPowerOff,
   BiSearch,
-  BiUser,
-  BiUserPlus,
 } from "react-icons/bi";
 import { BsHandbag } from "react-icons/bs";
 import { FiBell } from "react-icons/fi";
+import { FaRegCircleUser } from "react-icons/fa6";
 import logo from "@/assets/signup/signupLogo.png";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import { RxHamburgerMenu } from "react-icons/rx";
 import Link from "next/link";
-import { FaUserEdit } from "react-icons/fa";
+import { RiUserAddLine } from "react-icons/ri";
 import styles from "@/components/layout/navbar/Navbar.module.css";
+import { LuPencilRuler, LuUserRoundPen } from "react-icons/lu";
 
 const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const [user, setUser] = useState(null);
@@ -149,17 +148,17 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                         <div
                           className={`${styles.profAvatar} ${styles.avatarColor_3}`}
                         >
-                          J
+                           {user?.name ? user?.name[0] : ""}
                         </div>
-                        <div className={styles.profName}>Janak Singh</div>
+                        <div className={styles.profName}> {user?.name ? user?.name : ""}</div>
                         <div className={styles.profComp}>
-                          Goyal Infotech Pvt. Ltd.{" "}
+                          {user?.company_name ? user?.company_name : ""}
                         </div>
                         <div className={styles.profDesg}>
                           <span className={styles.profID}>
-                            Partner ID : P123456
+                            {user?.id ? `Partner ID : ${user?.id}` : ""}
                           </span>
-                          <div className="statusBadge primaryBg profAdmin">
+                          <div className="statusBadge primaryBg profAdmin ms-1">
                             Admin
                           </div>
                         </div>
@@ -167,7 +166,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                       <ul className="my-3">
                         <li>
                           <a href="#">
-                            <BiUser
+                            <FaRegCircleUser
                               className={`${styles.icon} me-2`}
                               size={20}
                             />
@@ -185,7 +184,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                         </li>
                         <li>
                           <a href="#">
-                            <BiUserPlus
+                            <RiUserAddLine
                               className={`${styles.icon} me-2`}
                               size={20}
                             />
@@ -194,7 +193,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                         </li>
                         <li>
                           <a href="#">
-                            <FaUserEdit
+                            <LuUserRoundPen
                               className={`${styles.icon} me-2`}
                               size={20}
                             />
@@ -203,7 +202,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                         </li>
                         <li>
                           <a href="#">
-                            <BiPalette
+                            <LuPencilRuler
                               className={`${styles.icon} me-2`}
                               size={20}
                             />
@@ -213,7 +212,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                       </ul>
                       <div className="p-3 text-center subtleBg">
                         <button type="button" className="btn btnWhite w-100">
-                          <i className="icon" data-lucide="power"></i>{" "}
+                        <BiPowerOff className="icon" size={20} strokeWidth={0}/>
                           <span>Sign Out</span>
                         </button>
                       </div>

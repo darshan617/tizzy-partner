@@ -170,16 +170,12 @@
 .dropdownMenu {
   width: 250px;
   overflow: hidden;
-  --bs-dropdown-link-color: var(--textBody);
-  --bs-dropdown-link-active-bg: var(--grayColor);
-  --bs-dropdown-link-active-color: var(--textBody);
-  --bs-dropdown-border-color: var(--borderColor);
+
   position: absolute;
   top: 100%;
   right: 0;
   z-index: 1000;
   min-width: 10rem;
-  padding: 0.5rem 0;
   margin: 0.125rem 0 0;
   font-size: 1rem;
   color: var(--textBody);
@@ -234,7 +230,6 @@
   width: 16px;
   aspect-ratio: 1;
   display: inline-block;
-  stroke-width: 1.5;
   color: inherit;
 }
 

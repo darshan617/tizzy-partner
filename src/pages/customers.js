@@ -1,16 +1,9 @@
-import CustomerDetail from "@/components/customers/customers-details/CustomersDetails";
-import CustomerList from "@/components/customers/management/Management";
-import CustomerSummary from "@/components/customers/summary/Summary";
+import AccountSummary from "@/components/dashboard/account-summary/AccountSummary";
 import Layout from "@/components/layout/Layout";
 import React from "react";
 
 const Customers = () => {
-  return <Layout>
-    <CustomerSummary />
-    {/* <CustomerList /> */}
-    {/* <CustomerDetail /> */}
-    
-  </Layout>;
+  return <Layout>customer</Layout>;
 };
 
 export default Customers;
