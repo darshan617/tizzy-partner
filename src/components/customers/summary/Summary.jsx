@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { Plus, ChevronUp } from 'lucide-react';
+import styles from "@/components/customers/summary/Summary.module.css"
+
 
 const ActiveCustomerIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className="icon">
@@ -87,7 +90,7 @@ export default function CustomerSummary() {
       <div className="col">
         <div className="row align-items-end">
           <div className="col">
-            <nav className="breadcrumb mb-0">
+            <nav className={`${styles.breadcrumb} mb-0`}>
               <Link href="/" className="breadcrumb-item">Dashboard</Link>
               <Link href="/customers" className="breadcrumb-item">Customers</Link>
               <h1 className="breadcrumb-item active" aria-current="page">
@@ -98,9 +101,9 @@ export default function CustomerSummary() {
         </div>
       </div>
       <div className="col">
-        <div className="sectionCard py-4 px-sm-4 px-3">
+        <div className={`${styles.sectionCard} py-4 px-sm-4 px-3`}>
           <div className="mb-2">
-            <h2 className="sectionCardHead">Summary</h2>
+            <h2 className={`${styles.sectionCardHead}`}>Summary</h2>
             <small className="ms-1 textSecondary">(As on 02 Apr, 2026)</small>
           </div>
 
@@ -112,12 +115,12 @@ export default function CustomerSummary() {
                     {card.icon}
                   </div>
 
-                  <a href="#" className="statText mt-3">
-                    <div className="statLabel mb-2">{card.title}</div>
+                  <a href="#" className={`${styles.statText}  mt-3`}>
+                    <div className={`${styles.statLabel}  mb-2`}>{card.title}</div>
                     <div className="d-flex align-items-center">
-                      <div className="statValue">{card.value}</div>
+                      <div className={`${styles.statValue}`}>{card.value}</div>
                       <div className={`statusBadge ${card.badgeClass}`}>
-                        <i className="icon" data-lucide="chevron-up"></i>
+                       <ChevronUp className="icon me-0" />
                         <span>{card.trend}</span>
                       </div>
                     </div>
@@ -131,7 +134,7 @@ export default function CustomerSummary() {
                 className="boxLink primaryBg d-flex flex-column align-items-center justify-content-center"
               >
                 <div className="iconBx mb-2">
-                  <i className="icon" data-lucide="plus"></i>
+                  <Plus className={styles.icon} size={18} />
                 </div>
                 <div>Add New Customer</div>
               </Link>

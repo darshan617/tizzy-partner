@@ -1101,10 +1101,11 @@ strong {
 }
 
 .ckbCol {
-  align-self: stretch;
-  display: flex;
-  align-items: center;
-  background: rgba(238, 242, 247, 0.5);
+   align-self: stretch;
+   display: flex;
+   align-items: center;
+   background: rgba(238, 242, 247, .5);
+   height: 70px;
 }
 
 .ckbCol input {
