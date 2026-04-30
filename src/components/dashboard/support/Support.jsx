@@ -1,5 +1,9 @@
 
 import React, { useEffect } from "react";
+import styles from '@/components/dashboard/support/Support.module.css'
+import { ChevronRight, Plus } from "lucide-react";
+import Link from "next/link";
+
 
 const Support = () => {
   useEffect(() => {
@@ -44,7 +48,7 @@ const Support = () => {
           <div className="col"><h2 className="sectionCardHead">Support</h2></div>
           <div className="col-auto">
             <a href="#" className="btn small btnDefault">
-              <i className="icon" data-lucide="plus" strokeWidth="3"></i>
+                <Plus className="icon me-0" />
               <span>Open New Ticket</span>
             </a>
           </div>
@@ -78,7 +82,9 @@ const Support = () => {
                     </div>
                   </div>
                   <div className="col-auto">
-                    <a href="#" className="crBtn"><i className="icon me-0" data-lucide="chevron-right"></i></a>
+                    <Link href="#" className="crBtn">
+                      <ChevronRight className="icon me-0" />
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -109,7 +115,9 @@ const Support = () => {
                     </div>
                   </div>
                   <div className="col-auto">
-                    <a href="#" className="crBtn"><i className="icon me-0" data-lucide="chevron-right"></i></a>
+                    <Link href="#" className="crBtn">
+                      <ChevronRight className="icon me-0" />
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -140,7 +148,9 @@ const Support = () => {
                     </div>
                   </div>
                   <div className="col-auto">
-                    <a href="#" className="crBtn"><i className="icon me-0" data-lucide="chevron-right"></i></a>
+                    <Link href="#" className="crBtn">
+                      <ChevronRight className="icon me-0" />
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -171,7 +181,9 @@ const Support = () => {
                     </div>
                   </div>
                   <div className="col-auto">
-                    <a href="#" className="crBtn"><i className="icon me-0" data-lucide="chevron-right"></i></a>
+                    <Link href="#" className="crBtn">
+                      <ChevronRight className="icon me-0" />
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -202,7 +214,9 @@ const Support = () => {
                     </div>
                   </div>
                   <div className="col-auto">
-                    <a href="#" className="crBtn"><i className="icon me-0" data-lucide="chevron-right"></i></a>
+                    <Link href="#" className="crBtn">
+                      <ChevronRight className="icon me-0" />
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -233,7 +247,9 @@ const Support = () => {
                     </div>
                   </div>
                   <div className="col-auto">
-                    <a href="#" className="crBtn"><i className="icon me-0" data-lucide="chevron-right"></i></a>
+                    <Link href="#" className="crBtn">
+                      <ChevronRight className="icon me-0" />
+                    </Link>
                   </div>
                 </div>
               </div>
