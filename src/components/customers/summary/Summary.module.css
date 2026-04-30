@@ -26,7 +26,7 @@
     color: var(--textBody);
 }
 
-.breadcrumb-item.active {
+.breadcrumbItem.active {
     display: block;
     width: 100%;
     padding: 0;
@@ -36,7 +36,7 @@
     color: var(--textBody);
 }
 
-.breadcrumb-item.active:before {
+.breadcrumbItem.active:before {
     display: none;
 }
 
@@ -197,15 +197,13 @@
     color: inherit;
 }
 
-.icon {
-    width: 100%;
-    height: 100%;
-    color: inherit;
-    line-height: 0;
-    display: block;
+.statusBadgeIcon {
+    width: 14px;
+    aspect-ratio: 1;
+    stroke-width: 2;
+    display: inline-block;
 }
 
-/* Responsive adjustments (only for this component) */
 @media (min-width: 768px) {
     .statBox {
         padding: 15px;
