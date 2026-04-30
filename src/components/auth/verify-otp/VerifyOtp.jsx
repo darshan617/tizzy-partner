@@ -20,7 +20,6 @@ const VerifyOtp = () => {
     email: "",
     otp: "",
   });
-
   const [otpArray, setOtpArray] = useState(["", "", "", "", "", ""]);
 
   const userData = useSelector(selectUserData);
@@ -60,18 +59,23 @@ const VerifyOtp = () => {
           body: otpDetails,
         });
       }
+      console.log(res, "res");
 
       if (res?.data?.success) {
         Cookies.set("userData", JSON.stringify(res?.data?.data?.partner));
-        router?.push("/");
+        showToast("Email verified successfully", "success");
+        router?.push("/dashboard");
         setOtpDetails((prev) => ({
           ...prev,
           email: "",
           otp: "",
         }));
+      }else{
+        showToast(res?.error?.data?.message, "error");
       }
     } catch (error) {
       console.log(error);
+      showToast("Failed to verify email", "error");
     }
   };
 

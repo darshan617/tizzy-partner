@@ -107,8 +107,9 @@
 .profName {
   font-size: var(--fs16);
   font-weight: 500;
-  max-width: 100px;
+  width: 100%;
   line-height: 1;
+  text-align: center;
 }
 
 .profComp {
@@ -172,7 +173,7 @@
   overflow: hidden;
 
   position: absolute;
-  top: 100%;
+  top: 47px;
   right: 0;
   z-index: 1000;
   min-width: 10rem;

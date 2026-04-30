@@ -16,8 +16,12 @@ import Link from "next/link";
 import { RiUserAddLine } from "react-icons/ri";
 import styles from "@/components/layout/navbar/Navbar.module.css";
 import { LuPencilRuler, LuUserRoundPen } from "react-icons/lu";
+import { useRouter } from "next/router";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
 
 const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
+  const router = useRouter();
+  const { showToast } = useToast();
   const [user, setUser] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -33,7 +37,12 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
     }
   }, []);
 
-  // Handle click outside dropdown
+  const handleSignOut = () => {
+    Cookies.remove("userData");
+    router?.push("/auth/login");
+    showToast("Signed Out successfully", "success");
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -211,7 +220,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                         </li>
                       </ul>
                       <div className="p-3 text-center subtleBg">
-                        <button type="button" className="btn btnWhite w-100">
+                        <button type="button" className="btn btnWhite w-100" onClick={handleSignOut}>
                         <BiPowerOff className="icon" size={20} strokeWidth={0}/>
                           <span>Sign Out</span>
                         </button>

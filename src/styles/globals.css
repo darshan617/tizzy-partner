@@ -227,7 +227,7 @@ body {
 .form-check-input:focus {
   outline: none;
   box-shadow: none;
-  border-color: inherit;
+  border-color: var(--primaryColor);
 }
 
 input::-webkit-outer-spin-button,
@@ -893,7 +893,7 @@ strong {
   font-weight: 600;
   text-transform: uppercase;
   color: var(--darkColor);
-  display: inline;
+  display: block;
   margin-bottom: 0;
 }
 
