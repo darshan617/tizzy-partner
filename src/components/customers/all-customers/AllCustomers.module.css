@@ -114,13 +114,6 @@
 }
 
 .filtersMain {
-<<<<<<< HEAD:src/components/customers/management/Management.module.css
-    position: relative;
-    background: var(--whiteColor);
-    border-radius: 10px 10px 0 0;
-    /* top: 60px; */
-    z-index: 999;
-=======
     position: sticky;
     top: 0;
     /* margin-bottom: 60px; */
@@ -128,7 +121,6 @@
     border-radius: 10px 10px 0 0;
     /* top: 60px; */
     z-index:2;
->>>>>>> c007c5f (done with create customer api and get all customer list api):src/components/customers/all-customers/AllCustomers.module.css
 }
 
 .filterWrapper {
@@ -439,11 +431,8 @@
         opacity: 1;
         right: 0;
     }
-<<<<<<< HEAD:src/components/customers/management/Management.module.css
-=======
 /* 
     .filtersMain {
         top: 74px;
     } */
->>>>>>> c007c5f (done with create customer api and get all customer list api):src/components/customers/all-customers/AllCustomers.module.css
 }

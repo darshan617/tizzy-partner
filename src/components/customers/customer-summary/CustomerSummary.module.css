@@ -204,8 +204,6 @@
     display: inline-block;
 }
 
-<<<<<<< HEAD:src/components/customers/summary/Summary.module.css
-=======
 .breadcrumbItem{
     background: none;
     border: none;
@@ -215,7 +213,6 @@
     color: var(--textBody);
     cursor: pointer;
 }
->>>>>>> c007c5f (done with create customer api and get all customer list api):src/components/customers/customer-summary/CustomerSummary.module.css
 @media (min-width: 768px) {
     .statBox {
         padding: 15px;

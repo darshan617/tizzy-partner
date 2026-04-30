@@ -60,13 +60,8 @@ import React, { useEffect, useRef } from "react";
 const summaryCards = [
   {
     title: "Active Customers",
-<<<<<<< HEAD:src/components/customers/summary/Summary.jsx
-    value: 124000,
-    suffix: "k",
-=======
     key: "active",
     value: "124k",
->>>>>>> c007c5f (done with create customer api and get all customer list api):src/components/customers/customer-summary/CustomerSummary.jsx
     trend: "8.72%",
     boxClass: "successGrad",
     iconClass: "successColor",
@@ -75,13 +70,8 @@ const summaryCards = [
   },
   {
     title: "Inactive Customers",
-<<<<<<< HEAD:src/components/customers/summary/Summary.jsx
-    value: 51000,
-    suffix: "k",
-=======
     key: "inactive",
     value: "51k",
->>>>>>> c007c5f (done with create customer api and get all customer list api):src/components/customers/customer-summary/CustomerSummary.jsx
     trend: "8.72%",
     boxClass: "dangerGrad",
     iconClass: "dangerColor",
@@ -90,13 +80,8 @@ const summaryCards = [
   },
   {
     title: "Closed Customers",
-<<<<<<< HEAD:src/components/customers/summary/Summary.jsx
-    value: 75000,
-    suffix: "k",
-=======
     key: "closed",
     value: "75k",
->>>>>>> c007c5f (done with create customer api and get all customer list api):src/components/customers/customer-summary/CustomerSummary.jsx
     trend: "8.72%",
     boxClass: "warningGrad",
     iconClass: "warningColor",
@@ -105,7 +90,6 @@ const summaryCards = [
   },
 ];
 
-<<<<<<< HEAD:src/components/customers/summary/Summary.jsx
 const Counter = ({ target, suffix }) => {
   const ref = useRef();
   useEffect(() => {
@@ -131,8 +115,7 @@ const Counter = ({ target, suffix }) => {
   return <span ref={ref}>0{suffix || ""}</span>;
 };
 
-export default function CustomerSummary() {
-=======
+
 export default function CustomerSummary({allCustomers, isFetchingAllCustomers}) {
   const router = useRouter();
   const todayDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -140,22 +123,15 @@ export default function CustomerSummary({allCustomers, isFetchingAllCustomers}) 
 
 
   const counts = {}
->>>>>>> c007c5f (done with create customer api and get all customer list api):src/components/customers/customer-summary/CustomerSummary.jsx
   return (
     <div>
       <div className="col">
         <div className="row align-items-end">
           <div className="col">
             <nav className={`${styles.breadcrumb} mb-0`}>
-<<<<<<< HEAD:src/components/customers/summary/Summary.jsx
-              <Link href="/" className={`${styles.breadcrumbItem}`}>Dashboard</Link>
-              <Link href="/customers" className={`${styles.breadcrumbItem}`}>Customers</Link>
-              <h1 className={`${styles.breadcrumbItem} ${styles.active}`} aria-current="page">
-=======
               <button onClick={() => router.push('/dashboard')} className={styles.breadcrumbItem}>Dashboard</button> /
               <button onClick={() => router.push('/customers')} className={styles.breadcrumbItem}>Customers</button>
               <h1 className="breadcrumb-item active" aria-current="page">
->>>>>>> c007c5f (done with create customer api and get all customer list api):src/components/customers/customer-summary/CustomerSummary.jsx
                 Customer Management
               </h1>
             </nav>
@@ -183,17 +159,9 @@ export default function CustomerSummary({allCustomers, isFetchingAllCustomers}) 
                   <a href="#" className={`${styles.statText}  mt-3`}>
                     <div className={`${styles.statLabel}  mb-2`}>{card.title}</div>
                     <div className="d-flex align-items-center">
-<<<<<<< HEAD:src/components/customers/summary/Summary.jsx
-                      <div className={`${styles.statValue}`}>
-                        <Counter target={card.value} suffix={card.suffix} />
-                      </div>
-                      <div className={`statusBadge ${card.badgeClass}`}>
-                       <ChevronUp className={`${styles.statusBadgeIcon}`} size={18} />
-=======
                       <div className={`${styles.statValue}`}>{count?.[card?.key.toLowerCase()]}</div>
                       {/* <div className={`statusBadge ${card.badgeClass}`}>
                        <ChevronUp className="icon me-0" />
->>>>>>> c007c5f (done with create customer api and get all customer list api):src/components/customers/customer-summary/CustomerSummary.jsx
                         <span>{card.trend}</span>
                       </div> */}
                     </div>
@@ -203,15 +171,9 @@ export default function CustomerSummary({allCustomers, isFetchingAllCustomers}) 
               )
             })}
             <div className="col pt-4">
-<<<<<<< HEAD:src/components/customers/summary/Summary.jsx
-              <Link
-                href="/add_new_customer"
-                className={`${styles.boxLink} ${styles.primaryBg} d-flex flex-column align-items-center justify-content-center`}
-=======
               <button
                 className="boxLink primaryBg d-flex flex-column align-items-center justify-content-center border-0 outline-0"
                 onClick={() => router.push('/customers/create-customer')}
->>>>>>> c007c5f (done with create customer api and get all customer list api):src/components/customers/customer-summary/CustomerSummary.jsx
               >
                 <div className={`${styles.iconBx} mb-2`}>
                   <Plus className={`${styles.icon}`} size={18} />
