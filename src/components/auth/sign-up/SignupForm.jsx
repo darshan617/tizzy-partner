@@ -20,10 +20,12 @@ import Image from "next/image";
 import signupImage from "@/assets/signup/signupImg.png";
 import signupLogo from "@/assets/signup/signupLogo.png";
 import AuthLayout from "../authLayout/AuthLayout";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
 
 const SignupForm = () => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { showToast } = useToast();
   const [register, { isLoading }] = useRegisterMutation();
   const [searchGstin, { isLoading: isSearchingGstinLoading }] =
     useSearchGstinMutation();
@@ -141,6 +143,10 @@ const SignupForm = () => {
           zip_code: "",
           pan_no: "",
         });
+      }else{
+        console.log(res);
+        
+        showToast(res?.error?.data?.message  || "Something went wrong", "error");
       }
     } catch (error) {
       console.log("error", error);

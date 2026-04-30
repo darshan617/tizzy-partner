@@ -104,25 +104,32 @@
 
 .sectionCard {
     width: 100%;
-    min-height: 100px;
+    max-height: calc(100vh - 360px);
     background: #fff;
     box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     max-width: 1100px;
     margin: auto;
+    overflow: auto;
 }
 
-
-
 .filtersMain {
+<<<<<<< HEAD:src/components/customers/management/Management.module.css
     position: relative;
     background: var(--whiteColor);
     border-radius: 10px 10px 0 0;
     /* top: 60px; */
     z-index: 999;
+=======
+    position: sticky;
+    top: 0;
+    /* margin-bottom: 60px; */
+    background: var(--whiteColor);
+    border-radius: 10px 10px 0 0;
+    /* top: 60px; */
+    z-index:2;
+>>>>>>> c007c5f (done with create customer api and get all customer list api):src/components/customers/all-customers/AllCustomers.module.css
 }
-
-
 
 .filterWrapper {
     box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15);
@@ -200,7 +207,7 @@
     display: flex;
     align-items: center;
     background: rgba(238, 242, 247, 0.5);
-    height: 65px;
+    height: auto;
 }
 
 .ckbCol input {
@@ -242,6 +249,10 @@
     font-size: var(--fs14);
     font-weight: 500;
     color: var(--primaryColor);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
 }
 
 .crDescription {
@@ -373,8 +384,20 @@
 .searchCount {
     font-size: var(--fs14);
 }
-
-
+.avatarBg{
+    background-color: var(--primaryColor);
+}
+.crName{
+    text-transform: capitalize;
+}
+.statusBadgeStyle{
+    text-transform: capitalize;
+    padding:  2px 5px;
+    font-size: var(--fs10);
+    border-radius: 4px;
+    color: var(--whiteColor);
+    font-weight: 500;
+}
 @media (max-width: 575.98px) {
     .searchCount {
         font-size: var(--fs11);
@@ -416,4 +439,11 @@
         opacity: 1;
         right: 0;
     }
+<<<<<<< HEAD:src/components/customers/management/Management.module.css
+=======
+/* 
+    .filtersMain {
+        top: 74px;
+    } */
+>>>>>>> c007c5f (done with create customer api and get all customer list api):src/components/customers/all-customers/AllCustomers.module.css
 }

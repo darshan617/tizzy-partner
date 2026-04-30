@@ -41,6 +41,7 @@
   justify-content: center;
   gap: 10px;
   margin-bottom: 25px;
+  flex-wrap: wrap;
 }
 
 .otpInput {
