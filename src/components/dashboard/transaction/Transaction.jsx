@@ -244,7 +244,7 @@ export default function TransactionSection() {
                                         </div>
 
                                         <div className="col-sm-auto col-12 text-end py-0">
-                                            <Link href="#" className={`${styles.crBtn}`}>
+                                            <Link href="#" className="crBtn">
                                                 <ChevronRight className="icon me-0" />
                                             </Link>
                                         </div>
@@ -262,17 +262,17 @@ export default function TransactionSection() {
                                 <div className={`${styles.tabBtnGroup} rounded-pill`}>
                                     <input type="radio" className="btn-check" name="tnxRadio" id="tnxRadio1" autoComplete="off" defaultChecked />
                                     <label className="tbgItem rounded-pill" htmlFor="tnxRadio1">
-                                        <span className="fw-medium">Last 7 Days</span> (10)
+                                        <span className="fw-medium">Today</span> (10)
                                     </label>
 
                                     <input type="radio" className="btn-check" name="tnxRadio" id="tnxRadio2" autoComplete="off" />
                                     <label className="tbgItem rounded-pill" htmlFor="tnxRadio2">
-                                        <span className="fw-medium">Last 15 Days</span> (50)
+                                        <span className="fw-medium">Next 15 Days</span> (50)
                                     </label>
 
                                     <input type="radio" className="btn-check" name="tnxRadio" id="tnxRadio3" autoComplete="off" />
                                     <label className="tbgItem rounded-pill" htmlFor="tnxRadio3">
-                                        <span className="fw-medium">Last 30 Days</span> (100)
+                                        <span className="fw-medium">Next 30 Days</span> (100)
                                     </label>
                                 </div>
                             </div>
@@ -289,12 +289,12 @@ export default function TransactionSection() {
                                                     </div>
                                                     <div className={`${styles.crDomainName} ps-2`}>{item.domain}</div>
                                                 </div>
-                                                <div className="crDescription ms-4 ps-2">{item.owner}</div>
+                                                <div className={`${styles.crDescription} ms-4 ps-2`}>{item.owner}</div>
                                             </div>
 
                                             <div className="col-md col-12">
-                                                <div className="crDescription ms-4 ps-2">{item.plan}</div>
-                                                <div className="crDescription ms-4 ps-2">{item.date}</div>
+                                                <div className={`${styles.crDescription} ms-4 ps-2`}>{item.plan}</div>
+                                                <div className={`${styles.crDescription} ms-4 ps-2`}>{item.date}</div>
                                             </div>
                                         </div>
 
@@ -303,7 +303,7 @@ export default function TransactionSection() {
                                                 <span className={`statusBadge ${item.statusClass}`}>
                                                     {item.status}
                                                 </span>
-                                                <small class="d-block dangerColor">{item.wartext}</small>
+                                                <small className="d-block dangerColor">{item.wartext}</small>
                                             </div>
                                             <div className="col-md-6 col-12 text-center">
                                                 <Link href="#" className="btn btnWhite small crRenew">
