@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect  } from "react";
 import { FaPencil } from "react-icons/fa6";
 import { CiGlobe } from "react-icons/ci";
 import { BiTransfer } from "react-icons/bi";
 import { IoMdArrowBack } from "react-icons/io";
 import { ChevronRight, Plus } from "lucide-react";
+import Link from "next/link";
 import styles from '@/components/customers/customers-details/CustomerDetails.module.css'
 
 
@@ -61,10 +62,10 @@ export default function CustomerDetail() {
                         </nav>
                     </div>
                     <div className="col-auto">
-                        <a href="customers.html" className="btn small btnWhite">
+                        <Link href="customers.html" className="btn small btnWhite">
                             <IoMdArrowBack />
                             <span>Back</span>
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -105,16 +106,16 @@ export default function CustomerDetail() {
 
                             <div className="d-flex align-items-center mb-3">
                                 <div
-                                    className="profAvatar flex-shrink-0 avatarColor_2"
+                                    className={`${styles.profAvatar} ${styles.avatarColor_2} flex-shrink-0`}
                                     style={{ zoom: 1.4 }}
                                 >
                                     V
                                 </div>
-                                <div className="profUser mx-2">
-                                    <div className="profName text-nowrap text-truncate">
+                                <div className={`${styles.profUser} mx-2`}>
+                                    <div className={`${styles.profName} text-nowrap text-truncate`}>
                                         Vikas Goyal
                                     </div>
-                                    <div className="idBadge mt-1">
+                                    <div className={`${styles.idBadge} mt-1`}>
                                         Customer Id : <strong>00024</strong>
                                     </div>
                                 </div>
@@ -124,13 +125,13 @@ export default function CustomerDetail() {
                                 <div className="row">
                                     <div className="col-md-12 col-6 mb-3">
                                         <small className="d-block textLight">Email Id</small>
-                                        <a href="mailto:vikasgoyal@gmail.com">
+                                        <Link href="mailto:vikasgoyal@gmail.com">
                                             vikasgoyal@gmail.com
-                                        </a>
+                                        </Link>
                                     </div>
                                     <div className="col-md-12 col-6">
                                         <small className="d-block textLight">Mobile No.</small>
-                                        <a href="tel:+9198123456780">+91 981234 56780</a>
+                                        <Link href="tel:+9198123456780">+91 981234 56780</Link>
                                     </div>
                                 </div>
                             </div>
@@ -207,7 +208,7 @@ export default function CustomerDetail() {
                             </div>
                             <div>
                                 <small className="text-decoration-underline">
-                                    <a href="">View History</a>
+                                    <Link href="">View History</Link>
                                 </small>
                             </div>
                         </div>
@@ -216,7 +217,7 @@ export default function CustomerDetail() {
                             <div className="row align-items-center">
                                 <div className="col-xl-3 col-12 d-flex align-items-center">
                                     <div
-                                        className="servBadge tizzy flex-shrink-0"
+                                        className={`${styles.servBadge} ${styles.tizzy}  flex-shrink-0`}
                                         title="Tizzy Mail"
                                     ></div>
                                     <div className="ms-2">
@@ -235,25 +236,25 @@ export default function CustomerDetail() {
                                         <div className="col-md-auto col-sm-6 col-4">
                                             <small className="d-block textLight">License</small>
                                             <span>10</span>
-                                            <a href="" className="btnWhite btn iconBtn">
+                                            <Link href="" className={`${styles.iconBtn} btnWhite btn`}>
                                                 <FaPencil />
-                                            </a>
+                                            </Link>
                                         </div>
                                         <div className="col-md-auto col-sm-6 col-8">
                                             <small className="d-block textLight">Period</small>
                                             <span>25 May, 2025 - 25 May, 2026</span>
                                         </div>
                                         <div className="col-md-auto col-sm-6 col-4 align-self-center">
-                                            <div className="statusBadge subtleSuccess">Active</div>
+                                            <div className={`${styles.statusBadge} ${styles.subtleSuccess}`}>Active</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
-                                    <a href="#" className="btn small btnWhite crRenew">
+                                    <Link href="#" className={`${styles.crRenew} btn small btnWhite`}>
                                         <span>Renew</span>
-                                    </a>
-                                    <div className="mt-2 text-uppercase updwngrade">
-                                        <a href="">Upgrade / Downgrade</a>
+                                    </Link>
+                                    <div className={`${styles.updwngrade} mt-2 text-uppercase`}>
+                                        <Link href="">Upgrade / Downgrade</Link>
                                     </div>
                                 </div>
                             </div>
@@ -263,16 +264,16 @@ export default function CustomerDetail() {
             </div>
 
             <div className="col">
-                <div className="sectionCard py-4">
+                <div className={`${styles.sectionCard} py-4`}>
                     <div className="d-flex px-sm-4 px-3 mb-3 align-items-center">
                         <div className="col">
-                            <h2 className="sectionCardHead">Support Tickets</h2>
+                            <h2 className={`${styles.sectionCardHead}`}>Support Tickets</h2>
                         </div>
                         <div className="col-auto">
-                            <a href="#" className="btn small btnDefault">
+                            <Link href="#" className={`${styles.btnDefault} ${styles.small} ${styles.btn}`}>
                                 <Plus className={styles.icon} size={14} />
                                 <span>Open New Ticket</span>
-                            </a>
+                            </Link>
                         </div>
                     </div>
 
@@ -281,30 +282,30 @@ export default function CustomerDetail() {
 
                             {/* Slide 1 */}
                             <div className="swiper-slide">
-                                <div className="supportTkt btnDisplay d-flex flex-column">
-                                    <div className="stktTop d-flex align-items-center col-auto">
+                                <div className={`${styles.supportTkt} btnDisplay d-flex flex-column`}>
+                                    <div className={`${styles.stktTop} d-flex align-items-center col-auto`}>
                                         <div className="col">
-                                            <div className="stktNo">SUP2523</div>
-                                            <span className="statusBadge subtleSuccess">Active</span>
+                                            <div className={`${styles.stktNo}`}>SUP2523</div>
+                                            <span className={`${styles.statusBadge} ${styles.subtleSuccess}`}>Active</span>
                                         </div>
                                         <div className="col-auto">
-                                            <div className="stktDate">20 Mar, 2026</div>
+                                            <div className={`${styles.stktDate}`}>20 Mar, 2026</div>
                                         </div>
                                     </div>
-                                    <div className="stktContent col">
-                                        <span className="priorityBadge high">High Priority</span>
-                                        <a href="#"><h3 className="stktHead my-2">Can&apos;t access dashboard after update</h3></a>
+                                    <div className={`${styles.stktContent} col`}>
+                                        <span className={`${styles.priorityBadge} ${styles.high}`}>High Priority</span>
+                                        <Link href="#"><h3 className={`${styles.stktHead} my-2`}>Can&apos;t access dashboard after update</h3></Link>
                                         <div className="">Tizzy® Mail Enterprise - 100 GB</div>
                                     </div>
-                                    <div className="stktBtm d-flex align-items-center col-auto">
+                                    <div className={`${styles.stktBtm} d-flex align-items-center col-auto`}>
                                         <div className="col">
-                                            <div className="crDomain d-flex align-items-center">
-                                                <div className="avatarSmall flex-shrink-0 warningBg">G</div>
+                                            <div className={`${styles.crDomain} d-flex align-items-center`}>
+                                                <div className={`${styles.avatarSmall} flex-shrink-0 warningBg`}>G</div>
                                                 <div className="crDomainName ps-2">ganeshenterprises.com</div>
                                             </div>
                                         </div>
                                         <div className="col-auto">
-                                            <a href="#" className="crBtn"><ChevronRight className="icon me-0" /></a>
+                                            <Link href="#" className={`${styles.crBtn}`}><ChevronRight className={`${styles.icon} me-0`} /></Link>
                                         </div>
                                     </div>
                                 </div>
@@ -312,30 +313,30 @@ export default function CustomerDetail() {
 
                             {/* Slide 2 */}
                             <div className="swiper-slide">
-                                <div className="supportTkt btnDisplay d-flex flex-column">
-                                    <div className="stktTop d-flex align-items-center col-auto">
+                                <div className={`${styles.supportTkt} ${styles.supportTkt} d-flex flex-column`}>
+                                    <div className={`${styles.stktTop} d-flex align-items-center col-auto`}>
                                         <div className="col">
-                                            <div className="stktNo">SUP2523</div>
-                                            <span className="statusBadge subtleSuccess">Active</span>
+                                            <div className={`${styles.stktNo}`}>SUP2523</div>
+                                            <span className={`${styles.statusBadge} ${styles.subtleSuccess}`}>Active</span>
                                         </div>
                                         <div className="col-auto">
-                                            <div className="stktDate">20 Mar, 2026</div>
+                                            <div className={`${styles.stktDate}`}>20 Mar, 2026</div>
                                         </div>
                                     </div>
-                                    <div className="stktContent col">
-                                        <span className="priorityBadge low">Low Priority</span>
-                                        <a href="#"><h3 className="stktHead my-2">Can&apos;t access dashboard after update</h3></a>
+                                    <div className={`${styles.stktContent} col`}>
+                                        <span className={`${styles.priorityBadge} ${styles.low}`}>Low Priority</span>
+                                        <Link href="#"><h3 className={`${styles.stktHead} my-2`}>Can&apos;t access dashboard after update</h3></Link>
                                         <div className="">Tizzy® Mail Enterprise - 100 GB</div>
                                     </div>
-                                    <div className="stktBtm d-flex align-items-center col-auto">
+                                    <div className={`${styles.stktBtm} d-flex align-items-center col-auto`}>
                                         <div className="col">
-                                            <div className="crDomain d-flex align-items-center">
-                                                <div className="avatarSmall flex-shrink-0 successBg">A</div>
-                                                <div className="crDomainName ps-2">goyalinfotech.com</div>
+                                            <div className={`${styles.crDomain} d-flex align-items-center`}>
+                                                <div className={`${styles.avatarSmall} flex-shrink-0 successBg`}>A</div>
+                                                <div className={`${styles.crDomainName} ps-2`}>goyalinfotech.com</div>
                                             </div>
                                         </div>
                                         <div className="col-auto">
-                                            <a href="#" className="crBtn"><ChevronRight className="icon me-0" /></a>
+                                            <Link href="#" className={`${styles.crBtn}`}><ChevronRight className={`${styles.icon} me-0`}/></Link>
                                         </div>
                                     </div>
                                 </div>
@@ -343,30 +344,30 @@ export default function CustomerDetail() {
 
                             {/* Slide 3 */}
                             <div className="swiper-slide">
-                                <div className="supportTkt btnDisplay d-flex flex-column">
-                                    <div className="stktTop d-flex align-items-center col-auto">
+                                <div className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}>
+                                    <div className={`${styles.stktTop} d-flex align-items-center col-auto`}>
                                         <div className="col">
-                                            <div className="stktNo">SUP2523</div>
-                                            <span className="statusBadge subtleSuccess">Active</span>
+                                            <div className={`${styles.stktNo}`}>SUP2523</div>
+                                            <span className={`${styles.statusBadge} ${styles.statusBadge} ${styles.subtleSuccess}`}>Active</span>
                                         </div>
                                         <div className="col-auto">
-                                            <div className="stktDate">20 Mar, 2026</div>
+                                            <div className={`${styles.stktDate}`}>20 Mar, 2026</div>
                                         </div>
                                     </div>
-                                    <div className="stktContent col">
-                                        <span className="priorityBadge high">High Priority</span>
-                                        <a href="#"><h3 className="stktHead my-2">Can&apos;t access dashboard after update</h3></a>
+                                    <div className={`${styles.stktContent} col`}>
+                                        <span className={`${styles.priorityBadge} ${styles.high}`}>High Priority</span>
+                                        <Link href="#"><h3 className={`${styles.stktHead} my-2`}>Can&apos;t access dashboard after update</h3></Link>
                                         <div className="">Tizzy® Mail Enterprise - 100 GB</div>
                                     </div>
-                                    <div className="stktBtm d-flex align-items-center col-auto">
+                                    <div className={`${styles.stktBtm} d-flex align-items-center col-auto`}>
                                         <div className="col">
-                                            <div className="crDomain d-flex align-items-center">
-                                                <div className="avatarSmall flex-shrink-0 secondaryBg">P</div>
-                                                <div className="crDomainName ps-2">kingstonmarketing.net</div>
+                                            <div className={`${styles.crDomain} d-flex align-items-center`}>
+                                                <div className={`${styles.avatarSmall} flex-shrink-0 secondaryBg`}>P</div>
+                                                <div className={`${styles.crDomainName} ps-2`}>kingstonmarketing.net</div>
                                             </div>
                                         </div>
                                         <div className="col-auto">
-                                            <a href="#" className="crBtn"><ChevronRight className="icon me-0" /></a>
+                                            <Link href="#" className={`${styles.crBtn}`}><ChevronRight className={`${styles.icon} me-0`}/></Link>
                                         </div>
                                     </div>
                                 </div>
@@ -374,30 +375,30 @@ export default function CustomerDetail() {
 
                             {/* Slide 4 */}
                             <div className="swiper-slide">
-                                <div className="supportTkt btnDisplay d-flex flex-column">
-                                    <div className="stktTop d-flex align-items-center col-auto">
+                                <div className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}>
+                                    <div className={`${styles.stktTop} d-flex align-items-center col-auto`}>
                                         <div className="col">
-                                            <div className="stktNo">SUP2523</div>
-                                            <span className="statusBadge subtleSuccess">Active</span>
+                                            <div className={`${styles.stktNo}`}>SUP2523</div>
+                                            <span className={`${styles.statusBadge} ${styles.subtleSuccess}`}>Active</span>
                                         </div>
                                         <div className="col-auto">
-                                            <div className="stktDate">20 Mar, 2026</div>
+                                            <div className={`${styles.stktDate}`}>20 Mar, 2026</div>
                                         </div>
                                     </div>
-                                    <div className="stktContent col">
-                                        <span className="priorityBadge med">Medium Priority</span>
-                                        <a href="#"><h3 className="stktHead my-2">Can&apos;t access dashboard after update</h3></a>
+                                    <div className={`${styles.stktContent} col`}>
+                                        <span className={`${styles.priorityBadge} ${styles.med}`}>Medium Priority</span>
+                                        <Link href="#"><h3 className={`${styles.stktHead} my-2`}>Can&apos;t access dashboard after update</h3></Link>
                                         <div className="">Tizzy® Mail Enterprise - 100 GB</div>
                                     </div>
-                                    <div className="stktBtm d-flex align-items-center col-auto">
+                                    <div className={`${styles.stktBtm} d-flex align-items-center col-auto`}>
                                         <div className="col">
-                                            <div className="crDomain d-flex align-items-center">
-                                                <div className="avatarSmall flex-shrink-0 infoBg">G</div>
+                                            <div className={`${styles.crDomain} d-flex align-items-center`}>
+                                                <div className={`${styles.avatarSmall} ${styles.infoBg} flex-shrink-0`}>G</div>
                                                 <div className="crDomainName ps-2">pinchthewallet.com</div>
                                             </div>
                                         </div>
                                         <div className="col-auto">
-                                            <a href="#" className="crBtn"><ChevronRight className="icon me-0" /></a>
+                                            <Link href="#" className={`${styles.crBtn}`}><ChevronRight className={`${styles.icon} me-0`} /></Link>
                                         </div>
                                     </div>
                                 </div>
@@ -405,30 +406,30 @@ export default function CustomerDetail() {
 
                             {/* Slide 5 */}
                             <div className="swiper-slide">
-                                <div className="supportTkt btnDisplay d-flex flex-column">
-                                    <div className="stktTop d-flex align-items-center col-auto">
+                                <div className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}>
+                                    <div className={`${styles.stktTop} d-flex align-items-center col-auto`}>
                                         <div className="col">
-                                            <div className="stktNo">SUP2523</div>
-                                            <span className="statusBadge subtleSuccess">Active</span>
+                                            <div className={`${styles.stktNo}`}>SUP2523</div>
+                                            <span className={`${styles.statusBadge} ${styles.subtleSuccess}`}>Active</span>
                                         </div>
                                         <div className="col-auto">
-                                            <div className="stktDate">20 Mar, 2026</div>
+                                            <div className={`${styles.stktDate}`}>20 Mar, 2026</div>
                                         </div>
                                     </div>
-                                    <div className="stktContent col">
-                                        <span className="priorityBadge high">High Priority</span>
-                                        <a href="#"><h3 className="stktHead my-2">Can&apos;t access dashboard after update</h3></a>
+                                    <div className={`${styles.stktContent} col`}>
+                                        <span className={`${styles.priorityBadge} ${styles.high}`}>High Priority</span>
+                                        <Link href="#"><h3 className={`${styles.stktHead} my-2`}>Can&apos;t access dashboard after update</h3></Link>
                                         <div className="">Tizzy® Mail Enterprise - 100 GB</div>
                                     </div>
-                                    <div className="stktBtm d-flex col-auto">
+                                    <div className={`${styles.stktBtm} d-flex align-items-center col-auto`}>
                                         <div className="col">
-                                            <div className="crDomain d-flex align-items-center">
-                                                <div className="avatarSmall flex-shrink-0 warningBg">G</div>
-                                                <div className="crDomainName ps-2">ganeshenterprises.com</div>
+                                            <div className={`${styles.crDomain} d-flex align-items-center`}>
+                                                <div className={`${styles.avatarSmall} flex-shrink-0 warningBg`}>G</div>
+                                                <div className={`${styles.crDomainName} ps-2`}>ganeshenterprises.com</div>
                                             </div>
                                         </div>
                                         <div className="col-auto">
-                                            <a href="#" className="crBtn"><ChevronRight className="icon me-0" /></a>
+                                            <Link href="#" className={`${styles.crBtn}`}><ChevronRight className={`${styles.icon} me-0`} /></Link>
                                         </div>
                                     </div>
                                 </div>
@@ -436,30 +437,30 @@ export default function CustomerDetail() {
 
                             {/* Slide 6 */}
                             <div className="swiper-slide">
-                                <div className="supportTkt btnDisplay d-flex flex-column">
-                                    <div className="stktTop d-flex align-items-center col-auto">
+                                <div className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}>
+                                    <div className={`${styles.stktTop} d-flex align-items-center col-auto`}>
                                         <div className="col">
-                                            <div className="stktNo">SUP2523</div>
-                                            <span className="statusBadge subtleSuccess">Active</span>
+                                            <div className={`${styles.stktNo}`}>SUP2523</div>
+                                            <span className={`${styles.statusBadge} ${styles.subtleSuccess}`}>Active</span>
                                         </div>
                                         <div className="col-auto">
-                                            <div className="stktDate">20 Mar, 2026</div>
+                                            <div className={`${styles.stktDate}`}>20 Mar, 2026</div>
                                         </div>
                                     </div>
-                                    <div className="stktContent col">
-                                        <span className="priorityBadge high">High Priority</span>
-                                        <a href="#"><h3 className="stktHead my-2">Can&apos;t access dashboard after update</h3></a>
+                                    <div className={`${styles.stktContent} col`}>
+                                        <span className={`${styles.priorityBadge} ${styles.high}`}>High Priority</span>
+                                        <Link href="#"><h3 className={`${styles.stktHead} my-2`}>Can&apos;t access dashboard after update</h3></Link>
                                         <div className="">Tizzy® Mail Enterprise - 100 GB</div>
                                     </div>
-                                    <div className="stktBtm d-flex align-items-center col-auto">
+                                    <div className={`${styles.stktBtm} d-flex align-items-center col-auto`}>
                                         <div className="col">
-                                            <div className="crDomain d-flex align-items-center">
-                                                <div className="avatarSmall flex-shrink-0 dangerBg">G</div>
-                                                <div className="crDomainName ps-2">ganeshenterprises.com</div>
+                                            <div className={`${styles.crDomain} d-flex align-items-center`}>
+                                                <div className={`${styles.avatarSmall} flex-shrink-0 dangerBg`}>G</div>
+                                                <div className={`${styles.crDomainName} ps-2`}>ganeshenterprises.com</div>
                                             </div>
                                         </div>
                                         <div className="col-auto">
-                                            <a href="#" className="crBtn"><ChevronRight className="icon me-0" /></a>
+                                            <Link href="#" className={`${styles.crBtn}`}><ChevronRight className={`${styles.icon} me-0`} /></Link>
                                         </div>
                                     </div>
                                 </div>

@@ -1,59 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Baloo+Bhai+2:wght@400..800&display=swap");
-
-:root {
-    --primaryColor: #0355ac;
-    --primarySubtleColor: #b5d9ff;
-    --secondaryColor: #7b70ef;
-    --successColor: #02bc9c;
-    --infoColor: #5bc3e1;
-    --warningColor: #f9bf59;
-    --dangerColor: #f7577e;
-    --whiteColor: #ffffff;
-    --subtleBg: #fafafa;
-    --darkColor: #313a46;
-    --grayColor: #fafafa;
-    --textBody: #444444;
-    --textBodySecondary: #666666;
-    --textLight: #cccccc;
-    --borderColor: #e9e9e9;
-    --fs10: 0.75rem;
-    --fs11: 0.8rem;
-    --fs12: 0.85rem;
-    --fs14: 1rem;
-    --fs16: 1.143rem;
-}
-
-.secondaryBg {
-    background: var(--secondaryColor) !important;
-}
-
-.successBg {
-    background: var(--successColor) !important;
-}
-
-.infoBg {
-    background: var(--infoColor) !important;
-}
-
-.warningBg {
-    background: var(--warningColor) !important;
-}
-
-.dangerBg {
-    background: var(--dangerColor) !important;
-}
-
-.darkColor {
-    color: var(--darkColor);
-}
-
-.textSecondary {
-    color: var(--textBodySecondary);
-}
-
-.fw-medium {
-    font-weight: 500;
-}
 
 .pageSearchBox {
     width: 100%;
@@ -172,10 +116,9 @@
 
 .filtersMain {
     position: relative;
-    margin-bottom: 60px;
     background: var(--whiteColor);
     border-radius: 10px 10px 0 0;
-    top: 60px;
+    /* top: 60px; */
     z-index: 999;
 }
 
@@ -472,9 +415,5 @@
     .btnDisplay:hover .crBtn {
         opacity: 1;
         right: 0;
-    }
-
-    .filtersMain {
-        top: 74px;
     }
 }

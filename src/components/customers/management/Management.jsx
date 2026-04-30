@@ -132,6 +132,7 @@ const customers = [
     statusBg: "warningBg",
     createdOn: "25 Jun, 2021",
   },
+  
 ];
 
 const SERVICE_TITLES = {
@@ -189,7 +190,6 @@ export default function CustomerList() {
     <div className="col">
       <div className={`${styles.sectionCard} ${styles.adjustWidth} `}>
         <div className={`${styles.filtersMain}`}>
-          {/* Search & Count Header */}
           <div className="py-3 px-sm-4 px-3 border-bottom">
             <div className="row align-items-center justify-content-between">
               <div className="col-sm-auto order-sm-2">
@@ -371,7 +371,7 @@ export default function CustomerList() {
                   </div>
 
                   <div className="col-sm-auto col-6 align-self-stretch d-flex align-items-center justify-content-end order-sm-3 mobAction">
-                    <a href="/customer_profile" className="crBtn">
+                    <a href="/customer_profile" className={`${styles.crBtn}`}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"
@@ -382,7 +382,7 @@ export default function CustomerList() {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="icon me-0"
+                        className={`${styles.icon} me-0`}
                       >
                         <path d="m9 18 6-6-6-6" />
                       </svg>

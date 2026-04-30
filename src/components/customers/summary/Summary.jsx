@@ -54,10 +54,13 @@ const ClosedCustomerIcon = () => (
   </svg>
 );
 
+import React, { useEffect, useRef } from "react";
+
 const summaryCards = [
   {
     title: "Active Customers",
-    value: "124k",
+    value: 124000,
+    suffix: "k",
     trend: "8.72%",
     boxClass: "successGrad",
     iconClass: "successColor",
@@ -66,7 +69,8 @@ const summaryCards = [
   },
   {
     title: "Inactive Customers",
-    value: "51k",
+    value: 51000,
+    suffix: "k",
     trend: "8.72%",
     boxClass: "dangerGrad",
     iconClass: "dangerColor",
@@ -75,7 +79,8 @@ const summaryCards = [
   },
   {
     title: "Closed Customers",
-    value: "75k",
+    value: 75000,
+    suffix: "k",
     trend: "8.72%",
     boxClass: "warningGrad",
     iconClass: "warningColor",
@@ -84,6 +89,31 @@ const summaryCards = [
   },
 ];
 
+const Counter = ({ target, suffix }) => {
+  const ref = useRef();
+  useEffect(() => {
+    let start = 0;
+    let raf;
+    const isInt = Number.isInteger(target);
+    const displayTarget = target >= 1000 ? target / 1000 : target; 
+    const animate = () => {
+      if (start < displayTarget) {
+        start += displayTarget / 100;
+        if (start > displayTarget) start = displayTarget;
+        ref.current.innerText =
+          Math.floor(start) + (suffix || "");
+        raf = requestAnimationFrame(animate);
+      } else {
+        ref.current.innerText =
+          Math.floor(displayTarget) + (suffix || "");
+      }
+    };
+    animate();
+    return () => raf && cancelAnimationFrame(raf);
+  }, [target, suffix]);
+  return <span ref={ref}>0{suffix || ""}</span>;
+};
+
 export default function CustomerSummary() {
   return (
     <div>
@@ -91,9 +121,9 @@ export default function CustomerSummary() {
         <div className="row align-items-end">
           <div className="col">
             <nav className={`${styles.breadcrumb} mb-0`}>
-              <Link href="/" className="breadcrumb-item">Dashboard</Link>
-              <Link href="/customers" className="breadcrumb-item">Customers</Link>
-              <h1 className="breadcrumb-item active" aria-current="page">
+              <Link href="/" className={`${styles.breadcrumbItem}`}>Dashboard</Link>
+              <Link href="/customers" className={`${styles.breadcrumbItem}`}>Customers</Link>
+              <h1 className={`${styles.breadcrumbItem} ${styles.active}`} aria-current="page">
                 Customer Management
               </h1>
             </nav>
@@ -118,9 +148,11 @@ export default function CustomerSummary() {
                   <a href="#" className={`${styles.statText}  mt-3`}>
                     <div className={`${styles.statLabel}  mb-2`}>{card.title}</div>
                     <div className="d-flex align-items-center">
-                      <div className={`${styles.statValue}`}>{card.value}</div>
+                      <div className={`${styles.statValue}`}>
+                        <Counter target={card.value} suffix={card.suffix} />
+                      </div>
                       <div className={`statusBadge ${card.badgeClass}`}>
-                       <ChevronUp className="icon me-0" />
+                       <ChevronUp className={`${styles.statusBadgeIcon}`} size={18} />
                         <span>{card.trend}</span>
                       </div>
                     </div>
@@ -131,10 +163,10 @@ export default function CustomerSummary() {
             <div className="col pt-4">
               <Link
                 href="/add_new_customer"
-                className="boxLink primaryBg d-flex flex-column align-items-center justify-content-center"
+                className={`${styles.boxLink} ${styles.primaryBg} d-flex flex-column align-items-center justify-content-center`}
               >
-                <div className="iconBx mb-2">
-                  <Plus className={styles.icon} size={18} />
+                <div className={`${styles.iconBx} mb-2`}>
+                  <Plus className={`${styles.icon}`} size={18} />
                 </div>
                 <div>Add New Customer</div>
               </Link>

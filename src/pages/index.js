@@ -6,9 +6,9 @@ import React from "react";
 
 const Home = () => {
   return <Layout>
-    <AccountSummary/>
-    {/* <Summary /> */}
-    <TransactionSection />
+    {/* <AccountSummary/> */}
+    <CustomerSummary />
+    {/* <TransactionSection /> */}
   </Layout>;
 };
 
