@@ -56,6 +56,8 @@ const ClosedCustomerIcon = () => (
 );
 
 import React, { useEffect, useRef } from "react";
+import { RiLoader2Fill } from "react-icons/ri";
+import Loader from "@/components/common-components/Loader";
 
 const summaryCards = [
   {
@@ -121,7 +123,6 @@ export default function CustomerSummary({allCustomers, isFetchingAllCustomers}) 
   const todayDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const count = allCustomers?.data?.count;
 
-
   const counts = {}
   return (
     <div>
@@ -159,7 +160,7 @@ export default function CustomerSummary({allCustomers, isFetchingAllCustomers}) 
                   <a href="#" className={`${styles.statText}  mt-3`}>
                     <div className={`${styles.statLabel}  mb-2`}>{card.title}</div>
                     <div className="d-flex align-items-center">
-                      <div className={`${styles.statValue}`}>{count?.[card?.key.toLowerCase()]}</div>
+                      <div className={`${styles.statValue}`}>{isFetchingAllCustomers ? <Loader/>: Counter({target: count?.[card?.key.toLowerCase()], suffix: card?.suffix})}</div>
                       {/* <div className={`statusBadge ${card.badgeClass}`}>
                        <ChevronUp className="icon me-0" />
                         <span>{card.trend}</span>
