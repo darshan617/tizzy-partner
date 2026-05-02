@@ -2,11 +2,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import userSlice from "@/redux/slices/userSlice";
 import { createWrapper } from "next-redux-wrapper";
 import { apiSlice } from "./apiSlice";
+import servicesSlice from "./slices/servicesSlice";
 
 const makeStore = () => {
   const store = configureStore({
     reducer: {
       user: userSlice,
+      services: servicesSlice,
       [apiSlice.reducerPath]: apiSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>

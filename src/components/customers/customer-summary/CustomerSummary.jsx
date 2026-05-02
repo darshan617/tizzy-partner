@@ -1,11 +1,16 @@
 import Link from "next/link";
-import { Plus, ChevronUp } from 'lucide-react';
-import styles from "@/components/customers/customer-summary/CustomerSummary.module.css"
+import { Plus, ChevronUp } from "lucide-react";
+import styles from "@/components/customers/customer-summary/CustomerSummary.module.css";
 import { useRouter } from "next/router";
 
-
 const ActiveCustomerIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className="icon">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    className="icon"
+  >
     <path fill="currentColor" d="M16 6a4 4 0 1 1-8 0a4 4 0 0 1 8 0" />
     <path
       fill="currentColor"
@@ -22,7 +27,13 @@ const ActiveCustomerIcon = () => (
 );
 
 const InactiveCustomerIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className="icon">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    className="icon"
+  >
     <path fill="currentColor" d="M16 6a4 4 0 1 1-8 0a4 4 0 0 1 8 0" />
     <path
       fill="currentColor"
@@ -39,7 +50,13 @@ const InactiveCustomerIcon = () => (
 );
 
 const ClosedCustomerIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className="icon">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    className="icon"
+  >
     <path fill="currentColor" d="M12 10a4 4 0 1 0 0-8a4 4 0 0 0 0 8" />
     <path
       fill="currentColor"
@@ -92,46 +109,63 @@ const summaryCards = [
   },
 ];
 
-const Counter = ({ target, suffix }) => {
-  const ref = useRef();
-  useEffect(() => {
-    let start = 0;
-    let raf;
-    const isInt = Number.isInteger(target);
-    const displayTarget = target >= 1000 ? target / 1000 : target; 
-    const animate = () => {
-      if (start < displayTarget) {
-        start += displayTarget / 100;
-        if (start > displayTarget) start = displayTarget;
-        ref.current.innerText =
-          Math.floor(start) + (suffix || "");
-        raf = requestAnimationFrame(animate);
-      } else {
-        ref.current.innerText =
-          Math.floor(displayTarget) + (suffix || "");
-      }
-    };
-    animate();
-    return () => raf && cancelAnimationFrame(raf);
-  }, [target, suffix]);
-  return <span ref={ref}>0{suffix || ""}</span>;
-};
+// const Counter = ({ target, suffix }) => {
+//   const ref = useRef();
+//   useEffect(() => {
+//     let start = 0;
+//     let raf;
+//     const isInt = Number.isInteger(target);
+//     const displayTarget = target >= 1000 ? target / 1000 : target;
+//     const animate = () => {
+//       if (start < displayTarget) {
+//         start += displayTarget / 100;
+//         if (start > displayTarget) start = displayTarget;
+//         ref.current.innerText =
+//           Math.floor(start) + (suffix || "");
+//         raf = requestAnimationFrame(animate);
+//       } else {
+//         ref.current.innerText =
+//           Math.floor(displayTarget) + (suffix || "");
+//       }
+//     };
+//     animate();
+//     return () => raf && cancelAnimationFrame(raf);
+//   }, [target, suffix]);
+//   return <span ref={ref}>0{suffix || ""}</span>;
+// };
 
-
-export default function CustomerSummary({allCustomers, isFetchingAllCustomers}) {
+export default function CustomerSummary({
+  allCustomers,
+  isFetchingAllCustomers,
+}) {
   const router = useRouter();
-  const todayDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const todayDate = new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
   const count = allCustomers?.data?.count;
 
-  const counts = {}
+  const counts = {};
   return (
     <div>
       <div className="col">
         <div className="row align-items-end">
           <div className="col">
             <nav className={`${styles.breadcrumb} mb-0`}>
-              <button onClick={() => router.push('/dashboard')} className={styles.breadcrumbItem}>Dashboard</button> /
-              <button onClick={() => router.push('/customers')} className={styles.breadcrumbItem}>Customers</button>
+              <button
+                onClick={() => router.push("/dashboard")}
+                className={styles.breadcrumbItem}
+              >
+                Dashboard
+              </button>{" "}
+              /
+              <button
+                onClick={() => router.push("/customers")}
+                className={styles.breadcrumbItem}
+              >
+                Customers
+              </button>
               <h1 className="breadcrumb-item active" aria-current="page">
                 Customer Management
               </h1>
@@ -149,32 +183,40 @@ export default function CustomerSummary({allCustomers, isFetchingAllCustomers}) 
           <div className="row row-cols-md-4 row-cols-sm-4 row-cols-2 g-sm-4 g-3">
             {summaryCards.map((card, index) => {
               // console.log(count[card?.title.toLowerCase()]);
-              
-              return(
-                <div className="col pt-4" key={index}>
-                <div className={`statBox ${card.boxClass}`}>
-                  <div className={`statIcon ${card.iconClass}`}>
-                    {card.icon}
-                  </div>
 
-                  <a href="#" className={`${styles.statText}  mt-3`}>
-                    <div className={`${styles.statLabel}  mb-2`}>{card.title}</div>
-                    <div className="d-flex align-items-center">
-                      <div className={`${styles.statValue}`}>{isFetchingAllCustomers ? <Loader/>: Counter({target: count?.[card?.key.toLowerCase()], suffix: card?.suffix})}</div>
-                      {/* <div className={`statusBadge ${card.badgeClass}`}>
+              return (
+                <div className="col pt-4" key={index}>
+                  <div className={`statBox ${card.boxClass}`}>
+                    <div className={`statIcon ${card.iconClass}`}>
+                      {card.icon}
+                    </div>
+
+                    <a href="#" className={`${styles.statText}  mt-3`}>
+                      <div className={`${styles.statLabel}  mb-2`}>
+                        {card.title}
+                      </div>
+                      <div className="d-flex align-items-center">
+                        <div className={`${styles.statValue}`}>
+                          {isFetchingAllCustomers ? (
+                            <Loader />
+                          ) : (
+                            count?.[card?.key.toLowerCase()]
+                          )}
+                        </div>
+                        {/* <div className={`statusBadge ${card.badgeClass}`}>
                        <ChevronUp className="icon me-0" />
                         <span>{card.trend}</span>
                       </div> */}
-                    </div>
-                  </a>
+                      </div>
+                    </a>
+                  </div>
                 </div>
-              </div>
-              )
+              );
             })}
             <div className="col pt-4">
               <button
                 className="boxLink primaryBg d-flex flex-column align-items-center justify-content-center border-0 outline-0"
-                onClick={() => router.push('/customers/create-customer')}
+                onClick={() => router.push("/customers/create-customer")}
               >
                 <div className={`${styles.iconBx} mb-2`}>
                   <Plus className={`${styles.icon}`} size={18} />
