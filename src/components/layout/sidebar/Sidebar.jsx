@@ -114,7 +114,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                     }}
                     style={{
                       background:
-                        router?.pathname === menu?.href
+                        `/services/${router?.query?.slug}` === menu?.href
                           ? "var(--primaryColor)"
                           : "transparent",
                     }}
@@ -125,7 +125,15 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                       <span className={`${styles.iconCircle} `}>
                         {menu?.image}
                       </span>
-                      <span className={`${styles.menuLabel}`}>
+                      <span
+                        className={`${styles.menuLabel}`}
+                        style={{
+                          color:
+                            `/services/${router?.query?.slug}` === menu?.href
+                              ? "var(--whiteColor)"
+                              : "var(--textBody)",
+                        }}
+                      >
                         {menu?.title}
                       </span>
                     </button>

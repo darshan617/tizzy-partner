@@ -1,0 +1,31 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 75px - 40px);
+  min-height: 280px;
+  overflow: hidden;
+}
+
+.header {
+  flex-shrink: 0;
+}
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 2px 8px 0;
+}
+
+@media (max-width: 575.98px) {
+  .root {
+    max-height: none;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .scroll {
+    overflow: visible;
+  }
+}

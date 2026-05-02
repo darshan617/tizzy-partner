@@ -189,7 +189,7 @@ const VerifyOtp = () => {
         </div>
         {errors.otp && <p className={styles.errorMessage}>{errors.otp}</p>}
 
-        <button className={styles.confirmBtn} onClick={handleSubmit}>
+        <button className={styles.confirmBtn} onClick={handleSubmit} disabled={isGetOtpVerifiedLoading || isVerifyOtpLoading}>
           {isGetOtpVerifiedLoading || isVerifyOtpLoading
             ? "Verifying..."
             : "Confirm"}

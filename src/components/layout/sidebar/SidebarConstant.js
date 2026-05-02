@@ -55,11 +55,11 @@ export const SIDEBAR_SERVICES_CONSTANTS = [
         ></path>
       </svg>
     ),
-    href: "/tizzy-mail",
+    href: "/services/tizzy",
   },
   {
     id: 2,
-    title: "Microsoft 365",
+    title: "Microsoft Solution",
     image: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -92,11 +92,11 @@ export const SIDEBAR_SERVICES_CONSTANTS = [
         ></path>
       </svg>
     ),
-    href: "/microsoft-365",
+    href: "/services/microsoft-solution-partner",
   },
   {
     id: 3,
-    title: "Google Workspace",
+    title: "Google Cloud",
     image: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -140,6 +140,6 @@ export const SIDEBAR_SERVICES_CONSTANTS = [
         ></path>
       </svg>
     ),
-    href: "/google-workspace",
+    href: "/services/google-cloud-partner",
   },
 ];

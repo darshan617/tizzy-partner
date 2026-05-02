@@ -110,20 +110,28 @@
     border-radius: 10px;
     max-width: 1100px;
     margin: auto;
-    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .filtersMain {
-    position: sticky;
-    top: 0;
-    /* margin-bottom: 60px; */
+    flex-shrink: 0;
     background: var(--whiteColor);
     border-radius: 10px 10px 0 0;
-    /* top: 60px; */
-    z-index:2;
+    z-index: 2;
+}
+
+.listScrollArea {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .filterWrapper {
+    position: relative;
     box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15);
     border-radius: 0 0 10px 10px;
 }

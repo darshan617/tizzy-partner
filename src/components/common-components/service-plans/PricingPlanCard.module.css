@@ -1,0 +1,156 @@
+/* Reference: dark header, centered pricing, pill CTA, divider, feature list */
+.card {
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e2e5ea;
+  box-shadow: 0 2px 12px rgba(51, 60, 78, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  padding: 1rem 1.25rem;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 3.5rem;
+}
+
+.headerTitle {
+  font-size: var(--fs14, 0.875rem);
+  font-weight: 500;
+  line-height: 1.4;
+  max-width: 100%;
+}
+
+.pricingSection {
+  background: #ffffff;
+  padding: 1.15rem 1.35rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.65rem;
+}
+
+.discountRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.discountBadge {
+  display: inline-block;
+  font-size: var(--fs11, 0.6875rem);
+  font-weight: 600;
+  color: #ffffff;
+  background: #2d9d5c;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.priceBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.priceRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.35rem 0.6rem;
+}
+
+.price {
+  font-size: clamp(1.5rem, 4vw, 1.875rem);
+  font-weight: 700;
+  color: #2d333d;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.wasPrice {
+  font-size: var(--fs14, 0.875rem);
+  color: #6b7280;
+  text-decoration: line-through;
+}
+
+.periodNote {
+  font-size: var(--fs13, 0.8125rem);
+  font-weight: 500;
+  color: #5c6370;
+  line-height: 1.45;
+}
+
+.gstNote {
+  font-size: var(--fs12, 0.75rem);
+  color: #8b929e;
+  line-height: 1.4;
+}
+
+.cta {
+  width: 100%;
+  margin-top: 0.35rem;
+  min-height: 48px;
+  padding: 0.85rem 1.5rem;
+  border: 0;
+  border-radius: 9999px;
+  background: #0056b3;
+  color: #ffffff;
+  font-size: var(--fs16, 1rem);
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+.cta:hover {
+  filter: brightness(1.06);
+}
+
+.cta:active {
+  transform: scale(0.99);
+}
+
+.divider {
+  height: 1px;
+  background: #e2e5ea;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.features {
+  list-style: none;
+  margin: 0;
+  padding: 1.15rem 1.35rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  background: #ffffff;
+  text-align: left;
+}
+
+.feature {
+  display: flex;
+  gap: 0.55rem;
+  font-size: var(--fs13, 0.8125rem);
+  font-weight: 400;
+  color: #3d4450;
+  line-height: 1.5;
+}
+
+.check {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  color: #4a5568;
+}
