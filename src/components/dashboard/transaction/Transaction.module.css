@@ -115,6 +115,10 @@
     margin-bottom: 0;
 }
 
+/* .dbdTabMargin {
+    margin-bottom: -35px;
+} */
+
 .dbdTabs .dbdNavtab {
     background: none;
     border: none;
@@ -126,6 +130,7 @@
 }
 
 .tabBtnGroup {
+    position: relative;
     display: flex;
     align-items: center;
     background: var(--grayColor);
@@ -142,6 +147,7 @@
     color: var(--textBodySecondary);
     cursor: pointer;
     text-align: center;
+    top: 60px;
 }
 
 
@@ -150,7 +156,7 @@
 }
 
 .tbgItem.active,
-.btn-check:checked +.tbgItem {
+.btn-check:checked+.tbgItem {
     background: var(--whiteColor);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border: 1px solid var(--borderColor);
@@ -260,9 +266,7 @@
 }
 
 @media (min-width: 992px) {
-    .dbdTabMargin {
-        margin-bottom: -35px;
-    }
+
 
     .btnDisplay .crBtn {
         opacity: 0;

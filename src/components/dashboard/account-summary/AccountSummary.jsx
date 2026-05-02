@@ -92,7 +92,6 @@ const summaryCards = [
     icon: <CustomerIcon />,
     anchor: {
       href: "/add_new_customer",
-      tooltip: "Add New Customer",
     },
   },
   {

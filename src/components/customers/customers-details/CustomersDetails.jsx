@@ -49,14 +49,14 @@ export default function CustomerDetail() {
                 <div className="row align-items-end ">
                     <div className="col">
                         <nav className={`${styles.breadcrumb} mb-0`}>
-                            <a href="index.html" className="breadcrumb-item">
+                            <a href="index.html" className={`${styles.breadcrumbItem}`}>
                                 Dashboard
                             </a>
-                            <a href="customers.html" className="breadcrumb-item">
+                            <a href="customers.html" className={`${styles.breadcrumbItem}`}>
                                 Customers
                             </a>
-                            <span className="breadcrumb-item"></span>
-                            <h1 className="breadcrumb-item active" aria-current="page">
+                            <span className={`${styles.breadcrumbItem}`}></span>
+                            <h1 className={`${styles.breadcrumbItem} ${styles.active}`} aria-current="page">
                                 Customer - 00024
                             </h1>
                         </nav>

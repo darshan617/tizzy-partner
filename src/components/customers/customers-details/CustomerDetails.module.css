@@ -1,4 +1,4 @@
-.breadcrumb-item {
+.breadcrumbItem {
     font-size: var(--fs12);
     color: var(--textBody);
 
@@ -9,7 +9,7 @@
     margin: auto;
 }
 
-.breadcrumb-item.active {
+.breadcrumbItem.active {
     display: block;
     width: 100%;
     padding: 0;
@@ -19,7 +19,7 @@
     color: var(--textBody);
 }
 
-.breadcrumb-item.active:before {
+.breadcrumbItem.active:before {
     display: none;
 }
 
@@ -187,7 +187,7 @@
   background-color: var(--secondaryColor);
 }
 
-.breadcrumb-item.active:before {
+.breadcrumbItem.active:before {
   display: none;
 }
 

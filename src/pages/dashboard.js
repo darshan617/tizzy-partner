@@ -11,9 +11,9 @@ import React from "react";
 const dashboard = () => {
   return <Layout>
     <AccountSummary />
-    {/* <TransactionSection /> */}
+    <TransactionSection />
     <SalesReport />
-    {/* <Support /> */}
+    <Support />
 
   </Layout>;
 };

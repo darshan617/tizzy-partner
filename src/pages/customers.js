@@ -1,15 +1,22 @@
 import CustomerDetail from "@/components/customers/customers-details/CustomersDetails";
 import CustomerList from "@/components/customers/management/Management";
 import CustomerSummary from "@/components/customers/summary/Summary";
+import RenewCart from "@/components/customers/renew-plans/renew-cart/RenewCart";
 import Layout from "@/components/layout/Layout";
-import React from "react";
+import OrderSummary from "@/components/customers/renew-plans/order-summary/OrderSummery";
+import Breadcumb from "@/components/customers/renew-plans/breadcrumb/Breadcumb";
+
+
+
 
 const Customers = () => {
   return <Layout>
-    <CustomerSummary />
+    {/* <CustomerSummary /> */}
     {/* <CustomerList /> */}
     {/* <CustomerDetail /> */}
-    
+    <Breadcumb />
+    {/* <RenewCart /> */}
+    <OrderSummary />
   </Layout>;
 };
 

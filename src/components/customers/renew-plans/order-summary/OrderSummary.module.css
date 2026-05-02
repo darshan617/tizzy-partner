@@ -1,0 +1,168 @@
+.card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px 22px 22px;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cardTitle {
+    color: #111827;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.summaryRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 14px;
+    color: #374151;
+}
+
+
+.label {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #444444;
+}
+
+.addLink {
+    color: #3b82f6;
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    margin-left: 4px;
+}
+
+.addLink:hover {
+    text-decoration: underline;
+    color: #2563eb;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #f0f0f0;
+    margin: 4px 0;
+}
+
+.dividerHeavy {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 6px 0 16px;
+}
+
+.totalRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 11px 0 4px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #313A46;
+}
+
+.creditBox {
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.creditBalance {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #F7577E;
+    margin-bottom: 4px;
+}
+
+.creditWarning {
+    font-size: 12px;
+    color: #F7577E;
+    font-weight: 400;
+}
+
+.btnPrimary {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    background: #0355AC;
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    margin-bottom: 16px;
+    letter-spacing: 0.01em;
+}
+
+.btnPrimary:hover {
+    background: #1a38c4;
+}
+
+.btnPrimary:active {
+    transform: scale(0.98);
+}
+
+.requestBox {
+    background: #FBFBFB;
+    padding: 10px;
+    text-align: center;
+}
+
+.requestBox p {
+    font-size: 12px;
+    font-weight: 400;
+    color: #666666;
+    margin-bottom: 4px;
+}
+
+.requestLink {
+    font-size: 14px;
+    font-weight: 500;
+    color: #0355AC;
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    transition: color 0.15s;
+}
+
+.requestLink:hover {
+    color: #1e40af;
+}
+
+@media (max-width: 480px) {
+    .card {
+        padding: 18px 16px;
+        border-radius: 12px;
+    }
+
+    .cardTitle {
+        font-size: 12px;
+    }
+
+    .totalRow {
+        font-size: 14.5px;
+    }
+
+    .btnPrimary {
+        font-size: 13.5px;
+        padding: 11px;
+    }
+}

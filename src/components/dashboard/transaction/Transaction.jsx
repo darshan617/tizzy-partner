@@ -4,8 +4,9 @@ import { ChevronRight, ChevronsDown } from "lucide-react";
 import styles from '@/components/dashboard/transaction/Transaction.module.css'
 
 
-const transactions = [
+const allData = [
     {
+        type: 'transaction',
         date: "20 Mar, 2026",
         number: "TNX00123",
         domain: "ganeshenterprises.com",
@@ -17,6 +18,7 @@ const transactions = [
         amount: "₹ 1254.00",
     },
     {
+        type: 'transaction',
         date: "20 Mar, 2026",
         number: "TNX00124",
         domain: "goyalinfotech.com",
@@ -28,6 +30,7 @@ const transactions = [
         amount: "₹ 1254.00",
     },
     {
+        type: 'transaction',
         date: "20 Mar, 2026",
         number: "TNX00124",
         domain: "kingstonmarketing.net",
@@ -39,6 +42,7 @@ const transactions = [
         amount: "₹ 1254.00",
     },
     {
+        type: 'transaction',
         date: "20 Mar, 2026",
         number: "TNX00124",
         domain: "pinchthewallet.com",
@@ -50,6 +54,7 @@ const transactions = [
         amount: "₹ 1254.00",
     },
     {
+        type: 'transaction',
         date: "20 Mar, 2026",
         number: "TNX00124",
         domain: "lorealpharma.in",
@@ -61,6 +66,7 @@ const transactions = [
         amount: "₹ 1254.00",
     },
     {
+        type: 'transaction',
         date: "20 Mar, 2026",
         number: "TNX00124",
         domain: "lorealpharma.in",
@@ -72,6 +78,7 @@ const transactions = [
         amount: "₹ 1254.00",
     },
     {
+        type: 'transaction',
         date: "20 Mar, 2026",
         number: "TNX00124",
         domain: "lorealpharma.in",
@@ -82,10 +89,8 @@ const transactions = [
         statusClass: "subtleWarning",
         amount: "₹ 1254.00",
     },
-];
-
-const renewals = [
     {
+        type: 'renewal',
         domain: "ganeshenterprises.com",
         avatar: "G",
         avatarBg: "warningBg",
@@ -96,6 +101,7 @@ const renewals = [
         statusClass: "subtleWarning",
     },
     {
+        type: 'renewal',
         domain: "goyalinfotech.com",
         avatar: "A",
         avatarBg: "secondaryBg",
@@ -107,6 +113,7 @@ const renewals = [
         statusClass: "subtleWarning",
     },
     {
+        type: 'renewal',
         domain: "goyalinfotech.com",
         avatar: "A",
         avatarBg: "secondaryBg",
@@ -117,6 +124,7 @@ const renewals = [
         statusClass: "subtleWarning",
     },
     {
+        type: 'renewal',
         domain: "goyalinfotech.com",
         avatar: "A",
         avatarBg: "secondaryBg",
@@ -127,6 +135,7 @@ const renewals = [
         statusClass: "subtleWarning",
     },
     {
+        type: 'renewal',
         domain: "goyalinfotech.com",
         avatar: "A",
         avatarBg: "secondaryBg",
@@ -137,6 +146,7 @@ const renewals = [
         statusClass: "subtleWarning",
     },
     {
+        type: 'renewal',
         domain: "goyalinfotech.com",
         avatar: "A",
         avatarBg: "secondaryBg",
@@ -146,30 +156,33 @@ const renewals = [
         status: "Expiring",
         statusClass: "subtleWarning",
     },
-];
+]
+
 
 export default function TransactionSection() {
     const [activeTab, setActiveTab] = useState("transactions");
-    const [showAllTransactions, setShowAllTransactions] = useState(false);
-    const [showAllRenewals, setShowAllRenewals] = useState(false);
+    const [showAll, setShowAll] = useState(false);
 
-    const visibleTransactions = showAllTransactions
-        ? transactions
-        : transactions.slice(0, 5);
+    const activeData = allData.filter(item =>
+        activeTab === "transactions" ? item.type === "transaction" : item.type === "renewal"
+    );
 
-    const visibleRenewals = showAllRenewals
-        ? renewals
-        : renewals.slice(0, 5);
+    const visibleData = showAll ? activeData : activeData.slice(0, 5);
+
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+        setShowAll(false);
+    };
 
     return (
         <div className="col">
             <div className={`${styles.sectionCard} py-4 px-sm-4 px-3`}>
-                <div className="d-flex dbdTabMargin">
+                <div className={`${styles.dbdTabMargin} d-flex`}>
                     <div className="col-lg-6">
                         <div className="nav d-flex gap-3 dbdTabs">
                             <button
                                 className={`dbdNavtab ${activeTab === "transactions" ? "active" : ""}`}
-                                onClick={() => setActiveTab("transactions")}
+                                onClick={() => handleTabChange("transactions")}
                             >
                                 <h2 className={`${styles.sectionCardHead} mb-0`}>Recent Transactions</h2>
                             </button>
@@ -180,41 +193,40 @@ export default function TransactionSection() {
 
                             <button
                                 className={`dbdNavtab ${activeTab === "renewals" ? "active" : ""}`}
-                                onClick={() => setActiveTab("renewals")}
+                                onClick={() => handleTabChange("renewals")}
                             >
                                 <h2 className={`${styles.sectionCardHead} mb-0`}>Upcoming Renewals</h2>
                             </button>
                         </div>
                     </div>
-                </div>
-
-                {activeTab === "transactions" && (
-                    <>
+                    <div className="col-lg-6 d-flex justify-content-end">
                         <div className="w-100 d-flex justify-content-lg-end justify-content-center mb-3 mt-3 mt-lg-0">
-                            <div className="col-lg-6 d-flex justify-content-end">
-                                <div className={`${styles.tabBtnGroup} rounded-pill`}>
-                                    <input type="radio" className="btn-check" name="tnxRadio" id="tnxRadio1" autoComplete="off" defaultChecked />
-                                    <label className="tbgItem rounded-pill" htmlFor="tnxRadio1">
-                                        <span className="fw-medium">Last 7 Days</span> (10)
-                                    </label>
+                            <div className={`${styles.tabBtnGroup} rounded-pill`}>
+                                <input type="radio" className="btn-check" name="tnxRadio" id="tnxRadio1" autoComplete="off" defaultChecked />
+                                <label className="tbgItem rounded-pill" htmlFor="tnxRadio1">
+                                    <span className="fw-medium">Last 7 Days</span> (10)
+                                </label>
 
-                                    <input type="radio" className="btn-check" name="tnxRadio" id="tnxRadio2" autoComplete="off" />
-                                    <label className="tbgItem rounded-pill" htmlFor="tnxRadio2">
-                                        <span className="fw-medium">Last 15 Days</span> (50)
-                                    </label>
+                                <input type="radio" className="btn-check" name="tnxRadio" id="tnxRadio2" autoComplete="off" />
+                                <label className="tbgItem rounded-pill" htmlFor="tnxRadio2">
+                                    <span className="fw-medium">Last 15 Days</span> (50)
+                                </label>
 
-                                    <input type="radio" className="btn-check" name="tnxRadio" id="tnxRadio3" autoComplete="off" />
-                                    <label className="tbgItem rounded-pill" htmlFor="tnxRadio3">
-                                        <span className="fw-medium">Last 30 Days</span> (100)
-                                    </label>
-                                </div>
+                                <input type="radio" className="btn-check" name="tnxRadio" id="tnxRadio3" autoComplete="off" />
+                                <label className="tbgItem rounded-pill" htmlFor="tnxRadio3">
+                                    <span className="fw-medium">Last 30 Days</span> (100)
+                                </label>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <div className={`${styles.contentList} d-flex flex-column gap-3 mb-4`}>
-                            {visibleTransactions.map((item, index) => (
-                                <div className={`${styles.contentRow} btnDisplay`} key={index}>
-                                    <div className="row align-items-center">
+                <div className={`${styles.contentList} d-flex flex-column gap-3 mb-4`}>
+                    {visibleData.map((item, index) => (
+                        <div className={`${styles.contentRow} btnDisplay`} key={index}>
+                            <div className="row align-items-center">
+                                {item.type === "transaction" ? (
+                                    <>
                                         <div className="col-12 col-sm-2 d-flex align-items-center justify-content-between d-sm-block">
                                             <div className={`${styles.crDate}`}>{item.date}</div>
                                             <div className={`${styles.crNumber} fw-medium`}>{item.number}</div>
@@ -242,45 +254,9 @@ export default function TransactionSection() {
                                                 <span className="fw-medium">{item.amount}</span>
                                             </div>
                                         </div>
-
-                                        <div className="col-sm-auto col-12 text-end py-0">
-                                            <Link href="#" className="crBtn">
-                                                <ChevronRight className="icon me-0" />
-                                            </Link>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </>
-                )}
-
-                {activeTab === "renewals" && (
-                    <>
-                        <div className="w-100 d-flex justify-content-lg-end justify-content-center mb-3 mt-3 mt-lg-0">
-                            <div className="col-lg-6 d-flex justify-content-end">
-                                <div className={`${styles.tabBtnGroup} rounded-pill`}>
-                                    <input type="radio" className="btn-check" name="tnxRadio" id="tnxRadio1" autoComplete="off" defaultChecked />
-                                    <label className="tbgItem rounded-pill" htmlFor="tnxRadio1">
-                                        <span className="fw-medium">Today</span> (10)
-                                    </label>
-
-                                    <input type="radio" className="btn-check" name="tnxRadio" id="tnxRadio2" autoComplete="off" />
-                                    <label className="tbgItem rounded-pill" htmlFor="tnxRadio2">
-                                        <span className="fw-medium">Next 15 Days</span> (50)
-                                    </label>
-
-                                    <input type="radio" className="btn-check" name="tnxRadio" id="tnxRadio3" autoComplete="off" />
-                                    <label className="tbgItem rounded-pill" htmlFor="tnxRadio3">
-                                        <span className="fw-medium">Next 30 Days</span> (100)
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={`${styles.contentList} d-flex flex-column gap-3 mb-4`}>
-                            {visibleRenewals.map((item, index) => (
-                                <div className={`${styles.contentRow} btnDisplay`} key={index}>
-                                    <div className="row align-items-center">
+                                    </>
+                                ) : (
+                                    <>
                                         <div className="col-md col-7 d-flex flex-wrap">
                                             <div className="col-md col-12">
                                                 <div className={`${styles.crDomain} d-flex align-items-center`}>
@@ -311,42 +287,32 @@ export default function TransactionSection() {
                                                 </Link>
                                             </div>
                                         </div>
-                                        <div className="col-md-auto col-12 text-end py-0">
-                                            <Link href="#" className="crBtn">
-                                                <ChevronRight className="icon me-0" />
-                                            </Link>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </>
-                )}
+                                    </>
+                                )}
 
-                <div className="d-flex justify-content-center">
-                    {activeTab === "transactions" && transactions.length > 5 && (
-                        <div className="col-md-2 col-sm-4 col-6">
-                            <button
-                                className="btn btnWhite w-100"
-                                onClick={() => setShowAllTransactions(!showAllTransactions)}
-                            >
-                                <ChevronsDown className={`icon me-0 ${showAllTransactions ? "rotate-180" : ""}`} />
-                                <span>{showAllTransactions ? "Show Less" : "Load More"}</span>
-                            </button>
+                                <div className="col-sm-auto col-12 text-end py-0">
+                                    <Link href="#" className="crBtn">
+                                        <ChevronRight className="icon me-0" />
+                                    </Link>
+                                </div>
+                            </div>
                         </div>
-                    )}
-                    {activeTab === "renewals" && renewals.length > 5 && (
-                        <div className="col-md-2 col-sm-4 col-6">
-                            <button
-                                className="btn btnWhite w-100"
-                                onClick={() => setShowAllRenewals(!showAllRenewals)}
-                            >
-                                <ChevronsDown className={`icon me-0 ${showAllRenewals ? "rotate-180" : ""}`} />
-                                <span>{showAllRenewals ? "Show Less" : "Load More"}</span>
-                            </button>
-                        </div>
-                    )}
+                    ))}
                 </div>
+
+                {activeData.length > 5 && (
+                    <div className="d-flex justify-content-center">
+                        <div className="col-md-2 col-sm-4 col-6">
+                            <button
+                                className="btn btnWhite w-100"
+                                onClick={() => setShowAll(!showAll)}
+                            >
+                                <ChevronsDown className={`icon me-0 ${showAll ? "rotate-180" : ""}`} />
+                                <span>{showAll ? "Show Less" : "Load More"}</span>
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
