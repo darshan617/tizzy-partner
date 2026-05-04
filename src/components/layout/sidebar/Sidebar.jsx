@@ -110,6 +110,8 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                     className={`${styles.sideMenuItem}`}
                     key={idx}
                     onClick={() => {
+                      console.log(menu?.href, "tttttttttttt");
+                      
                       router.push(menu?.href);
                     }}
                     style={{
