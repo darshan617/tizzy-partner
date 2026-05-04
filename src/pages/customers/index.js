@@ -5,6 +5,7 @@ import CustomerSummary from "@/components/customers/customer-summary/CustomerSum
 import AllCustomers from "@/components/customers/all-customers/AllCustomers";
 import Cookies from "js-cookie";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
+import CustomerList from "@/components/customers/all-customers/AllCustomers";
 import OrderComplete from "@/components/customers/order-complete/OrderComplete";
 
 const Customers = () => {
@@ -25,7 +26,7 @@ const Customers = () => {
     allCustomers={allCustomers}
     isFetchingAllCustomers={isFetchingAllCustomers}
     />
-    <AllCustomers 
+    <CustomerList 
     allCustomers={allCustomers}
     isFetchingAllCustomers={isFetchingAllCustomers}
     refetch={refetch}

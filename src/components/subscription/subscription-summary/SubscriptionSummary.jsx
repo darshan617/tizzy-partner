@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Plus, ChevronUp } from "lucide-react";
-import styles from "@/components/customers/customer-summary/CustomerSummary.module.css";
+import styles from "@/components/subscription/subscription-summary/SubscriptionSummary.module.css";
 import { useRouter } from "next/router";
 
 const ActiveCustomerIcon = () => (
@@ -75,39 +75,7 @@ const ClosedCustomerIcon = () => (
 import React, { useEffect, useRef, useState } from "react";
 import { RiLoader2Fill } from "react-icons/ri";
 import Loader from "@/components/common-components/loader/Loader";
-
-const summaryCards = [
-  {
-    title: "Active Customers",
-    key: "active",
-    value: "124k",
-    trend: "8.72%",
-    boxClass: "successGrad",
-    iconClass: "successColor",
-    badgeClass: "down",
-    icon: <ActiveCustomerIcon />,
-  },
-  {
-    title: "Inactive Customers",
-    key: "inactive",
-    value: "51k",
-    trend: "8.72%",
-    boxClass: "dangerGrad",
-    iconClass: "dangerColor",
-    badgeClass: "up",
-    icon: <InactiveCustomerIcon />,
-  },
-  {
-    title: "Closed Customers",
-    key: "closed",
-    value: "75k",
-    trend: "8.72%",
-    boxClass: "warningGrad",
-    iconClass: "warningColor",
-    badgeClass: "up",
-    icon: <ClosedCustomerIcon />,
-  },
-];
+import { BsPlusCircleDotted } from "react-icons/bs";
 
 // const Counter = ({ target, suffix }) => {
 //   const ref = useRef();
@@ -134,9 +102,9 @@ const summaryCards = [
 //   return <span ref={ref}>0{suffix || ""}</span>;
 // };
 
-export default function CustomerSummary({
-  allCustomers,
-  isFetchingAllCustomers,
+export default function SubscriptionSummary({
+  summaryData,
+  isSummaryFetching,
 }) {
   const router = useRouter();
   const [asOnDate, setAsOnDate] = useState("");
@@ -149,7 +117,8 @@ export default function CustomerSummary({
       }),
     );
   }, []);
-  const count = allCustomers?.data?.count;
+  const count = summaryData?.summary;
+  console.log(count, "countcountcount");
 
   return (
     <div>
@@ -164,14 +133,8 @@ export default function CustomerSummary({
                 Dashboard
               </button>{" "}
               /
-              <button
-                onClick={() => router.push("/customers")}
-                className={styles.breadcrumbItem}
-              >
-                Customers
-              </button>
               <h1 className="breadcrumb-item active" aria-current="page">
-                Customer Management
+                Subscriptions
               </h1>
             </nav>
           </div>
@@ -187,34 +150,45 @@ export default function CustomerSummary({
           </div>
 
           <div className="row row-cols-md-4 row-cols-sm-4 row-cols-2 g-sm-4 g-3">
-            {summaryCards.map((card, index) => {
-              // console.log(count[card?.title.toLowerCase()]);
+            {count?.map((card, index) => {
+              const cardStyles = [
+                {
+                  boxClass: "successGrad",
+                  iconClass: "successColor",
+                  icon: <ActiveCustomerIcon />,
+                },
+                {
+                  boxClass: "warningGrad",
+                  iconClass: "warningColor",
+                  icon: <InactiveCustomerIcon />,
+                },
+                {
+                  boxClass: "dangerGrad",
+                  iconClass: "dangerColor",
+                  icon: <ClosedCustomerIcon />,
+                },
+              ];
+
+              const currentStyle = cardStyles[index];
 
               return (
                 <div className="col pt-4" key={index}>
-                  <div className={`statBox ${card.boxClass}`}>
-                    <div className={`statIcon ${card.iconClass}`}>
-                      {card.icon}
+                  <div className={`statBox ${currentStyle?.boxClass}`}>
+                    <div className={`statIcon ${currentStyle?.iconClass}`}>
+                      {currentStyle?.icon}
                     </div>
 
-                    <a href="#" className={`${styles.statText}  mt-3`}>
-                      <div className={`${styles.statLabel}  mb-2`}>
-                        {card.title}
+                    <div className={`${styles.statText} mt-3`}>
+                      <div className={`${styles.statLabel} mb-2`}>
+                        {card?.name}
                       </div>
+
                       <div className="d-flex align-items-center">
-                        <div className={`${styles.statValue}`}>
-                          {isFetchingAllCustomers ? (
-                            <Loader />
-                          ) : (
-                            count?.[card?.key.toLowerCase()]
-                          )}
+                        <div className={styles.statValue}>
+                          {isSummaryFetching ? <Loader /> : card?.count}
                         </div>
-                        {/* <div className={`statusBadge ${card.badgeClass}`}>
-                       <ChevronUp className="icon me-0" />
-                        <span>{card.trend}</span>
-                      </div> */}
                       </div>
-                    </a>
+                    </div>
                   </div>
                 </div>
               );
@@ -222,12 +196,12 @@ export default function CustomerSummary({
             <div className="col pt-4">
               <button
                 className="boxLink primaryBg d-flex flex-column align-items-center justify-content-center border-0 outline-0"
-                onClick={() => router.push("/customers/create-customer")}
+                onClick={() => router.push("/services/tizzy")}
               >
                 <div className={`${styles.iconBx} mb-2`}>
-                  <Plus className={`${styles.icon}`} size={18} />
+                  <BsPlusCircleDotted className={`${styles.icon}`} size={18} />
                 </div>
-                <div>Add New Customer</div>
+                <div>Buy New Subscription</div>
               </button>
             </div>
           </div>

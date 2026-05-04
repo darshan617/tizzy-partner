@@ -13,7 +13,7 @@ import {
   getServiceCatalogConfig,
   isValidServiceSlug,
   SERVICE_NAV_ITEMS,
-} from "@/constants/servicePlansBySlug";
+} from "@/pages/services/servicePlansBySlug";
 import styles from "@/components/common-components/service-plans/ServicePlans.module.css";
 import {
   useGetPlansMutation,
@@ -27,6 +27,7 @@ import {
   setCategories,
   setSubCategories,
 } from "@/redux/slices/servicesSlice";
+import { useRouter } from "next/router";
 
 function formatInr(amount) {
   if (typeof amount !== "number" || Number.isNaN(amount)) return "";
@@ -45,6 +46,7 @@ export default function ServiceSlugPage({
 }) {
   const dispatch = useDispatch();
   const { showToast } = useToast();
+  const router = useRouter();
   const config = slug ? getServiceCatalogConfig(slug) : null;
   const valid = slug && isValidServiceSlug(slug);
   const [searchQuery, setSearchQuery] = useState("");
@@ -245,14 +247,19 @@ export default function ServiceSlugPage({
           { label: "Services" },
         ]}
       />
-      <ServicePageTitle>{config.pageTitle}</ServicePageTitle>
-      <ServiceTabsBar
-        activeSlug={slug}
-        searchPlaceholder={config.searchPlaceholder}
-        searchValue={searchQuery}
-        onSearchChange={setSearchQuery}
-        providers={providers}
-      />
+      <ServicePageTitle>{router?.query?.slug}</ServicePageTitle>
+      {isLoadingProviders ? (
+        "Loading Tabs"
+      ) : (
+        <ServiceTabsBar
+          activeSlug={slug}
+          searchPlaceholder={config.searchPlaceholder}
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          providers={providers}
+        />
+      )}
+
       <ServiceIntroBlock
         headline={config.intro.headline}
         subline={config.intro.subline}

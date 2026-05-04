@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "@/components/customers/all-customers/AllCustomers.module.css";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import Cookies from "js-cookie";
-import Loader from "@/components/common-components/Loader";
+import Loader from "@/components/common-components/loader/Loader";
 import { FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 
@@ -224,7 +224,7 @@ export default function CustomerList({
             >
               {isFetchingAllCustomers ? (
                 <Loader />
-              ) : (
+              ) : allCustomers?.data?.customers?.length > 0 ? (
                 allCustomers?.data?.customers?.map((customer, idx) => (
                   <div
                     key={idx}
@@ -325,6 +325,8 @@ export default function CustomerList({
                     </div>
                   </div>
                 ))
+              ) : (
+                "No Customer Data"
               )}
             </div>
           </div>

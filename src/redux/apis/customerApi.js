@@ -15,7 +15,7 @@ const customerApi = apiSlice.injectEndpoints({
     getAllCustomers: builder.query({
       query: ({partner_id}) => {
         return{
-          url:`/customers/${partner_id}`,
+          url:`/customers?partner_id=${partner_id}`,
           method:"GET",
         }
       },
