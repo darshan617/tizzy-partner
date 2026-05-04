@@ -72,7 +72,7 @@ const ClosedCustomerIcon = () => (
   </svg>
 );
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { RiLoader2Fill } from "react-icons/ri";
 import Loader from "@/components/common-components/Loader";
 
@@ -139,11 +139,16 @@ export default function CustomerSummary({
   isFetchingAllCustomers,
 }) {
   const router = useRouter();
-  const todayDate = new Date().toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const [asOnDate, setAsOnDate] = useState("");
+  useEffect(() => {
+    setAsOnDate(
+      new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
+    );
+  }, []);
   const count = allCustomers?.data?.count;
 
   const counts = {};
@@ -177,7 +182,9 @@ export default function CustomerSummary({
         <div className={`${styles.sectionCard} py-4 px-sm-4 px-3`}>
           <div className="mb-2">
             <h2 className={`${styles.sectionCardHead}`}>Summary</h2>
-            <small className="ms-1 textSecondary">{`(As on ${todayDate})`}</small>
+            {asOnDate ? (
+              <small className="ms-1 textSecondary">{`(As on ${asOnDate})`}</small>
+            ) : null}
           </div>
 
           <div className="row row-cols-md-4 row-cols-sm-4 row-cols-2 g-sm-4 g-3">
