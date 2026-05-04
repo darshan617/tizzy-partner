@@ -21,16 +21,16 @@ const Customers = () => {
   }, []);
 
   return <Layout>
-    {/* <CustomerSummary 
+    <CustomerSummary 
     allCustomers={allCustomers}
     isFetchingAllCustomers={isFetchingAllCustomers}
-    /> */}
-    {/* <AllCustomers 
+    />
+    <AllCustomers 
     allCustomers={allCustomers}
     isFetchingAllCustomers={isFetchingAllCustomers}
     refetch={refetch}
-    /> */}
-    <OrderComplete />
+    />
+    {/* <OrderComplete /> */}
   </Layout>;
 };
 
