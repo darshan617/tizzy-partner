@@ -125,7 +125,6 @@ const OrderSummaryCard = ({
             ? "Clear Pending Invoices"
             : "Generate Purchase Order"}
         </button>
-
         <div className={styles.requestBox}>
           <p>Want to complete purchase urgently?</p>
           <button className={styles.requestLink}>Request Credits</button>

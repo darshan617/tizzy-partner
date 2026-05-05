@@ -6,12 +6,18 @@ import SalesReport from "@/components/dashboard/sales-report/SalesReport";
 import Support from "@/components/dashboard/support/Support";
 import TransactionSection from "@/components/dashboard/transaction/Transaction";
 import Layout from "@/components/layout/Layout";
+import dynamic from "next/dynamic";
 import React from "react";
+
+const DynamicAccountSummary = dynamic(() => import('@/components/dashboard/account-summary/AccountSummary'), {
+  ssr: false,
+  loading: 'Loading...'
+})
 
 const dashboard = () => {
   return (
     <Layout>
-      <AccountSummary />
+      <DynamicAccountSummary />
       <TransactionSection />
       <SalesReport />
       <Support />

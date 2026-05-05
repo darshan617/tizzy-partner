@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus, ChevronUp } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 import styles from "@/components/dashboard/account-summary/AccountSummary.module.css";
+import Cookies from "js-cookie";
 
 const WalletIcon = () => (
   <svg
@@ -150,7 +151,7 @@ const summaryCards = [
     badgeClass: "down",
     icon: <CustomerIcon />,
     anchor: {
-      href: "/add_new_customer",
+      href: "/customers/create-customer",
       tooltip: "Add New Customer",
     },
   },
@@ -164,7 +165,10 @@ const summaryCards = [
     iconClass: "warningColor",
     badgeClass: "up",
     icon: <SubscriptionIcon />,
-    anchor: null,
+    anchor: {
+      href: "/services/tizzy",
+      tooltip: "View Subscriptions",
+    },
   },
   {
     title: "Renewals This Month",
@@ -181,6 +185,10 @@ const summaryCards = [
 ];
 
 export default function AccountSummary() {
+  const userData = Cookies.get("userData")
+    ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
+    : {};
+
   return (
     <div className={`${styles.containerMain} mx-auto d-flex flex-column`}>
       <div className="row flex-column gy-4 py-4">
@@ -193,7 +201,7 @@ export default function AccountSummary() {
                   className={`${styles.breadcrumbItem} ${styles.active}`}
                   aria-current="page"
                 >
-                  Janak Singh
+                  {userData?.name || ""}
                 </span>
               </div>
             </div>
