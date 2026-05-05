@@ -295,7 +295,14 @@ export default function ServiceSlugPage({
                 periodNote={"user/month, paid yearly"}
                 gstNote={"GST 18% Additional"}
                 features={plan?.features}
-                onCtaClick={() => {}}
+                onCtaClick={() =>
+                  router.push({
+                    pathname: `/order-summary`,
+                    query: {
+                      type: "buy-service",
+                    },
+                  })
+                }
               />
             ))
           )}

@@ -327,7 +327,6 @@ export default function CustomerDetail() {
             </div>
           </div>
         </div>
-        <VerifyOtp />
 
         {allPlans?.map((plan, idx) => {
           const otherPlans = plan?.plans;
