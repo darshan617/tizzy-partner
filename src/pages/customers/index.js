@@ -5,6 +5,7 @@ import CustomerSummary from "@/components/customers/customer-summary/CustomerSum
 import AllCustomers from "@/components/customers/all-customers/AllCustomers";
 import Cookies from "js-cookie";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
+import OrderComplete from "@/components/customers/order-complete/OrderComplete";
 
 const Customers = () => {
   const userData = Cookies.get("userData")
@@ -29,6 +30,7 @@ const Customers = () => {
     isFetchingAllCustomers={isFetchingAllCustomers}
     refetch={refetch}
     />
+    {/* <OrderComplete /> */}
   </Layout>;
 };
 

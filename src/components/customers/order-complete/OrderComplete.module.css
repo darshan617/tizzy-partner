@@ -1,0 +1,71 @@
+.breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    list-style: none;
+    background-color: transparent;
+    max-width: 1100px;
+    margin: auto;
+    margin-bottom: 25px;
+
+}
+
+.breadcrumbItem {
+    font-size: var(--fs12);
+    color: var(--textBody);
+    border: none;
+    background: none;
+}
+
+.breadcrumbItem.active {
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin-bottom: 25px;
+    font-size: var(--fs20);
+    font-weight: 600;
+    color: var(--textBody);
+}
+
+.breadcrumbItem.active:before {
+    display: none;
+}
+
+.orderCard{
+    background: #fff;
+    max-width: 1100px;
+    height: auto;
+    margin: auto;
+    padding: 20px;
+}
+
+.orderMainHead {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.value{
+    font-size: 14px;
+    font-weight: 600;
+}
+.valueContent{
+    font-size: 14px;
+    font-weight: 400;
+}
+.orderHead{
+    padding: 10px;
+    background: #FBFBFB;
+}
+.BalInfo h1{
+    font-size: 14px;
+    font-weight: 400;
+    color: #444444;
+}
+.CreditValue{
+    font-size: 14px;
+    font-weight: 600;
+}
+.InvoiceImg {
+    border-radius: 10px;
+    border: 1px solid #E7E9EB;
+}
