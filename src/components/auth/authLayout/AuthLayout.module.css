@@ -16,7 +16,7 @@
 }
 
 .formSection {
-  flex: 0.2;
+  flex: 0.25;
   padding: 10px 30px;
   display: flex;
   flex-direction: column;
@@ -63,7 +63,7 @@
 }
 
 .imageSection {
-  flex: 0.8;
+  flex: 0.75;
   position: relative;
 }
 .mascotBody {

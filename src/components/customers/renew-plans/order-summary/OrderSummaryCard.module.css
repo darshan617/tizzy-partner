@@ -1,6 +1,6 @@
 .card {
     background: #ffffff;
-    border-radius: 16px;
+    border-radius: 12px;
     padding: 24px 22px 22px;
     width: 100%;
     max-width: 300px;
@@ -97,7 +97,7 @@
     display: block;
     width: 100%;
     padding: 13px;
-    background: #0355AC;
+    background: var(--primaryColor);
     color: #ffffff;
     border: none;
     border-radius: 50px;
@@ -111,7 +111,7 @@
 }
  
 .btnPrimary:hover {
-    background: #1a38c4;
+    background: #2d43a9;
 }
  
 .btnPrimary:active {

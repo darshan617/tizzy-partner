@@ -8,7 +8,7 @@ const CommonOrderSummary = () => {
   const pricePerUser = 1000;
   const total = pricePerUser * lisceneCounter;
   return (
-    <div className="d-flex align-items-start gap-3">
+    <div className="d-flex align-items-start gap-3 justify-content-center">
       <RenewCart
         lisceneCounter={lisceneCounter}
         setLisceneCounter={setLisceneCounter}
