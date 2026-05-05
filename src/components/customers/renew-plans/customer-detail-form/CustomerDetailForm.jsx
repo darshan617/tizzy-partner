@@ -1,6 +1,5 @@
 import React from "react";
 import { Plus } from "lucide-react";
-
 import styles from "@/components/customers/renew-plans/customer-detail-form/CustomerDetailForm.module.css";
 
 const CustomerDetailForm = () => {
