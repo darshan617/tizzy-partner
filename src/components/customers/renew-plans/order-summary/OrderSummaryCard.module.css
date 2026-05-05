@@ -1,6 +1,6 @@
 .card {
     background: #ffffff;
-    border-radius: 16px;
+    border-radius: 12px;
     padding: 24px 22px 22px;
     width: 100%;
     max-width: 300px;
@@ -97,7 +97,7 @@
     display: block;
     width: 100%;
     padding: 13px;
-    background: #0355AC;
+    background: var(--primaryColor);
     color: #ffffff;
     border: none;
     border-radius: 50px;
@@ -111,7 +111,7 @@
 }
  
 .btnPrimary:hover {
-    background: #1a38c4;
+    background: #2d43a9;
 }
  
 .btnPrimary:active {
@@ -146,6 +146,52 @@
 .requestLink:hover {
     color: #1e40af;
 }
+
+.promoBox {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+  }
+  
+  .promoInput {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 5px 2px 2px 5px;
+    font-size: 14px;
+    color: #111827;
+  }
+  
+  .promoInput::placeholder {
+    color: #c0c0c0;
+  }
+  
+  .applyBtn {
+    background: #0057b8;
+    color: white;
+    border: none;
+    padding: 8px 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    height: 100%;
+  }
+  
+  .applyBtn:hover {
+    background: #00489a;
+  }
+  
+  .addLinkBtn {
+    background: transparent;
+    border: none;
+    color: #2563eb;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+  }
  
 @media (max-width: 480px) {
     .card {

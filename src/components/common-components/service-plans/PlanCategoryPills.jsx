@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import Loader from "../Loader";
+import Loader from "../loader/Loader";
 import styles from "./ServicePlans.module.css";
 import {
   selectCategories,

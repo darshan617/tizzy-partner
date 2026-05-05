@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import styles from "@/components/customers/all-customers/AllCustomers.module.css";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import Cookies from "js-cookie";
-import Loader from "@/components/common-components/Loader";
+import Loader from "@/components/common-components/loader/Loader";
 import { FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
+import { useRouter } from "next/router";
 
 const SERVICE_TITLES = {
   tizzy: "Tizzy Mail",
@@ -17,6 +18,7 @@ export default function CustomerList({
   isFetchingAllCustomers,
   refetch,
 }) {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
@@ -224,7 +226,7 @@ export default function CustomerList({
             >
               {isFetchingAllCustomers ? (
                 <Loader />
-              ) : (
+              ) : allCustomers?.data?.customers?.length > 0 ? (
                 allCustomers?.data?.customers?.map((customer, idx) => (
                   <div
                     key={idx}
@@ -305,7 +307,17 @@ export default function CustomerList({
                       </div>
 
                       <div className="col-sm-auto col-6 align-self-stretch d-flex align-items-center justify-content-end order-sm-3 mobAction">
-                        <a href="/customer_profile" className="crBtn">
+                        <button
+                          className="crBtn"
+                          onClick={() =>
+                            router.push({
+                              pathname: "/customers/customer-details",
+                              query: {
+                                customerId: customer?.id,
+                              },
+                            })
+                          }
+                        >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="16"
@@ -320,11 +332,13 @@ export default function CustomerList({
                           >
                             <path d="m9 18 6-6-6-6" />
                           </svg>
-                        </a>
+                        </button>
                       </div>
                     </div>
                   </div>
                 ))
+              ) : (
+                "No Customer Data"
               )}
             </div>
           </div>

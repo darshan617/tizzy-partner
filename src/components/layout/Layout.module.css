@@ -1,0 +1,12 @@
+.contentWrapper {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  margin-left: 280px;
+}
+
+@media (max-width: 991px) {
+  .contentWrapper {
+    margin-left: 0;
+  }
+}

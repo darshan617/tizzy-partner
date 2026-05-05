@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import styles from "@/components/layout/sidebar/Sidebar.module.css";
 import {
@@ -9,6 +10,7 @@ import { useRouter } from "next/router";
 import { MdOutlineContactSupport } from "react-icons/md";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const sidebarRef = useRef(null);
 
@@ -33,7 +35,15 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
     setIsSidebarOpen(false);
   }, [router.pathname, setIsSidebarOpen]);
 
-  return (
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
+  return createPortal(
     <>
       {isSidebarOpen && (
         <div
@@ -111,7 +121,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                     key={idx}
                     onClick={() => {
                       console.log(menu?.href, "tttttttttttt");
-                      
+
                       router.push(menu?.href);
                     }}
                     style={{
@@ -184,7 +194,8 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           </div>
         </div>
       </div>
-    </>
+    </>,
+    document.body,
   );
 };
 

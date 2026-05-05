@@ -1,10 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import {
-  BiChevronDown,
-  BiKey,
-  BiPowerOff,
-  BiSearch,
-} from "react-icons/bi";
+import { BiChevronDown, BiKey, BiPowerOff, BiSearch } from "react-icons/bi";
 import { BsHandbag } from "react-icons/bs";
 import { FiBell } from "react-icons/fi";
 import { FaRegCircleUser } from "react-icons/fa6";
@@ -68,6 +63,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
               <a href="index.html" className="d-inline-block">
                 <Image
                   src={logo}
+                  alt="logo"
                   className={styles.pageLogoImg}
                   title="Tizzy Partners"
                 />
@@ -157,9 +153,12 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                         <div
                           className={`${styles.profAvatar} ${styles.avatarColor_3}`}
                         >
-                           {user?.name ? user?.name[0] : ""}
+                          {user?.name ? user?.name[0] : ""}
                         </div>
-                        <div className={styles.profName}> {user?.name ? user?.name : ""}</div>
+                        <div className={styles.profName}>
+                          {" "}
+                          {user?.name ? user?.name : ""}
+                        </div>
                         <div className={styles.profComp}>
                           {user?.company_name ? user?.company_name : ""}
                         </div>
@@ -220,8 +219,16 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                         </li>
                       </ul>
                       <div className="p-3 text-center subtleBg">
-                        <button type="button" className="btn btnWhite w-100" onClick={handleSignOut}>
-                        <BiPowerOff className="icon" size={20} strokeWidth={0}/>
+                        <button
+                          type="button"
+                          className="btn btnWhite w-100"
+                          onClick={handleSignOut}
+                        >
+                          <BiPowerOff
+                            className="icon"
+                            size={20}
+                            strokeWidth={0}
+                          />
                           <span>Sign Out</span>
                         </button>
                       </div>

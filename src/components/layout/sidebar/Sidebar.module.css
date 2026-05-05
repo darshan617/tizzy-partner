@@ -8,8 +8,11 @@
   z-index: 1050;
   height: calc(100vh - 75px);
   overflow-y: auto;
+  position: fixed;
+  top: 75px;
+  left: 0;
+  background: var(--whiteColor);
 }
-
 
 .sidebarOverlay {
   position: fixed;
@@ -245,7 +248,7 @@
   }
 
   .sidebarOverlay {
-    display: none;
+    display: block;
   }
 
   .sidebarOverlay.show {
