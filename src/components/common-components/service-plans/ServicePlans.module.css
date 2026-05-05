@@ -55,6 +55,7 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   flex-direction: row-reverse;
+  justify-content: flex-start;
 }
 
 .tab {
