@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Navbar from "./navbar/Navbar";
 import Footer from "./footer/Footer";
 import Sidebar from "./sidebar/Sidebar";
+import styles from "./Layout.module.css";
 
 const Layout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -21,16 +22,13 @@ const Layout = ({ children }) => {
           height: "calc(100vh - 75px)",
           width: "100%",
           position: "sticky",
-          // zIndex: 222,
         }}
       >
         <Sidebar
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
         />
-        <div style={{ flex: 1, padding: "20px", overflowY: "auto" }}>
-          {children}
-        </div>
+        <div className={styles.contentWrapper}>{children}</div>
       </div>
     </>
   );
