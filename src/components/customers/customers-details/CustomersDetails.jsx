@@ -287,12 +287,19 @@ export default function CustomerDetail() {
                     </div>
                   </div>
                   <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
-                    <Link
-                      href="#"
+                    <button
+                      onClick={() =>
+                        router?.push({
+                          pathname: "/order-summary",
+                          query: {
+                            type: "renew-plan",
+                          },
+                        })
+                      }
                       className={`${styles.crRenew} btn small btnWhite`}
                     >
                       <span>Renew</span>
-                    </Link>
+                    </button>
                     <div className={`${styles.updwngrade} mt-2 text-uppercase`}>
                       <Link href="">Upgrade / Downgrade</Link>
                     </div>

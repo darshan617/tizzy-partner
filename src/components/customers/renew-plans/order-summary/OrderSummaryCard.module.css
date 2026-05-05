@@ -146,6 +146,52 @@
 .requestLink:hover {
     color: #1e40af;
 }
+
+.promoBox {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+  }
+  
+  .promoInput {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 5px 2px 2px 5px;
+    font-size: 14px;
+    color: #111827;
+  }
+  
+  .promoInput::placeholder {
+    color: #c0c0c0;
+  }
+  
+  .applyBtn {
+    background: #0057b8;
+    color: white;
+    border: none;
+    padding: 8px 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    height: 100%;
+  }
+  
+  .applyBtn:hover {
+    background: #00489a;
+  }
+  
+  .addLinkBtn {
+    background: transparent;
+    border: none;
+    color: #2563eb;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+  }
  
 @media (max-width: 480px) {
     .card {

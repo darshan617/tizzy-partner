@@ -6,12 +6,14 @@ import { useDispatch } from "react-redux";
 import AuthLayout from "../authLayout/AuthLayout";
 import styles from "@/components/auth/login/LoginForm.module.css";
 import Link from "next/link";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
 
 const LoginForm = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState({});
+  const { showToast } = useToast();
 
   const [sendOtp, { isLoading }] = useSendOtpMutation();
   const validateForm = () => {
@@ -43,6 +45,8 @@ const LoginForm = () => {
         router?.push("/auth/otp-verification?type=login");
         setEmail("");
         dispatch(setUserData({ email: email }));
+      } else {
+        showToast(res?.error?.data?.message, "error");
       }
     } catch (error) {
       console.log(error);
