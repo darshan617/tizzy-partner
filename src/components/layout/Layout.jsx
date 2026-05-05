@@ -21,6 +21,7 @@ const Layout = ({ children }) => {
           height: "calc(100vh - 75px)",
           width: "100%",
           position: "sticky",
+          zIndex: 222,
         }}
       >
         <div>

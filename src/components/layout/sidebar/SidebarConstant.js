@@ -1,8 +1,12 @@
 import { BiUser } from "react-icons/bi";
 import { BsFileEarmarkBarGraph } from "react-icons/bs";
 import { LuLayoutDashboard, LuUsers } from "react-icons/lu";
-import { TfiWallet } from "react-icons/tfi";
 import { VscFiles } from "react-icons/vsc";
+import { PiHandCoinsLight } from "react-icons/pi";
+import { LuReceiptIndianRupee } from "react-icons/lu";
+
+
+
 
 export const SIDEBAR_MENU_CONSTANTS = [
   {
@@ -23,14 +27,20 @@ export const SIDEBAR_MENU_CONSTANTS = [
     icon: VscFiles,
     href: "/subscriptions",
   },
-  {
+    {
     id: 4,
-    title: "Finance",
-    icon: TfiWallet,
-    href: "/finance",
+    title: "Invoices",
+    icon: LuReceiptIndianRupee,
+    href: "/invoices",
   },
   {
     id: 5,
+    title: "Transactions",
+    icon: PiHandCoinsLight,
+    href: "/transactions",
+  },
+  {
+    id: 6,
     title: "Reports",
     icon: BsFileEarmarkBarGraph,
     href: "/reports",
