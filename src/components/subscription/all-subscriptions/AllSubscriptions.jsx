@@ -4,6 +4,7 @@ import { FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { LuPencil } from "react-icons/lu";
 import Loader from "@/components/common-components/loader/Loader";
+import { useRouter } from "next/router";
 
 const statusLabelMap = {
   active: "Active",
@@ -17,7 +18,7 @@ const AllSubscriptions = ({
   allSubscriptionsData,
   isAllSubscriptionDataLoading,
 }) => {
-  console.log(allSubscriptionsData);
+  const router = useRouter();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -235,6 +236,14 @@ const AllSubscriptions = ({
                                   <button
                                     type="button"
                                     className={styles.renewBtn}
+                                    onClick={() =>
+                                      router.push({
+                                        pathname: "/order-summary",
+                                        query: {
+                                          type: "renew-plan",
+                                        },
+                                      })
+                                    }
                                   >
                                     Renew
                                   </button>
@@ -246,7 +255,17 @@ const AllSubscriptions = ({
                           <div
                             className={`col-auto align-self-stretch d-flex align-items-center justify-content-end order-sm-3 mobAction ${styles.arrowCol}`}
                           >
-                            <a href="/subscriptions" className={styles.crBtn}>
+                            <button
+                              className={styles.crBtn}
+                              onClick={() =>
+                                router.push({
+                                  pathname: "/customers/customer-details",
+                                  query: {
+                                    customerId: customer?.customer_id,
+                                  },
+                                })
+                              }
+                            >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="16"
@@ -261,7 +280,7 @@ const AllSubscriptions = ({
                               >
                                 <path d="m9 18 6-6-6-6" />
                               </svg>
-                            </a>
+                            </button>
                           </div>
                         </div>
                       </div>
