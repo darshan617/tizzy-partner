@@ -21,10 +21,10 @@ const customerApi = apiSlice.injectEndpoints({
       },
       providesTags: ["customer"],
     }),
-    getCustomerById: builder.query({
+    getSpecificCustomerDetails: builder.query({
       query: ({customer_id}) => {
         return{
-          url:`/customer/${customer_id}`,
+          url:`/getCustomerDetail?customer_id=${customer_id}`,
           method:"GET",
         }
       },
@@ -35,5 +35,6 @@ const customerApi = apiSlice.injectEndpoints({
 
 export const {
     useCreateCustomerMutation,
-    useGetAllCustomersQuery
+    useGetAllCustomersQuery,
+    useGetSpecificCustomerDetailsQuery
 } = customerApi;

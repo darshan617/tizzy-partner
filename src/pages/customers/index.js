@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import CustomerList from "@/components/customers/all-customers/AllCustomers";
 import OrderComplete from "@/components/customers/order-complete/OrderComplete";
+import CustomerList from "@/components/customers/all-customers/AllCustomers";
 
 const Customers = () => {
   const userData = Cookies.get("userData")
