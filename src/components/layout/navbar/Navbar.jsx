@@ -63,6 +63,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
               <a href="index.html" className="d-inline-block">
                 <Image
                   src={logo}
+                  alt="logo"
                   className={styles.pageLogoImg}
                   title="Tizzy Partners"
                 />

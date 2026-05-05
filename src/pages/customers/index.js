@@ -8,6 +8,7 @@ import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import CustomerList from "@/components/customers/all-customers/AllCustomers";
 import OrderComplete from "@/components/customers/order-complete/OrderComplete";
 import CustomerList from "@/components/customers/all-customers/AllCustomers";
+import CustomerDetailForm from "@/components/customers/renew-plans/customer-detail-form/CustomerDetailForm";
 
 const Customers = () => {
   const userData = Cookies.get("userData")
@@ -33,6 +34,7 @@ const Customers = () => {
     refetch={refetch}
     />
     {/* <OrderComplete /> */}
+    {/* <CustomerDetailForm /> */}
   </Layout>;
 };
 
