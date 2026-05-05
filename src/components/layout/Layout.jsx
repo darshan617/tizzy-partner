@@ -8,7 +8,7 @@ const Layout = ({ children }) => {
 
   return (
     <>
-      <div style={{ position: "sticky", top: 0, zIndex: 100, }}>
+      <div style={{ position: "sticky", top: 0, zIndex: 100 }}>
         <Navbar
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
@@ -21,15 +21,13 @@ const Layout = ({ children }) => {
           height: "calc(100vh - 75px)",
           width: "100%",
           position: "sticky",
-          zIndex: 222,
+          // zIndex: 222,
         }}
       >
-        <div>
-          <Sidebar
-            isSidebarOpen={isSidebarOpen}
-            setIsSidebarOpen={setIsSidebarOpen}
-          />
-        </div>
+        <Sidebar
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+        />
         <div style={{ flex: 1, padding: "20px", overflowY: "auto" }}>
           {children}
         </div>
