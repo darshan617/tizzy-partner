@@ -3,7 +3,7 @@ import styles from "@/components/subscription/all-subscriptions/AllSubscriptions
 import { FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { LuPencil } from "react-icons/lu";
-import Loader from "@/components/common-components/loader/Loader";
+import Loader from "@/common-components/loader/Loader";
 import { useRouter } from "next/router";
 
 const statusLabelMap = {

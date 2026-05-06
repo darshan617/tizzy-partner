@@ -1,7 +1,3 @@
-import CustomerDetail from "@/components/customers/customers-details/CustomersDetails";
-import OrderSummary from "@/components/customers/renew-plans/order-summary/OrderSummaryCard";
-import RenewCart from "@/components/customers/renew-plans/renew-cart/RenewCart";
-import AccountSummary from "@/components/dashboard/account-summary/AccountSummary";
 import SalesReport from "@/components/dashboard/sales-report/SalesReport";
 import Support from "@/components/dashboard/support/Support";
 import TransactionSection from "@/components/dashboard/transaction/Transaction";
@@ -33,8 +29,8 @@ export const getServerSideProps = async (context) => {
   };
 };
 
-const DynamicAccountSummary = dynamic(
-  () => import("@/components/dashboard/account-summary/AccountSummary"),
+const DynamicSummaryCounts = dynamic(
+  () => import("@/common-components/summary-counts/SummaryCounts"),
   {
     ssr: false,
     loading: () => <p>Loading...</p>,
@@ -49,7 +45,10 @@ const dashboard = ({ partner_id }) => {
 
   return (
     <Layout>
-      <DynamicAccountSummary />
+      <DynamicSummaryCounts 
+      title="Account Summary" 
+      countData={data?.data?.kpis}
+      />
       <TransactionSection />
       <SalesReport />
       <Support />
