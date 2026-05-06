@@ -3,9 +3,10 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.35rem;
-  margin-bottom: 0.35rem;
   font-size: var(--fs12);
   color: var(--textBodySecondary);
+  max-width: 1100px;
+  margin: auto;
 }
 
 .breadcrumbLink {
@@ -32,7 +33,9 @@
   font-size: var(--fs22);
   font-weight: 700;
   color: var(--darkColor);
-  margin: 0 0 1rem;
+  /* margin: 0 0 1rem; */
+  margin: auto;
+  max-width: 1100px;
   line-height: 1.25;
   text-transform: capitalize;
 }
@@ -43,6 +46,8 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   border: 1px solid var(--borderColor);
   padding: 0.75rem 1rem;
+  max-width: 1100px;
+  margin: auto;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -183,10 +188,12 @@
 }
 
 .grid {
-  display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1.25rem;
-  padding-top: 0.25rem;
+  padding-top: .25rem;
+  display: grid;
+  max-width: 1100px;
+  margin: auto;
 }
 
 .empty {
