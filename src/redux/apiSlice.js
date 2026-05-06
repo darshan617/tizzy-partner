@@ -5,6 +5,13 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "https://goyalinfotech.in/tizzy/api/v1/partner",
   }),
-  tagTypes: ["login", "signup", "customer", "services", "subscriptions"],
+  tagTypes: [
+    "login",
+    "signup",
+    "customer",
+    "services",
+    "subscriptions",
+    "dashboard",
+  ],
   endpoints: (builder) => ({}),
 });

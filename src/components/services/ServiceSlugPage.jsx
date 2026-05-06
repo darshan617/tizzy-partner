@@ -8,13 +8,13 @@ import {
   PlanCategoryPills,
   ServiceIntroBlock,
   PricingPlanCard,
-} from "@/components/common-components/service-plans";
+} from "@/common-components/service-plans";
 import {
   getServiceCatalogConfig,
   isValidServiceSlug,
   SERVICE_NAV_ITEMS,
-} from "@/pages/services/servicePlansBySlug";
-import styles from "@/components/common-components/service-plans/ServicePlans.module.css";
+} from "@/constants/servicePlansBySlug";
+import styles from "@/common-components/service-plans/ServicePlans.module.css";
 import {
   useGetPlansMutation,
   useProviderVariantsMutation,
