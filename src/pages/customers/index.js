@@ -1,12 +1,10 @@
 import Layout from "@/components/layout/Layout";
 import React, { useEffect } from "react";
-import CustomerSummary from "@/components/customers/customer-summary/CustomerSummary";
-import AllCustomers from "@/components/customers/all-customers/AllCustomers";
 import Cookies from "js-cookie";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import CustomerList from "@/components/customers/all-customers/AllCustomers";
-import OrderComplete from "@/components/customers/order-complete/OrderComplete";
-import CustomerDetailForm from "@/components/customers/renew-plans/customer-detail-form/CustomerDetailForm";
+import SummaryCounts from "@/common-components/summary-counts/SummaryCounts";
+import { Plus } from "lucide-react";
 
 const Customers = () => {
   const userData = Cookies.get("userData")
@@ -25,11 +23,20 @@ const Customers = () => {
     refetch();
   }, []);
 
+  console.log(allCustomers, "allCustomers");
+  
   return (
     <Layout>
-      <CustomerSummary
-        allCustomers={allCustomers}
-        isFetchingAllCustomers={isFetchingAllCustomers}
+      <SummaryCounts
+      countData={allCustomers?.data?.count}
+      additionalBtns={[
+        {
+          href: "/customers/create-customer",
+          label: "Add New Customer",
+          icon: <Plus size={18} />,
+        }
+      ]}
+      isFetchingCountData={isFetchingAllCustomers}
       />
       <CustomerList
         allCustomers={allCustomers}

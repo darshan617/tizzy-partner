@@ -1,5 +1,5 @@
 
-import CommonOrderSummary from '@/components/common-components/common-order-summary/CommonOrderSummary'
+import CommonOrderSummary from '@/common-components/common-order-summary/CommonOrderSummary'
 import Layout from '@/components/layout/Layout'
 import React from 'react'
 
