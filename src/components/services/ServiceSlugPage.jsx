@@ -13,7 +13,7 @@ import {
   getServiceCatalogConfig,
   isValidServiceSlug,
   SERVICE_NAV_ITEMS,
-} from "@/pages/services/servicePlansBySlug";
+} from "@/constants/servicePlansBySlug";
 import styles from "@/components/common-components/service-plans/ServicePlans.module.css";
 import {
   useGetPlansMutation,
