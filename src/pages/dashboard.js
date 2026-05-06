@@ -1,3 +1,4 @@
+
 import SalesReport from "@/components/dashboard/sales-report/SalesReport";
 import Support from "@/components/dashboard/support/Support";
 import TransactionSection from "@/components/dashboard/transaction/Transaction";
@@ -29,6 +30,7 @@ export const getServerSideProps = async (context) => {
   };
 };
 
+
 const DynamicSummaryCounts = dynamic(
   () => import("@/common-components/summary-counts/SummaryCounts"),
   {
@@ -45,9 +47,9 @@ const dashboard = ({ partner_id }) => {
 
   return (
     <Layout>
-      <DynamicSummaryCounts 
-      title="Account Summary" 
-      countData={data?.data?.kpis}
+      <DynamicSummaryCounts
+        title="Account Summary"
+        countData={data?.data?.kpis}
       />
       <TransactionSection />
       <SalesReport />
