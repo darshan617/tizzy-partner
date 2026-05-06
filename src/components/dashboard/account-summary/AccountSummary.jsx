@@ -142,7 +142,7 @@ const summaryCards = [
   },
   {
     title: "Active Customers",
-    value: 245,
+    value: 25,
     prefix: "",
     suffix: "k",
     trend: "8.72%",
@@ -183,6 +183,52 @@ const summaryCards = [
     anchor: null,
   },
 ];
+
+const summaryCardConfig = {
+  revenue: {
+    prefix: "₹",
+    suffix: "k",
+    trend: "8.72%",
+    boxClass: "infoGrad",
+    iconClass: "infoColor",
+    badgeClass: "up",
+    icon: <WalletIcon />,
+    redirectUrl: null,
+  },
+
+  customers: {
+    prefix: "",
+    suffix: "k",
+    trend: "8.72%",
+    boxClass: "successGrad",
+    iconClass: "successColor",
+    badgeClass: "down",
+    icon: <CustomerIcon />,
+    redirectUrl: "/customers",
+  },
+
+  subscriptions: {
+    prefix: "",
+    suffix: "k",
+    trend: "8.72%",
+    boxClass: "warningGrad",
+    iconClass: "warningColor",
+    badgeClass: "up",
+    icon: <SubscriptionIcon />,
+    redirectUrl: "/subscriptions",
+  },
+
+  renewals: {
+    prefix: "",
+    suffix: "",
+    trend: "8.72%",
+    boxClass: "secondaryGrad",
+    iconClass: "secondaryColor",
+    badgeClass: "down",
+    icon: <RenewalIcon />,
+    redirectUrl: null,
+  },
+};
 
 export default function AccountSummary() {
   const userData = Cookies.get("userData")
