@@ -80,17 +80,17 @@
     white-space: nowrap;
 }
 
-.statusBadge.subtleDanger {
+.subtleDanger {
     background: var(--dangerSubtleColor);
     color: var(--dangerColor);
 }
 
-.statusBadge.subtleSuccess {
+.completed {
     background: var(--successSubtleColor);
     color: var(--successColor);
 }
 
-.statusBadge.subtleWarning {
+.subtleWarning {
     background: var(--warningSubtleColor);
     color: var(--warningColor);
 }
