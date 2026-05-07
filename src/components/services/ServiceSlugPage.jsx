@@ -28,6 +28,7 @@ import {
   setSubCategories,
 } from "@/redux/slices/servicesSlice";
 import { useRouter } from "next/router";
+import { useLazyUpgradeDowngradePlanQuery } from "@/redux/apis/customerApi";
 
 function formatInr(amount) {
   if (typeof amount !== "number" || Number.isNaN(amount)) return "";
@@ -50,7 +51,7 @@ export default function ServiceSlugPage({
   const config = slug ? getServiceCatalogConfig(slug) : null;
   const valid = slug && isValidServiceSlug(slug);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [planDetails, setPlanDetails] = useState(null);
   const [activeCategoryId, setActiveCategoryId] = useState(
     () => config?.defaultCategoryId ?? "",
   );
@@ -67,6 +68,7 @@ export default function ServiceSlugPage({
     useProviderVariantsMutation();
 
   const [fetchPlans, { isLoading: isPlansLoading }] = useGetPlansMutation();
+  const [triggerUpgradeDowngradePlan] = useLazyUpgradeDowngradePlanQuery();
 
   const applyCategoryFromVariant = useCallback(
     (cat) => {
@@ -154,6 +156,7 @@ export default function ServiceSlugPage({
   }, [slug, dispatch]);
 
   useEffect(() => {
+    if (!router?.isReady) return;
     if (!currentProvider?.id) return;
     if (
       showCategoryPills &&
@@ -165,15 +168,41 @@ export default function ServiceSlugPage({
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetchPlans({
-          body: {
-            provider_id: currentProvider.id,
-            variant_id: plansVariantId,
-          },
-        });
-        if (cancelled) return;
-        if (res?.data?.success) {
-          dispatch(setAllPlans(res?.data?.data?.plans ?? []));
+        let res;
+        const isPlanChangeRequest =
+          router?.query?.type === "upgrade" ||
+          router?.query?.type === "downgrade";
+        const hasOrderId = Boolean(router?.query?.order_id);
+
+        if (isPlanChangeRequest && hasOrderId) {
+          res = await triggerUpgradeDowngradePlan({
+            type: router?.query?.type,
+            order_id: router?.query?.order_id,
+          });
+          console.log(res);
+          if (res?.data?.success) {
+            setPlanDetails(res?.data?.data?.current_plan || null);
+            dispatch(
+              setAllPlans(
+                res?.data?.data?.upgrade_plans ||
+                  res?.data?.data?.downgrade_plans ||
+                  [],
+              ),
+            );
+          } else {
+            console.log(res?.error);
+          }
+        } else {
+          res = await fetchPlans({
+            body: {
+              provider_id: currentProvider.id,
+              variant_id: plansVariantId,
+            },
+          });
+          if (cancelled) return;
+          if (res?.data?.success) {
+            dispatch(setAllPlans(res?.data?.data?.plans ?? []));
+          }
         }
       } catch (error) {
         if (!cancelled) {
@@ -191,8 +220,12 @@ export default function ServiceSlugPage({
     showCategoryPills,
     activeCategoryId,
     activeSubCategoryId,
+    router?.isReady,
     fetchPlans,
+    triggerUpgradeDowngradePlan,
     dispatch,
+    router?.query?.type,
+    router?.query?.order_id,
   ]);
 
   const filteredPlans = useMemo(() => {
@@ -257,6 +290,7 @@ export default function ServiceSlugPage({
           searchValue={searchQuery}
           onSearchChange={setSearchQuery}
           providers={providers}
+          planDetails={planDetails}
         />
       )}
 

@@ -29,6 +29,15 @@ const customerApi = apiSlice.injectEndpoints({
         }
       },
       providesTags: ["customer"],
+    }),
+    upgradeDowngradePlan: builder.query({
+      query: ({type, order_id}) => {
+        return{
+          url:`/${type}?order_id=${order_id}`,
+          method:"GET",
+        }
+      },
+      providesTags: ["customer"],
     })
   }),
 });
@@ -36,5 +45,6 @@ const customerApi = apiSlice.injectEndpoints({
 export const {
     useCreateCustomerMutation,
     useGetAllCustomersQuery,
-    useGetSpecificCustomerDetailsQuery
+    useGetSpecificCustomerDetailsQuery,
+    useLazyUpgradeDowngradePlanQuery
 } = customerApi;

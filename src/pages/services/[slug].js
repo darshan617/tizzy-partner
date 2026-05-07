@@ -6,13 +6,13 @@ import { useRouter } from "next/router";
 export default function ParticularService() {
   const router = useRouter();
   const slug =
-    typeof router.query.slug === "string" ? router.query.slug : undefined;
+    typeof router?.query?.slug === "string" ? router?.query?.slug : undefined;
   const {
     data: providers,
     isLoading: isLoadingProviders,
     isFetching: isFetchingProviders,
   } = useGetProvidersQuery(undefined, {
-    skip: !router.isReady,
+    skip: !router?.isReady,
   });
 
   return (
