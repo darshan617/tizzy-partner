@@ -11,6 +11,7 @@ export const getServerSideProps = async (context) => {
   const { req } = context;
 
   let partner_id = null;
+  let partner_name = null;
 
   try {
     const userData = req?.cookies?.userData;
@@ -18,6 +19,7 @@ export const getServerSideProps = async (context) => {
     if (userData) {
       const parsedUser = JSON.parse(userData);
       partner_id = parsedUser?.id || null;
+      partner_name = parsedUser?.name || null;
     }
   } catch (error) {
     console.log("Cookie parse error:", error);
@@ -26,6 +28,7 @@ export const getServerSideProps = async (context) => {
   return {
     props: {
       partner_id,
+      partner_name,
     },
   };
 };
@@ -39,20 +42,30 @@ const DynamicSummaryCounts = dynamic(
   },
 );
 
-const dashboard = ({ partner_id }) => {
+const dashboard = ({ partner_id, partner_name }) => {
   console.log("Partner ID:", partner_id);
 
-  const { data, error, isLoading } = useGetDashboardDataQuery({ partner_id });
-  console.log(data?.data?.kpis);
+  const { data: dashboardData, error, isLoading: isDashboardLoading } = useGetDashboardDataQuery({ partner_id });
 
   return (
     <Layout>
+      <div className="row"> 
+          <p className=" m-0">Welcome,</p>
+          <p className="fw-bold fs-3 m-0 text-capitalize">{partner_name}</p>
+      </div>
       <DynamicSummaryCounts
         title="Account Summary"
-        countData={data?.data?.kpis}
+        countData={dashboardData?.data?.kpis}
+        isFetchingCountData={isDashboardLoading}
       />
-      <TransactionSection />
-      <SalesReport />
+      <TransactionSection 
+      data={dashboardData?.data}
+      isDataLoading={isDashboardLoading}
+      />
+      <SalesReport 
+      data={dashboardData?.data}
+      isDataLoading={isDashboardLoading}
+      />
       <Support />
     </Layout>
   );
