@@ -384,7 +384,11 @@ export default function CustomerDetail() {
                               title="Tizzy Mail"
                             ></div> */}
                             <div>
-                              <Image src={plansImg?.[innerPlan?.provider_id]} />
+                              <p
+                                className={`${styles.servBadge} m-0 flex-shrink-0`}
+                              >
+                                {plansImg?.[innerPlan?.provider_id - 1] || "-"}
+                              </p>
                             </div>
                             <div className="ms-2">
                               <div className="fw-medium">
@@ -457,14 +461,15 @@ export default function CustomerDetail() {
                             >
                               <button
                                 className={styles.updwngradeBtn}
-                                onClick={() =>
+                                onClick={() => {
                                   router.push({
-                                    pathname: "/services/tizzy",
+                                    pathname: `/services/${innerPlan?.provider_name === "Tizzy Mail" ? "tizzy" : innerPlan?.provider_name === "Microsoft 365" ? "microsoft-solution-partner" : "google-cloud-partner"}`,
                                     query: {
-                                      type: "upgrade-plan",
+                                      type: "upgrade",
+                                      order_id: innerPlan?.order_id,
                                     },
-                                  })
-                                }
+                                  });
+                                }}
                               >
                                 UPGRADE
                               </button>{" "}
@@ -475,7 +480,8 @@ export default function CustomerDetail() {
                                   router.push({
                                     pathname: "/services/tizzy",
                                     query: {
-                                      type: "downgrade-plan",
+                                      type: "downgrade",
+                                      order_id: innerPlan?.order_id,
                                     },
                                   })
                                 }
