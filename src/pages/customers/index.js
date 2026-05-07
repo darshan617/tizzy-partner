@@ -44,10 +44,8 @@ const Customers = () => {
         allCustomers={allCustomers}
         isFetchingAllCustomers={isFetchingAllCustomers}
         refetch={refetch}
-      /> */}
-      {/* <OrderComplete /> */}
-      {/* <CustomerDetailForm /> */}
-      <SubscriptionHistory />
+      /> 
+
     </Layout>
   );
 };
