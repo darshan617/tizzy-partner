@@ -51,7 +51,7 @@ export default function ServiceSlugPage({
   const config = slug ? getServiceCatalogConfig(slug) : null;
   const valid = slug && isValidServiceSlug(slug);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [planDetails, setPlanDetails] = useState(null);
   const [activeCategoryId, setActiveCategoryId] = useState(
     () => config?.defaultCategoryId ?? "",
   );
@@ -181,6 +181,7 @@ export default function ServiceSlugPage({
           });
           console.log(res);
           if (res?.data?.success) {
+            setPlanDetails(res?.data?.data?.current_plan || null);
             dispatch(
               setAllPlans(
                 res?.data?.data?.upgrade_plans ||
@@ -289,6 +290,7 @@ export default function ServiceSlugPage({
           searchValue={searchQuery}
           onSearchChange={setSearchQuery}
           providers={providers}
+          planDetails={planDetails}
         />
       )}
 
