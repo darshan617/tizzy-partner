@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "@/components/customers/all-customers/AllCustomers.module.css";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import Cookies from "js-cookie";
-import Loader from "@/components/common-components/loader/Loader";
+import Loader from "@/common-components/loader/Loader";
 import { FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { useRouter } from "next/router";
