@@ -13,10 +13,12 @@ import Cookies from "js-cookie";
 import Image from "next/image";
 import VerifyOtp from "@/components/auth/verify-otp/VerifyOtp";
 import { BsPlusCircleDotted } from "react-icons/bs";
+import { setCustomerData } from "@/redux/slices/customerSlice";
+import { useDispatch } from "react-redux";
 
 export default function CustomerDetail() {
   const router = useRouter();
-
+  const dispatch = useDispatch();
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
@@ -33,7 +35,6 @@ export default function CustomerDetail() {
 
   const customerDetails = customerDetailsData?.data?.customer;
   const allPlans = customerDetailsData?.data?.current_plans;
-  console.log(allPlans, "😁");
 
   useEffect(() => {
     const initSwiper = async () => {
@@ -483,6 +484,7 @@ export default function CustomerDetail() {
                                 <button
                                   className={styles.updwngradeBtn}
                                   onClick={() => {
+                                    Cookies.remove("customerData");
                                     router.push({
                                       pathname: `/services/${innerPlan?.provider_name === "Tizzy Mail" ? "tizzy" : innerPlan?.provider_name === "Microsoft 365" ? "microsoft-solution-partner" : "google-cloud-partner"}`,
                                       query: {
@@ -490,6 +492,22 @@ export default function CustomerDetail() {
                                         order_id: innerPlan?.order_id,
                                       },
                                     });
+                                    Cookies.set(
+                                      "customerData",
+                                      JSON.stringify({
+                                        partner_id: userData?.id,
+                                        customer_id: router?.query?.customerId,
+                                        domain_name: plan?.domain_name,
+                                      }),
+                                    );
+                                    // dispatch(
+                                    //   setCustomerData({
+                                    //     partner_id: userData?.id,
+                                    //     customer_id: router?.query?.customerId,
+                                    //     plan_id: innerPlan?.plan_id,
+                                    //     domain_name: plan?.domain_name,
+                                    //   }),
+                                    // );
                                   }}
                                 >
                                   UPGRADE

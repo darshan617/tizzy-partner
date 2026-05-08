@@ -243,7 +243,7 @@ export default function TransactionSection({ data, isDataLoading }) {
                     <div className="col-12 col-sm-2 d-flex align-items-center justify-content-between d-sm-block">
                       <div className={`${styles.crDate}`}>{item?.date}</div>
                       <div className={`${styles.crNumber} fw-medium`}>
-                        {item?.order_id}
+                        {item?.order_no}
                       </div>
                     </div>
 

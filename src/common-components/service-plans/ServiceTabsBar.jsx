@@ -24,7 +24,7 @@ export default function ServiceTabsBar({
               className="m-0 px-1 d-flex align-items-center rounded-1"
               style={{ background: "#E6F6FB" }}
             >
-              Remaining : <b>{planDetails?.remaining_days || "0"}</b>
+              Remaining Days : <b>{planDetails?.remaining_days || "0"}</b>
               <span className="px-2">|</span>
               <b>₹ {planDetails?.amount || "-"}</b>
               <span className="ps-2">

@@ -49,7 +49,13 @@ const RenewCart = ({
               >
                 −
               </button>
-              <span>{lisceneCounter}</span>
+              <input
+                type="text"
+                value={lisceneCounter}
+                onChange={(e) => setLisceneCounter(Number(e.target.value))}
+                className={styles.qtyInput}
+                min={1}
+              />
               <button onClick={() => setLisceneCounter((prev) => prev + 1)}>
                 +
               </button>
@@ -60,8 +66,8 @@ const RenewCart = ({
             <div className={styles.colLabel}>Total</div>
             <div className={styles.priceVal}>₹ {total.toFixed(2)}</div>
           </div>
-
-          <button className={styles.removeBtn}>×</button>
+          {/* 
+          <button className={styles.removeBtn}>×</button> */}
         </div>
 
         <hr className={styles.divider} />

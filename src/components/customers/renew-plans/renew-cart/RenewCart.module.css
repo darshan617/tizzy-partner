@@ -252,6 +252,12 @@
     border-color: #d1d5db;
     color: #111827;
 }
+.qtyInput{
+    width: 30px;
+    text-align: center;
+    border: none;
+    outline: none;
+}
 
 @media (max-width: 1024px) {
     .card {

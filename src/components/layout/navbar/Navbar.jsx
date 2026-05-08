@@ -34,6 +34,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
   const handleSignOut = () => {
     Cookies.remove("userData");
+    Cookies.remove("customerData");
     router?.push("/auth/login");
     showToast("Signed Out successfully", "success");
   };
