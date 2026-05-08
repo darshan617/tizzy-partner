@@ -11,10 +11,12 @@ const CommonOrderSummary = () => {
   const customerData = Cookies.get("customerData")
     ? JSON.parse(Cookies.get("customerData"))
     : {};
+  const [cartDetails, setCartDetails] = useState({});
+  const [pricePerUser, setPricePerUser] = useState(null);
 
   const [lisceneCounter, setLisceneCounter] = useState(1);
-  const pricePerUser = 1000;
   const total = pricePerUser * lisceneCounter;
+  console.log(pricePerUser, "pricePerUser");
 
   const [getCartDetails, { isLoading: isGettingCartDetails }] =
     useGetCartDetailsMutation();
@@ -41,12 +43,10 @@ const CommonOrderSummary = () => {
           },
         });
       }
-
+      console.log(res, "res");
       if (res?.data?.success) {
-        showToast(" successfully", "success");
-        router.push({
-          pathname: `/order-summary`,
-        });
+        setCartDetails(res?.data?.data);
+        setPricePerUser(res?.data?.data?.plan?.actual_price);
       }
     } catch (error) {
       console.log("error", error);
@@ -64,6 +64,7 @@ const CommonOrderSummary = () => {
         setLisceneCounter={setLisceneCounter}
         pricePerUser={pricePerUser}
         total={total}
+        cartDetails={cartDetails}
       />
       <OrderSummaryCard
         lisceneCounter={lisceneCounter}

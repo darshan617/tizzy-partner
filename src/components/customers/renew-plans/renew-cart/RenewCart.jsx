@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import styles from "@/components/customers/renew-plans/renew-cart/RenewCart.module.css";
 import Link from "next/link";
-import { IoMdArrowBack } from "react-icons/io";
+import CustomPopup from "@/common-components/custom-popup/CustomPopup";
+import CustomerForm from "../../customer-form/CustomerForm";
 
 const RenewCart = ({
   total,
@@ -9,8 +10,12 @@ const RenewCart = ({
   setLisceneCounter,
   lisceneCounter,
 }) => {
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+  };
   return (
-    <>
+    <div>
       <div className={styles.card}>
         <div className={styles.cartRow}>
           <div
@@ -34,7 +39,7 @@ const RenewCart = ({
 
           <div className={styles.priceCol}>
             <div className={styles.colLabel}>Price</div>
-            <div className={styles.priceVal}>₹ {pricePerUser.toFixed(2)}</div>
+            <div className={styles.priceVal}>₹ {pricePerUser?.toFixed(2)}</div>
             <div className={styles.priceSub}>per user/year</div>
           </div>
 
@@ -77,7 +82,52 @@ const RenewCart = ({
           <span className={styles.subtotalVal}>₹ {total.toFixed(2)}</span>
         </div>
       </div>
-    </>
+
+      <div className={styles.customerDetailsCard}>
+        <div className={styles.customerDetailsHeader}>
+          <h3 className={styles.customerDetailsTitle}>CUSTOMER DETAILS</h3>
+          <button
+            type="button"
+            className={styles.newCustomerBtn}
+            onClick={() => setIsPopupOpen(true)}
+          >
+            + New Customer
+          </button>
+        </div>
+
+        <div className={styles.customerFieldsRow}>
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel} htmlFor="companyName">
+              Company Name <span className={styles.required}>*</span>
+            </label>
+            <input
+              id="companyName"
+              type="text"
+              className={styles.fieldInput}
+              placeholder="Enter Company Name"
+            />
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel} htmlFor="domainName">
+              Domain <span className={styles.required}>*</span>
+            </label>
+            <input
+              id="domainName"
+              type="text"
+              className={styles.fieldInput}
+              placeholder="Enter Domain Name"
+            />
+          </div>
+        </div>
+      </div>
+
+      {isPopupOpen && (
+        <CustomPopup onClose={handleClosePopup}>
+          <CustomerForm />
+        </CustomPopup>
+      )}
+    </div>
   );
 };
 

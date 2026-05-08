@@ -339,6 +339,7 @@ export default function ServiceSlugPage({
                     pathname: `/order-summary`,
                     query: {
                       plan_id: plan?.plan_id || plan?.id,
+                      ...(!router?.query?.type && { variant: "new-plan" }),
                     },
                   });
                 }}

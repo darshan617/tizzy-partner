@@ -32,12 +32,15 @@ const initialFormData = {
 const CustomerForm = () => {
   const router = useRouter();
   const { showToast } = useToast();
-  const [searchGstin, { isLoading: isSearchingGstin }] = useSearchGstinMutation();
-  const [createCustomer, { isLoading: isCreatingCustomer }] = useCreateCustomerMutation();
+  const [searchGstin, { isLoading: isSearchingGstin }] =
+    useSearchGstinMutation();
+  const [createCustomer, { isLoading: isCreatingCustomer }] =
+    useCreateCustomerMutation();
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
   const [isGstinVerified, setIsGstinVerified] = useState(false);
-  const gstinRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+  const gstinRegex =
+    /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
 
   const validateForm = () => {
     const newErrors = {};
@@ -228,37 +231,99 @@ const CustomerForm = () => {
       if (res?.data?.success) {
         setIsGstinVerified(false);
         setFormData(initialFormData);
-        showToast(res?.data?.message  || "Customer created successfully", "success");
-        router.push("/customers");
+        showToast(
+          res?.data?.message || "Customer created successfully",
+          "success",
+        );
+        if (router?.asPath !== "/customers/create-customer") {
+          router.push({
+            pathname: "/order-summary",
+            query: {
+              plan_id: router?.query?.plan_id,
+            },
+          });
+        } else {
+          router.push("/customers");
+        }
       }
     } catch (error) {
       console.log("error", error);
     }
   };
 
+  console.log(router, "router");
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.headerRow}>
-        <nav className="breadcrumb mb-0">
-          <Link href="/dashboard" className="breadcrumb-item">
-            Dashboard
-          </Link>
-          <Link href="/customers" className="breadcrumb-item">
-            Customers
-          </Link>
-          <h1 className="breadcrumb-item active" aria-current="page">
-            Add New Customer
-          </h1>
-        </nav>
-        <button className={styles.backBtn} onClick={() => router.back()} type="button">
-          <BsArrowLeft/> Back
-        </button>
-      </div>
-
-      <div className={`sectionCard ${styles.formCard}`}>
+      <div
+        className={`sectionCard ${styles.formCard}`}
+        style={{
+          padding:
+            router?.asPath !== "/customers/create-customer" ? "0" : "20px",
+          boxShadow:
+            router?.asPath !== "/customers/create-customer" ? "none" : "",
+        }}
+      >
         <form onSubmit={handleSubmit} noValidate>
-          <h2 className={`${styles.sectionTitle} sectionCardHead`}>Company Details</h2>
+          <h2 className={`${styles.sectionTitle} sectionCardHead`}>
+            Contact Details
+          </h2>
+
+          <div className={styles.grid}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Name<span className={styles.required}>*</span>
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="form-control"
+              />
+              {errors.name && (
+                <span className={styles.errorMessage}>{errors.name}</span>
+              )}
+            </div>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Email<span className={styles.required}>*</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="form-control"
+              />
+              {errors.email && (
+                <span className={styles.errorMessage}>{errors.email}</span>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.grid}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Mobile No.<span className={styles.required}>*</span>
+              </label>
+              <input
+                type="text"
+                name="mobile"
+                maxLength={10}
+                value={formData.mobile}
+                onChange={handleChange}
+                className="form-control"
+              />
+              {errors.mobile && (
+                <span className={styles.errorMessage}>{errors.mobile}</span>
+              )}
+            </div>
+          </div>
+
+          <h2 className={`${styles.sectionTitle} sectionCardHead`}>
+            Company Details
+          </h2>
 
           <div className={styles.grid}>
             <div className={`${styles.formGroup} ${styles.fullWidthLeft}`}>
@@ -276,7 +341,9 @@ const CustomerForm = () => {
               {isSearchingGstin && (
                 <span className={styles.infoMessage}>Searching GSTIN...</span>
               )}
-              {errors.gstin && <span className={styles.errorMessage}>{errors.gstin}</span>}
+              {errors.gstin && (
+                <span className={styles.errorMessage}>{errors.gstin}</span>
+              )}
             </div>
           </div>
           {isGstinVerified && (
@@ -296,7 +363,9 @@ const CustomerForm = () => {
                     style={{ backgroundColor: "#f5f5f5" }}
                   />
                   {errors.company_name && (
-                    <span className={styles.errorMessage}>{errors.company_name}</span>
+                    <span className={styles.errorMessage}>
+                      {errors.company_name}
+                    </span>
                   )}
                 </div>
                 <div className={styles.formGroup}>
@@ -313,7 +382,9 @@ const CustomerForm = () => {
                     style={{ backgroundColor: "#f5f5f5" }}
                   />
                   {errors.company_address && (
-                    <span className={styles.errorMessage}>{errors.company_address}</span>
+                    <span className={styles.errorMessage}>
+                      {errors.company_address}
+                    </span>
                   )}
                 </div>
               </div>
@@ -333,7 +404,9 @@ const CustomerForm = () => {
                     style={{ backgroundColor: "#f5f5f5" }}
                   />
                   {errors.country && (
-                    <span className={styles.errorMessage}>{errors.country}</span>
+                    <span className={styles.errorMessage}>
+                      {errors.country}
+                    </span>
                   )}
                 </div>
                 <div className={styles.formGroup}>
@@ -349,7 +422,9 @@ const CustomerForm = () => {
                     readOnly
                     style={{ backgroundColor: "#f5f5f5" }}
                   />
-                  {errors.state && <span className={styles.errorMessage}>{errors.state}</span>}
+                  {errors.state && (
+                    <span className={styles.errorMessage}>{errors.state}</span>
+                  )}
                 </div>
               </div>
 
@@ -363,11 +438,13 @@ const CustomerForm = () => {
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    className="form-control"   
+                    className="form-control"
                     readOnly
                     style={{ backgroundColor: "#f5f5f5" }}
                   />
-                  {errors.city && <span className={styles.errorMessage}>{errors.city}</span>}
+                  {errors.city && (
+                    <span className={styles.errorMessage}>{errors.city}</span>
+                  )}
                 </div>
                 <div className={styles.formGroup}>
                   <label className={styles.label}>
@@ -382,9 +459,11 @@ const CustomerForm = () => {
                     className="form-control"
                     readOnly
                     style={{ backgroundColor: "#f5f5f5" }}
-                  />    
+                  />
                   {errors.pincode && (
-                    <span className={styles.errorMessage}>{errors.pincode}</span>
+                    <span className={styles.errorMessage}>
+                      {errors.pincode}
+                    </span>
                   )}
                 </div>
               </div>
@@ -403,63 +482,23 @@ const CustomerForm = () => {
                     readOnly
                     style={{ backgroundColor: "#f5f5f5" }}
                   />
-                  {errors.pan_no && <span className={styles.errorMessage}>{errors.pan_no}</span>}
+                  {errors.pan_no && (
+                    <span className={styles.errorMessage}>{errors.pan_no}</span>
+                  )}
                 </div>
               </div>
             </>
           )}
 
-          <h2 className={`${styles.sectionTitle} sectionCardHead`}>Contact Details</h2>
-
-          <div className={styles.grid}>
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Name<span className={styles.required}>*</span>
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="form-control"
-              />
-              {errors.name && <span className={styles.errorMessage}>{errors.name}</span>}
-            </div>
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Email<span className={styles.required}>*</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="form-control"
-              />
-              {errors.email && <span className={styles.errorMessage}>{errors.email}</span>}
-            </div>
-          </div>
-
-          <div className={styles.grid}>
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Mobile No.<span className={styles.required}>*</span>
-              </label>
-              <input
-                type="text"
-                name="mobile"
-                maxLength={10}
-                value={formData.mobile}
-                onChange={handleChange}
-                className="form-control"
-              />
-              {errors.mobile && <span className={styles.errorMessage}>{errors.mobile}</span>}
-            </div>
-          </div>
-
           <div className={styles.submitWrap}>
             <button type="submit" className={styles.submitBtn}>
-              {isCreatingCustomer ? "Creating..." : "Create Profile"}
+              {router?.asPath !== "/customers/create-customer"
+                ? isCreatingCustomer
+                  ? "Adding..."
+                  : "Add Customer"
+                : isCreatingCustomer
+                  ? "Creating..."
+                  : "Create Profile"}
             </button>
           </div>
         </form>
