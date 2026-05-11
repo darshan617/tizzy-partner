@@ -173,7 +173,11 @@ const CommonOrderSummary = () => {
         total={total}
         promoCode={promoCode}
         setPromoCode={setPromoCode}
-        _creditBalance_={Number(cartDetails?.wallet_info?.wallet_balance || 0)}
+        _creditBalance_={Number(
+          cartDetails?.wallet_info?.wallet_balance ||
+            cartDetails?.pricing?.credit_balance ||
+            0,
+        )}
       />
     </div>
   );
