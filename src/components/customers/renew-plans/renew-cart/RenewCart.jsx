@@ -1,16 +1,35 @@
 import React, { useState } from "react";
 import styles from "@/components/customers/renew-plans/renew-cart/RenewCart.module.css";
 import Link from "next/link";
-import { IoMdArrowBack } from "react-icons/io";
+import CustomPopup from "@/common-components/custom-popup/CustomPopup";
+import CustomerForm from "../../customer-form/CustomerForm";
+import { useRouter } from "next/router";
+import CustomDropdown from "@/common-components/custom-dropdown/CustomDropdown";
 
 const RenewCart = ({
   total,
   pricePerUser,
   setLisceneCounter,
   lisceneCounter,
+  cartDetails,
+  getAllCustomers,
+  selectedCompany,
+  setSelectedCompany,
 }) => {
+  const router = useRouter();
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+  };
+  const companyNames = getAllCustomers?.data?.customers?.map(
+    (customer, index) => ({
+      label: customer?.company,
+      value: customer?.id || customer?.customer_id || customer?.company,
+      idx: index,
+    }),
+  );
   return (
-    <>
+    <div>
       <div className={styles.card}>
         <div className={styles.cartRow}>
           <div
@@ -18,23 +37,21 @@ const RenewCart = ({
             title="Tizzy Mail"
           ></div>
           <div className={styles.productInfo}>
-            <div className={styles.productName}>
-              Tizzy® Mail Enterprise 100 GB
-            </div>
-            <Link
-              href="https://goyalinfotech.com"
-              className={styles.productLink}
-            >
-              goyalinfotech.com
-            </Link>
+            <div className={styles.productName}>{cartDetails?.plan_name}</div>
+            {cartDetails?.domain_name && (
+              <p className={`${styles.productLink} m-0`}>
+                {cartDetails?.domain_name}
+              </p>
+            )}
             <div className={styles.productDate}>
-              25 May, 2025 – 25 May, 2026
+              {cartDetails?.subscription_start_date} –{" "}
+              {cartDetails?.subscription_end_date}
             </div>
           </div>
 
           <div className={styles.priceCol}>
             <div className={styles.colLabel}>Price</div>
-            <div className={styles.priceVal}>₹ {pricePerUser.toFixed(2)}</div>
+            <div className={styles.priceVal}>₹ {pricePerUser?.toFixed(2)}</div>
             <div className={styles.priceSub}>per user/year</div>
           </div>
 
@@ -49,7 +66,13 @@ const RenewCart = ({
               >
                 −
               </button>
-              <span>{lisceneCounter}</span>
+              <input
+                type="text"
+                value={lisceneCounter}
+                onChange={(e) => setLisceneCounter(Number(e.target.value))}
+                className={styles.qtyInput}
+                min={1}
+              />
               <button onClick={() => setLisceneCounter((prev) => prev + 1)}>
                 +
               </button>
@@ -71,7 +94,64 @@ const RenewCart = ({
           <span className={styles.subtotalVal}>₹ {total.toFixed(2)}</span>
         </div>
       </div>
-    </>
+
+      {router?.query?.variant === "new-plan" && (
+        <div className={styles.customerDetailsCard}>
+          <div className={styles.customerDetailsHeader}>
+            <h3 className={styles.customerDetailsTitle}>CUSTOMER DETAILS</h3>
+            <button
+              type="button"
+              className={styles.newCustomerBtn}
+              onClick={() => setIsPopupOpen(true)}
+            >
+              + New Customer
+            </button>
+          </div>
+
+          <div className={styles.customerFieldsRow}>
+            <CustomDropdown
+              options={companyNames}
+              value={selectedCompany}
+              placeholder="Select Company Name"
+              label="Company Name"
+              onChange={(option) => setSelectedCompany(option?.label || "")}
+            />
+            {/* <div className={styles.fieldGroup}>
+              <label className={styles.fieldLabel} htmlFor="companyName">
+                Company Name <span className={styles.required}>*</span>
+              </label>
+              <input
+                id="companyName"
+                type="text"
+                className={styles.fieldInput}
+                placeholder="Enter Company Name"
+              />
+            </div> */}
+
+            <div className={styles.fieldGroup}>
+              <label className={styles.fieldLabel} htmlFor="domainName">
+                Domain <span className={styles.required}>*</span>
+              </label>
+              <input
+                id="domainName"
+                type="text"
+                className={styles.fieldInput}
+                placeholder="Enter Domain Name"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isPopupOpen && (
+        <CustomPopup onClose={handleClosePopup}>
+          <h3 className="fs-5 fw-600 mb-3 border-bottom pb-3">
+            Add New Customer
+          </h3>
+          <CustomerForm />
+        </CustomPopup>
+      )}
+    </div>
   );
 };
 

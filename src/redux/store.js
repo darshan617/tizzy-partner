@@ -3,12 +3,14 @@ import userSlice from "@/redux/slices/userSlice";
 import { createWrapper } from "next-redux-wrapper";
 import { apiSlice } from "./apiSlice";
 import servicesSlice from "./slices/servicesSlice";
+import customerSlice from "./slices/customerSlice";
 
 const makeStore = () => {
   const store = configureStore({
     reducer: {
       user: userSlice,
       services: servicesSlice,
+      customer: customerSlice,
       [apiSlice.reducerPath]: apiSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>

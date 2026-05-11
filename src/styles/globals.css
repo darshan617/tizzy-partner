@@ -203,7 +203,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #000;
+  background-color: var(--primaryColor);
   border-radius: 5px;
 }
 

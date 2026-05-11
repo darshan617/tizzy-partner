@@ -10,7 +10,7 @@ const customerApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
-      providesTags: ["customer"],
+      invalidatesTags: ["customer"],
     }),
     getAllCustomers: builder.query({
       query: ({partner_id}) => {
@@ -19,7 +19,7 @@ const customerApi = apiSlice.injectEndpoints({
           method:"GET",
         }
       },
-      providesTags: ["customer"],
+      providesTags: ["customer", "customer"],
     }),
     getSpecificCustomerDetails: builder.query({
       query: ({customer_id, partner_id}) => {

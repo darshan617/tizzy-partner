@@ -10,7 +10,7 @@ const loginApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
-      providesTags: ["login"],
+      invalidatesTags: ["login"],
     }),
     verifyOtp: builder.mutation({
       query: ({ body }) => {
@@ -20,7 +20,7 @@ const loginApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
-      providesTags: ["login"],
+      invalidatesTags: ["login"],
     }),
     resendOtp: builder.mutation({
       query: ({ body }) => {
@@ -30,7 +30,7 @@ const loginApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
-      providesTags: ["login"],
+      invalidatesTags: ["login"],
     }),
   }),
 });

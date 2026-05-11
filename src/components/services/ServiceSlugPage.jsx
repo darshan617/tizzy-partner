@@ -29,6 +29,12 @@ import {
 } from "@/redux/slices/servicesSlice";
 import { useRouter } from "next/router";
 import { useLazyUpgradeDowngradePlanQuery } from "@/redux/apis/customerApi";
+import { selectCustomerData } from "@/redux/slices/customerSlice";
+import Cookies from "js-cookie";
+import {
+  useAddToCartMutation,
+  useGetCartDetailsMutation,
+} from "@/redux/apis/addToCartApi";
 
 function formatInr(amount) {
   if (typeof amount !== "number" || Number.isNaN(amount)) return "";
@@ -179,7 +185,6 @@ export default function ServiceSlugPage({
             type: router?.query?.type,
             order_id: router?.query?.order_id,
           });
-          console.log(res);
           if (res?.data?.success) {
             setPlanDetails(res?.data?.data?.current_plan || null);
             dispatch(
@@ -321,22 +326,23 @@ export default function ServiceSlugPage({
           ) : (
             allPlans.map((plan) => (
               <PricingPlanCard
-                key={plan?.id}
+                plan_id={plan?.plan_id || plan?.id}
                 title={plan?.name}
                 priceLabel={`₹${plan?.price ?? "0"}`}
                 originalPriceLabel={plan?.actual_price ?? ""}
-                discountPercent={plan.discountPercent}
+                discountPercent={plan?.discountPercent}
                 periodNote={"user/month, paid yearly"}
                 gstNote={"GST 18% Additional"}
                 features={plan?.features}
-                onCtaClick={() =>
+                onCtaClick={() => {
                   router.push({
                     pathname: `/order-summary`,
                     query: {
-                      type: "buy-service",
+                      plan_id: plan?.plan_id || plan?.id,
+                      ...(!router?.query?.type && { variant: "new-plan" }),
                     },
-                  })
-                }
+                  });
+                }}
               />
             ))
           )}
