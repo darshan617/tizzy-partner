@@ -3,6 +3,7 @@ import OrderSummaryCard from "@/components/customers/renew-plans/order-summary/O
 import RenewCart from "@/components/customers/renew-plans/renew-cart/RenewCart";
 import {
   useAddToCartMutation,
+  useRenewCustomerDetailsMutation,
   useUpdateCartMutation,
 } from "@/redux/apis/addToCartApi";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
@@ -26,13 +27,15 @@ const CommonOrderSummary = () => {
   const [cartDetails, setCartDetails] = useState({});
   const [pricePerUser, setPricePerUser] = useState(null);
   const [selectedCompany, setSelectedCompany] = useState("");
-  const [lisceneCounter, setLisceneCounter] = useState(1);
+  const [lisceneCounter, setLisceneCounter] = useState(10);
+  const [promoCode, setPromoCode] = useState(10);
   const total = pricePerUser * lisceneCounter;
 
   const [addToCart, { isLoading: isGettingCartDetails }] =
     useAddToCartMutation();
-
   const [updateCart, { isLoading: isUpdatingCart }] = useUpdateCartMutation();
+  const [renewCustomerDetails, { isLoading: isRenewingCustomerDetails }] =
+    useRenewCustomerDetailsMutation();
 
   const { data: getAllCustomers } = useGetAllCustomersQuery(
     {
@@ -73,9 +76,14 @@ const CommonOrderSummary = () => {
       // }
 
       if (res?.data?.success) {
-        setCartDetails(res?.data?.data);
-        setPricePerUser(res?.data?.data?.unit_price || 0);
-        dispatch(setCartData(res?.data?.data));
+        const data = res?.data?.data;
+        setCartDetails({
+          ...data,
+          customerLimit: data?.customerLimit || data?.customer_limit,
+        });
+        setPricePerUser(data?.unit_price || 0);
+        dispatch(setCartData(data));
+        setLisceneCounter(data?.licenses);
       }
     } catch (error) {
       console.log("error", error);
@@ -97,13 +105,54 @@ const CommonOrderSummary = () => {
     }
   };
 
+  const handleRenewCustomerDetails = async () => {
+    try {
+      const res = await renewCustomerDetails({
+        body: {
+          order_id: router?.query?.order_id,
+        },
+      });
+      if (res?.data?.success) {
+        const resCartDetails = {
+          ...res?.data?.data,
+          plan_name: res?.data?.data?.plan_info?.plan_name,
+          domain_name: res?.data?.data?.company_info?.domain,
+          subscription_start_date:
+            res?.data?.data?.plan_info?.billing_cycle?.start_date,
+          subscription_end_date:
+            res?.data?.data?.plan_info?.billing_cycle?.end_date,
+          customerLimit: res?.data?.data?.plan_info?.customer_limit,
+        };
+
+        setCartDetails(resCartDetails);
+        setPricePerUser(
+          res?.data?.data?.renewal_summary?.price_per_license_per_year || 0,
+        );
+        setLisceneCounter(res?.data?.data?.plan_info?.licenses);
+        dispatch(setCartData(res?.data?.data));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    handleAddToCart();
+    if (router?.query?.plan_id && router?.query?.variant) {
+      handleAddToCart();
+    }
   }, [router?.query?.plan_id, router?.query?.variant]);
 
   useEffect(() => {
-    handleUpdateCart();
+    if (cartData?.cart_id && lisceneCounter) {
+      handleUpdateCart();
+    }
   }, [cartData?.cart_id, lisceneCounter]);
+
+  useEffect(() => {
+    if (router?.query?.type === "renew-plan") {
+      handleRenewCustomerDetails();
+    }
+  }, [router?.query?.type === "renew-plan"]);
 
   return (
     <div className="d-flex align-items-start gap-3 justify-content-center">
@@ -122,6 +171,9 @@ const CommonOrderSummary = () => {
         setLisceneCounter={setLisceneCounter}
         pricePerUser={pricePerUser}
         total={total}
+        promoCode={promoCode}
+        setPromoCode={setPromoCode}
+        _creditBalance_={Number(cartDetails?.wallet_info?.wallet_balance || 0)}
       />
     </div>
   );

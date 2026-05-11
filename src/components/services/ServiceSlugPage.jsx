@@ -340,6 +340,12 @@ export default function ServiceSlugPage({
                     query: {
                       plan_id: plan?.plan_id || plan?.id,
                       ...(!router?.query?.type && { variant: "new-plan" }),
+                      ...(router?.query?.type === "upgrade" && {
+                        variant: "upgrade",
+                      }),
+                      ...(router?.query?.type === "downgrade" && {
+                        variant: "downgrade",
+                      }),
                     },
                   });
                 }}
