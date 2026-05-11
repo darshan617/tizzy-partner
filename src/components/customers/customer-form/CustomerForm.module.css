@@ -139,6 +139,11 @@
 .submitBtn:hover {
   background: #1260b8;
 }
+.submitBtn:disabled {
+  background: #1260b8;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 @media (min-width: 768px) {
   .formCard {

@@ -3,16 +3,14 @@ import { apiSlice } from "../apiSlice";
 const addToCartApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     addToCart: builder.mutation({
-      query: ({ body }) => {
-        console.log(body, "body");
-        
+      query: ({ body }) => {        
         return {
           url: `/add-to-cart`,
           method: "POST",
           body: body,
         };
       },
-      providesTags: ["addToCart"],
+      invalidatesTags: ["addToCart"],
     }),
     getCartDetails: builder.mutation({
       query: ({ body }) => {
@@ -22,7 +20,7 @@ const addToCartApi = apiSlice.injectEndpoints({
           body: body,
         }
       },
-      providesTags: ["addToCart"],
+      invalidatesTags: ["addToCart"],
     })
   }),
 });

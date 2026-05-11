@@ -10,7 +10,7 @@ const signupApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
-      providesTags: ["signup"],
+      invalidatesTags: ["signup"],
     }),
     searchGstin: builder?.mutation({
       query: ({ body }) => {
@@ -20,7 +20,7 @@ const signupApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
-      providesTags: ["signup"],
+      invalidatesTags: ["signup"],
     }),
     getOtpVerified: builder?.mutation({
       query: ({ body }) => {
@@ -30,7 +30,7 @@ const signupApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
-      providesTags: ["signup"],
+        invalidatesTags: ["signup"],
     }),
   }),
 });

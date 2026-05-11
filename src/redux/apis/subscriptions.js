@@ -10,7 +10,7 @@ const subscriptionsApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
-      providesTags: ["subscriptions"],
+      invalidatesTags: ["subscriptions"],
     }),
   }),
 });

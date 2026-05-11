@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "@/common-components/custom-popup/CustomPopup.module.css";
 import { createPortal } from "react-dom";
+import { IoClose } from "react-icons/io5";
 
 const CustomPopup = ({
   children,
@@ -47,7 +48,7 @@ const CustomPopup = ({
             onClick={onClose}
             aria-label="Close popup"
           >
-            X
+            <IoClose size={20} />
           </button>
 
           {(description || children) && (

@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import styles from "@/components/customers/renew-plans/order-summary/OrderSummaryCard.module.css";
-import { FiInfo } from "react-icons/fi";
-import Link from "next/link";
+import { FiCheck, FiInfo } from "react-icons/fi";
+import CustomPopup from "@/common-components/custom-popup/CustomPopup";
+import Image from "next/image";
+import requestCredit from "@/assets/cart/request_credit.svg";
 
 const OrderSummaryCard = ({
   _gstRate_ = 0.18,
@@ -16,6 +18,10 @@ const OrderSummaryCard = ({
   const isInsufficient = _creditBalance_ < totals;
   const [isPromoCodeAdded, setIsPromoCodeAdded] = useState(false);
 
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+  };
   return (
     <div>
       <div className={styles.card}>
@@ -127,9 +133,32 @@ const OrderSummaryCard = ({
         </button>
         <div className={styles.requestBox}>
           <p>Want to complete purchase urgently?</p>
-          <button className={styles.requestLink}>Request Credits</button>
+          <button
+            className={styles.requestLink}
+            onClick={() => setIsPopupOpen(true)}
+          >
+            Request Credits
+          </button>
         </div>
       </div>
+      {isPopupOpen && (
+        <CustomPopup onClose={handleClosePopup}>
+          <div className={styles.creditRequestPopup}>
+            <Image src={requestCredit} className="mb-3" />
+            <h3 className={styles.creditRequestAmount}>
+              ₹ {totals.toFixed(2)}
+            </h3>
+            <p className={styles.creditRequestTitle}>
+              YOUR CREDIT REQUEST IS SENT SUCCESSFULLY.
+            </p>
+            <p className={styles.creditRequestDescription}>
+              Your request has been sent for approval.
+              <br />
+              We'll notify you once it's approved.
+            </p>
+          </div>
+        </CustomPopup>
+      )}
     </div>
   );
 };

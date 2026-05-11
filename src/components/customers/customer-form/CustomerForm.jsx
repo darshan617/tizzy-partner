@@ -239,15 +239,43 @@ const CustomerForm = () => {
           router.push({
             pathname: "/order-summary",
             query: {
-              plan_id: router?.query?.plan_id,
+              ...router?.query,
             },
           });
         } else {
           router.push("/customers");
         }
+      } else {
+        const responseData = res?.error?.data || {};
+        const backendErrors = {};
+
+        Object.entries(responseData).forEach(([key, value]) => {
+          if (
+            typeof value === "string" &&
+            value.trim() &&
+            !["error", "message", "success"].includes(key)
+          ) {
+            backendErrors[key] = value;
+          }
+        });
+
+        if (Object.keys(backendErrors).length > 0) {
+          setErrors((prev) => ({
+            ...prev,
+            ...backendErrors,
+          }));
+        }
+
+        showToast(
+          responseData?.message ||
+            Object.values(backendErrors)?.[0] ||
+            "Unable to create customer",
+          "error",
+        );
       }
     } catch (error) {
       console.log("error", error);
+      showToast("Unable to create customer", "error");
     }
   };
 
@@ -491,7 +519,11 @@ const CustomerForm = () => {
           )}
 
           <div className={styles.submitWrap}>
-            <button type="submit" className={styles.submitBtn}>
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={isCreatingCustomer || formData?.country?.trim() === ""}
+            >
               {router?.asPath !== "/customers/create-customer"
                 ? isCreatingCustomer
                   ? "Adding..."
