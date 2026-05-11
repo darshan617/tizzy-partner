@@ -59,21 +59,47 @@ const RenewCart = ({
             <div className={styles.colLabel}>License</div>
             <div className={styles.qtyCtrl}>
               <button
-                disabled={lisceneCounter === 1}
+                disabled={
+                  lisceneCounter === 1 ||
+                  router?.query?.variant === "upgrade" ||
+                  router?.query?.variant === "downgrade"
+                }
                 onClick={() =>
                   lisceneCounter > 1 && setLisceneCounter((prev) => prev - 1)
                 }
+                className={styles.qtyBtn}
               >
                 −
               </button>
               <input
                 type="text"
                 value={lisceneCounter}
-                onChange={(e) => setLisceneCounter(Number(e.target.value))}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  if (value <= cartDetails?.customerLimit) {
+                    setLisceneCounter(value);
+                  }
+                }}
                 className={styles.qtyInput}
                 min={1}
+                max={cartDetails?.customerLimit}
+                disabled={
+                  router?.query?.variant === "upgrade" ||
+                  router?.query?.variant === "downgrade"
+                }
               />
-              <button onClick={() => setLisceneCounter((prev) => prev + 1)}>
+              <button
+                onClick={() =>
+                  lisceneCounter < cartDetails?.customerLimit &&
+                  setLisceneCounter((prev) => prev + 1)
+                }
+                className={styles.qtyBtn}
+                disabled={
+                  lisceneCounter === cartDetails?.customerLimit ||
+                  router?.query?.variant === "upgrade" ||
+                  router?.query?.variant === "downgrade"
+                }
+              >
                 +
               </button>
             </div>
