@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import styles from "@/common-components/custom-dropdown/CustomerDropdown.module.css";
 
@@ -13,6 +13,10 @@ const CustomDropdown = ({
   const [selectedOption, setSelectedOption] = useState(value);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+
+  useEffect(() => {
+    setSelectedOption(value ?? "");
+  }, [value]);
 
   const filteredOptions =
     options?.filter((option) =>
@@ -32,7 +36,11 @@ const CustomDropdown = ({
           className={styles.dropdownToggle}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
-          <span>{selectedOption ? selectedOption : placeholder}</span>
+          <span
+            className={!selectedOption?.trim() ? styles.placeholderText : undefined}
+          >
+            {selectedOption?.trim() ? selectedOption : placeholder}
+          </span>
           <BiChevronDown
             style={{
               transform: isDropdownOpen ? "rotate(-180deg)" : "rotate(0deg)",

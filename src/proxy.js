@@ -43,7 +43,6 @@
 //   ],
 // };
 
-
 import { NextResponse } from "next/server";
 
 export function proxy(request) {
@@ -63,6 +62,10 @@ export function proxy(request) {
   }
 
   if (token && isPublicRoute) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  if (token && pathname === "/") {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

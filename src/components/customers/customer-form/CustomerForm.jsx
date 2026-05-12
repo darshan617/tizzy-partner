@@ -235,16 +235,16 @@ const CustomerForm = () => {
           res?.data?.message || "Customer created successfully",
           "success",
         );
-        if (router?.asPath !== "/customers/create-customer") {
-          router.push({
-            pathname: "/order-summary",
-            query: {
-              ...router?.query,
-            },
-          });
-        } else {
-          router.push("/customers");
-        }
+        // if (router?.asPath !== "/customers/create-customer") {
+        //   router.push({
+        //     pathname: "/order-summary",
+        //     query: {
+        //       ...router?.query,
+        //     },
+        //   });
+        // } else {
+        //   router.push("/customers");
+        // }
       } else {
         const responseData = res?.error?.data || {};
         const backendErrors = {};

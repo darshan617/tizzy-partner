@@ -1,6 +1,9 @@
 .dropdownContainer{
     position: relative;
 }
+.placeholderText {
+    color: #6c757d;
+}
 .dropdownToggle{
     display: flex;
     align-items: center;
