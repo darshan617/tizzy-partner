@@ -8,13 +8,13 @@ import {
   PlanCategoryPills,
   ServiceIntroBlock,
   PricingPlanCard,
-} from "@/components/common-components/service-plans";
+} from "@/common-components/service-plans";
 import {
   getServiceCatalogConfig,
   isValidServiceSlug,
   SERVICE_NAV_ITEMS,
-} from "@/pages/services/servicePlansBySlug";
-import styles from "@/components/common-components/service-plans/ServicePlans.module.css";
+} from "@/constants/servicePlansBySlug";
+import styles from "@/common-components/service-plans/ServicePlans.module.css";
 import {
   useGetPlansMutation,
   useProviderVariantsMutation,
@@ -28,6 +28,13 @@ import {
   setSubCategories,
 } from "@/redux/slices/servicesSlice";
 import { useRouter } from "next/router";
+import { useLazyUpgradeDowngradePlanQuery } from "@/redux/apis/customerApi";
+import { selectCustomerData } from "@/redux/slices/customerSlice";
+import Cookies from "js-cookie";
+import {
+  useAddToCartMutation,
+  useGetCartDetailsMutation,
+} from "@/redux/apis/addToCartApi";
 
 function formatInr(amount) {
   if (typeof amount !== "number" || Number.isNaN(amount)) return "";
@@ -50,7 +57,7 @@ export default function ServiceSlugPage({
   const config = slug ? getServiceCatalogConfig(slug) : null;
   const valid = slug && isValidServiceSlug(slug);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [planDetails, setPlanDetails] = useState(null);
   const [activeCategoryId, setActiveCategoryId] = useState(
     () => config?.defaultCategoryId ?? "",
   );
@@ -67,6 +74,7 @@ export default function ServiceSlugPage({
     useProviderVariantsMutation();
 
   const [fetchPlans, { isLoading: isPlansLoading }] = useGetPlansMutation();
+  const [triggerUpgradeDowngradePlan] = useLazyUpgradeDowngradePlanQuery();
 
   const applyCategoryFromVariant = useCallback(
     (cat) => {
@@ -154,6 +162,7 @@ export default function ServiceSlugPage({
   }, [slug, dispatch]);
 
   useEffect(() => {
+    if (!router?.isReady) return;
     if (!currentProvider?.id) return;
     if (
       showCategoryPills &&
@@ -165,15 +174,40 @@ export default function ServiceSlugPage({
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetchPlans({
-          body: {
-            provider_id: currentProvider.id,
-            variant_id: plansVariantId,
-          },
-        });
-        if (cancelled) return;
-        if (res?.data?.success) {
-          dispatch(setAllPlans(res?.data?.data?.plans ?? []));
+        let res;
+        const isPlanChangeRequest =
+          router?.query?.type === "upgrade" ||
+          router?.query?.type === "downgrade";
+        const hasOrderId = Boolean(router?.query?.order_id);
+
+        if (isPlanChangeRequest && hasOrderId) {
+          res = await triggerUpgradeDowngradePlan({
+            type: router?.query?.type,
+            order_id: router?.query?.order_id,
+          });
+          if (res?.data?.success) {
+            setPlanDetails(res?.data?.data?.current_plan || null);
+            dispatch(
+              setAllPlans(
+                res?.data?.data?.upgrade_plans ||
+                  res?.data?.data?.downgrade_plans ||
+                  [],
+              ),
+            );
+          } else {
+            console.log(res?.error);
+          }
+        } else {
+          res = await fetchPlans({
+            body: {
+              provider_id: currentProvider.id,
+              variant_id: plansVariantId,
+            },
+          });
+          if (cancelled) return;
+          if (res?.data?.success) {
+            dispatch(setAllPlans(res?.data?.data?.plans ?? []));
+          }
         }
       } catch (error) {
         if (!cancelled) {
@@ -191,8 +225,12 @@ export default function ServiceSlugPage({
     showCategoryPills,
     activeCategoryId,
     activeSubCategoryId,
+    router?.isReady,
     fetchPlans,
+    triggerUpgradeDowngradePlan,
     dispatch,
+    router?.query?.type,
+    router?.query?.order_id,
   ]);
 
   const filteredPlans = useMemo(() => {
@@ -257,6 +295,7 @@ export default function ServiceSlugPage({
           searchValue={searchQuery}
           onSearchChange={setSearchQuery}
           providers={providers}
+          planDetails={planDetails}
         />
       )}
 
@@ -287,22 +326,29 @@ export default function ServiceSlugPage({
           ) : (
             allPlans.map((plan) => (
               <PricingPlanCard
-                key={plan?.id}
+                plan_id={plan?.plan_id || plan?.id}
                 title={plan?.name}
                 priceLabel={`₹${plan?.price ?? "0"}`}
                 originalPriceLabel={plan?.actual_price ?? ""}
-                discountPercent={plan.discountPercent}
+                discountPercent={plan?.discountPercent}
                 periodNote={"user/month, paid yearly"}
                 gstNote={"GST 18% Additional"}
                 features={plan?.features}
-                onCtaClick={() =>
+                onCtaClick={() => {
                   router.push({
                     pathname: `/order-summary`,
                     query: {
-                      type: "buy-service",
+                      plan_id: plan?.plan_id || plan?.id,
+                      ...(!router?.query?.type && { variant: "new-plan" }),
+                      ...(router?.query?.type === "upgrade" && {
+                        variant: "upgrade",
+                      }),
+                      ...(router?.query?.type === "downgrade" && {
+                        variant: "downgrade",
+                      }),
                     },
-                  })
-                }
+                  });
+                }}
               />
             ))
           )}

@@ -1,21 +1,29 @@
 import React, { useState } from "react";
 import styles from "@/components/customers/renew-plans/order-summary/OrderSummaryCard.module.css";
-import { FiInfo } from "react-icons/fi";
-import Link from "next/link";
+import { FiCheck, FiInfo } from "react-icons/fi";
+import CustomPopup from "@/common-components/custom-popup/CustomPopup";
+import Image from "next/image";
+import requestCredit from "@/assets/cart/request_credit.svg";
 
 const OrderSummaryCard = ({
   _gstRate_ = 0.18,
-  _creditBalance_ = 9245.4,
+  _creditBalance_ = 0,
   total,
   pricePerUser,
   setLisceneCounter,
   lisceneCounter,
+  promoCode = 0,
+  setPromoCode,
 }) => {
   const gst = +(total * _gstRate_).toFixed(2);
-  const totals = +(total + gst).toFixed(2);
+  const totals = +(total + gst - promoCode).toFixed(2);
   const isInsufficient = _creditBalance_ < totals;
   const [isPromoCodeAdded, setIsPromoCodeAdded] = useState(false);
 
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+  };
   return (
     <div>
       <div className={styles.card}>
@@ -38,7 +46,7 @@ const OrderSummaryCard = ({
             </button>
           </span>
 
-          <span className={styles.value}>₹ 0.00</span>
+          <span className={styles.value}>₹ {promoCode.toFixed(2)}</span>
         </div>
 
         {isPromoCodeAdded && (
@@ -70,20 +78,19 @@ const OrderSummaryCard = ({
         <hr className={styles.dividerHeavy} />
 
         <div className={styles.creditBox}>
-          <div
-            className={`${styles.creditBalance}`}
-            style={{ color: isInsufficient ? "red" : "#3b82f6" }}
-          >
-            <FiInfo size={15} />
-            Credit Balance ₹{" "}
-            {_creditBalance_.toLocaleString("en-IN", {
-              minimumFractionDigits: 2,
-            })}
-          </div>
           {isInsufficient ? (
-            <div className={styles.creditWarning}>
-              Insufficient credits to complete this purchase.
-            </div>
+            <>
+              <div className={`${styles.creditBalance}`}>
+                <FiInfo size={15} />
+                Credit Balance ₹{" "}
+                {_creditBalance_.toLocaleString("en-IN", {
+                  minimumFractionDigits: 2,
+                })}
+              </div>
+              <div className={styles.creditWarning}>
+                Insufficient credits to complete this purchase.
+              </div>
+            </>
           ) : (
             <form
               className={styles.singleInputForm}
@@ -125,11 +132,36 @@ const OrderSummaryCard = ({
             ? "Clear Pending Invoices"
             : "Generate Purchase Order"}
         </button>
-        <div className={styles.requestBox}>
-          <p>Want to complete purchase urgently?</p>
-          <button className={styles.requestLink}>Request Credits</button>
-        </div>
+        {isInsufficient && (
+          <div className={styles.requestBox}>
+            <p>Want to complete purchase urgently?</p>
+            <button
+              className={styles.requestLink}
+              onClick={() => setIsPopupOpen(true)}
+            >
+              Request Credits
+            </button>
+          </div>
+        )}
       </div>
+      {isPopupOpen && (
+        <CustomPopup onClose={handleClosePopup}>
+          <div className={styles.creditRequestPopup}>
+            <Image src={requestCredit} className="mb-3" />
+            <h3 className={styles.creditRequestAmount}>
+              ₹ {totals.toFixed(2)}
+            </h3>
+            <p className={styles.creditRequestTitle}>
+              YOUR CREDIT REQUEST IS SENT SUCCESSFULLY.
+            </p>
+            <p className={styles.creditRequestDescription}>
+              Your request has been sent for approval.
+              <br />
+              We'll notify you once it's approved.
+            </p>
+          </div>
+        </CustomPopup>
+      )}
     </div>
   );
 };

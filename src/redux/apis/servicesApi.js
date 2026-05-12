@@ -19,7 +19,7 @@ const servicesApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
-      providesTags: ["services"],
+      invalidatesTags: ["services"],
     }),
     getPlans: builder.mutation({
       query: ({ body }) => {
@@ -29,7 +29,7 @@ const servicesApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
-      providesTags: ["services"],
+      invalidatesTags: ["services"],
     }),
   }),
 });

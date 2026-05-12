@@ -12,6 +12,7 @@ function CheckIcon() {
 }
 
 export default function PricingPlanCard({
+  plan_id,
   title,
   headerBg = "#333c4e",
   priceLabel,
@@ -27,7 +28,7 @@ export default function PricingPlanCard({
     typeof discountPercent === "number" && discountPercent > 0;
 
   return (
-    <article className={styles.card}>
+    <article className={styles.card} key={plan_id}>
       <div className={styles.header} style={{ background: headerBg }}>
         <span className={styles.headerTitle}>{title}</span>
       </div>

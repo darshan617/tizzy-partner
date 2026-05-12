@@ -74,6 +74,10 @@
     pointer-events: none;
 }
 
+.statBox::before {
+    transition: background 0.2s ease-in-out;
+}
+
 .statBox.successGrad:before {
     background: linear-gradient(135deg, var(--successSubtleColor) 0%, var(--subtleBg) 20%);
 }
@@ -84,6 +88,34 @@
 
 .statBox.warningGrad:before {
     background: linear-gradient(135deg, var(--warningSubtleColor) 0%, var(--subtleBg) 20%);
+}
+
+.statBox.infoGrad:before {
+    background: linear-gradient(135deg, var(--infoSubtleColor) 0%, var(--subtleBg) 20%);
+}
+
+.statBox.secondaryGrad:before {
+    background: linear-gradient(135deg, var(--secondarySubtleColor) 0%, var(--subtleBg) 20%);
+}
+
+.statBox.infoGrad:hover:before {
+    background: linear-gradient(160deg, var(--infoSubtleColor) 0%, var(--whiteColor) 50%);
+}
+
+.statBox.successGrad:hover:before {
+    background: linear-gradient(160deg, var(--successSubtleColor) 0%, var(--whiteColor) 50%);
+}
+
+.statBox.warningGrad:hover:before {
+    background: linear-gradient(160deg, var(--warningSubtleColor) 0%, var(--whiteColor) 50%);
+}
+
+.statBox.dangerGrad:hover:before {
+    background: linear-gradient(160deg, var(--dangerSubtleColor) 0%, var(--whiteColor) 50%);
+}
+
+.statBox.secondaryGrad:hover:before {
+    background: linear-gradient(160deg, var(--secondarySubtleColor) 0%, var(--whiteColor) 50%);
 }
 
 .statBox * {
@@ -97,6 +129,26 @@
     aspect-ratio: 1;
     display: block;
     margin-top: -25px;
+}
+
+.infoColor {
+    color: var(--infoColor);
+}
+
+.successColor {
+    color: var(--successColor);
+}
+
+.warningColor {
+    color: var(--warningColor);
+}
+
+.dangerColor {
+    color: var(--dangerColor);
+}
+
+.secondaryColor {
+    color: var(--secondaryColor);
 }
 
 .statText {
@@ -149,7 +201,35 @@
     transform: rotate(180deg);
 }
 
-/* Add new customer box */
+.statAnchor {
+    width: 30px;
+    height: 30px;
+    border: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 20px;
+    bottom: -12px;
+    border-radius: 50%;
+    background: #005bbb;
+    color: var(--whiteColor);
+    box-shadow: 0 6px 14px rgba(0, 67, 140, 0.35);
+    transition: transform 0.15s ease-out, background 0.15s ease-out;
+}
+
+.statAnchor:hover {
+    background: #0a68c9;
+    transform: scale(1.06);
+}
+
+.statAnchorIcon {
+    width: 1.55rem;
+    height: 1.55rem;
+    stroke-width: 2.25;
+}
+
 .boxLink {
     width: 100%;
     height: 100%;

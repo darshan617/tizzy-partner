@@ -12,10 +12,13 @@ import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import Image from "next/image";
 import VerifyOtp from "@/components/auth/verify-otp/VerifyOtp";
+import { BsPlusCircleDotted } from "react-icons/bs";
+import { setCustomerData } from "@/redux/slices/customerSlice";
+import { useDispatch } from "react-redux";
 
 export default function CustomerDetail() {
   const router = useRouter();
-
+  const dispatch = useDispatch();
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
@@ -328,171 +331,215 @@ export default function CustomerDetail() {
           </div>
         </div>
 
-        {allPlans?.map((plan, idx) => {
-          const otherPlans = plan?.plans;
-          return (
-            <div className="col">
-              <div className={`${styles.sectionCard} px-sm-4 px-3 py-1`}>
-                <div className="border-bottom py-sm-2 py-3">
-                  <div className="row align-items-center position-relative">
-                    <div className="col-md-3 d-none d-md-block"></div>
-                    <div className="col-md-6 col text-center d-flex align-items-center justify-content-md-center">
-                      <div className="d-inline-flex align-items-center domainSection">
-                        <CiGlobe />
-                        <h3 className="mb-0 ms-2 fw-semibold primaryColor">
-                          {plan?.domain_name || ""}
-                        </h3>
+        {allPlans?.length === 0 ? (
+          <div className="col">
+            <div
+              className={`${styles.sectionCard} text-center  px-sm-4 px-3 py-1 d-flex flex-column align-items-center justify-content-center gap-2`}
+            >
+              <p className="m-0">No Subscriptions</p>
+              <button
+                className="small btnDefault btn"
+                onClick={() => router.push("/services/tizzy")}
+              >
+                <BsPlusCircleDotted className="me-2" size={14} />
+                <span>Buy New Subscription</span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          allPlans?.map((plan, idx) => {
+            const otherPlans = plan?.plans;
+            return (
+              <div className="col">
+                <div className={`${styles.sectionCard} px-sm-4 px-3 py-1`}>
+                  <div className="border-bottom py-sm-2 py-3">
+                    <div className="row align-items-center position-relative">
+                      <div className="col-md-3 d-none d-md-block"></div>
+                      <div className="col-md-6 col text-center d-flex align-items-center justify-content-md-center">
+                        <div className="d-inline-flex align-items-center domainSection">
+                          <CiGlobe />
+                          <h3 className="mb-0 ms-2 fw-semibold primaryColor">
+                            {plan?.domain_name || ""}
+                          </h3>
+                        </div>
+                      </div>
+                      <div className="col-md-3 col-auto text-end">
+                        <button
+                          className="btn small btnWhite"
+                          data-bs-toggle="modal"
+                          data-bs-target="#modalTransferCode"
+                        >
+                          <BiTransfer />
+                          <span>Transfer Code</span>
+                        </button>
                       </div>
                     </div>
-                    <div className="col-md-3 col-auto text-end">
-                      <button
-                        className="btn small btnWhite"
-                        data-bs-toggle="modal"
-                        data-bs-target="#modalTransferCode"
-                      >
-                        <BiTransfer />
-                        <span>Transfer Code</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="py-3">
-                  <div className="d-flex align-items-center justify-content-between mb-2">
-                    <div>
-                      <h2 className={`${styles.sectionCardHead}`}>
-                        Current Subscription
-                      </h2>
-                    </div>
-                    <div>
-                      <small className="text-decoration-underline">
-                        <Link href="">View History</Link>
-                      </small>
-                    </div>
                   </div>
 
-                  {otherPlans?.map((innerPlan, idx) => {
-                    return (
-                      <div className={`${styles.contentRow} noHover`}>
-                        <div className="row align-items-center">
-                          <div
-                            div
-                            className="col-xl-3 col-12 d-flex align-items-center"
-                          >
-                            {/* <div
-                              className={`${styles.servBadge} ${styles.tizzy}  flex-shrink-0`}
-                              title="Tizzy Mail"
-                            ></div> */}
-                            <div>
-                              <Image src={plansImg?.[innerPlan?.provider_id]} />
-                            </div>
-                            <div className="ms-2">
-                              <div className="fw-medium">
-                                {innerPlan?.plan_name || "-"}
+                  <div className="py-3">
+                    <div className="d-flex align-items-center justify-content-between mb-2">
+                      <div>
+                        <h2 className={`${styles.sectionCardHead}`}>
+                          Current Subscription
+                        </h2>
+                      </div>
+                      <div>
+                        <small className="text-decoration-underline">
+                          <Link href="">View History</Link>
+                        </small>
+                      </div>
+                    </div>
+
+                    {otherPlans?.map((innerPlan, idx) => {
+                      return (
+                        <div className={`${styles.contentRow} noHover`}>
+                          <div className="row align-items-center">
+                            <div
+                              div
+                              className="col-xl-3 col-12 d-flex align-items-center"
+                            >
+                              {/* <div
+                                className={`${styles.servBadge} ${styles.tizzy}  flex-shrink-0`}
+                                title="Tizzy Mail"
+                              ></div> */}
+                              <div>
+                                <p
+                                  className={`${styles.servBadge} m-0 flex-shrink-0`}
+                                >
+                                  {plansImg?.[innerPlan?.provider_id - 1] ||
+                                    "-"}
+                                </p>
+                              </div>
+                              <div className="ms-2">
+                                <div className="fw-medium">
+                                  {innerPlan?.plan_name || "-"}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <div className="col-xl col-md-9 col-sm-8">
-                            <div className="row text-sm-center align-items-start justify-content-around gy-3">
-                              <div className="col-md-auto col-sm-6 col-8">
-                                <small className="d-block textLight">
-                                  Price
-                                </small>
-                                <span>₹ {innerPlan?.price}</span>
-                                <small className="d-block">per user/year</small>
+                            <div className="col-xl col-md-9 col-sm-8">
+                              <div className="row text-sm-center align-items-start justify-content-around gy-3">
+                                <div className="col-md-auto col-sm-6 col-8">
+                                  <small className="d-block textLight">
+                                    Price
+                                  </small>
+                                  <span>₹ {innerPlan?.price}</span>
+                                  <small className="d-block">
+                                    per user/year
+                                  </small>
+                                </div>
+                                <div className="col-md-auto col-sm-6 col-4">
+                                  <small className="d-block textLight">
+                                    License
+                                  </small>
+                                  <span>{innerPlan?.license_count || "-"}</span>
+                                  <button
+                                    className={`${styles.iconBtn} btnWhite btn`}
+                                    onClick={() =>
+                                      router?.push({
+                                        pathname: "/order-summary",
+                                        query: {
+                                          type: "renew-plan",
+                                        },
+                                      })
+                                    }
+                                  >
+                                    <FaPencil />
+                                  </button>
+                                </div>
+                                <div className="col-md-auto col-sm-6 col-8">
+                                  <small className="d-block textLight">
+                                    Period
+                                  </small>
+                                  <span>
+                                    {innerPlan?.start_date} -{" "}
+                                    {innerPlan?.end_date}
+                                  </span>
+                                </div>
+                                <div className="col-md-auto col-sm-6 col-4 align-self-center">
+                                  <div
+                                    className={`${styles.statusBadge} ${styles.subtleSuccess}`}
+                                  >
+                                    {innerPlan?.status || "-"}
+                                  </div>
+                                </div>
                               </div>
-                              <div className="col-md-auto col-sm-6 col-4">
-                                <small className="d-block textLight">
-                                  License
-                                </small>
-                                <span>{innerPlan?.license_count || "-"}</span>
+                            </div>
+                            <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
+                              <button
+                                onClick={() =>
+                                  router?.push({
+                                    pathname: "/order-summary",
+                                    query: {
+                                      type: "renew-plan",
+                                      order_id: innerPlan?.order_id,
+                                    },
+                                  })
+                                }
+                                className={`${styles.crRenew} btn small btnWhite`}
+                              >
+                                <span>Renew</span>
+                              </button>
+                              <div
+                                className={`${styles.updwngrade} mt-2 text-uppercase`}
+                              >
                                 <button
-                                  className={`${styles.iconBtn} btnWhite btn`}
-                                  onClick={() =>
-                                    router?.push({
-                                      pathname: "/order-summary",
+                                  className={styles.updwngradeBtn}
+                                  onClick={() => {
+                                    Cookies.remove("customerData");
+                                    router.push({
+                                      pathname: `/services/${innerPlan?.provider_name === "Tizzy Mail" ? "tizzy" : innerPlan?.provider_name === "Microsoft 365" ? "microsoft-solution-partner" : "google-cloud-partner"}`,
                                       query: {
-                                        type: "renew-plan",
+                                        type: "upgrade",
+                                        order_id: innerPlan?.order_id,
+                                      },
+                                    });
+                                    Cookies.set(
+                                      "customerData",
+                                      JSON.stringify({
+                                        partner_id: userData?.id,
+                                        customer_id: router?.query?.customerId,
+                                        domain_name: plan?.domain_name,
+                                      }),
+                                    );
+                                    // dispatch(
+                                    //   setCustomerData({
+                                    //     partner_id: userData?.id,
+                                    //     customer_id: router?.query?.customerId,
+                                    //     plan_id: innerPlan?.plan_id,
+                                    //     domain_name: plan?.domain_name,
+                                    //   }),
+                                    // );
+                                  }}
+                                >
+                                  UPGRADE
+                                </button>{" "}
+                                /
+                                <button
+                                  className={styles.downgradeBtn}
+                                  onClick={() =>
+                                    router.push({
+                                      pathname: "/services/tizzy",
+                                      query: {
+                                        type: "downgrade",
+                                        order_id: innerPlan?.order_id,
                                       },
                                     })
                                   }
                                 >
-                                  <FaPencil />
+                                  DOWNGRADE
                                 </button>
                               </div>
-                              <div className="col-md-auto col-sm-6 col-8">
-                                <small className="d-block textLight">
-                                  Period
-                                </small>
-                                <span>
-                                  {innerPlan?.start_date} -{" "}
-                                  {innerPlan?.end_date}
-                                </span>
-                              </div>
-                              <div className="col-md-auto col-sm-6 col-4 align-self-center">
-                                <div
-                                  className={`${styles.statusBadge} ${styles.subtleSuccess}`}
-                                >
-                                  {innerPlan?.status || "-"}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
-                            <button
-                              onClick={() =>
-                                router?.push({
-                                  pathname: "/order-summary",
-                                  query: {
-                                    type: "renew-plan",
-                                  },
-                                })
-                              }
-                              className={`${styles.crRenew} btn small btnWhite`}
-                            >
-                              <span>Renew</span>
-                            </button>
-                            <div
-                              className={`${styles.updwngrade} mt-2 text-uppercase`}
-                            >
-                              <button
-                                className={styles.updwngradeBtn}
-                                onClick={() =>
-                                  router.push({
-                                    pathname: "/services/tizzy",
-                                    query: {
-                                      type: "upgrade-plan",
-                                    },
-                                  })
-                                }
-                              >
-                                UPGRADE
-                              </button>{" "}
-                              /
-                              <button
-                                className={styles.downgradeBtn}
-                                onClick={() =>
-                                  router.push({
-                                    pathname: "/services/tizzy",
-                                    query: {
-                                      type: "downgrade-plan",
-                                    },
-                                  })
-                                }
-                              >
-                                DOWNGRADE
-                              </button>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
 
         <div className="col">
           <div className={`${styles.sectionCard} py-4`}>

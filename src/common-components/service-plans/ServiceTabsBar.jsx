@@ -10,6 +10,7 @@ export default function ServiceTabsBar({
   searchValue,
   onSearchChange,
   providers,
+  planDetails,
 }) {
   const router = useRouter();
   return (
@@ -18,12 +19,14 @@ export default function ServiceTabsBar({
         <div>
           <p className="text-muted m-0">Current Active Plan</p>
           <div className="d-flex gap-4">
-            <p className="fw-bold m-0">Tizzy® Mail Enterprise 100 GB</p>
+            <p className="fw-bold m-0">{planDetails?.name || "-"}</p>
             <p
               className="m-0 px-1 d-flex align-items-center rounded-1"
               style={{ background: "#E6F6FB" }}
             >
-              Remaining : <b>128 days</b> | <b>₹4524.25</b>
+              Remaining Days : <b>{planDetails?.remaining_days || "0"}</b>
+              <span className="px-2">|</span>
+              <b>₹ {planDetails?.amount || "-"}</b>
               <span className="ps-2">
                 <IoIosInformationCircleOutline />{" "}
               </span>

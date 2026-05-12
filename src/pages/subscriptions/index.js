@@ -1,13 +1,10 @@
-import CustomerList from "@/components/customers/all-customers/AllCustomers";
-import TransactionSection from "@/components/dashboard/transaction/Transaction";
+import SummaryCounts from "@/common-components/summary-counts/SummaryCounts";
 import Layout from "@/components/layout/Layout";
 import AllSubcriptions from "@/components/subscription/all-subscriptions/AllSubscriptions";
-import SubscriptionSummary from "@/components/subscription/subscription-summary/SubscriptionSummary";
 import { useGetAllSubscriptionsMutation } from "@/redux/apis/subscriptions";
-import { selectUserData } from "@/redux/slices/userSlice";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { BsPlusCircleDotted } from "react-icons/bs";
 
 const Subscriptions = () => {
   const [
@@ -38,9 +35,16 @@ const Subscriptions = () => {
   }, []);
   return (
     <Layout>
-      <SubscriptionSummary
-        summaryData={allSubscriptionsData}
-        isSummaryFetching={isAllSubscriptionDataLoading}
+      <SummaryCounts
+      countData={allSubscriptionsData?.summary}
+      isFetchingCountData={isAllSubscriptionDataLoading}
+      additionalBtns={[
+        {
+          href: "/services/tizzy",
+          label: "Buy New Subscription",
+          icon: <BsPlusCircleDotted size={18} />,
+        },
+      ]}
       />
       <AllSubcriptions
         allSubscriptionsData={allSubscriptionsData?.data}

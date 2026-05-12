@@ -34,6 +34,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
   const handleSignOut = () => {
     Cookies.remove("userData");
+    Cookies.remove("customerData");
     router?.push("/auth/login");
     showToast("Signed Out successfully", "success");
   };
@@ -60,14 +61,14 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
         <div className="row align-items-center">
           <div className="col-auto">
             <div className={styles.pageLogoBox}>
-              <a href="index.html" className="d-inline-block">
+              <Link href="/dashboard" className="d-inline-block">
                 <Image
                   src={logo}
                   alt="logo"
                   className={styles.pageLogoImg}
                   title="Tizzy Partners"
                 />
-              </a>
+              </Link>
             </div>
           </div>
           <div className="col d-flex justify-content-end d-md-block ps-lg-4">
@@ -116,7 +117,10 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                     </button>
                   </div>
                   <div className="">
-                    <button className={styles.navBtns}>
+                    <button
+                      className={styles.navBtns}
+                      onClick={() => router.push("/my-cart")}
+                    >
                       <BsHandbag size={20} />
                       <span className={`${styles.navLabel} d-none`}></span>
                     </button>

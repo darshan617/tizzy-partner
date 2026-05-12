@@ -192,6 +192,52 @@
     font-size: 14px;
     padding: 0;
   }
+
+.creditRequestPopup {
+    text-align: center;
+    padding: 34px 20px 40px;
+}
+
+.creditRequestIconWrap {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 18px;
+    border-radius: 14px;
+    background: #9de8da;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.creditRequestIcon {
+    font-size: 36px;
+    color: #00b894;
+}
+
+.creditRequestAmount {
+    margin: 0;
+    color: #373b43;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.15;
+}
+
+.creditRequestTitle {
+    margin: 15px 0 0;
+    color: #373b43;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.creditRequestDescription {
+    margin: 30px 0 0;
+    color: #555b66;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.45;
+}
  
 @media (max-width: 480px) {
     .card {
@@ -210,5 +256,17 @@
     .btnPrimary {
         font-size: 13.5px;
         padding: 11px;
+    }
+
+    .creditRequestAmount {
+        font-size: 22px;
+    }
+
+    .creditRequestTitle {
+        font-size: 20px;
+    }
+
+    .creditRequestDescription {
+        font-size: 14px;
     }
 }
