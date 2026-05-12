@@ -74,10 +74,10 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
               {SIDEBAR_MENU_CONSTANTS?.map((menu, idx) => {
                 const ICON = menu?.icon || "";
                 return (
-                  <li
+                  <Link
+                    href={menu?.href}
                     className={`${styles.sideMenuItem}`}
                     key={idx}
-                    onClick={() => router.push(menu?.href)}
                     style={{
                       background:
                         router?.pathname === menu?.href
@@ -103,7 +103,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                         {menu?.title}
                       </span>
                     </button>
-                  </li>
+                  </Link>
                 );
               })}
             </ul>

@@ -3,6 +3,7 @@ import OrderSummaryCard from "@/components/customers/renew-plans/order-summary/O
 import RenewCart from "@/components/customers/renew-plans/renew-cart/RenewCart";
 import {
   useAddToCartMutation,
+  useGetCartDetailsMutation,
   useGetUpdateCartDetailsQuery,
   useRenewCustomerDetailsMutation,
   useUpdateCartMutation,
@@ -13,6 +14,11 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
+const normalizeCompanyName = (name) => {
+  const t = String(name ?? "").trim();
+  return t && t !== "-" ? t : "";
+};
 
 const CommonOrderSummary = () => {
   const router = useRouter();
@@ -31,6 +37,7 @@ const CommonOrderSummary = () => {
   const [lisceneCounter, setLisceneCounter] = useState(1);
   const [promoCode, setPromoCode] = useState(10);
   const [domainName, setDomainName] = useState("");
+
   console.log(domainName, "domainName");
 
   const total = (Number(pricePerUser) || 0) * (Number(lisceneCounter) || 0);
@@ -41,12 +48,19 @@ const CommonOrderSummary = () => {
   const [renewCustomerDetails, { isLoading: isRenewingCustomerDetails }] =
     useRenewCustomerDetailsMutation();
 
+  //cart api
+  const [getCartDetailsApi, { isLoading: isGettingCartDetailsApi }] =
+    useGetCartDetailsMutation();
+
   const { data: getAllCustomers } = useGetAllCustomersQuery(
     {
       partner_id: userData?.id,
     },
     {
-      skip: router?.query?.variant !== "new-plan" || !userData?.id,
+      skip:
+        !userData?.id ||
+        (!router?.pathname === "/my-cart" &&
+          !router?.query?.variant === "new-plan"),
     },
   );
 
@@ -108,10 +122,11 @@ const CommonOrderSummary = () => {
     try {
       const res = await updateCart({
         body: {
-          cart_id: cartData?.cart_id,
+          cart_id: cartData?.cart_id || cartDetails?.cart_id,
           licenses: lisceneCounter,
           domain_name: domainName,
-          company_name: selectedCompany,
+          company_name: normalizeCompanyName(selectedCompany),
+          customer_id: customerData?.customer_id,
         },
       });
 
@@ -154,20 +169,55 @@ const CommonOrderSummary = () => {
     }
   };
 
+  //cart api
+  const handleGetCartDetails = async () => {
+    const res = await getCartDetailsApi({
+      body: {
+        partner_id: userData?.id,
+      },
+    });
+    if (res?.data?.success) {
+      const data = res?.data?.data?.[0];
+      console.log(data, "res?.data?.data");
+      setCartDetails({
+        ...data,
+        plan_name: data?.plan?.name,
+        domain_name: data?.domain_name,
+        subscription_start_date: data?.created_at,
+        subscription_end_date: data?.end_date,
+        customerLimit: data?.customer_limit,
+      });
+      setPricePerUser(Number(data?.price_per_unit) || 0);
+      setLisceneCounter(Number(data?.licenses) || 1);
+      setDomainName(data?.domain_name || "");
+      setSelectedCompany(normalizeCompanyName(data?.company_name));
+    } else {
+      console.log(res?.data?.message, "res?.data?.message");
+    }
+  };
+
   useEffect(() => {
     if (router?.query?.plan_id && router?.query?.variant) {
       handleAddToCart();
     }
   }, []);
-
+  console.log(cartData?.cart_id, "cartData?.cart_id");
+  console.log(cartDetails?.cart_id, "cartDetails?.cart_id");
   useEffect(() => {
-    if (
-      cartData?.cart_id &&
-      (lisceneCounter || domainName || selectedCompany)
-    ) {
+    if (!cartData?.cart_id && !cartDetails?.cart_id) return;
+
+    const timer = setTimeout(() => {
       handleUpdateCart();
-    }
-  }, [cartData?.cart_id, lisceneCounter, domainName, selectedCompany]);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [
+    cartData?.cart_id,
+    lisceneCounter,
+    domainName,
+    selectedCompany,
+    cartDetails?.cart_id,
+  ]);
 
   useEffect(() => {
     if (router?.query?.type === "renew-plan") {
@@ -178,6 +228,7 @@ const CommonOrderSummary = () => {
   useEffect(() => {
     if (getUpdateCartDetails?.success) {
       const data = getUpdateCartDetails?.data;
+
       if (!data) return;
       setCartDetails({
         ...data,
@@ -191,9 +242,16 @@ const CommonOrderSummary = () => {
       dispatch(setCartData(data));
       setLisceneCounter(data?.licenses || 1);
       setDomainName(data?.domain_name || "");
-      setSelectedCompany(data?.company_name || "");
+      setSelectedCompany(normalizeCompanyName(data?.company_name));
     }
   }, [getUpdateCartDetails, router?.query?.plan_id, dispatch]);
+
+  //cart api — skip when plan_id is present; getUpdateCartDetails already loads that cart
+  useEffect(() => {
+    if (userData?.id && !router?.query?.plan_id) {
+      handleGetCartDetails();
+    }
+  }, [userData?.id, router?.query?.plan_id]);
 
   return (
     <div className="d-flex align-items-start gap-3 justify-content-center">

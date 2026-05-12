@@ -138,7 +138,8 @@ const RenewCart = ({
         </div>
       </div>
 
-      {router?.query?.variant === "new-plan" && (
+      {(router?.query?.variant === "new-plan" ||
+        router?.pathname === "/my-cart") && (
         <div className={styles.customerDetailsCard}>
           <div className={styles.customerDetailsHeader}>
             <h3 className={styles.customerDetailsTitle}>CUSTOMER DETAILS</h3>
@@ -154,7 +155,7 @@ const RenewCart = ({
           <div className={styles.customerFieldsRow}>
             <CustomDropdown
               options={companyNames}
-              value={selectedCompany}
+              value={selectedCompany || ""}
               placeholder="Select Company Name"
               label="Company Name"
               onChange={(option) => setSelectedCompany(option?.label || "")}
