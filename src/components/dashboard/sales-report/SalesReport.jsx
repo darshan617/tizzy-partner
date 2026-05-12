@@ -162,7 +162,7 @@ const SalesReport = ({ data, isDataLoading }) => {
                           {invoiceCardsData[card?.label?.toLocaleUpperCase()] ||
                             "0"}
                         </p>
-                        <div
+                        {/* <div
                           className={`${styles.statusBadge} ${
                             card.trend === "up"
                               ? styles.badgeUp
@@ -173,7 +173,7 @@ const SalesReport = ({ data, isDataLoading }) => {
                         >
                           <TrendIcon trend={card.trend} />
                           <span>{card.trendValue}</span>
-                        </div>
+                        </div> */}
                       </div>
                       <div className={styles.invoiceCardActions}>
                         <Link href="#" className={styles.crBtn}>

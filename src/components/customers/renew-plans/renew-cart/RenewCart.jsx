@@ -89,10 +89,15 @@ const RenewCart = ({
                 }
               />
               <button
-                onClick={() =>
-                  lisceneCounter < cartDetails?.customerLimit &&
-                  setLisceneCounter((prev) => prev + 1)
-                }
+                onClick={() => {
+                  if (cartDetails?.customerLimit) {
+                    if (lisceneCounter < cartDetails.customerLimit) {
+                      setLisceneCounter((prev) => prev + 1);
+                    }
+                  } else {
+                    setLisceneCounter((prev) => prev + 1);
+                  }
+                }}
                 className={styles.qtyBtn}
                 disabled={
                   lisceneCounter === cartDetails?.customerLimit ||

@@ -471,6 +471,7 @@ export default function CustomerDetail() {
                                     pathname: "/order-summary",
                                     query: {
                                       type: "renew-plan",
+                                      order_id: innerPlan?.order_id,
                                     },
                                   })
                                 }
