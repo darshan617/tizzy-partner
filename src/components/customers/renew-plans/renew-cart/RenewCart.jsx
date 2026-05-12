@@ -15,7 +15,10 @@ const RenewCart = ({
   getAllCustomers,
   selectedCompany,
   setSelectedCompany,
+  domainName,
+  setDomainName,
 }) => {
+  console.log(cartDetails, "cartDetails");
   const router = useRouter();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const handleClosePopup = () => {
@@ -37,12 +40,15 @@ const RenewCart = ({
             title="Tizzy Mail"
           ></div>
           <div className={styles.productInfo}>
-            <div className={styles.productName}>{cartDetails?.plan_name}</div>
-            {cartDetails?.domain_name && (
-              <p className={`${styles.productLink} m-0`}>
-                {cartDetails?.domain_name}
-              </p>
-            )}
+            <div className={styles.productName}>
+              {cartDetails?.plan_name || "-"}
+            </div>
+            {cartDetails?.domain_name &&
+              router?.query?.variant !== "new-plan" && (
+                <p className={`${styles.productLink} m-0`}>
+                  {cartDetails?.domain_name || "-"}
+                </p>
+              )}
             <div className={styles.productDate}>
               {cartDetails?.subscription_start_date} –{" "}
               {cartDetails?.subscription_end_date}
@@ -51,7 +57,9 @@ const RenewCart = ({
 
           <div className={styles.priceCol}>
             <div className={styles.colLabel}>Price</div>
-            <div className={styles.priceVal}>₹ {pricePerUser?.toFixed(2)}</div>
+            <div className={styles.priceVal}>
+              ₹ {(Number(pricePerUser) || 0).toFixed(2)}
+            </div>
             <div className={styles.priceSub}>per user/year</div>
           </div>
 
@@ -112,17 +120,21 @@ const RenewCart = ({
 
           <div className={styles.totalCol}>
             <div className={styles.colLabel}>Total</div>
-            <div className={styles.priceVal}>₹ {total.toFixed(2)}</div>
+            <div className={styles.priceVal}>
+              ₹ {(Number(total) || 0).toFixed(2)}
+            </div>
           </div>
 
-          <button className={styles.removeBtn}>×</button>
+          {/* <button className={styles.removeBtn}>×</button> */}
         </div>
 
         <hr className={styles.divider} />
 
         <div className={styles.subtotalRow}>
           <span className={styles.subtotalLabel}>SUBTOTAL</span>
-          <span className={styles.subtotalVal}>₹ {total.toFixed(2)}</span>
+          <span className={styles.subtotalVal}>
+            ₹ {(Number(total) || 0).toFixed(2)}
+          </span>
         </div>
       </div>
 
@@ -168,6 +180,8 @@ const RenewCart = ({
                 type="text"
                 className={styles.fieldInput}
                 placeholder="Enter Domain Name"
+                value={domainName}
+                onChange={(e) => setDomainName(e.target.value)}
               />
             </div>
           </div>

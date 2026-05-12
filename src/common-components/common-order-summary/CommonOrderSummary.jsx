@@ -3,6 +3,7 @@ import OrderSummaryCard from "@/components/customers/renew-plans/order-summary/O
 import RenewCart from "@/components/customers/renew-plans/renew-cart/RenewCart";
 import {
   useAddToCartMutation,
+  useGetUpdateCartDetailsQuery,
   useRenewCustomerDetailsMutation,
   useUpdateCartMutation,
 } from "@/redux/apis/addToCartApi";
@@ -29,7 +30,10 @@ const CommonOrderSummary = () => {
   const [selectedCompany, setSelectedCompany] = useState("");
   const [lisceneCounter, setLisceneCounter] = useState(1);
   const [promoCode, setPromoCode] = useState(10);
-  const total = pricePerUser * lisceneCounter;
+  const [domainName, setDomainName] = useState("");
+  console.log(domainName, "domainName");
+
+  const total = (Number(pricePerUser) || 0) * (Number(lisceneCounter) || 0);
 
   const [addToCart, { isLoading: isGettingCartDetails }] =
     useAddToCartMutation();
@@ -43,6 +47,16 @@ const CommonOrderSummary = () => {
     },
     {
       skip: router?.query?.variant !== "new-plan" || !userData?.id,
+    },
+  );
+
+  const { data: getUpdateCartDetails } = useGetUpdateCartDetailsQuery(
+    {
+      partner_id: userData?.id,
+      plan_id: router?.query?.plan_id,
+    },
+    {
+      skip: !userData?.id || !router?.query?.plan_id,
     },
   );
 
@@ -81,7 +95,7 @@ const CommonOrderSummary = () => {
           ...data,
           customerLimit: data?.customerLimit || data?.customer_limit,
         });
-        setPricePerUser(data?.unit_price || 0);
+        setPricePerUser(Number(data?.unit_price) || 0);
         dispatch(setCartData(data));
         setLisceneCounter(data?.licenses);
       }
@@ -96,6 +110,8 @@ const CommonOrderSummary = () => {
         body: {
           cart_id: cartData?.cart_id,
           licenses: lisceneCounter,
+          domain_name: domainName,
+          company_name: selectedCompany,
         },
       });
 
@@ -126,7 +142,9 @@ const CommonOrderSummary = () => {
 
         setCartDetails(resCartDetails);
         setPricePerUser(
-          res?.data?.data?.renewal_summary?.price_per_license_per_year || 0,
+          Number(
+            res?.data?.data?.renewal_summary?.price_per_license_per_year,
+          ) || 0,
         );
         setLisceneCounter(res?.data?.data?.plan_info?.licenses);
         dispatch(setCartData(res?.data?.data));
@@ -140,19 +158,42 @@ const CommonOrderSummary = () => {
     if (router?.query?.plan_id && router?.query?.variant) {
       handleAddToCart();
     }
-  }, [router?.query?.plan_id, router?.query?.variant]);
+  }, []);
 
   useEffect(() => {
-    if (cartData?.cart_id && lisceneCounter) {
+    if (
+      cartData?.cart_id &&
+      (lisceneCounter || domainName || selectedCompany)
+    ) {
       handleUpdateCart();
     }
-  }, [cartData?.cart_id, lisceneCounter]);
+  }, [cartData?.cart_id, lisceneCounter, domainName, selectedCompany]);
 
   useEffect(() => {
     if (router?.query?.type === "renew-plan") {
       handleRenewCustomerDetails();
     }
   }, [router?.query?.type === "renew-plan"]);
+
+  useEffect(() => {
+    if (getUpdateCartDetails?.success) {
+      const data = getUpdateCartDetails?.data;
+      if (!data) return;
+      setCartDetails({
+        ...data,
+        plan_name: data?.plan_name,
+        domain_name: data?.domain_name,
+        subscription_start_date: data?.created_at,
+        subscription_end_date: data?.updated_at,
+        customerLimit: data?.customerLimit,
+      });
+      setPricePerUser(Number(data?.unit_price) || 0);
+      dispatch(setCartData(data));
+      setLisceneCounter(data?.licenses || 1);
+      setDomainName(data?.domain_name || "");
+      setSelectedCompany(data?.company_name || "");
+    }
+  }, [getUpdateCartDetails, router?.query?.plan_id, dispatch]);
 
   return (
     <div className="d-flex align-items-start gap-3 justify-content-center">
@@ -165,6 +206,8 @@ const CommonOrderSummary = () => {
         getAllCustomers={getAllCustomers}
         selectedCompany={selectedCompany}
         setSelectedCompany={setSelectedCompany}
+        domainName={domainName}
+        setDomainName={setDomainName}
       />
       <OrderSummaryCard
         lisceneCounter={lisceneCounter}
@@ -176,6 +219,7 @@ const CommonOrderSummary = () => {
         _creditBalance_={Number(
           cartDetails?.wallet_info?.wallet_balance ||
             cartDetails?.pricing?.wallet_balance ||
+            cartDetails?.wallet_balance ||
             0,
         )}
       />
