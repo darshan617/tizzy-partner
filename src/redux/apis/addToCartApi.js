@@ -42,6 +42,15 @@ const addToCartApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["addToCart"],
     }),
+    getUpdateCartDetails: builder.query({
+      query: ({ partner_id, plan_id }) => {
+        return {
+          url: `/updated?partner_id=${partner_id}&plan_id=${plan_id}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -50,4 +59,5 @@ export const {
   useGetCartDetailsMutation,
   useUpdateCartMutation,
   useRenewCustomerDetailsMutation,
+  useGetUpdateCartDetailsQuery,
 } = addToCartApi;
