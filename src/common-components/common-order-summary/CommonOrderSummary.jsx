@@ -27,7 +27,7 @@ const CommonOrderSummary = () => {
   const [cartDetails, setCartDetails] = useState({});
   const [pricePerUser, setPricePerUser] = useState(null);
   const [selectedCompany, setSelectedCompany] = useState("");
-  const [lisceneCounter, setLisceneCounter] = useState(10);
+  const [lisceneCounter, setLisceneCounter] = useState(1);
   const [promoCode, setPromoCode] = useState(10);
   const total = pricePerUser * lisceneCounter;
 
@@ -175,7 +175,7 @@ const CommonOrderSummary = () => {
         setPromoCode={setPromoCode}
         _creditBalance_={Number(
           cartDetails?.wallet_info?.wallet_balance ||
-            cartDetails?.pricing?.credit_balance ||
+            cartDetails?.pricing?.wallet_balance ||
             0,
         )}
       />
