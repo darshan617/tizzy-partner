@@ -31,6 +31,7 @@ const CommonOrderSummary = () => {
   const [lisceneCounter, setLisceneCounter] = useState(1);
   const [promoCode, setPromoCode] = useState(10);
   const [domainName, setDomainName] = useState("");
+
   console.log(domainName, "domainName");
 
   const total = (Number(pricePerUser) || 0) * (Number(lisceneCounter) || 0);
@@ -161,12 +162,13 @@ const CommonOrderSummary = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      cartData?.cart_id &&
-      (lisceneCounter || domainName || selectedCompany)
-    ) {
+    if (!cartData?.cart_id) return;
+
+    const timer = setTimeout(() => {
       handleUpdateCart();
-    }
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, [cartData?.cart_id, lisceneCounter, domainName, selectedCompany]);
 
   useEffect(() => {
