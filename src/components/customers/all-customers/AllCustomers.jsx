@@ -6,12 +6,7 @@ import Loader from "@/common-components/loader/Loader";
 import { FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { useRouter } from "next/router";
-
-const SERVICE_TITLES = {
-  tizzy: "Tizzy Mail",
-  microsoft: "Microsoft Solutions",
-  google: "Google Cloud",
-};
+import { CUSTOMER_STATUS } from "@/constants/customer-constants";
 
 export default function CustomerList({
   allCustomers,
@@ -21,26 +16,9 @@ export default function CustomerList({
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedStatuses, setSelectedStatuses] = useState([]);
-  const [selectedServices, setSelectedServices] = useState([]);
-  const [checkedCustomers, setCheckedCustomers] = useState([]);
-
-  // const userData = Cookies.get("userData")
-  // ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
-  // : {};
-
-  // const {data: allCustomers, isFetching: isFetchingAllCustomers, refetch} = useGetAllCustomersQuery({
-  //   partner_id: userData?.id,
-  // })
-  // console.log(allCustomers);
-
-  const toggleStatus = (status) => {
-    setSelectedStatuses((prev) =>
-      prev.includes(status)
-        ? prev.filter((s) => s !== status)
-        : [...prev, status],
-    );
-  };
+  const [selectedStatuses, setSelectedStatuses] = useState("all");
+  const [selectedServices, setSelectedServices] = useState("all");
+  console.log(selectedStatuses, "selectedServices");
 
   const toggleService = (service) => {
     setSelectedServices((prev) =>
@@ -49,29 +27,6 @@ export default function CustomerList({
         : [...prev, service],
     );
   };
-
-  const toggleCustomer = (id) => {
-    setCheckedCustomers((prev) =>
-      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id],
-    );
-  };
-
-  const filteredCustomers = ["k", "h"].filter((c) => {
-    const matchesSearch =
-      searchQuery === "" ||
-      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.domain.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.email.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesStatus =
-      selectedStatuses.length === 0 || selectedStatuses.includes(c.status);
-
-    const matchesService =
-      selectedServices.length === 0 ||
-      selectedServices.some((s) => c.services.includes(s));
-
-    return matchesSearch && matchesStatus && matchesService;
-  });
 
   function toCamelCase(str) {
     return str
@@ -137,21 +92,37 @@ export default function CustomerList({
                   <div className={`${styles.filterPart} col-auto `}>
                     <span className={`${styles.filterHead}`}>Status :</span>
                     <ul className={`${styles.filterGroup} gap-2`} role="group">
-                      {["Active", "Inactive", "Closed"].map((status, i) => (
-                        <li key={status}>
+                      {CUSTOMER_STATUS?.map((status, i) => (
+                        <li key={status?.key}>
                           <input
                             type="checkbox"
                             className="btn-check"
-                            id={`status_${i + 1}`}
+                            id={`status_${status?.key}`}
                             autoComplete="off"
-                            checked={selectedStatuses.includes(status)}
-                            onChange={() => toggleStatus(status)}
+                            checked={selectedStatuses === status?.key}
+                            onChange={() =>
+                              setSelectedStatuses(
+                                selectedStatuses === status?.key
+                                  ? "all"
+                                  : status?.key,
+                              )
+                            }
                           />
                           <label
                             className={`${styles.filterItem} rounded-pill`}
-                            htmlFor={`status_${i + 1}`}
+                            htmlFor={`status_${status?.key}`}
+                            style={{
+                              backgroundColor:
+                                selectedStatuses === status?.key
+                                  ? "var(--primaryColor)"
+                                  : "",
+                              color:
+                                selectedStatuses === status?.key
+                                  ? "var(--whiteColor)"
+                                  : "var(--darkColor)",
+                            }}
                           >
-                            {status}
+                            {status?.label}
                           </label>
                         </li>
                       ))}
@@ -227,13 +198,19 @@ export default function CustomerList({
               {isFetchingAllCustomers ? (
                 <Loader />
               ) : allCustomers?.data?.customers?.length > 0 ? (
-                allCustomers?.data?.customers?.map((customer, idx) => (
-                  <div
-                    key={idx}
-                    className={`${styles.contentRow} ${styles.btnDisplay}`}
-                  >
-                    <div className="row align-items-center">
-                      {/* <div className={`${styles.ckbCol} col-sm-auto col-6  order-sm-1 `}>
+                allCustomers?.data?.customers
+                  ?.filter((customer) =>
+                    selectedStatuses === "all"
+                      ? true
+                      : customer?.status === selectedStatuses,
+                  )
+                  .map((customer, idx) => (
+                    <div
+                      key={idx}
+                      className={`${styles.contentRow} ${styles.btnDisplay}`}
+                    >
+                      <div className="row align-items-center">
+                        {/* <div className={`${styles.ckbCol} col-sm-auto col-6  order-sm-1 `}>
                         <input
                           type="checkbox"
                           className="form-check-input"
@@ -243,42 +220,44 @@ export default function CustomerList({
                         />
                       </div> */}
 
-                      <div className="col-sm order-sm-2">
-                        <div className="row align-items-center py-3">
-                          <div className="col-8 col-sm-7 d-flex align-items-center flex-wrap">
-                            <div className="col-lg-6 col-12">
-                              <div
-                                className={`${styles.crDomain} d-flex align-items-center`}
-                              >
+                        <div className="col-sm order-sm-2">
+                          <div className="row align-items-center py-3">
+                            <div className="col-8 col-sm-7 d-flex align-items-center flex-wrap">
+                              <div className="col-lg-6 col-12">
                                 <div
-                                  className={`avatarSmall flex-shrink-0 ${styles.avatarBg}`}
+                                  className={`${styles.crDomain} d-flex align-items-center`}
                                 >
-                                  {customer?.name?.charAt(0)}
+                                  <div
+                                    className={`avatarSmall flex-shrink-0 ${styles.avatarBg}`}
+                                  >
+                                    {customer?.name?.charAt(0)}
+                                  </div>
+                                  <div
+                                    className={`${styles.crDomainName} ps-2`}
+                                  >
+                                    {toCamelCase(customer?.company)}
+                                  </div>
                                 </div>
-                                <div className={`${styles.crDomainName} ps-2`}>
-                                  {toCamelCase(customer?.company)}
+                                <div className={`${styles.crName} ms-4 ps-2`}>
+                                  {customer?.name}
                                 </div>
                               </div>
-                              <div className={`${styles.crName} ms-4 ps-2`}>
-                                {customer?.name}
+                              <div className="col-lg-6 col-12">
+                                <div
+                                  className={`${styles.crDescription}  ms-4 ps-2`}
+                                >
+                                  {customer?.email}
+                                </div>
+                                <div
+                                  className={`${styles.crDescription}  ms-4 ps-2`}
+                                >
+                                  {customer?.mobile}
+                                </div>
                               </div>
                             </div>
-                            <div className="col-lg-6 col-12">
-                              <div
-                                className={`${styles.crDescription}  ms-4 ps-2`}
-                              >
-                                {customer?.email}
-                              </div>
-                              <div
-                                className={`${styles.crDescription}  ms-4 ps-2`}
-                              >
-                                {customer?.mobile}
-                              </div>
-                            </div>
-                          </div>
 
-                          <div className="col-4 col-sm-5 d-flex align-items-center flex-wrap gap-2 gap-md-0">
-                            {/* <div className="col-md col-12 text-center">
+                            <div className="col-4 col-sm-5 d-flex align-items-center flex-wrap gap-2 gap-md-0">
+                              {/* <div className="col-md col-12 text-center">
                               {customer?.services?.map((service) => (
                                 <div
                                   key={service}
@@ -287,56 +266,56 @@ export default function CustomerList({
                                 />
                               ))}
                             </div> */}
-                            <div className="col-md col-12 text-center">
-                              <div className="d-flex flex-column align-items-center">
-                                <span
-                                  className={`${styles.statusBadgeStyle} ${customer?.status === "active" ? "successBg" : "dangerBg"}`}
-                                >
-                                  {customer?.status?.toUpperCase()}
-                                </span>
-                                <small className="textSecondary mt-1">
-                                  Created on{" "}
-                                  <span className="d-inline-block">
-                                    {customer?.created_date}
+                              <div className="col-md col-12 text-center">
+                                <div className="d-flex flex-column align-items-center">
+                                  <span
+                                    className={`${styles.statusBadgeStyle} ${customer?.status === "active" ? "successBg" : "dangerBg"}`}
+                                  >
+                                    {customer?.status?.toUpperCase()}
                                   </span>
-                                </small>
+                                  <small className="textSecondary mt-1">
+                                    Created on{" "}
+                                    <span className="d-inline-block">
+                                      {customer?.created_date}
+                                    </span>
+                                  </small>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="col-sm-auto col-6 align-self-stretch d-flex align-items-center justify-content-end order-sm-3 mobAction">
-                        <button
-                          className="crBtn"
-                          onClick={() =>
-                            router.push({
-                              pathname: "/customers/customer-details",
-                              query: {
-                                customerId: customer?.id,
-                              },
-                            })
-                          }
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="icon me-0"
+                        <div className="col-sm-auto col-6 align-self-stretch d-flex align-items-center justify-content-end order-sm-3 mobAction">
+                          <button
+                            className="crBtn"
+                            onClick={() =>
+                              router.push({
+                                pathname: "/customers/customer-details",
+                                query: {
+                                  customerId: customer?.id,
+                                },
+                              })
+                            }
                           >
-                            <path d="m9 18 6-6-6-6" />
-                          </svg>
-                        </button>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="icon me-0"
+                            >
+                              <path d="m9 18 6-6-6-6" />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  ))
               ) : (
                 "No Customer Data"
               )}
