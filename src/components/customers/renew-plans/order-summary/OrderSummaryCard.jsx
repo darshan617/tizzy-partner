@@ -29,9 +29,9 @@ const OrderSummaryCard = ({
       <div className={styles.card}>
         <div className={styles.cardTitle}>Order Summary</div>
 
-        <div _className_={styles.summaryRow}>
+        <div className={styles.summaryRow}>
           <span className={styles.label}>Subtotal</span>
-          <span className={styles.value}>₹ {total.toFixed(2)}</span>
+          <span className={styles.value}>₹ {total?.toFixed(2)}</span>
         </div>
 
         <div className={styles.summaryRow}>
@@ -147,7 +147,11 @@ const OrderSummaryCard = ({
       {isPopupOpen && (
         <CustomPopup onClose={handleClosePopup}>
           <div className={styles.creditRequestPopup}>
-            <Image src={requestCredit} className="mb-3" />
+            <Image
+              src={requestCredit}
+              className="mb-3"
+              alt=""
+            />
             <h3 className={styles.creditRequestAmount}>
               ₹ {totals.toFixed(2)}
             </h3>
@@ -157,7 +161,7 @@ const OrderSummaryCard = ({
             <p className={styles.creditRequestDescription}>
               Your request has been sent for approval.
               <br />
-              We'll notify you once it's approved.
+              {"We'll notify you once it's approved."}
             </p>
           </div>
         </CustomPopup>

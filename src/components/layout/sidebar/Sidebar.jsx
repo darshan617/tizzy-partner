@@ -116,14 +116,10 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
             <ul className={`${styles.sideMenuList} d-flex flex-column gap-1`}>
               {SIDEBAR_SERVICES_CONSTANTS?.map((menu, idx) => {
                 return (
-                  <li
+                  <Link
+                    href={menu?.href}
                     className={`${styles.sideMenuItem}`}
                     key={idx}
-                    onClick={() => {
-                      console.log(menu?.href, "tttttttttttt");
-
-                      router.push(menu?.href);
-                    }}
                     style={{
                       background:
                         `/services/${router?.query?.slug}` === menu?.href
@@ -149,7 +145,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                         {menu?.title}
                       </span>
                     </button>
-                  </li>
+                  </Link>
                 );
               })}
             </ul>

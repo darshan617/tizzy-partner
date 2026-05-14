@@ -1,0 +1,73 @@
+.shell {
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  border-radius: 16px;
+  min-height: calc(100vh - 220px);
+  box-sizing: border-box;
+}
+
+.split {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.leftScroll {
+  flex: 1 1 68%;
+  min-width: 0;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  scrollbar-gutter: stable;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  width: 100%;
+}
+
+
+.rightSticky {
+  flex: 0 0 clamp(280px, 30%, 340px);
+  min-width: 0;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+}
+
+.emptyCart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.emptyCartContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+@media (max-width: 991px) {
+  .split {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .leftScroll {
+    flex: 1 1 auto;
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 0;
+  }
+
+  .rightSticky {
+    position: static;
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

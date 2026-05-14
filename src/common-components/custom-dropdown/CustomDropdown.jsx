@@ -37,7 +37,9 @@ const CustomDropdown = ({
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           <span
-            className={!selectedOption?.trim() ? styles.placeholderText : undefined}
+            className={
+              !selectedOption?.trim() ? styles.placeholderText : undefined
+            }
           >
             {selectedOption?.trim() ? selectedOption : placeholder}
           </span>

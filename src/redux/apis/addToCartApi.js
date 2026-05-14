@@ -51,6 +51,16 @@ const addToCartApi = apiSlice.injectEndpoints({
       },
       providesTags: ["addToCart"],
     }),
+    deleteFromCart: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/delete-cart`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -60,4 +70,5 @@ export const {
   useUpdateCartMutation,
   useRenewCustomerDetailsMutation,
   useGetUpdateCartDetailsQuery,
+  useDeleteFromCartMutation,
 } = addToCartApi;

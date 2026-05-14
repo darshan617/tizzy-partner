@@ -230,7 +230,7 @@ export default function CustomerDetail() {
                     <div
                       className={`${styles.profName} text-nowrap text-capitalize`}
                     >
-                      {customerDetails?.company_name}
+                      <p>{customerDetails?.company_name}</p>
                       {/* {customerDetails?.name} */}
                     </div>
                     <div className={`${styles.idBadge} mt-1`}>
@@ -339,7 +339,7 @@ export default function CustomerDetail() {
               <p className="m-0">No Subscriptions</p>
               <button
                 className="small btnDefault btn"
-                onClick={() => router.push("/services/tizzy")}
+                onClick={() => router.push("/services/goole-cloud-partner")}
               >
                 <BsPlusCircleDotted className="me-2" size={14} />
                 <span>Buy New Subscription</span>
