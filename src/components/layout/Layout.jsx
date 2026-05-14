@@ -19,7 +19,8 @@ const Layout = ({ children }) => {
         style={{
           display: "flex",
           overflow: "hidden",
-          height: "calc(100vh - 75px)",
+          // height: "calc(100vh - 75px)",
+          height: "calc(100vh - 90px)",
           width: "100%",
           position: "sticky",
         }}

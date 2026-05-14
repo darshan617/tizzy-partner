@@ -24,7 +24,7 @@ const Subscriptions = () => {
             partner_id: userData?.id,
           },
         });
-        if (res?.data?.success) {          
+        if (res?.data?.success) {
           setAllSubscriptionsData(res?.data);
         }
       } catch (error) {
@@ -36,15 +36,15 @@ const Subscriptions = () => {
   return (
     <Layout>
       <SummaryCounts
-      countData={allSubscriptionsData?.summary}
-      isFetchingCountData={isAllSubscriptionDataLoading}
-      additionalBtns={[
-        {
-          href: "/services/tizzy",
-          label: "Buy New Subscription",
-          icon: <BsPlusCircleDotted size={18} />,
-        },
-      ]}
+        countData={allSubscriptionsData?.summary}
+        isFetchingCountData={isAllSubscriptionDataLoading}
+        additionalBtns={[
+          {
+            href: "/services/google-cloud-partner",
+            label: "Buy New Subscription",
+            icon: <BsPlusCircleDotted size={18} />,
+          },
+        ]}
       />
       <AllSubcriptions
         allSubscriptionsData={allSubscriptionsData?.data}

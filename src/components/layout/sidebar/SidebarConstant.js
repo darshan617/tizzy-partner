@@ -5,9 +5,6 @@ import { VscFiles } from "react-icons/vsc";
 import { PiHandCoinsLight } from "react-icons/pi";
 import { LuReceiptIndianRupee } from "react-icons/lu";
 
-
-
-
 export const SIDEBAR_MENU_CONSTANTS = [
   {
     id: 1,
@@ -27,7 +24,7 @@ export const SIDEBAR_MENU_CONSTANTS = [
     icon: VscFiles,
     href: "/subscriptions",
   },
-    {
+  {
     id: 4,
     title: "Invoices",
     icon: LuReceiptIndianRupee,
@@ -48,62 +45,6 @@ export const SIDEBAR_MENU_CONSTANTS = [
 ];
 
 export const SIDEBAR_SERVICES_CONSTANTS = [
-  {
-    id: 1,
-    title: "Tizzy Mail",
-    image: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="400"
-        height="400"
-        viewBox="0 0 400 400"
-        class="icon"
-      >
-        <path
-          fill="#34a853"
-          d="M49,59s86.637-1.833,172,99L282,21,350,9V20s-36.234-2.265-53,43L144,391l-14-39,80-172S164.162,106.238,49,69V59Z"
-        ></path>
-      </svg>
-    ),
-    href: "/services/tizzy",
-  },
-  {
-    id: 2,
-    title: "Microsoft Solution",
-    image: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        x="0px"
-        y="0px"
-        width="100"
-        height="100"
-        viewBox="0 0 48 48"
-        class="icon"
-      >
-        <path
-          fill="#ff5722"
-          d="M6 6H22V22H6z"
-          transform="rotate(-180 14 14)"
-        ></path>
-        <path
-          fill="#4caf50"
-          d="M26 6H42V22H26z"
-          transform="rotate(-180 34 14)"
-        ></path>
-        <path
-          fill="#ffc107"
-          d="M26 26H42V42H26z"
-          transform="rotate(-180 34 34)"
-        ></path>
-        <path
-          fill="#03a9f4"
-          d="M6 26H22V42H6z"
-          transform="rotate(-180 14 34)"
-        ></path>
-      </svg>
-    ),
-    href: "/services/microsoft-solution-partner",
-  },
   {
     id: 3,
     title: "Google Cloud",
@@ -151,5 +92,61 @@ export const SIDEBAR_SERVICES_CONSTANTS = [
       </svg>
     ),
     href: "/services/google-cloud-partner",
+  },
+  {
+    id: 2,
+    title: "Microsoft Solution",
+    image: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        x="0px"
+        y="0px"
+        width="100"
+        height="100"
+        viewBox="0 0 48 48"
+        class="icon"
+      >
+        <path
+          fill="#ff5722"
+          d="M6 6H22V22H6z"
+          transform="rotate(-180 14 14)"
+        ></path>
+        <path
+          fill="#4caf50"
+          d="M26 6H42V22H26z"
+          transform="rotate(-180 34 14)"
+        ></path>
+        <path
+          fill="#ffc107"
+          d="M26 26H42V42H26z"
+          transform="rotate(-180 34 34)"
+        ></path>
+        <path
+          fill="#03a9f4"
+          d="M6 26H22V42H6z"
+          transform="rotate(-180 14 34)"
+        ></path>
+      </svg>
+    ),
+    href: "/services/microsoft-solution-partner",
+  },
+  {
+    id: 1,
+    title: "Tizzy Mail",
+    image: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="400"
+        height="400"
+        viewBox="0 0 400 400"
+        class="icon"
+      >
+        <path
+          fill="#34a853"
+          d="M49,59s86.637-1.833,172,99L282,21,350,9V20s-36.234-2.265-53,43L144,391l-14-39,80-172S164.162,106.238,49,69V59Z"
+        ></path>
+      </svg>
+    ),
+    href: "/services/tizzy",
   },
 ];
