@@ -282,8 +282,18 @@ export default function ServiceSlugPage({
           },
         });
         if (res?.data?.success) {
-          router.push("/my-cart");
-          showToast("Plan added to cart", "success");
+          if (router?.query?.type === "upgrade") {
+            router.push({
+              pathname: "/my-cart",
+              query: {
+                type: "upgrade",
+                plan_id: planId,
+              },
+            });
+          } else {
+            router.push("/my-cart");
+            showToast("Plan added to cart", "success");
+          }
         } else {
           showToast("Error adding plan to cart", "error");
         }
@@ -400,14 +410,16 @@ export default function ServiceSlugPage({
                 // });
               }}
               ctaLabel={
-                router?.query?.slug === "tizzy" ||
-                router?.query?.slug === "microsoft-solution-partner"
-                  ? plan?.plan_is_in_cart
-                    ? "View Cart"
-                    : "Add to Cart"
-                  : plan?.plan_is_in_cart
-                    ? "View Cart"
-                    : "Buy Plan"
+                router?.query?.type === "upgrade"
+                  ? "Upgrade Plan"
+                  : router?.query?.slug === "tizzy" ||
+                      router?.query?.slug === "microsoft-solution-partner"
+                    ? plan?.plan_is_in_cart
+                      ? "View Cart"
+                      : "Add to Cart"
+                    : plan?.plan_is_in_cart
+                      ? "View Cart"
+                      : "Buy Plan"
               }
             />
           ))}

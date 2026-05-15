@@ -66,13 +66,18 @@ export default function PricingPlanCard({
         <button
           type="button"
           className={styles.cta}
-          onClick={() =>
-            plan_is_in_cart
-              ? router.push("/my-cart")
-              : isProviderInCart === false
-                ? onCtaClick()
-                : setIsPopupOpen(true)
-          }
+          onClick={() => {
+            if (plan_is_in_cart) {
+              router.push("/my-cart");
+            } else if (
+              isProviderInCart === false ||
+              router?.query?.type === "upgrade"
+            ) {
+              onCtaClick();
+            } else {
+              setIsPopupOpen(true);
+            }
+          }}
         >
           {ctaLabel}
         </button>

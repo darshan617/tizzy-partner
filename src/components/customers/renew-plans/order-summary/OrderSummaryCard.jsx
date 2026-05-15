@@ -128,9 +128,7 @@ const OrderSummaryCard = ({
         </div>
 
         <button className={styles.btnPrimary}>
-          {isInsufficient
-            ? "Clear Pending Invoices"
-            : "Generate Purchase Order"}
+          {isInsufficient ? "Clear Pending Invoices" : "Proceed"}
         </button>
         {isInsufficient && (
           <div className={styles.requestBox}>
@@ -147,11 +145,7 @@ const OrderSummaryCard = ({
       {isPopupOpen && (
         <CustomPopup onClose={handleClosePopup}>
           <div className={styles.creditRequestPopup}>
-            <Image
-              src={requestCredit}
-              className="mb-3"
-              alt=""
-            />
+            <Image src={requestCredit} className="mb-3" alt="" />
             <h3 className={styles.creditRequestAmount}>
               ₹ {totals.toFixed(2)}
             </h3>

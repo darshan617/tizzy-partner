@@ -91,25 +91,6 @@ const CommonOrderSummary = () => {
           // licenses: 1,
         },
       });
-      // if (!router?.query?.variant && router?.query?.plan_id) {
-      //   res = await addToCart({
-      //     body: {
-      //       partner_id: customerData?.partner_id,
-      //       plan_id: router?.query?.plan_id,
-      //       // licenses: 1,
-      //     },
-      //   });
-      // } else if (router?.query?.type && router?.query?.plan_id) {
-      //   res = await addToCart({
-      //     body: {
-      //       // partner_id: customerData?.partner_id,
-      //       // customer_id: customerData?.customer_id,
-      //       plan_id: router?.query?.plan_id,
-      //       // domain_name: customerData?.domain_name,
-      //       // licenses: 1,
-      //     },
-      //   });
-      // }
 
       if (res?.data?.success) {
         const data = res?.data?.data;
@@ -248,10 +229,10 @@ const CommonOrderSummary = () => {
   }, [cartDetails, domainName, selectedCompany, customerData?.customer_id]);
 
   useEffect(() => {
-    if (router?.query?.type === "renew-plan") {
+    if (router?.query?.type === "renew-plan" && router?.query?.order_id) {
       handleRenewCustomerDetails();
     }
-  }, [router?.query?.type === "renew-plan"]);
+  }, [router?.query?.type, router?.query?.order_id]);
 
   useEffect(() => {
     if (getUpdateCartDetails?.success) {
@@ -263,7 +244,7 @@ const CommonOrderSummary = () => {
         plan_name: data?.plan_name,
         domain_name: data?.domain_name,
         subscription_start_date: data?.created_at,
-        subscription_end_date: data?.updated_at,
+        subscription_end_date: data?.end_date,
         customerLimit: data?.customerLimit,
       });
       setPricePerUser(Number(data?.unit_price) || 0);
@@ -276,10 +257,11 @@ const CommonOrderSummary = () => {
 
   //cart api — skip when plan_id is present; getUpdateCartDetails already loads that cart
   useEffect(() => {
-    if (userData?.id) {
-      handleGetCartDetails();
-    }
-  }, [userData?.id]);
+    if (!userData?.id || !router?.isReady) return;
+    if (router?.query?.type === "renew-plan") return;
+    if (router?.query?.type === "upgrade") return;
+    handleGetCartDetails();
+  }, [userData?.id, router?.isReady, router?.query?.type]);
 
   const updateLineLicenses = (lineKey, nextLicenses) => {
     setCartDetails((prev) => {
@@ -294,7 +276,11 @@ const CommonOrderSummary = () => {
 
   return (
     <div className={layoutStyles.shell}>
-      {cartDetails.length > 0 ? (
+      {(
+        Array.isArray(cartDetails)
+          ? cartDetails.length
+          : Object.keys(cartDetails || {}).length
+      ) ? (
         <div className={layoutStyles.split}>
           <div className={layoutStyles.leftScroll}>
             <RenewCart

@@ -467,6 +467,15 @@
   background: none;
   outline: none;
   border: none;
+  border-bottom: 1px solid var(--primaryColor);
+  color: var(--primaryColor);
+  font-weight: 500;
+}
+
+.updwngradeBtn:hover,
+.downgradeBtn:hover {
+  color: #007bff;
+  border-bottom: 1px solid #007bff;
 }
 
 @media (min-width: 576px) {

@@ -26,6 +26,7 @@ const RenewCart = ({
   isGettingCartDetails,
   hideInlineSubtotal = false,
 }) => {
+  console.log("cartDetails", cartDetails);
   const router = useRouter();
   const { showToast } = useToast();
   const [isPopupOpen, setIsPopupOpen] = useState("");
@@ -80,6 +81,7 @@ const RenewCart = ({
       ) : (
         <div>
           {cartItemList.map((item, idx) => {
+            console.log("item", item);
             const customerLimit =
               item?.customerLimit ?? item?.customer_limit ?? undefined;
             const lineKey = item?.cart_id ?? item?.id ?? idx;
@@ -99,11 +101,15 @@ const RenewCart = ({
                   ></div> */}
                   <div>
                     <span className={`${styles.iconCircle} `}>
-                      {
-                        SIDEBAR_SERVICES_CONSTANTS.find(
-                          (menu) => menu.id === Number(item?.plan?.provider_id),
-                        )?.image
-                      }
+                      {SIDEBAR_SERVICES_CONSTANTS.find(
+                        (menu) =>
+                          menu?.id ===
+                          Number(
+                            item?.plan?.provider_id ||
+                              item?.plan_info?.provider_id ||
+                              item?.provider_id,
+                          ),
+                      )?.image || "-"}
                     </span>
                   </div>
                   <div className={styles.productInfo}>
@@ -278,7 +284,7 @@ const RenewCart = ({
               />
             </div> */}
 
-              <div className={styles.fieldGroup}>
+              {/* <div className={styles.fieldGroup}>
                 <label className={styles.fieldLabel} htmlFor="domainName">
                   Domain <span className={styles.required}>*</span>
                 </label>
@@ -290,7 +296,7 @@ const RenewCart = ({
                   value={domainName}
                   onChange={(e) => setDomainName(e.target.value)}
                 />
-              </div>
+              </div> */}
             </div>
           </div>
 
