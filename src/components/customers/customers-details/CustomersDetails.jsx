@@ -496,6 +496,7 @@ export default function CustomerDetail() {
                                     query: {
                                       type: "upgrade",
                                       order_id: innerPlan?.order_id,
+                                      customer_id: router?.query?.customerId,
                                     },
                                   }}
                                   className={styles.updwngradeBtn}

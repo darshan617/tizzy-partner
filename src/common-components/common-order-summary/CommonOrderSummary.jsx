@@ -5,6 +5,8 @@ import {
   useAddToCartMutation,
   useGetCartDetailsMutation,
   useGetUpdateCartDetailsQuery,
+  useGetUpgradeAddToCartDetailsMutation,
+  useGetUpgradeAddToCartDetailsQuery,
   useRenewCustomerDetailsMutation,
   useUpdateCartMutation,
 } from "@/redux/apis/addToCartApi";
@@ -16,6 +18,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const normalizeCompanyName = (name) => {
+  console.log(name, "nameeeeeeeeeeeeeeee");
   const t = String(name ?? "").trim();
   return t && t !== "-" ? t : "";
 };
@@ -37,6 +40,7 @@ const CommonOrderSummary = () => {
   const [cartDetails, setCartDetails] = useState({});
   const [pricePerUser, setPricePerUser] = useState(null);
   const [selectedCompany, setSelectedCompany] = useState("");
+  console.log(selectedCompany, "selectedCompany");
   const [lisceneCounter, setLisceneCounter] = useState(1);
   const [promoCode, setPromoCode] = useState(10);
   const [domainName, setDomainName] = useState("");
@@ -59,6 +63,12 @@ const CommonOrderSummary = () => {
   //cart api
   const [getCartDetailsApi, { isLoading: isGettingCartDetailsApi }] =
     useGetCartDetailsMutation();
+
+  //get upgrade cart details api
+  const [
+    getUpgradeCartDetailsApi,
+    { isLoading: isGettingUpgradeCartDetailsApi },
+  ] = useGetUpgradeAddToCartDetailsMutation();
 
   const { data: getAllCustomers } = useGetAllCustomersQuery(
     {
@@ -179,6 +189,25 @@ const CommonOrderSummary = () => {
     }
   };
 
+  //get upgrade cart details api
+  const handleGetUpgradeCartDetails = async () => {
+    try {
+      const res = await getUpgradeCartDetailsApi({
+        body: {
+          partner_id: userData?.id,
+          customer_id: router?.query?.customer_id,
+        },
+      });
+      if (res?.data?.success) {
+        console.log(res, "res?.data?.data");
+        const data = res?.data?.data;
+        setCartDetails(data);
+      } else {
+        console.log(res?.data?.message, "res?.data?.message");
+      }
+    } catch (error) {}
+  };
+
   useEffect(() => {
     if (router?.query?.plan_id && router?.query?.variant) {
       handleAddToCart();
@@ -263,6 +292,13 @@ const CommonOrderSummary = () => {
     handleGetCartDetails();
   }, [userData?.id, router?.isReady, router?.query?.type]);
 
+  //get upgrade cart details api
+  useEffect(() => {
+    if (router?.query?.type === "upgrade" && router?.query?.customer_id) {
+      handleGetUpgradeCartDetails();
+    }
+  }, [router?.query?.type, router?.query?.customer_id]);
+
   const updateLineLicenses = (lineKey, nextLicenses) => {
     setCartDetails((prev) => {
       if (!Array.isArray(prev)) return prev;
@@ -296,7 +332,9 @@ const CommonOrderSummary = () => {
               domainName={domainName}
               setDomainName={setDomainName}
               isGettingCartDetails={isGettingCartDetailsApi}
-              hideInlineSubtotal={true}
+              hideInlineSubtotal={
+                router?.query?.type === "upgrade" ? false : true
+              }
             />
           </div>
           <aside className={layoutStyles.rightSticky}>

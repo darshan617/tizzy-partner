@@ -61,6 +61,24 @@ const addToCartApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["addToCart"],
     }),
+    upgradeAddToCart: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/upgrade-add-to-cart`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
+    getUpgradeAddToCartDetails: builder.mutation({
+      query: ({ body }) => ({
+        url: `/upgrade-cart-details`,
+        method: "POST",
+        body: body,
+      }),
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -71,4 +89,6 @@ export const {
   useRenewCustomerDetailsMutation,
   useGetUpdateCartDetailsQuery,
   useDeleteFromCartMutation,
+  useUpgradeAddToCartMutation,
+  useGetUpgradeAddToCartDetailsMutation,
 } = addToCartApi;
