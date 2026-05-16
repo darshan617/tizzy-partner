@@ -201,7 +201,8 @@ const RenewCart = ({
                             ? lineLicenses <= 1
                             : lisceneCounter === 1) ||
                           router?.query?.variant === "upgrade" ||
-                          router?.query?.variant === "downgrade"
+                          router?.query?.variant === "downgrade" ||
+                          router?.query?.type === "renew-plan"
                         }
                         onClick={() => {
                           if (listMode) {
@@ -237,7 +238,8 @@ const RenewCart = ({
                         max={customerLimit}
                         disabled={
                           router?.query?.variant === "upgrade" ||
-                          router?.query?.variant === "downgrade"
+                          router?.query?.variant === "downgrade" ||
+                          router?.query?.type === "renew-plan"
                         }
                       />
                       <button
@@ -267,7 +269,8 @@ const RenewCart = ({
                             ? lineLicenses === customerLimit
                             : lisceneCounter === customerLimit) ||
                           router?.query?.variant === "upgrade" ||
-                          router?.query?.variant === "downgrade"
+                          router?.query?.variant === "downgrade" ||
+                          router?.query?.type === "renew-plan"
                         }
                       >
                         +

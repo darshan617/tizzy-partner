@@ -331,7 +331,12 @@ const CommonOrderSummary = () => {
               setSelectedCompany={setSelectedCompany}
               domainName={domainName}
               setDomainName={setDomainName}
-              isGettingCartDetails={isGettingCartDetailsApi}
+              isGettingCartDetails={
+                isGettingCartDetailsApi ||
+                isGettingUpgradeCartDetailsApi ||
+                isRenewingCustomerDetails ||
+                isGettingCartDetails
+              }
               // hideInlineSubtotal={
               //   router?.query?.type === "upgrade" ? false : true
               // }
@@ -339,12 +344,8 @@ const CommonOrderSummary = () => {
           </div>
           <aside className={layoutStyles.rightSticky}>
             <OrderSummaryCard
-              lisceneCounter={lisceneCounter}
-              setLisceneCounter={setLisceneCounter}
-              pricePerUser={pricePerUser}
               total={total}
               promoCode={promoCode}
-              setPromoCode={setPromoCode}
               _creditBalance_={Number(
                 (Array.isArray(cartDetails)
                   ? (cartDetails[0]?.wallet_info?.wallet_balance ??

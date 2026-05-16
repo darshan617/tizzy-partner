@@ -259,7 +259,9 @@ export default function ServiceSlugPage({
     awaitingProviderList ||
     (showCategoryPills && isFetchingProviderVariants) ||
     isPlansLoading ||
-    isUpgradeDowngradeFetching;
+    isUpgradeDowngradeFetching ||
+    isAddingToCart ||
+    isUpgradingToCart;
 
   const filteredPlans = useMemo(() => {
     if (!config?.plans) return [];
