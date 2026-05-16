@@ -332,9 +332,9 @@ const CommonOrderSummary = () => {
               domainName={domainName}
               setDomainName={setDomainName}
               isGettingCartDetails={isGettingCartDetailsApi}
-              hideInlineSubtotal={
-                router?.query?.type === "upgrade" ? false : true
-              }
+              // hideInlineSubtotal={
+              //   router?.query?.type === "upgrade" ? false : true
+              // }
             />
           </div>
           <aside className={layoutStyles.rightSticky}>

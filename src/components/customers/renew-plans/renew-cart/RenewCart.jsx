@@ -80,27 +80,33 @@ const RenewCart = ({
         </div>
       ) : (
         <div>
-          <div className={styles.customerDetailsCard}>
-            <div className={styles.customerDetailsHeader}>
-              <h3 className={styles.customerDetailsTitle}>CUSTOMER DETAILS</h3>
-              <button
-                type="button"
-                className={styles.newCustomerBtn}
-                onClick={() => setIsPopupOpen("new-customer")}
-              >
-                + New Customer
-              </button>
-            </div>
+          {!router?.query?.type && (
+            <>
+              <div className={styles.customerDetailsCard}>
+                <div className={styles.customerDetailsHeader}>
+                  <h3 className={styles.customerDetailsTitle}>
+                    CUSTOMER DETAILS
+                  </h3>
+                  <button
+                    type="button"
+                    className={styles.newCustomerBtn}
+                    onClick={() => setIsPopupOpen("new-customer")}
+                  >
+                    + New Customer
+                  </button>
+                </div>
 
-            <div className={styles.customerFieldsRow}>
-              <CustomDropdown
-                options={companyNames}
-                value={selectedCompany || ""}
-                placeholder="Select Company Name"
-                label="Company Name"
-                onChange={(option) => setSelectedCompany(option?.label || "")}
-              />
-              {/* <div className={styles.fieldGroup}>
+                <div className={styles.customerFieldsRow}>
+                  <CustomDropdown
+                    options={companyNames}
+                    value={selectedCompany || ""}
+                    placeholder="Select Company Name"
+                    label="Company Name"
+                    onChange={(option) =>
+                      setSelectedCompany(option?.label || "")
+                    }
+                  />
+                  {/* <div className={styles.fieldGroup}>
               <label className={styles.fieldLabel} htmlFor="companyName">
                 Company Name <span className={styles.required}>*</span>
               </label>
@@ -112,7 +118,7 @@ const RenewCart = ({
               />
             </div> */}
 
-              {/* <div className={styles.fieldGroup}>
+                  {/* <div className={styles.fieldGroup}>
                 <label className={styles.fieldLabel} htmlFor="domainName">
                   Domain <span className={styles.required}>*</span>
                 </label>
@@ -125,8 +131,10 @@ const RenewCart = ({
                   onChange={(e) => setDomainName(e.target.value)}
                 />
               </div> */}
-            </div>
-          </div>
+                </div>
+              </div>
+            </>
+          )}
 
           {cartItemList.map((item, idx) => {
             console.log("item", item);
