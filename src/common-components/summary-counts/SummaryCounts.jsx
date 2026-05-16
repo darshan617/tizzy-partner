@@ -222,7 +222,7 @@ export default function SummaryCounts({
         router?.pathname === "/subscriptions" ? "successColor" : "warningColor",
       badgeClass: "up",
       icon: <SubscriptionIcon />,
-      redirectUrl: "/services/tizzy",
+      redirectUrl: "/services/google-cloud-partner",
     },
 
     "renewals this month": {
