@@ -26,6 +26,7 @@ const RenewCart = ({
   isGettingCartDetails,
   hideInlineSubtotal = false,
 }) => {
+  console.log("cartDetails", cartDetails);
   const router = useRouter();
   const { showToast } = useToast();
   const [isPopupOpen, setIsPopupOpen] = useState("");
@@ -79,7 +80,64 @@ const RenewCart = ({
         </div>
       ) : (
         <div>
+          {!router?.query?.type && (
+            <>
+              <div className={styles.customerDetailsCard}>
+                <div className={styles.customerDetailsHeader}>
+                  <h3 className={styles.customerDetailsTitle}>
+                    CUSTOMER DETAILS
+                  </h3>
+                  <button
+                    type="button"
+                    className={styles.newCustomerBtn}
+                    onClick={() => setIsPopupOpen("new-customer")}
+                  >
+                    + New Customer
+                  </button>
+                </div>
+
+                <div className={styles.customerFieldsRow}>
+                  <CustomDropdown
+                    options={companyNames}
+                    value={selectedCompany || ""}
+                    placeholder="Select Company Name"
+                    label="Company Name"
+                    onChange={(option) =>
+                      setSelectedCompany(option?.label || "")
+                    }
+                  />
+                  {/* <div className={styles.fieldGroup}>
+              <label className={styles.fieldLabel} htmlFor="companyName">
+                Company Name <span className={styles.required}>*</span>
+              </label>
+              <input
+                id="companyName"
+                type="text"
+                className={styles.fieldInput}
+                placeholder="Enter Company Name"
+              />
+            </div> */}
+
+                  {/* <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel} htmlFor="domainName">
+                  Domain <span className={styles.required}>*</span>
+                </label>
+                <input
+                  id="domainName"
+                  type="text"
+                  className={styles.fieldInput}
+                  placeholder="Enter Domain Name"
+                  value={domainName}
+                  onChange={(e) => setDomainName(e.target.value)}
+                />
+              </div> */}
+                </div>
+              </div>
+            </>
+          )}
+
           {cartItemList.map((item, idx) => {
+            console.log("item", item);
             const customerLimit =
               item?.customerLimit ?? item?.customer_limit ?? undefined;
             const lineKey = item?.cart_id ?? item?.id ?? idx;
@@ -99,11 +157,15 @@ const RenewCart = ({
                   ></div> */}
                   <div>
                     <span className={`${styles.iconCircle} `}>
-                      {
-                        SIDEBAR_SERVICES_CONSTANTS.find(
-                          (menu) => menu.id === Number(item?.plan?.provider_id),
-                        )?.image
-                      }
+                      {SIDEBAR_SERVICES_CONSTANTS.find(
+                        (menu) =>
+                          menu?.id ===
+                          Number(
+                            item?.plan?.provider_id ||
+                              item?.plan_info?.provider_id ||
+                              item?.provider_id,
+                          ),
+                      )?.image || "-"}
                     </span>
                   </div>
                   <div className={styles.productInfo}>
@@ -245,54 +307,6 @@ const RenewCart = ({
               </div>
             </>
           )}
-
-          <div className={styles.customerDetailsCard}>
-            <div className={styles.customerDetailsHeader}>
-              <h3 className={styles.customerDetailsTitle}>CUSTOMER DETAILS</h3>
-              <button
-                type="button"
-                className={styles.newCustomerBtn}
-                onClick={() => setIsPopupOpen("new-customer")}
-              >
-                + New Customer
-              </button>
-            </div>
-
-            <div className={styles.customerFieldsRow}>
-              <CustomDropdown
-                options={companyNames}
-                value={selectedCompany || ""}
-                placeholder="Select Company Name"
-                label="Company Name"
-                onChange={(option) => setSelectedCompany(option?.label || "")}
-              />
-              {/* <div className={styles.fieldGroup}>
-              <label className={styles.fieldLabel} htmlFor="companyName">
-                Company Name <span className={styles.required}>*</span>
-              </label>
-              <input
-                id="companyName"
-                type="text"
-                className={styles.fieldInput}
-                placeholder="Enter Company Name"
-              />
-            </div> */}
-
-              <div className={styles.fieldGroup}>
-                <label className={styles.fieldLabel} htmlFor="domainName">
-                  Domain <span className={styles.required}>*</span>
-                </label>
-                <input
-                  id="domainName"
-                  type="text"
-                  className={styles.fieldInput}
-                  placeholder="Enter Domain Name"
-                  value={domainName}
-                  onChange={(e) => setDomainName(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
 
           {isPopupOpen === "new-customer" && (
             <CustomPopup onClose={handleClosePopup}>

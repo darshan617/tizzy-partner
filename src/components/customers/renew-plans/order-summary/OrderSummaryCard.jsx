@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import styles from "@/components/customers/renew-plans/order-summary/OrderSummaryCard.module.css";
-import { FiCheck, FiInfo } from "react-icons/fi";
+import { FiInfo, FiPlus } from "react-icons/fi";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import Image from "next/image";
 import requestCredit from "@/assets/cart/request_credit.svg";
+
+const DOMAIN_SUFFIX = ".onmicrosoft.com";
 
 const OrderSummaryCard = ({
   _gstRate_ = 0.18,
@@ -20,9 +22,21 @@ const OrderSummaryCard = ({
   const isInsufficient = _creditBalance_ < totals;
   const [isPromoCodeAdded, setIsPromoCodeAdded] = useState(false);
 
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState("");
+  const [domainRows, setDomainRows] = useState([{ id: 1, prefix: "" }]);
+
   const handleClosePopup = () => {
-    setIsPopupOpen(false);
+    setIsPopupOpen("");
+  };
+
+  const handleAddDomainRow = () => {
+    setDomainRows((prev) => [...prev, { id: Date.now(), prefix: "" }]);
+  };
+
+  const handleDomainPrefixChange = (id, value) => {
+    setDomainRows((prev) =>
+      prev.map((row) => (row.id === id ? { ...row, prefix: value } : row)),
+    );
   };
   return (
     <div>
@@ -127,31 +141,30 @@ const OrderSummaryCard = ({
           )}
         </div>
 
-        <button className={styles.btnPrimary}>
-          {isInsufficient
-            ? "Clear Pending Invoices"
-            : "Generate Purchase Order"}
+        <button
+          className={styles.btnPrimary}
+          onClick={() => {
+            !isInsufficient && setIsPopupOpen("proceed");
+          }}
+        >
+          {isInsufficient ? "Clear Pending Invoices" : "Proceed"}
         </button>
         {isInsufficient && (
           <div className={styles.requestBox}>
             <p>Want to complete purchase urgently?</p>
             <button
               className={styles.requestLink}
-              onClick={() => setIsPopupOpen(true)}
+              onClick={() => setIsPopupOpen("request-credit")}
             >
               Request Credits
             </button>
           </div>
         )}
       </div>
-      {isPopupOpen && (
-        <CustomPopup onClose={handleClosePopup}>
+      {isPopupOpen === "request-credit" && (
+        <CustomPopup onClose={handleClosePopup} maxWidth="200px">
           <div className={styles.creditRequestPopup}>
-            <Image
-              src={requestCredit}
-              className="mb-3"
-              alt=""
-            />
+            <Image src={requestCredit} className="mb-3" alt="" />
             <h3 className={styles.creditRequestAmount}>
               ₹ {totals.toFixed(2)}
             </h3>
@@ -163,6 +176,85 @@ const OrderSummaryCard = ({
               <br />
               {"We'll notify you once it's approved."}
             </p>
+          </div>
+        </CustomPopup>
+      )}
+      {isPopupOpen === "proceed" && (
+        <CustomPopup onClose={handleClosePopup} maxWidth="400px">
+          <div className={styles.proceedPopup}>
+            <div className={styles.proceedPopupContent}>
+              <h3 className={styles.proceedPopupTitle}>
+                How would you like to continue?
+              </h3>
+              <p className={styles.proceedPopupSubtitle}>
+                Choose an option to proceed with your order.
+              </p>
+            </div>
+            <div className={styles.proceedPopupActions}>
+              <button
+                type="button"
+                className={styles.proceedPopupActionBtn}
+                onClick={handleClosePopup}
+              >
+                Transfer Service
+              </button>
+              <button
+                type="button"
+                className={styles.proceedPopupActionBtn}
+                onClick={() => {
+                  setIsPopupOpen("new-service");
+                }}
+              >
+                New Service
+              </button>
+            </div>
+          </div>
+        </CustomPopup>
+      )}
+      {isPopupOpen === "new-service" && (
+        <CustomPopup onClose={handleClosePopup} maxWidth="420px">
+          <div className={styles.newServicePopup}>
+            <div className={styles.newServicePopupHeader}>
+              <h3 className={styles.newServicePopupTitle}>Add Domain</h3>
+              <button
+                type="button"
+                className={styles.addDomainIconBtn}
+                onClick={
+                  domainRows?.length > 2 ? undefined : handleAddDomainRow
+                }
+                aria-label="Add domain row"
+              >
+                <FiPlus size={18} />
+              </button>
+            </div>
+            <div className={styles.newServicePopupBody}>
+              {domainRows.map((row) => (
+                <div key={row.id} className={styles.domainFieldRow}>
+                  <input
+                    type="text"
+                    className={styles.domainFieldInput}
+                    placeholder="Choose domain"
+                    value={row.prefix}
+                    onChange={(e) =>
+                      handleDomainPrefixChange(row.id, e.target.value)
+                    }
+                    aria-label="Domain prefix"
+                  />
+                  <span className={styles.domainFieldSuffix}>
+                    {DOMAIN_SUFFIX}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className={styles.newServicePopupFooter}>
+              <button
+                type="button"
+                className={styles.proceedPopupActionBtn}
+                onClick={handleClosePopup}
+              >
+                Done
+              </button>
+            </div>
           </div>
         </CustomPopup>
       )}

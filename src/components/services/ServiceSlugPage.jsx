@@ -34,6 +34,7 @@ import Cookies from "js-cookie";
 import {
   useAddToCartMutation,
   useGetCartDetailsMutation,
+  useUpgradeAddToCartMutation,
 } from "@/redux/apis/addToCartApi";
 
 function formatInr(amount) {
@@ -86,6 +87,9 @@ export default function ServiceSlugPage({
   ] = useLazyUpgradeDowngradePlanQuery();
 
   const [addToCart, { isLoading: isAddingToCart }] = useAddToCartMutation();
+
+  const [upgradeAddToCart, { isLoading: isUpgradingToCart }] =
+    useUpgradeAddToCartMutation();
 
   const applyCategoryFromVariant = useCallback(
     (cat) => {
@@ -282,8 +286,18 @@ export default function ServiceSlugPage({
           },
         });
         if (res?.data?.success) {
-          router.push("/my-cart");
-          showToast("Plan added to cart", "success");
+          if (router?.query?.type === "upgrade") {
+            router.push({
+              pathname: "/my-cart",
+              query: {
+                type: "upgrade",
+                plan_id: planId,
+              },
+            });
+          } else {
+            router.push("/my-cart");
+            showToast("Plan added to cart", "success");
+          }
         } else {
           showToast("Error adding plan to cart", "error");
         }
@@ -293,6 +307,31 @@ export default function ServiceSlugPage({
     },
     [addToCart, router?.query?.slug, router.asPath],
   );
+
+  const handleUpgradeAddToCart = async (planId) => {
+    try {
+      const res = await upgradeAddToCart({
+        body: {
+          partner_id: userData?.id,
+          plan_id: planId,
+          customer_id: router?.query?.customer_id,
+        },
+      });
+      if (res?.data?.success) {
+        router.push({
+          pathname: "/my-cart",
+          query: {
+            type: "upgrade",
+            customer_id: router?.query?.customer_id,
+          },
+        });
+      } else {
+        showToast("Error adding plan to cart", "error");
+      }
+    } catch (error) {
+      console.log(error, "error upgrading to cart");
+    }
+  };
 
   if (!slug) {
     return <p className={styles.empty}>Loading…</p>;
@@ -384,30 +423,36 @@ export default function ServiceSlugPage({
               isProviderInCart={plan?.provider_in_cart}
               plan_is_in_cart={plan?.plan_is_in_cart}
               onCtaClick={() => {
-                handleAddToCart(plan?.plan_id || plan?.id);
-                // router.push({
-                //   pathname: `/order-summary`,
-                //   query: {
-                //     plan_id: plan?.plan_id || plan?.id,
-                //     ...(!router?.query?.type && { variant: "new-plan" }),
-                //     ...(router?.query?.type === "upgrade" && {
-                //       variant: "upgrade",
-                //     }),
-                //     ...(router?.query?.type === "downgrade" && {
-                //       variant: "downgrade",
-                //     }),
-                //   },
-                // });
+                if (router?.query?.type === "upgrade") {
+                  handleUpgradeAddToCart(plan?.plan_id || plan?.id);
+                } else {
+                  handleAddToCart(plan?.plan_id || plan?.id);
+                  // router.push({
+                  //   pathname: `/order-summary`,
+                  //   query: {
+                  //     plan_id: plan?.plan_id || plan?.id,
+                  //     ...(!router?.query?.type && { variant: "new-plan" }),
+                  //     ...(router?.query?.type === "upgrade" && {
+                  //       variant: "upgrade",
+                  //     }),
+                  //     ...(router?.query?.type === "downgrade" && {
+                  //       variant: "downgrade",
+                  //     }),
+                  //   },
+                  // });
+                }
               }}
               ctaLabel={
-                router?.query?.slug === "tizzy" ||
-                router?.query?.slug === "microsoft-solution-partner"
-                  ? plan?.plan_is_in_cart
-                    ? "View Cart"
-                    : "Add to Cart"
-                  : plan?.plan_is_in_cart
-                    ? "View Cart"
-                    : "Buy Plan"
+                router?.query?.type === "upgrade"
+                  ? "Upgrade Plan"
+                  : router?.query?.slug === "tizzy" ||
+                      router?.query?.slug === "microsoft-solution-partner"
+                    ? plan?.plan_is_in_cart
+                      ? "View Cart"
+                      : "Add to Cart"
+                    : plan?.plan_is_in_cart
+                      ? "View Cart"
+                      : "Buy Plan"
               }
             />
           ))}

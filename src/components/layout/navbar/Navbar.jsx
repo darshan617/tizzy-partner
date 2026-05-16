@@ -117,13 +117,10 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                     </button>
                   </div>
                   <div className="">
-                    <button
-                      className={styles.navBtns}
-                      onClick={() => router.push("/my-cart")}
-                    >
-                      <BsHandbag size={20} />
+                    <Link className={styles.navBtns} href="/my-cart">
+                      <BsHandbag size={20} color="#000" />
                       <span className={`${styles.navLabel} d-none`}></span>
-                    </button>
+                    </Link>
                   </div>
                   <div className="vr  "></div>
                   <div className={styles.profHolder} ref={dropdownRef}>
