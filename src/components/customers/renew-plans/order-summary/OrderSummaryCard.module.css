@@ -1,10 +1,10 @@
 .card {
     background: #ffffff;
-    border-radius: 12px;
+    border-radius: 14px;
     padding: 24px 22px 22px;
     width: 100%;
-    max-width: 300px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    max-width: 100%;
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.08);
 }
  
 .cardTitle {
@@ -237,6 +237,142 @@
     font-size: 16px;
     font-weight: 400;
     line-height: 1.45;
+}
+
+.proceedPopup {
+    margin: -16px -18px -16px;
+    text-align: center;
+}
+
+.proceedPopupContent {
+    padding: 32px 28px 28px;
+}
+
+.proceedPopupTitle {
+    margin: 0 0 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.3;
+}
+
+.proceedPopupSubtitle {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: #6b7280;
+    line-height: 1.45;
+}
+
+.proceedPopupActions {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    padding: 0 24px 28px;
+}
+
+.proceedPopupActionBtn {
+    display: block;
+    width: 100%;
+    padding: 13px 20px;
+    background: var(--primaryColor);
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+}
+
+.proceedPopupActionBtn:hover {
+    background: #054891;
+}
+
+.proceedPopupActionBtn:active {
+    transform: scale(0.98);
+}
+
+.newServicePopup {
+    margin: -16px -18px -16px;
+}
+
+.newServicePopupHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 24px 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.newServicePopupTitle {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.3;
+}
+
+.addDomainIconBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: #e8f0fe;
+    color: var(--primaryColor);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s;
+}
+
+.addDomainIconBtn:hover {
+    background: #d6e6fc;
+}
+
+.newServicePopupBody {
+    padding: 20px 24px 8px;
+}
+
+.domainFieldRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+}
+
+.domainFieldInput {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 400;
+    color: #111827;
+}
+
+.domainFieldInput::placeholder {
+    color: #9ca3af;
+}
+
+.domainFieldSuffix {
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: #6b7280;
+}
+
+.newServicePopupFooter {
+    padding: 8px 24px 28px;
 }
  
 @media (max-width: 480px) {

@@ -34,6 +34,7 @@ import Cookies from "js-cookie";
 import {
   useAddToCartMutation,
   useGetCartDetailsMutation,
+  useUpgradeAddToCartMutation,
 } from "@/redux/apis/addToCartApi";
 
 function formatInr(amount) {
@@ -54,6 +55,8 @@ export default function ServiceSlugPage({
   const dispatch = useDispatch();
   const { showToast } = useToast();
   const router = useRouter();
+  console.log(router?.pathname, "router?.pathname");
+
   const config = slug ? getServiceCatalogConfig(slug) : null;
   const valid = slug && isValidServiceSlug(slug);
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,6 +65,10 @@ export default function ServiceSlugPage({
     () => config?.defaultCategoryId ?? "",
   );
   const [activeSubCategoryId, setActiveSubCategoryId] = useState(null);
+
+  const userData = Cookies.get("userData")
+    ? JSON.parse(Cookies.get("userData"))
+    : {};
 
   const currentProvider = useMemo(() => {
     const list = providers?.data;
@@ -74,7 +81,15 @@ export default function ServiceSlugPage({
     useProviderVariantsMutation();
 
   const [fetchPlans, { isLoading: isPlansLoading }] = useGetPlansMutation();
-  const [triggerUpgradeDowngradePlan] = useLazyUpgradeDowngradePlanQuery();
+  const [
+    triggerUpgradeDowngradePlan,
+    { isFetching: isUpgradeDowngradeFetching },
+  ] = useLazyUpgradeDowngradePlanQuery();
+
+  const [addToCart, { isLoading: isAddingToCart }] = useAddToCartMutation();
+
+  const [upgradeAddToCart, { isLoading: isUpgradingToCart }] =
+    useUpgradeAddToCartMutation();
 
   const applyCategoryFromVariant = useCallback(
     (cat) => {
@@ -202,6 +217,7 @@ export default function ServiceSlugPage({
             body: {
               provider_id: currentProvider.id,
               variant_id: plansVariantId,
+              partner_id: userData?.id,
             },
           });
           if (cancelled) return;
@@ -233,6 +249,18 @@ export default function ServiceSlugPage({
     router?.query?.order_id,
   ]);
 
+  const awaitingProviderList =
+    Boolean(slug && valid && config) &&
+    router?.isReady &&
+    !currentProvider?.id &&
+    (isLoadingProviders || isFetchingProviders);
+
+  const isPlansSectionLoading =
+    awaitingProviderList ||
+    (showCategoryPills && isFetchingProviderVariants) ||
+    isPlansLoading ||
+    isUpgradeDowngradeFetching;
+
   const filteredPlans = useMemo(() => {
     if (!config?.plans) return [];
     const q = searchQuery.trim().toLowerCase();
@@ -246,6 +274,64 @@ export default function ServiceSlugPage({
       return plan.features.some((f) => f.toLowerCase().includes(q));
     });
   }, [config, activeCategoryId, searchQuery, showCategoryPills]);
+
+  const handleAddToCart = useCallback(
+    async (planId) => {
+      console.log(planId, "planId");
+      try {
+        const res = await addToCart({
+          body: {
+            partner_id: userData?.id,
+            plan_id: planId,
+          },
+        });
+        if (res?.data?.success) {
+          if (router?.query?.type === "upgrade") {
+            router.push({
+              pathname: "/my-cart",
+              query: {
+                type: "upgrade",
+                plan_id: planId,
+              },
+            });
+          } else {
+            router.push("/my-cart");
+            showToast("Plan added to cart", "success");
+          }
+        } else {
+          showToast("Error adding plan to cart", "error");
+        }
+      } catch (error) {
+        console.log(error, "error adding to cart");
+      }
+    },
+    [addToCart, router?.query?.slug, router.asPath],
+  );
+
+  const handleUpgradeAddToCart = async (planId) => {
+    try {
+      const res = await upgradeAddToCart({
+        body: {
+          partner_id: userData?.id,
+          plan_id: planId,
+          customer_id: router?.query?.customer_id,
+        },
+      });
+      if (res?.data?.success) {
+        router.push({
+          pathname: "/my-cart",
+          query: {
+            type: "upgrade",
+            customer_id: router?.query?.customer_id,
+          },
+        });
+      } else {
+        showToast("Error adding plan to cart", "error");
+      }
+    } catch (error) {
+      console.log(error, "error upgrading to cart");
+    }
+  };
 
   if (!slug) {
     return <p className={styles.empty}>Loading…</p>;
@@ -317,41 +403,59 @@ export default function ServiceSlugPage({
 
   return (
     <ServicePageLayout header={header}>
-      {allPlans.length === 0 ? (
+      {isPlansSectionLoading ? (
+        <p className={styles.loading}>Loading plans…</p>
+      ) : allPlans.length === 0 ? (
         <p className={styles.empty}>No plans match your search or category.</p>
       ) : (
         <div className={styles.grid}>
-          {isPlansLoading ? (
-            <div className={styles.loading}>Loading...</div>
-          ) : (
-            allPlans.map((plan) => (
-              <PricingPlanCard
-                plan_id={plan?.plan_id || plan?.id}
-                title={plan?.name}
-                priceLabel={`₹${plan?.price ?? "0"}`}
-                originalPriceLabel={plan?.actual_price ?? ""}
-                discountPercent={plan?.discountPercent}
-                periodNote={"user/month, paid yearly"}
-                gstNote={"GST 18% Additional"}
-                features={plan?.features}
-                onCtaClick={() => {
-                  router.push({
-                    pathname: `/order-summary`,
-                    query: {
-                      plan_id: plan?.plan_id || plan?.id,
-                      ...(!router?.query?.type && { variant: "new-plan" }),
-                      ...(router?.query?.type === "upgrade" && {
-                        variant: "upgrade",
-                      }),
-                      ...(router?.query?.type === "downgrade" && {
-                        variant: "downgrade",
-                      }),
-                    },
-                  });
-                }}
-              />
-            ))
-          )}
+          {allPlans.map((plan) => (
+            <PricingPlanCard
+              key={plan?.plan_id ?? plan?.id}
+              plan_id={plan?.plan_id || plan?.id}
+              title={plan?.name}
+              priceLabel={`₹${plan?.price ?? "0"}`}
+              originalPriceLabel={plan?.actual_price ?? ""}
+              discountPercent={plan?.discountPercent}
+              periodNote={"user/month, paid yearly"}
+              gstNote={"GST 18% Additional"}
+              features={plan?.features}
+              isProviderInCart={plan?.provider_in_cart}
+              plan_is_in_cart={plan?.plan_is_in_cart}
+              onCtaClick={() => {
+                if (router?.query?.type === "upgrade") {
+                  handleUpgradeAddToCart(plan?.plan_id || plan?.id);
+                } else {
+                  handleAddToCart(plan?.plan_id || plan?.id);
+                  // router.push({
+                  //   pathname: `/order-summary`,
+                  //   query: {
+                  //     plan_id: plan?.plan_id || plan?.id,
+                  //     ...(!router?.query?.type && { variant: "new-plan" }),
+                  //     ...(router?.query?.type === "upgrade" && {
+                  //       variant: "upgrade",
+                  //     }),
+                  //     ...(router?.query?.type === "downgrade" && {
+                  //       variant: "downgrade",
+                  //     }),
+                  //   },
+                  // });
+                }
+              }}
+              ctaLabel={
+                router?.query?.type === "upgrade"
+                  ? "Upgrade Plan"
+                  : router?.query?.slug === "tizzy" ||
+                      router?.query?.slug === "microsoft-solution-partner"
+                    ? plan?.plan_is_in_cart
+                      ? "View Cart"
+                      : "Add to Cart"
+                    : plan?.plan_is_in_cart
+                      ? "View Cart"
+                      : "Buy Plan"
+              }
+            />
+          ))}
         </div>
       )}
     </ServicePageLayout>

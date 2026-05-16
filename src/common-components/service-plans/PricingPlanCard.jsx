@@ -1,4 +1,7 @@
+import { useState } from "react";
+import CustomPopup from "../custom-popup/CustomPopup";
 import styles from "./PricingPlanCard.module.css";
+import { useRouter } from "next/router";
 
 function CheckIcon() {
   return (
@@ -23,9 +26,16 @@ export default function PricingPlanCard({
   features,
   ctaLabel = "Buy Plan",
   onCtaClick,
+  isProviderInCart,
+  plan_is_in_cart,
 }) {
+  const router = useRouter();
   const showDiscount =
     typeof discountPercent === "number" && discountPercent > 0;
+
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  console.log(isProviderInCart, "isProviderInCart");
+  console.log(isPopupOpen, "isPopupOpen");
 
   return (
     <article className={styles.card} key={plan_id}>
@@ -53,7 +63,22 @@ export default function PricingPlanCard({
           {gstNote ? <div className={styles.gstNote}>{gstNote}</div> : null}
         </div>
 
-        <button type="button" className={styles.cta} onClick={onCtaClick}>
+        <button
+          type="button"
+          className={styles.cta}
+          onClick={() => {
+            if (plan_is_in_cart) {
+              router.push("/my-cart");
+            } else if (
+              isProviderInCart === false ||
+              router?.query?.type === "upgrade"
+            ) {
+              onCtaClick();
+            } else {
+              setIsPopupOpen(true);
+            }
+          }}
+        >
           {ctaLabel}
         </button>
       </div>
@@ -68,6 +93,15 @@ export default function PricingPlanCard({
           </li>
         ))}
       </ul>
+
+      {isPopupOpen && isProviderInCart === true && (
+        <CustomPopup onClose={() => setIsPopupOpen(false)} maxWidth="400px">
+          <h3 className="fs-5 fw-600 mb-3 border-bottom pb-3">
+            Some plans are already in your cart
+          </h3>
+          <p>Please remove the plans from the cart to add a new one</p>
+        </CustomPopup>
+      )}
     </article>
   );
 }

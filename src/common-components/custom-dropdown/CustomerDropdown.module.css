@@ -15,7 +15,7 @@
     cursor: pointer;
     background-color: #fff;
     width: 100%;
-    height: 40px;
+    height: auto;
 }
 .label{
     margin-bottom: 4px;
@@ -32,6 +32,8 @@
     padding: 0px 10px;
     max-height: 200px;
     overflow-y: auto;
+    z-index: 5;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 }
 .searchContainer{
     position: sticky;

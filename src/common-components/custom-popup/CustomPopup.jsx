@@ -6,12 +6,13 @@ import { IoClose } from "react-icons/io5";
 const CustomPopup = ({
   children,
   onClose,
-  title = "Popup Title",
+  title = "",
   description = "",
   primaryText = "Confirm",
   secondaryText = "Cancel",
   onPrimary,
   showFooter = false,
+  maxWidth = "600px",
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -41,7 +42,7 @@ const CustomPopup = ({
           aria-label="Close popup"
         />
 
-        <div className={styles.popup}>
+        <div className={styles.popup} style={{ maxWidth: maxWidth }}>
           <button
             type="button"
             className={styles.closeBtn}
@@ -51,6 +52,11 @@ const CustomPopup = ({
             <IoClose size={20} />
           </button>
 
+          {title && (
+            <div className={styles.body}>
+              {title && <p className={styles.title}>{title}</p>}
+            </div>
+          )}
           {(description || children) && (
             <div className={styles.body}>
               {description && (

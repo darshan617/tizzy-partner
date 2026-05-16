@@ -230,7 +230,7 @@ export default function CustomerDetail() {
                     <div
                       className={`${styles.profName} text-nowrap text-capitalize`}
                     >
-                      {customerDetails?.company_name}
+                      <p>{customerDetails?.company_name}</p>
                       {/* {customerDetails?.name} */}
                     </div>
                     <div className={`${styles.idBadge} mt-1`}>
@@ -339,7 +339,7 @@ export default function CustomerDetail() {
               <p className="m-0">No Subscriptions</p>
               <button
                 className="small btnDefault btn"
-                onClick={() => router.push("/services/tizzy")}
+                onClick={() => router.push("/services/goole-cloud-partner")}
               >
                 <BsPlusCircleDotted className="me-2" size={14} />
                 <span>Buy New Subscription</span>
@@ -436,9 +436,10 @@ export default function CustomerDetail() {
                                     className={`${styles.iconBtn} btnWhite btn`}
                                     onClick={() =>
                                       router?.push({
-                                        pathname: "/order-summary",
+                                        pathname: "/my-cart",
                                         query: {
                                           type: "renew-plan",
+                                          order_id: innerPlan?.order_id,
                                         },
                                       })
                                     }
@@ -468,7 +469,7 @@ export default function CustomerDetail() {
                               <button
                                 onClick={() =>
                                   router?.push({
-                                    pathname: "/order-summary",
+                                    pathname: "/my-cart",
                                     query: {
                                       type: "renew-plan",
                                       order_id: innerPlan?.order_id,
@@ -482,17 +483,25 @@ export default function CustomerDetail() {
                               <div
                                 className={`${styles.updwngrade} mt-2 text-uppercase`}
                               >
-                                <button
+                                <Link
+                                  href={{
+                                    pathname: `/services/${
+                                      innerPlan?.provider_name === "Tizzy Mail"
+                                        ? "tizzy"
+                                        : innerPlan?.provider_name ===
+                                            "Microsoft 365"
+                                          ? "microsoft-solution-partner"
+                                          : "google-cloud-partner"
+                                    }`,
+                                    query: {
+                                      type: "upgrade",
+                                      order_id: innerPlan?.order_id,
+                                      customer_id: router?.query?.customerId,
+                                    },
+                                  }}
                                   className={styles.updwngradeBtn}
                                   onClick={() => {
                                     Cookies.remove("customerData");
-                                    router.push({
-                                      pathname: `/services/${innerPlan?.provider_name === "Tizzy Mail" ? "tizzy" : innerPlan?.provider_name === "Microsoft 365" ? "microsoft-solution-partner" : "google-cloud-partner"}`,
-                                      query: {
-                                        type: "upgrade",
-                                        order_id: innerPlan?.order_id,
-                                      },
-                                    });
                                     Cookies.set(
                                       "customerData",
                                       JSON.stringify({
@@ -512,9 +521,9 @@ export default function CustomerDetail() {
                                   }}
                                 >
                                   UPGRADE
-                                </button>{" "}
-                                /
-                                <button
+                                </Link>{" "}
+                                {/* / */}
+                                {/* <button
                                   className={styles.downgradeBtn}
                                   onClick={() =>
                                     router.push({
@@ -527,7 +536,7 @@ export default function CustomerDetail() {
                                   }
                                 >
                                   DOWNGRADE
-                                </button>
+                                </button> */}
                               </div>
                             </div>
                           </div>
