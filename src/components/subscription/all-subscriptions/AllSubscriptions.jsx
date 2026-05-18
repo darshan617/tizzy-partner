@@ -288,7 +288,7 @@ const AllSubscriptions = ({
                     );
                   })
                 ) : (
-                  <p>No Subscriptions Data</p>
+                  <p className="text-center m-0">No Subscriptions Data</p>
                 )
               ) : (
                 <Loader />

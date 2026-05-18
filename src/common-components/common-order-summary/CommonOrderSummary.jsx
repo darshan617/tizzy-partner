@@ -16,6 +16,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Loader from "../loader/Loader";
 
 const normalizeCompanyName = (name) => {
   console.log(name, "nameeeeeeeeeeeeeeee");
@@ -208,6 +209,11 @@ const CommonOrderSummary = () => {
     } catch (error) {}
   };
 
+  const isDataLoading =
+    isGettingCartDetailsApi ||
+    isGettingUpgradeCartDetailsApi ||
+    isRenewingCustomerDetails ||
+    isGettingCartDetails;
   useEffect(() => {
     if (router?.query?.plan_id && router?.query?.variant) {
       handleAddToCart();
@@ -312,11 +318,13 @@ const CommonOrderSummary = () => {
 
   return (
     <div className={layoutStyles.shell}>
-      {(
-        Array.isArray(cartDetails)
-          ? cartDetails.length
-          : Object.keys(cartDetails || {}).length
-      ) ? (
+      {isDataLoading ? (
+        <Loader />
+      ) : (
+          Array.isArray(cartDetails)
+            ? cartDetails.length
+            : Object.keys(cartDetails || {}).length
+        ) ? (
         <div className={layoutStyles.split}>
           <div className={layoutStyles.leftScroll}>
             <RenewCart
@@ -355,6 +363,7 @@ const CommonOrderSummary = () => {
                     cartDetails?.pricing?.wallet_balance ||
                     cartDetails?.wallet_balance) ?? 0,
               )}
+              cartDetails={cartDetails}
             />
           </aside>
         </div>

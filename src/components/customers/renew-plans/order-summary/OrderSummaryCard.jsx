@@ -16,7 +16,9 @@ const OrderSummaryCard = ({
   lisceneCounter,
   promoCode = 0,
   setPromoCode,
+  cartDetails,
 }) => {
+  console.log(cartDetails, "cartDetails");
   const gst = +(total * _gstRate_).toFixed(2);
   const totals = +(total + gst - promoCode).toFixed(2);
   const isInsufficient = _creditBalance_ < totals;
@@ -240,9 +242,11 @@ const OrderSummaryCard = ({
                     }
                     aria-label="Domain prefix"
                   />
-                  <span className={styles.domainFieldSuffix}>
-                    {DOMAIN_SUFFIX}
-                  </span>
+                  {cartDetails?.[0]?.plan?.provider_id === 2 && (
+                    <span className={styles.domainFieldSuffix}>
+                      {DOMAIN_SUFFIX}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>

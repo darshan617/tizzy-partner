@@ -235,6 +235,9 @@ const CustomerForm = () => {
           res?.data?.message || "Customer created successfully",
           "success",
         );
+        if (router?.asPath === "/customers/create-customer") {
+          router?.push("/customers");
+        }
         // if (router?.asPath !== "/customers/create-customer") {
         //   router.push({
         //     pathname: "/order-summary",
