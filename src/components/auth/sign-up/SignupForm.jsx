@@ -143,10 +143,32 @@ const SignupForm = () => {
           zip_code: "",
           pan_no: "",
         });
-      }else{
+      } else {
         console.log(res);
-        
-        showToast(res?.error?.data?.message  || "Something went wrong", "error");
+        const backendErrors = {};
+        Object.entries(res?.error?.data).forEach(([key, value]) => {
+          if (
+            typeof value === "string" &&
+            value.trim() &&
+            !["error", "message", "success"].includes(key)
+          ) {
+            backendErrors[key] = value;
+          }
+        });
+
+        if (Object.keys(backendErrors).length > 0) {
+          setErrors((prev) => ({
+            ...prev,
+            ...backendErrors,
+          }));
+        }
+
+        showToast(
+          res?.error?.data?.message ||
+            Object.values(backendErrors)?.[0] ||
+            "Something went wrong",
+          "error",
+        );
       }
     } catch (error) {
       console.log("error", error);
@@ -244,11 +266,11 @@ const SignupForm = () => {
               type="text"
               value={userDetails?.name}
               onChange={handleChange}
-              className={`${styles.input} ${errors.name ? styles.inputError : ""}`}
+              className={`${styles.input} ${errors?.name ? styles.inputError : ""}`}
               placeholder="Enter your full name"
             />
-            {errors.name && (
-              <span className={styles.errorMessage}>{errors.name}</span>
+            {errors?.name && (
+              <span className={styles.errorMessage}>{errors?.name}</span>
             )}
           </div>
           <div className={styles.formGroup}>
@@ -261,10 +283,10 @@ const SignupForm = () => {
               placeholder="Enter your email address"
               value={userDetails?.email}
               onChange={handleChange}
-              className={`${styles.input} ${errors.email ? styles.inputError : ""}`}
+              className={`${styles.input} ${errors?.email ? styles.inputError : ""}`}
             />
-            {errors.email && (
-              <span className={styles.errorMessage}>{errors.email}</span>
+            {errors?.email && (
+              <span className={styles.errorMessage}>{errors?.email}</span>
             )}
           </div>
           <div className={styles.formGroup}>
@@ -281,11 +303,12 @@ const SignupForm = () => {
                 placeholder="Enter your mobile number"
                 value={userDetails?.mobile}
                 onChange={handleChange}
-                className={`${styles.mobileInput} ${errors.mobile ? styles.inputError : ""}`}
+                maxLength={10}
+                className={`${styles.mobileInput} ${errors?.mobile ? styles.inputError : ""}`}
               />
             </div>
-            {errors.mobile && (
-              <span className={styles.errorMessage}>{errors.mobile}</span>
+            {errors?.mobile && (
+              <span className={styles.errorMessage}>{errors?.mobile}</span>
             )}
           </div>
           <div className={styles.formGroup}>
@@ -299,14 +322,14 @@ const SignupForm = () => {
                 placeholder="Enter your GSTIN"
                 value={userDetails?.gstin}
                 onChange={handleChange}
-                className={`${styles.gstinInput} ${errors.gstin ? styles.inputError : ""}`}
+                className={`${styles.gstinInput} ${errors?.gstin ? styles.inputError : ""}`}
               />
               <button onClick={handleSearchGstin} className={styles.searchBtn}>
                 {isSearchingGstinLoading ? "Searching..." : "Search"}
               </button>
             </div>
-            {errors.gstin && (
-              <span className={styles.errorMessage}>{errors.gstin}</span>
+            {errors?.gstin && (
+              <span className={styles.errorMessage}>{errors?.gstin}</span>
             )}
           </div>
           {isValidGstIn && (
