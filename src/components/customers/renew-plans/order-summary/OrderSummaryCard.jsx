@@ -138,40 +138,42 @@ const OrderSummaryCard = ({
               </div>
             </>
           ) : (
-            <form
-              className={styles.singleInputForm}
-              style={{ marginBottom: "16px" }}
-            >
-              <label
-                htmlFor="aadhaarInput"
-                style={{
-                  display: "block",
-                  marginBottom: "4px",
-                  fontSize: "12px",
-                  color: "#666666",
-                  fontWeight: 400,
-                }}
+            tempDomainNames?.length > 0 && (
+              <form
+                className={styles.singleInputForm}
+                style={{ marginBottom: "16px" }}
               >
-                Enter Aadhar No. <span style={{ color: "red" }}>*</span>
-              </label>
-              <input
-                id="aadhaarInput"
-                type="text"
-                placeholder=""
-                title="Enter Aadhar number"
-                className={styles.inputField}
-                style={{
-                  width: "100%",
-                  padding: "10px 12px",
-                  borderRadius: "6px",
-                  border: "1px solid #d1d5db",
-                  outline: "none",
-                  fontSize: "15px",
-                }}
-                value={aadharNumber}
-                onChange={(e) => setAadharNumber(e.target.value)}
-              />
-            </form>
+                <label
+                  htmlFor="aadhaarInput"
+                  style={{
+                    display: "block",
+                    marginBottom: "4px",
+                    fontSize: "12px",
+                    color: "#666666",
+                    fontWeight: 400,
+                  }}
+                >
+                  Enter Aadhar No. <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  id="aadhaarInput"
+                  type="text"
+                  placeholder=""
+                  title="Enter Aadhar number"
+                  className={styles.inputField}
+                  style={{
+                    width: "100%",
+                    padding: "10px 12px",
+                    borderRadius: "6px",
+                    border: "1px solid #d1d5db",
+                    outline: "none",
+                    fontSize: "15px",
+                  }}
+                  value={aadharNumber}
+                  onChange={(e) => setAadharNumber(e.target.value)}
+                />
+              </form>
+            )
           )}
         </div>
 
@@ -185,14 +187,10 @@ const OrderSummaryCard = ({
         </button> */}
         <button
           className={styles.btnPrimary}
-          disabled={aadharNumber?.length < 1 || selectedCompany?.length < 1}
+          disabled={selectedCompany?.length < 1}
           style={{
-            opacity:
-              aadharNumber?.length < 1 || selectedCompany?.length < 1 ? 0.5 : 1,
-            cursor:
-              aadharNumber?.length < 1 || selectedCompany?.length < 1
-                ? "not-allowed"
-                : "pointer",
+            opacity: selectedCompany?.length < 1 ? 0.5 : 1,
+            cursor: selectedCompany?.length < 1 ? "not-allowed" : "pointer",
           }}
           onClick={() => {
             if (tempDomainNames?.length >= 1) {
