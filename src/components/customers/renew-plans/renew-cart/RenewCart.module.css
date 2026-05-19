@@ -397,6 +397,43 @@
 .cancelBtn:hover {
     background: #5b6779;
 }
+.domainNameContainer{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.domainNameContainer button{
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #9ca3af;
+}
+.domainNamesLabel{
+    font-weight: 500;
+    margin: 0;
+}
+.addDomainBtn{
+    color: var(--primaryColor);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 12px;
+    text-decoration: underline;
+    transition: text-decoration 0.15s;
+}
+.addDomainIconBtn:hover:not(:disabled) {
+    text-decoration: underline;
+    color: var(--primaryColor);
+    text-underline-offset: 4px;
+}
+
+.addDomainIconBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 
 @media (max-width: 1024px) {
     .card {

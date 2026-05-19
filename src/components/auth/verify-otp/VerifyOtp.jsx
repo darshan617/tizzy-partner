@@ -11,6 +11,7 @@ import {
 import styles from "@/components/auth/verify-otp/VerifyOtp.module.css";
 import AuthLayout from "../authLayout/AuthLayout";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
+import Layout from "@/components/layout/Layout";
 
 const VerifyOtp = () => {
   const router = useRouter();
@@ -70,7 +71,7 @@ const VerifyOtp = () => {
           email: "",
           otp: "",
         }));
-      }else{
+      } else {
         showToast(res?.error?.data?.message, "error");
       }
     } catch (error) {
@@ -148,6 +149,80 @@ const VerifyOtp = () => {
     }
   };
 
+  const otpContent = (
+    <div
+      className={styles.otpWrapper}
+      data-aos="fade-up"
+      data-aos-duration="900"
+    >
+      {router?.query?.type === "order" ? (
+        <h2 className={styles.title}>Verify Your Aadhar</h2>
+      ) : (
+        <h2 className={styles.title}>Verify Your Email</h2>
+      )}
+
+      {router?.query?.type === "order" ? (
+        <p className={styles.subtitle}>
+          Please enter the 6-digit code, we have sent on your
+          <br />
+          registered mobile number <b>9865648848</b> for verification.
+        </p>
+      ) : (
+        <p className={styles.subtitle}>
+          We've emailed you a 6-digit verification code.
+          <br />
+          Please enter it below to confirm your email.
+        </p>
+      )}
+
+      <p className={styles.email}>{otpDetails?.email}</p>
+      <p className={styles.label}>
+        Enter your 6-digit code <span>*</span>
+      </p>
+      <div className={styles.otpContainer} onPaste={handlePaste}>
+        {otpArray.map((digit, index) => (
+          <input
+            key={index}
+            type="text"
+            maxLength="1"
+            inputMode="numeric"
+            className={styles.otpInput}
+            value={digit}
+            ref={(el) => (inputsRef.current[index] = el)}
+            onChange={(e) => handleChange(e.target.value, index)}
+            onKeyDown={(e) => handleKeyDown(e, index)}
+          />
+        ))}
+      </div>
+      {errors.otp && <p className={styles.errorMessage}>{errors.otp}</p>}
+
+      <button
+        className={styles.confirmBtn}
+        onClick={handleSubmit}
+        disabled={isGetOtpVerifiedLoading || isVerifyOtpLoading}
+      >
+        {isGetOtpVerifiedLoading || isVerifyOtpLoading
+          ? "Verifying..."
+          : "Confirm"}
+      </button>
+
+      <p className={styles.resend}>
+        Didn’t receive a code?{" "}
+        <button
+          className={styles.resendBtn}
+          onClick={handleResend}
+          disabled={isResendOtpLoading}
+        >
+          {isResendOtpLoading ? "Resending..." : "Resend"}
+        </button>
+      </p>
+
+      {/* <p className={styles.back}>
+          Back to <span className={styles.link}>Forgot Password</span>
+        </p> */}
+    </div>
+  );
+
   useEffect(() => {
     setOtpDetails((prev) => ({
       ...prev,
@@ -155,62 +230,12 @@ const VerifyOtp = () => {
     }));
   }, []);
 
-  return (
-    <AuthLayout>
-      <div
-        className={styles.otpWrapper}
-        data-aos="fade-up"
-        data-aos-duration="900"
-      >
-        <h2 className={styles.title}>Verify Your Email</h2>
-        <p className={styles.subtitle}>
-          We've emailed you a 6-digit verification code.
-          <br />
-          Please enter it below to confirm your email.
-        </p>
-        <p className={styles.email}>{otpDetails?.email}</p>
-        <p className={styles.label}>
-          Enter your 6-digit code <span>*</span>
-        </p>
-        <div className={styles.otpContainer} onPaste={handlePaste}>
-          {otpArray.map((digit, index) => (
-            <input
-              key={index}
-              type="text"
-              maxLength="1"
-              inputMode="numeric"
-              className={styles.otpInput}
-              value={digit}
-              ref={(el) => (inputsRef.current[index] = el)}
-              onChange={(e) => handleChange(e.target.value, index)}
-              onKeyDown={(e) => handleKeyDown(e, index)}
-            />
-          ))}
-        </div>
-        {errors.otp && <p className={styles.errorMessage}>{errors.otp}</p>}
-
-        <button className={styles.confirmBtn} onClick={handleSubmit} disabled={isGetOtpVerifiedLoading || isVerifyOtpLoading}>
-          {isGetOtpVerifiedLoading || isVerifyOtpLoading
-            ? "Verifying..."
-            : "Confirm"}
-        </button>
-
-        <p className={styles.resend}>
-          Didn’t receive a code?{" "}
-          <button
-            className={styles.resendBtn}
-            onClick={handleResend}
-            disabled={isResendOtpLoading}
-          >
-            {isResendOtpLoading ? "Resending..." : "Resend"}
-          </button>
-        </p>
-
-        {/* <p className={styles.back}>
-          Back to <span className={styles.link}>Forgot Password</span>
-        </p> */}
-      </div>
-    </AuthLayout>
+  return router?.query?.type === "order" ? (
+    <Layout>{otpContent}</Layout>
+  ) : (
+    <>
+      <AuthLayout>{otpContent}</AuthLayout>
+    </>
   );
 };
 
