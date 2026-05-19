@@ -4,8 +4,15 @@ import { FiInfo, FiPlus } from "react-icons/fi";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import Image from "next/image";
 import requestCredit from "@/assets/cart/request_credit.svg";
+import { useRouter } from "next/router";
 
-const DOMAIN_SUFFIX = ".onmicrosoft.com";
+const toDomainArray = (value) => {
+  if (Array.isArray(value)) return value.filter(Boolean);
+  if (typeof value === "string" && value.trim()) return [value.trim()];
+  return [];
+};
+
+const MAX_DOMAINS = 3;
 
 const OrderSummaryCard = ({
   _gstRate_ = 0.18,
@@ -17,26 +24,49 @@ const OrderSummaryCard = ({
   promoCode = 0,
   setPromoCode,
   cartDetails,
+  handleUpdateCart,
+  setDomainNames,
+  domainNames,
+  domainSuffix,
+  isPopupOpen,
+  setIsPopupOpen,
+  tempDomainNames,
+  aadharNumber,
+  setAadharNumber,
+  selectedCompany,
 }) => {
-  console.log(cartDetails, "cartDetails");
+  const router = useRouter();
+  const savedDomainCount = toDomainArray(tempDomainNames).length;
+  const pendingDomainCount = domainNames?.length || 0;
+  const totalDomainCount = savedDomainCount + pendingDomainCount;
+  const isMaxDomainsReached = totalDomainCount >= MAX_DOMAINS;
   const gst = +(total * _gstRate_).toFixed(2);
   const totals = +(total + gst - promoCode).toFixed(2);
   const isInsufficient = _creditBalance_ < totals;
   const [isPromoCodeAdded, setIsPromoCodeAdded] = useState(false);
 
-  const [isPopupOpen, setIsPopupOpen] = useState("");
-  const [domainRows, setDomainRows] = useState([{ id: 1, prefix: "" }]);
-
   const handleClosePopup = () => {
     setIsPopupOpen("");
   };
 
-  const handleAddDomainRow = () => {
-    setDomainRows((prev) => [...prev, { id: Date.now(), prefix: "" }]);
+  const ensureDomainInputRow = () => {
+    if (isMaxDomainsReached) return;
+    setDomainNames((prev) =>
+      prev?.length > 0 ? prev : [{ id: Date.now(), prefix: "" }],
+    );
   };
 
+  const handleAddDomainRow = () => {
+    if (isMaxDomainsReached) return;
+    setDomainNames((prev) => [...prev, { id: Date.now(), prefix: "" }]);
+  };
+
+  const resolvedCartId = Array.isArray(cartDetails)
+    ? cartDetails[0]?.cart_id
+    : cartDetails?.cart_id;
+
   const handleDomainPrefixChange = (id, value) => {
-    setDomainRows((prev) =>
+    setDomainNames((prev) =>
       prev.map((row) => (row.id === id ? { ...row, prefix: value } : row)),
     );
   };
@@ -108,48 +138,93 @@ const OrderSummaryCard = ({
               </div>
             </>
           ) : (
-            <form
-              className={styles.singleInputForm}
-              style={{ marginBottom: "16px" }}
-            >
-              <label
-                htmlFor="aadhaarInput"
-                style={{
-                  display: "block",
-                  marginBottom: "4px",
-                  fontSize: "12px",
-                  color: "#666666",
-                  fontWeight: 400,
-                }}
+            tempDomainNames?.length > 0 && (
+              <form
+                className={styles.singleInputForm}
+                style={{ marginBottom: "16px" }}
               >
-                Enter Aadhar No. <span style={{ color: "red" }}>*</span>
-              </label>
-              <input
-                id="aadhaarInput"
-                type="text"
-                placeholder=""
-                title="Enter Aadhar number"
-                className={styles.inputField}
-                style={{
-                  width: "100%",
-                  padding: "10px 12px",
-                  borderRadius: "6px",
-                  border: "1px solid #d1d5db",
-                  outline: "none",
-                  fontSize: "15px",
-                }}
-              />
-            </form>
+                <label
+                  htmlFor="aadhaarInput"
+                  style={{
+                    display: "block",
+                    marginBottom: "4px",
+                    fontSize: "12px",
+                    color: "#666666",
+                    fontWeight: 400,
+                  }}
+                >
+                  Enter Aadhar No. <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  id="aadhaarInput"
+                  type="text"
+                  placeholder=""
+                  title="Enter Aadhar number"
+                  className={styles.inputField}
+                  style={{
+                    width: "100%",
+                    padding: "10px 12px",
+                    borderRadius: "6px",
+                    border: "1px solid #d1d5db",
+                    outline: "none",
+                    fontSize: "15px",
+                  }}
+                  value={aadharNumber}
+                  onChange={(e) => setAadharNumber(e.target.value)}
+                />
+              </form>
+            )
           )}
         </div>
 
-        <button
+        {/* <button
           className={styles.btnPrimary}
           onClick={() => {
             !isInsufficient && setIsPopupOpen("proceed");
           }}
         >
           {isInsufficient ? "Clear Pending Invoices" : "Proceed"}
+        </button> */}
+        <button
+          className={styles.btnPrimary}
+          disabled={selectedCompany?.length < 1}
+          style={{
+            opacity: selectedCompany?.length < 1 ? 0.5 : 1,
+            cursor: selectedCompany?.length < 1 ? "not-allowed" : "pointer",
+          }}
+          onClick={() => {
+            if (tempDomainNames?.length >= 1) {
+              router.push({
+                pathname: "/verify-otp",
+                query: {
+                  type: "order",
+                },
+              });
+            } else {
+              if (
+                router?.query?.type === "renew-plan" ||
+                router?.query?.type === "upgrade"
+              ) {
+                router.push({
+                  pathname: "/verify-otp",
+                  query: {
+                    type: "order",
+                  },
+                });
+              } else {
+                setIsPopupOpen("proceed");
+              }
+            }
+          }}
+        >
+          {isInsufficient
+            ? "Clear Pending Invoices"
+            : router?.query?.type === "renew-plan" ||
+                router?.query?.type === "upgrade"
+              ? isInsufficient
+                ? "Clear Pending Invoices"
+                : "Proceed"
+              : "Proceed"}
         </button>
         {isInsufficient && (
           <div className={styles.requestBox}>
@@ -204,6 +279,7 @@ const OrderSummaryCard = ({
                 type="button"
                 className={styles.proceedPopupActionBtn}
                 onClick={() => {
+                  ensureDomainInputRow();
                   setIsPopupOpen("new-service");
                 }}
               >
@@ -218,43 +294,53 @@ const OrderSummaryCard = ({
           <div className={styles.newServicePopup}>
             <div className={styles.newServicePopupHeader}>
               <h3 className={styles.newServicePopupTitle}>Add Domain</h3>
-              <button
-                type="button"
-                className={styles.addDomainIconBtn}
-                onClick={
-                  domainRows?.length > 2 ? undefined : handleAddDomainRow
-                }
-                aria-label="Add domain row"
-              >
-                <FiPlus size={18} />
-              </button>
             </div>
             <div className={styles.newServicePopupBody}>
-              {domainRows.map((row) => (
-                <div key={row.id} className={styles.domainFieldRow}>
-                  <input
-                    type="text"
-                    className={styles.domainFieldInput}
-                    placeholder="Choose domain"
-                    value={row.prefix}
-                    onChange={(e) =>
-                      handleDomainPrefixChange(row.id, e.target.value)
-                    }
-                    aria-label="Domain prefix"
-                  />
-                  {cartDetails?.[0]?.plan?.provider_id === 2 && (
-                    <span className={styles.domainFieldSuffix}>
-                      {DOMAIN_SUFFIX}
-                    </span>
-                  )}
-                </div>
+              {domainNames?.map((row) => (
+                <>
+                  <div key={row.id} className={styles.domainFieldRow}>
+                    <input
+                      type="text"
+                      className={styles.domainFieldInput}
+                      placeholder="Choose domain"
+                      value={row.prefix}
+                      onChange={(e) =>
+                        handleDomainPrefixChange(row.id, e.target.value)
+                      }
+                      aria-label="Domain prefix"
+                    />
+                    {cartDetails?.[0]?.plan?.provider_id === 2 && (
+                      <span className={styles.domainFieldSuffix}>
+                        {domainSuffix}
+                      </span>
+                    )}
+                  </div>
+                </>
               ))}
             </div>
+            {cartDetails?.[0]?.plan?.provider_id === 2 && (
+              <div className={styles.addDomainIconBtnContainer}>
+                <button
+                  type="button"
+                  className={styles.addDomainIconBtn}
+                  onClick={handleAddDomainRow}
+                  disabled={isMaxDomainsReached}
+                >
+                  {isMaxDomainsReached
+                    ? "Maximum domains reached"
+                    : "Add New Domain +"}
+                </button>
+              </div>
+            )}
+
             <div className={styles.newServicePopupFooter}>
               <button
                 type="button"
                 className={styles.proceedPopupActionBtn}
-                onClick={handleClosePopup}
+                onClick={() => {
+                  handleUpdateCart(resolvedCartId);
+                  setIsPopupOpen("");
+                }}
               >
                 Done
               </button>
