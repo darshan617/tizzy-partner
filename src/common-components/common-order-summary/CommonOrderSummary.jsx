@@ -19,7 +19,6 @@ import { useDispatch, useSelector } from "react-redux";
 import Loader from "../loader/Loader";
 
 const normalizeCompanyName = (name) => {
-  console.log(name, "nameeeeeeeeeeeeeeee");
   const t = String(name ?? "").trim();
   return t && t !== "-" ? t : "";
 };
@@ -100,7 +99,6 @@ const CommonOrderSummary = () => {
   const [cartDetails, setCartDetails] = useState({});
   const [pricePerUser, setPricePerUser] = useState(null);
   const [selectedCompany, setSelectedCompany] = useState("");
-  console.log(selectedCompany, "selectedCompany");
   const [lisceneCounter, setLisceneCounter] = useState(1);
   const [promoCode, setPromoCode] = useState(10);
   const [isPopupOpen, setIsPopupOpen] = useState("");
@@ -109,7 +107,6 @@ const CommonOrderSummary = () => {
   const tempDomainNamesRef = useRef([]);
   const selectedCompanyRef = useRef("");
   const [aadharNumber, setAadharNumber] = useState("");
-  console.log("😁", domainNames);
   const DOMAIN_SUFFIX = ".onmicrosoft.com";
   useEffect(() => {
     tempDomainNamesRef.current = tempDomainNames;
@@ -307,7 +304,6 @@ const CommonOrderSummary = () => {
         ? (cartDetails.find((item) => item?.cart_id === cart_id) ??
           cartDetails[0])
         : cartDetails;
-      console.log(currentItem, "currentItem❤️❤️");
       const resolvedCartId = cart_id ?? currentItem?.cart_id;
       if (!resolvedCartId) return;
 
@@ -465,7 +461,6 @@ const CommonOrderSummary = () => {
         },
       });
       if (res?.data?.success) {
-        console.log(res, "res?.data?.data");
         const data = res?.data?.data;
         setCartDetails(data);
       } else {

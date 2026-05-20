@@ -79,6 +79,15 @@ const addToCartApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["addToCart"],
     }),
+    checkIsDomainAvailable: builder.query({
+      query: ({ domain_name }) => {
+        return {
+          url: `/orders-check-domain?domain_name=${domain_name}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -91,4 +100,6 @@ export const {
   useDeleteFromCartMutation,
   useUpgradeAddToCartMutation,
   useGetUpgradeAddToCartDetailsMutation,
+  useCheckIsDomainAvailableQuery,
+  useLazyCheckIsDomainAvailableQuery,
 } = addToCartApi;

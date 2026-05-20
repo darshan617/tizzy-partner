@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "@/components/customers/renew-plans/order-summary/OrderSummaryCard.module.css";
 import { FiInfo, FiPlus } from "react-icons/fi";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import Image from "next/image";
 import requestCredit from "@/assets/cart/request_credit.svg";
 import { useRouter } from "next/router";
+import { useCheckIsDomainAvailableQuery } from "@/redux/apis/addToCartApi";
+import { BiCheck, BiX } from "react-icons/bi";
 
 const toDomainArray = (value) => {
   if (Array.isArray(value)) return value.filter(Boolean);
@@ -13,6 +15,7 @@ const toDomainArray = (value) => {
 };
 
 const MAX_DOMAINS = 3;
+const DOMAIN_DEBOUNCE_MS = 500;
 
 const OrderSummaryCard = ({
   _gstRate_ = 0.18,
@@ -44,9 +47,42 @@ const OrderSummaryCard = ({
   const totals = +(total + gst - promoCode).toFixed(2);
   const isInsufficient = _creditBalance_ < totals;
   const [isPromoCodeAdded, setIsPromoCodeAdded] = useState(false);
+  const [domainInput, setDomainInput] = useState("");
+  const [domainFromApi, setDomainFromApi] = useState(null);
+
+  const {
+    currentData: domainCheckData,
+    error: domainCheckError,
+    isFetching: isCheckingDomainAvailable,
+    isLoading: isLoadingDomainChecking,
+  } = useCheckIsDomainAvailableQuery(
+    { domain_name: domainFromApi },
+    { skip: !domainFromApi?.trim() },
+  );
+
+  const domainCheckResult = domainCheckError ?? domainCheckData;
+  const trimmedDomainInput = domainInput?.trim() || "";
+  const trimmedDomainFromApi = domainFromApi?.trim() || "";
+  const isDomainDebouncing =
+    Boolean(trimmedDomainInput) && trimmedDomainInput !== trimmedDomainFromApi;
+  const isDomainCheckInProgress =
+    isDomainDebouncing || isLoadingDomainChecking || isCheckingDomainAvailable;
+  const isDomainCheckSynced =
+    Boolean(trimmedDomainInput) && trimmedDomainInput === trimmedDomainFromApi;
+  const isDomainAvailable =
+    isDomainCheckSynced &&
+    (domainCheckResult?.data?.data?.available ||
+      domainCheckResult?.data?.available);
+  const domainCheckMessage =
+    domainCheckResult?.message || domainCheckError?.data?.message;
+  const showDomainCheckStatus =
+    Boolean(trimmedDomainInput) &&
+    (isDomainCheckInProgress || Boolean(domainCheckResult));
 
   const handleClosePopup = () => {
     setIsPopupOpen("");
+    setDomainInput("");
+    setDomainFromApi(null);
   };
 
   const ensureDomainInputRow = () => {
@@ -70,6 +106,33 @@ const OrderSummaryCard = ({
       prev.map((row) => (row.id === id ? { ...row, prefix: value } : row)),
     );
   };
+
+  useEffect(() => {
+    if (isPopupOpen !== "new-service") {
+      setDomainInput("");
+      setDomainFromApi(null);
+      return;
+    }
+
+    if (!trimmedDomainInput) {
+      setDomainFromApi(null);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setDomainFromApi(trimmedDomainInput);
+    }, DOMAIN_DEBOUNCE_MS);
+
+    return () => clearTimeout(timer);
+  }, [isPopupOpen, trimmedDomainInput]);
+
+  useEffect(() => {
+    if (isPopupOpen === "new-service") {
+      const activePrefix = domainNames?.[0]?.prefix ?? "";
+      setDomainInput(activePrefix);
+    }
+  }, [isPopupOpen, domainNames]);
+
   return (
     <div>
       <div className={styles.card}>
@@ -304,9 +367,11 @@ const OrderSummaryCard = ({
                       className={styles.domainFieldInput}
                       placeholder="Choose domain"
                       value={row.prefix}
-                      onChange={(e) =>
-                        handleDomainPrefixChange(row.id, e.target.value)
-                      }
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        handleDomainPrefixChange(row.id, value);
+                        setDomainInput(value);
+                      }}
                       aria-label="Domain prefix"
                     />
                     {cartDetails?.[0]?.plan?.provider_id === 2 && (
@@ -315,6 +380,28 @@ const OrderSummaryCard = ({
                       </span>
                     )}
                   </div>
+
+                  {showDomainCheckStatus && (
+                    <span
+                      className={styles.domainFieldSuffix}
+                      style={{
+                        color: isDomainCheckInProgress
+                          ? "#6b7280"
+                          : isDomainAvailable
+                            ? "green"
+                            : "red",
+                      }}
+                    >
+                      {isDomainCheckInProgress ? (
+                        <span style={{ color: "#6b7280" }}>Checking...</span>
+                      ) : (
+                        <>
+                          {isDomainAvailable ? <BiCheck /> : <BiX />}
+                          {domainCheckMessage}
+                        </>
+                      )}
+                    </span>
+                  )}
                 </>
               ))}
             </div>
@@ -337,8 +424,15 @@ const OrderSummaryCard = ({
               <button
                 type="button"
                 className={styles.proceedPopupActionBtn}
+                disabled={!isDomainAvailable}
+                style={{
+                  opacity: !isDomainAvailable ? 0.5 : 1,
+                  cursor: !isDomainAvailable ? "not-allowed" : "pointer",
+                }}
                 onClick={() => {
                   handleUpdateCart(resolvedCartId);
+                  setDomainInput("");
+                  setDomainFromApi(null);
                   setIsPopupOpen("");
                 }}
               >
