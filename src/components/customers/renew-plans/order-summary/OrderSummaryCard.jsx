@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "@/components/customers/renew-plans/order-summary/OrderSummaryCard.module.css";
-import { FiInfo, FiPlus } from "react-icons/fi";
+import { FiCopy, FiInfo, FiPlus } from "react-icons/fi";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import Image from "next/image";
 import requestCredit from "@/assets/cart/request_credit.svg";
@@ -39,6 +40,7 @@ const OrderSummaryCard = ({
   selectedCompany,
 }) => {
   const router = useRouter();
+  const { showToast } = useToast();
   const savedDomainCount = toDomainArray(tempDomainNames).length;
   const pendingDomainCount = domainNames?.length || 0;
   const totalDomainCount = savedDomainCount + pendingDomainCount;
@@ -49,6 +51,18 @@ const OrderSummaryCard = ({
   const [isPromoCodeAdded, setIsPromoCodeAdded] = useState(false);
   const [domainInput, setDomainInput] = useState("");
   const [domainFromApi, setDomainFromApi] = useState(null);
+  const [transferDomainInput, setTransferDomainInput] = useState("");
+
+  const transferIdentifier =
+    cartDetails?.[0]?.transfer_code ??
+    cartDetails?.transfer_code ??
+    cartDetails?.[0]?.main_cart_id ??
+    cartDetails?.main_cart_id ??
+    "";
+
+  const providerId = Number(cartDetails?.[0]?.plan?.provider_id);
+  const skipDomainVerification = providerId === 2;
+  const tizzyProviderId = providerId === 1;
 
   const {
     currentData: domainCheckData,
@@ -57,32 +71,73 @@ const OrderSummaryCard = ({
     isLoading: isLoadingDomainChecking,
   } = useCheckIsDomainAvailableQuery(
     { domain_name: domainFromApi },
-    { skip: !domainFromApi?.trim() },
+    {
+      skip: skipDomainVerification || !domainFromApi?.trim(),
+    },
   );
 
   const domainCheckResult = domainCheckError ?? domainCheckData;
   const trimmedDomainInput = domainInput?.trim() || "";
+  const trimmedTransferInput = transferDomainInput?.trim() || "";
+  const activeDomainPrefix =
+    isPopupOpen === "transfer-service"
+      ? trimmedTransferInput
+      : isPopupOpen === "new-service"
+        ? trimmedDomainInput
+        : "";
   const trimmedDomainFromApi = domainFromApi?.trim() || "";
   const isDomainDebouncing =
-    Boolean(trimmedDomainInput) && trimmedDomainInput !== trimmedDomainFromApi;
+    Boolean(activeDomainPrefix) && activeDomainPrefix !== trimmedDomainFromApi;
   const isDomainCheckInProgress =
     isDomainDebouncing || isLoadingDomainChecking || isCheckingDomainAvailable;
   const isDomainCheckSynced =
-    Boolean(trimmedDomainInput) && trimmedDomainInput === trimmedDomainFromApi;
+    Boolean(activeDomainPrefix) && activeDomainPrefix === trimmedDomainFromApi;
   const isDomainAvailable =
     isDomainCheckSynced &&
     (domainCheckResult?.data?.data?.available ||
       domainCheckResult?.data?.available);
   const domainCheckMessage =
     domainCheckResult?.message || domainCheckError?.data?.message;
+  const hasDomainPrefixInput = domainNames?.some((row) =>
+    Boolean(row?.prefix?.trim()),
+  );
+  const canConfirmDomain = skipDomainVerification
+    ? hasDomainPrefixInput
+    : isDomainAvailable;
+  const canConfirmTransferDomain = skipDomainVerification
+    ? Boolean(trimmedTransferInput)
+    : isDomainAvailable;
   const showDomainCheckStatus =
-    Boolean(trimmedDomainInput) &&
+    !skipDomainVerification &&
+    Boolean(activeDomainPrefix) &&
     (isDomainCheckInProgress || Boolean(domainCheckResult));
 
   const handleClosePopup = () => {
     setIsPopupOpen("");
     setDomainInput("");
     setDomainFromApi(null);
+    setTransferDomainInput("");
+  };
+
+  const handleCopyTransferIdentifier = async () => {
+    if (!transferIdentifier) return;
+    try {
+      await navigator.clipboard.writeText(String(transferIdentifier));
+      showToast("Identifier copied to clipboard", "success");
+    } catch {
+      showToast("Unable to copy identifier", "error");
+    }
+  };
+
+  const handleTransferAccount = () => {
+    const prefix = transferDomainInput?.trim();
+    if (!prefix || !canConfirmTransferDomain) return;
+
+    const domain = skipDomainVerification ? `${prefix}${domainSuffix}` : prefix;
+    handleUpdateCart(resolvedCartId, domain);
+    setTransferDomainInput("");
+    setDomainFromApi(null);
+    setIsPopupOpen("");
   };
 
   const ensureDomainInputRow = () => {
@@ -108,23 +163,23 @@ const OrderSummaryCard = ({
   };
 
   useEffect(() => {
-    if (isPopupOpen !== "new-service") {
+    if (isPopupOpen !== "new-service" && isPopupOpen !== "transfer-service") {
       setDomainInput("");
       setDomainFromApi(null);
       return;
     }
 
-    if (!trimmedDomainInput) {
+    if (skipDomainVerification || !activeDomainPrefix) {
       setDomainFromApi(null);
       return;
     }
 
     const timer = setTimeout(() => {
-      setDomainFromApi(trimmedDomainInput);
+      setDomainFromApi(activeDomainPrefix);
     }, DOMAIN_DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
-  }, [isPopupOpen, trimmedDomainInput]);
+  }, [isPopupOpen, activeDomainPrefix, skipDomainVerification]);
 
   useEffect(() => {
     if (isPopupOpen === "new-service") {
@@ -275,7 +330,12 @@ const OrderSummaryCard = ({
                   },
                 });
               } else {
-                setIsPopupOpen("proceed");
+                if (tizzyProviderId) {
+                  ensureDomainInputRow();
+                  setIsPopupOpen("new-service");
+                } else {
+                  setIsPopupOpen("proceed");
+                }
               }
             }
           }}
@@ -334,7 +394,10 @@ const OrderSummaryCard = ({
               <button
                 type="button"
                 className={styles.proceedPopupActionBtn}
-                onClick={handleClosePopup}
+                onClick={() => {
+                  handleClosePopup();
+                  setIsPopupOpen("transfer-service");
+                }}
               >
                 Transfer Service
               </button>
@@ -374,7 +437,7 @@ const OrderSummaryCard = ({
                       }}
                       aria-label="Domain prefix"
                     />
-                    {cartDetails?.[0]?.plan?.provider_id === 2 && (
+                    {skipDomainVerification && (
                       <span className={styles.domainFieldSuffix}>
                         {domainSuffix}
                       </span>
@@ -405,7 +468,7 @@ const OrderSummaryCard = ({
                 </>
               ))}
             </div>
-            {cartDetails?.[0]?.plan?.provider_id === 2 && (
+            {skipDomainVerification && (
               <div className={styles.addDomainIconBtnContainer}>
                 <button
                   type="button"
@@ -424,10 +487,10 @@ const OrderSummaryCard = ({
               <button
                 type="button"
                 className={styles.proceedPopupActionBtn}
-                disabled={!isDomainAvailable}
+                disabled={!canConfirmDomain}
                 style={{
-                  opacity: !isDomainAvailable ? 0.5 : 1,
-                  cursor: !isDomainAvailable ? "not-allowed" : "pointer",
+                  opacity: !canConfirmDomain ? 0.5 : 1,
+                  cursor: !canConfirmDomain ? "not-allowed" : "pointer",
                 }}
                 onClick={() => {
                   handleUpdateCart(resolvedCartId);
@@ -438,6 +501,143 @@ const OrderSummaryCard = ({
               >
                 Done
               </button>
+            </div>
+          </div>
+        </CustomPopup>
+      )}
+
+      {isPopupOpen === "transfer-service" && (
+        <CustomPopup onClose={handleClosePopup} maxWidth="900px">
+          <div className={styles.transferServicePopup}>
+            <div className={styles.transferServicePopupHeader}>
+              <h3 className={styles.transferServicePopupTitle}>
+                Transfer your{" "}
+                {!skipDomainVerification ? "Google Workspace" : "Microsoft 365"}{" "}
+                account
+              </h3>
+            </div>
+            <div className={styles.transferServicePopupBody}>
+              <div className={styles.transferServicePopupLeft}>
+                <div className={styles.transferServiceSection}>
+                  <p className={styles.transferServiceLabel}>Copy Identifier</p>
+                  <p className={styles.transferServiceHint}>
+                    {`Use this identifier to initiate the transfer from your
+                    existing ${!skipDomainVerification ? "Google Workspace" : "Microsoft 365"} admin panel.`}
+                  </p>
+                  <div className={styles.transferIdentifierBox}>
+                    <span className={styles.transferIdentifierValue}>
+                      {transferIdentifier || "—"}
+                    </span>
+                    <button
+                      type="button"
+                      className={styles.transferCopyBtn}
+                      onClick={handleCopyTransferIdentifier}
+                      disabled={!transferIdentifier}
+                      aria-label="Copy identifier"
+                    >
+                      <FiCopy size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className={styles.transferServiceSection}>
+                  <label
+                    htmlFor="transferDomainInput"
+                    className={styles.transferServiceLabel}
+                  >
+                    Enter your domain name
+                  </label>
+                  <div className={styles.domainFieldRow}>
+                    <input
+                      id="transferDomainInput"
+                      type="text"
+                      className={styles.domainFieldInput}
+                      placeholder="Choose domain"
+                      value={transferDomainInput}
+                      onChange={(e) => setTransferDomainInput(e.target.value)}
+                      aria-label="Domain prefix"
+                    />
+                    {skipDomainVerification && (
+                      <span className={styles.domainFieldSuffix}>
+                        {domainSuffix}
+                      </span>
+                    )}
+                  </div>
+                  {isPopupOpen === "transfer-service" &&
+                    showDomainCheckStatus && (
+                      <span
+                        className={styles.domainFieldSuffix}
+                        style={{
+                          color: isDomainCheckInProgress
+                            ? "#6b7280"
+                            : isDomainAvailable
+                              ? "green"
+                              : "red",
+                        }}
+                      >
+                        {isDomainCheckInProgress ? (
+                          <span style={{ color: "#6b7280" }}>Checking...</span>
+                        ) : (
+                          <>
+                            {isDomainAvailable ? <BiCheck /> : <BiX />}
+                            {domainCheckMessage}
+                          </>
+                        )}
+                      </span>
+                    )}
+                </div>
+
+                <button
+                  type="button"
+                  className={styles.proceedPopupActionBtn}
+                  disabled={!canConfirmTransferDomain}
+                  style={{
+                    opacity: !canConfirmTransferDomain ? 0.5 : 1,
+                    cursor: !canConfirmTransferDomain
+                      ? "not-allowed"
+                      : "pointer",
+                  }}
+                  onClick={handleTransferAccount}
+                >
+                  Transfer My Account
+                </button>
+              </div>
+
+              <div className={styles.transferServicePopupRight}>
+                <div className={styles.transferInfoSection}>
+                  <p className={styles.transferInfoTitle}>How does it work?</p>
+                  <p className={styles.transferInfoText}>
+                    We securely migrate all your email accounts from your
+                    current provider
+                  </p>
+                  <p className={styles.transferInfoText}>
+                    <strong>No data loss</strong> - all emails, files, and
+                    settings remain intact
+                  </p>
+                  <p className={styles.transferInfoText}>
+                    Your admin account and login credentials stay unchanged
+                  </p>
+                  <p className={styles.transferInfoText}>
+                    Minimal to zero downtime during the transfer
+                  </p>
+                  <p className={styles.transferInfoText}>
+                    <strong>Note:</strong> Your existing subscription tenure
+                    with the previous provider will not be carried forward.
+                  </p>
+                </div>
+
+                <div className={styles.transferInfoSection}>
+                  <p className={styles.transferInfoTitle}>
+                    Still have questions?
+                  </p>
+                  <p className={styles.transferInfoText}>
+                    Our support team is here to assist you at every step.
+                  </p>
+                  <a href="#" className={styles.transferSupportLink}>
+                    Contact our Support Team
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </CustomPopup>

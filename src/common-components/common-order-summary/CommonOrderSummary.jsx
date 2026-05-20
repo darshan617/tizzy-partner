@@ -298,7 +298,7 @@ const CommonOrderSummary = () => {
   //     console.log(error);
   //   }
   // };
-  const handleUpdateCart = async (cart_id) => {
+  const handleUpdateCart = async (cart_id, domainOverride) => {
     try {
       const currentItem = Array.isArray(cartDetails)
         ? (cartDetails.find((item) => item?.cart_id === cart_id) ??
@@ -307,13 +307,16 @@ const CommonOrderSummary = () => {
       const resolvedCartId = cart_id ?? currentItem?.cart_id;
       if (!resolvedCartId) return;
 
-      const newDomains = buildDomainsFromInput(
-        domainNames,
-        currentItem?.plan?.provider_id,
-        DOMAIN_SUFFIX,
-      );
+      const overrideDomains = toDomainArray(domainOverride);
+      const newDomains = overrideDomains.length
+        ? overrideDomains
+        : buildDomainsFromInput(
+            domainNames,
+            currentItem?.plan?.provider_id,
+            DOMAIN_SUFFIX,
+          );
 
-      if (!hasDomainPrefixInput(domainNames)) return;
+      if (!overrideDomains.length && !hasDomainPrefixInput(domainNames)) return;
 
       const existingDomains = tempDomainNames || [];
       const finalDomains = [...new Set([...existingDomains, ...newDomains])];
@@ -338,12 +341,10 @@ const CommonOrderSummary = () => {
       tempDomainNamesRef.current = finalDomains;
       setDomainNames([]);
       setCartDetails((prev) => {
-        if (!Array.isArray(prev)) return prev;
-        return prev.map((item) =>
-          item?.cart_id === resolvedCartId
-            ? { ...item, domain_name: finalDomains }
-            : item,
-        );
+        if (!Array.isArray(prev)) {
+          return prev?.cart_id ? { ...prev, domain_name: finalDomains } : prev;
+        }
+        return prev.map((item) => ({ ...item, domain_name: finalDomains }));
       });
     } catch (error) {
       console.log(error);
@@ -363,6 +364,13 @@ const CommonOrderSummary = () => {
       setTempDomainNames(updatedDomains);
       tempDomainNamesRef.current = updatedDomains;
 
+      setCartDetails((prev) => {
+        if (!Array.isArray(prev)) return prev;
+        return prev.map((item, idx) =>
+          idx === 0 ? { ...item, domain_name: updatedDomains } : item,
+        );
+      });
+
       await updateCart({
         body: {
           cart_id: resolvedCartId,
@@ -374,13 +382,6 @@ const CommonOrderSummary = () => {
           ),
           customer_id: currentItem?.customer_id ?? customerData?.customer_id,
         },
-      });
-
-      setCartDetails((prev) => {
-        if (!Array.isArray(prev)) return prev;
-        return prev.map((item, idx) =>
-          idx === 0 ? { ...item, domain_name: updatedDomains } : item,
-        );
       });
     } catch (error) {
       console.log(error);
@@ -438,7 +439,11 @@ const CommonOrderSummary = () => {
         customerLimit: item?.customer_limit,
       }));
       setCartDetails(allData);
-      const initialDomains = toDomainArray(allData[0]?.domain_name);
+      const initialDomains = [
+        ...new Set(
+          allData.flatMap((item) => toDomainArray(item?.domain_name)),
+        ),
+      ];
       setTempDomainNames(initialDomains);
       tempDomainNamesRef.current = initialDomains;
       const loadedCompany = normalizeCompanyName(allData[0]?.company_name);
