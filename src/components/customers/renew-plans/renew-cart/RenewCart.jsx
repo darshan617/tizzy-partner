@@ -66,8 +66,6 @@ const RenewCart = ({
       ? [cartDetails]
       : [];
 
-  console.log(cartItemList, "cartItemList");
-
   const listMode = Array.isArray(cartDetails);
   const domainList = toDomainArray(tempDomainNames);
 
@@ -213,7 +211,6 @@ const RenewCart = ({
           )}
 
           {cartItemList?.map((item, idx) => {
-            console.log("item", item);
             const customerLimit =
               item?.customerLimit ?? item?.customer_limit ?? undefined;
             const lineKey = item?.cart_id ?? item?.id ?? idx;
@@ -248,7 +245,7 @@ const RenewCart = ({
                     <div className={styles.productName}>
                       {item?.plan_name || "-"}
                     </div>
-                    {item?.domain_name &&
+                    {/* {item?.domain_name &&
                       router?.query?.variant !== "new-plan" && (
                         <p className={`${styles.productLink} m-0`}>
                           {(domainList.length > 0
@@ -256,7 +253,16 @@ const RenewCart = ({
                             : toDomainArray(item?.domain_name)
                           ).join(", ") || "-"}
                         </p>
-                      )}
+                      )} */}
+                    {item?.domain_name &&
+                      toDomainArray(item?.domain_name)?.map((domain, index) => (
+                        <p
+                          key={`${domain}-${index}`}
+                          className={`${styles.productLink} m-0`}
+                        >
+                          {domain || "-"}
+                        </p>
+                      ))}
                     <div className={styles.productDate}>
                       {item?.subscription_start_date} –{" "}
                       {item?.subscription_end_date}
