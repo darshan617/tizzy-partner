@@ -185,7 +185,7 @@ const CommonOrderSummary = () => {
     {
       skip:
         !userData?.id ||
-        (!router?.pathname === "/my-cart" &&
+        (!router?.pathname === "/order-summary" &&
           !router?.query?.variant === "new-plan"),
     },
   );

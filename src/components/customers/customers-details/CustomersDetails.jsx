@@ -436,7 +436,7 @@ export default function CustomerDetail() {
                                     className={`${styles.iconBtn} btnWhite btn`}
                                     onClick={() =>
                                       router?.push({
-                                        pathname: "/my-cart",
+                                        pathname: "/order-summary",
                                         query: {
                                           type: "renew-plan",
                                           order_id: innerPlan?.order_id,
@@ -469,7 +469,7 @@ export default function CustomerDetail() {
                               <button
                                 onClick={() =>
                                   router?.push({
-                                    pathname: "/my-cart",
+                                    pathname: "/order-summary",
                                     query: {
                                       type: "renew-plan",
                                       order_id: innerPlan?.order_id,
