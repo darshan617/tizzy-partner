@@ -143,7 +143,7 @@ const OrderSummaryCard = ({
     if (!prefix || !canConfirmTransferDomain) return;
 
     const domain = skipDomainVerification ? `${prefix}${domainSuffix}` : prefix;
-    handleUpdateCart(resolvedCartId, domain);
+    handleUpdateCart(resolvedCartId, domain, true);
     setTransferDomainInput("");
     setDomainFromApi(null);
     setIsPopupOpen("");
