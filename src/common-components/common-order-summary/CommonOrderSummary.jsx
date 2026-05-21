@@ -100,7 +100,7 @@ const CommonOrderSummary = () => {
   const [pricePerUser, setPricePerUser] = useState(null);
   const [selectedCompany, setSelectedCompany] = useState("");
   const [lisceneCounter, setLisceneCounter] = useState(1);
-  const [promoCode, setPromoCode] = useState(10);
+  const [promoCode, setPromoCode] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState("");
   const [domainNames, setDomainNames] = useState([]);
   const [tempDomainNames, setTempDomainNames] = useState([]);
@@ -635,6 +635,7 @@ const CommonOrderSummary = () => {
             <OrderSummaryCard
               total={total}
               promoCode={promoCode}
+              setPromoCode={setPromoCode}
               _creditBalance_={Number(
                 (Array.isArray(cartDetails)
                   ? (cartDetails[0]?.wallet_info?.wallet_balance ??

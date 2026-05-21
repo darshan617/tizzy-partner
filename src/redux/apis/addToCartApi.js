@@ -98,6 +98,16 @@ const addToCartApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["addToCart"],
     }),
+    promoCode: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/promo-code`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -113,4 +123,5 @@ export const {
   useCheckIsDomainAvailableQuery,
   useLazyCheckIsDomainAvailableQuery,
   useTransferCodeMutation,
+  usePromoCodeMutation,
 } = addToCartApi;

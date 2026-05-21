@@ -8,6 +8,7 @@ import requestCredit from "@/assets/cart/request_credit.svg";
 import { useRouter } from "next/router";
 import {
   useCheckIsDomainAvailableQuery,
+  usePromoCodeMutation,
   useTransferCodeMutation,
 } from "@/redux/apis/addToCartApi";
 import { BiCheck, BiX } from "react-icons/bi";
@@ -51,19 +52,26 @@ const OrderSummaryCard = ({
   const totalDomainCount = savedDomainCount + pendingDomainCount;
   const isMaxDomainsReached = totalDomainCount >= MAX_DOMAINS;
   const gst = +(total * _gstRate_).toFixed(2);
-  const totals = +(total + gst - promoCode).toFixed(2);
-  const isInsufficient = _creditBalance_ < totals;
+
   const [isPromoCodeAdded, setIsPromoCodeAdded] = useState(false);
   const [domainInput, setDomainInput] = useState("");
   const [domainFromApi, setDomainFromApi] = useState(null);
   const [transferDomainInput, setTransferDomainInput] = useState("");
+  const [discountedPercent, setDiscountedPercent] = useState(0);
 
   const providerId = Number(cartDetails?.[0]?.plan?.provider_id);
   const skipDomainVerification = providerId === 2;
   const tizzyProviderId = providerId === 1;
+  const totals = +(total + gst - (discountedPercent / 100) * total).toFixed(2);
+  const isInsufficient = _creditBalance_ < totals;
+
+  const discountedAmount = (discountedPercent / 100) * total;
 
   const [transerCode, { isLoading: isLoadingTransferCode }] =
     useTransferCodeMutation();
+
+  const [applyPromoCode, { isLoading: isLoadingPromoCode }] =
+    usePromoCodeMutation();
 
   const {
     currentData: domainCheckData,
@@ -180,6 +188,27 @@ const OrderSummaryCard = ({
     }
   };
 
+  const handlePromoCode = async () => {
+    try {
+      if (!promoCode) return;
+      const res = await applyPromoCode({
+        body: {
+          code: promoCode,
+        },
+      });
+      if (res.data.success) {
+        setDiscountedPercent(res?.data?.data?.discount_percent);
+        showToast("Promo code applied successfully", "success");
+        setPromoCode("");
+        setIsPromoCodeAdded(false);
+      } else {
+        showToast("Failed to apply promo code", "error");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (isPopupOpen !== "new-service" && isPopupOpen !== "transfer-service") {
       setDomainInput("");
@@ -228,7 +257,12 @@ const OrderSummaryCard = ({
             </button>
           </span>
 
-          <span className={styles.value}>₹ {promoCode.toFixed(2)}</span>
+          <span
+            className={styles.value}
+            style={{ color: discountedAmount > 0 ? "#43a910f5" : "#444444" }}
+          >
+            ₹ -{discountedAmount?.toFixed(2) || 0}
+          </span>
         </div>
 
         {isPromoCodeAdded && (
@@ -237,10 +271,24 @@ const OrderSummaryCard = ({
               type="text"
               placeholder="Enter Promo Code"
               className={styles.promoInput}
+              value={promoCode}
+              onChange={(e) => setPromoCode(e?.target?.value)}
             />
 
-            <button type="button" className={styles.applyBtn}>
-              Apply
+            <button
+              type="button"
+              className={styles.applyBtn}
+              onClick={handlePromoCode}
+              disabled={isLoadingPromoCode || !promoCode?.trim()}
+              style={{
+                opacity: isLoadingPromoCode || !promoCode?.trim() ? 0.5 : 1,
+                cursor:
+                  isLoadingPromoCode || !promoCode?.trim()
+                    ? "not-allowed"
+                    : "pointer",
+              }}
+            >
+              {isLoadingPromoCode ? "Applying..." : "Apply"}
             </button>
           </div>
         )}
