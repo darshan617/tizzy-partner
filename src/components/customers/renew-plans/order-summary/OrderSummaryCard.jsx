@@ -143,7 +143,7 @@ const OrderSummaryCard = ({
     if (!prefix || !canConfirmTransferDomain) return;
 
     const domain = skipDomainVerification ? `${prefix}${domainSuffix}` : prefix;
-    handleUpdateCart(resolvedCartId, domain);
+    handleUpdateCart(resolvedCartId, domain, true);
     setTransferDomainInput("");
     setDomainFromApi(null);
     setIsPopupOpen("");
@@ -196,7 +196,7 @@ const OrderSummaryCard = ({
           code: promoCode,
         },
       });
-      if (res.data.success) {
+      if (res?.data?.success) {
         setDiscountedPercent(res?.data?.data?.discount_percent);
         showToast("Promo code applied successfully", "success");
         setPromoCode("");
@@ -206,6 +206,7 @@ const OrderSummaryCard = ({
       }
     } catch (error) {
       console.log(error);
+      showToast("Failed to apply promo code", "error");
     }
   };
 
@@ -371,13 +372,18 @@ const OrderSummaryCard = ({
         </button> */}
         <button
           className={styles.btnPrimary}
+          // disabled={
+          //   router?.query?.type === "renew-plan" ||
+          //   router?.query?.type === "upgrade"
+          //     ? false
+          //     : selectedCompany?.length < 1
+          //       ? true
+          //       : false
+          // }
           disabled={
-            router?.query?.type === "renew-plan" ||
-            router?.query?.type === "upgrade"
-              ? false
-              : selectedCompany?.length < 1
-                ? true
-                : false
+            router?.query?.type !== "renew-plan" &&
+            router?.query?.type !== "upgrade" &&
+            selectedCompany?.length < 1
           }
           style={{
             opacity: selectedCompany?.length < 1 ? 0.5 : 1,

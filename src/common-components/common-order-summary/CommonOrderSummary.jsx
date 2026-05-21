@@ -76,6 +76,7 @@ const buildAutoUpdateCartBody = ({
     licenses: Number(item?.licenses) || 1,
     company_name: normalizeCompanyName(selectedCompany || item?.company_name),
     customer_id: customerId ?? item?.customer_id,
+    transfer_domain: item?.transfer_domain ?? "no",
   };
 
   if (domain_name.length > 0) {
@@ -184,7 +185,7 @@ const CommonOrderSummary = () => {
     {
       skip:
         !userData?.id ||
-        (!router?.pathname === "/my-cart" &&
+        (!router?.pathname === "/order-summary" &&
           !router?.query?.variant === "new-plan"),
     },
   );
@@ -302,7 +303,11 @@ const CommonOrderSummary = () => {
   //     console.log(error);
   //   }
   // };
-  const handleUpdateCart = async (cart_id, domainOverride) => {
+  const handleUpdateCart = async (
+    cart_id,
+    domainOverride,
+    isTransferDomain = false,
+  ) => {
     try {
       const currentItem = Array.isArray(cartDetails)
         ? (cartDetails.find((item) => item?.cart_id === cart_id) ??
@@ -338,6 +343,7 @@ const CommonOrderSummary = () => {
             currentItem?.company_name ?? selectedCompany,
           ),
           customer_id: currentItem?.customer_id ?? customerData?.customer_id,
+          transfer_domain: isTransferDomain ? "yes" : "no",
         },
       });
 
