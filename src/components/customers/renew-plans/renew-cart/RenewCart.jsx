@@ -219,7 +219,15 @@ const RenewCart = ({
                             );
                             setIsPopupOpen("new-service");
                           }}
+                          disabled={selectedCompany?.length < 1}
                           className={styles.addDomainBtn}
+                          style={{
+                            opacity: selectedCompany?.length < 1 ? 0.5 : 1,
+                            cursor:
+                              selectedCompany?.length < 1
+                                ? "not-allowed"
+                                : "pointer",
+                          }}
                         >
                           Add New Domain +
                         </button>

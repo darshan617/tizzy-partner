@@ -107,6 +107,10 @@ const CommonOrderSummary = () => {
   const tempDomainNamesRef = useRef([]);
   const selectedCompanyRef = useRef("");
   const [aadharNumber, setAadharNumber] = useState("");
+  const [transferCode, setTransferCode] = useState("");
+
+  console.log(transferCode, "transferCode");
+
   const DOMAIN_SUFFIX = ".onmicrosoft.com";
   useEffect(() => {
     tempDomainNamesRef.current = tempDomainNames;
@@ -440,9 +444,7 @@ const CommonOrderSummary = () => {
       }));
       setCartDetails(allData);
       const initialDomains = [
-        ...new Set(
-          allData.flatMap((item) => toDomainArray(item?.domain_name)),
-        ),
+        ...new Set(allData.flatMap((item) => toDomainArray(item?.domain_name))),
       ];
       setTempDomainNames(initialDomains);
       tempDomainNamesRef.current = initialDomains;
@@ -653,6 +655,8 @@ const CommonOrderSummary = () => {
               aadharNumber={aadharNumber}
               setAadharNumber={setAadharNumber}
               selectedCompany={selectedCompany}
+              transferCode={transferCode}
+              setTransferCode={setTransferCode}
             />
           </aside>
         </div>

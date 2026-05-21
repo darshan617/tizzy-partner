@@ -6,7 +6,10 @@ import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import Image from "next/image";
 import requestCredit from "@/assets/cart/request_credit.svg";
 import { useRouter } from "next/router";
-import { useCheckIsDomainAvailableQuery } from "@/redux/apis/addToCartApi";
+import {
+  useCheckIsDomainAvailableQuery,
+  useTransferCodeMutation,
+} from "@/redux/apis/addToCartApi";
 import { BiCheck, BiX } from "react-icons/bi";
 
 const toDomainArray = (value) => {
@@ -38,6 +41,8 @@ const OrderSummaryCard = ({
   aadharNumber,
   setAadharNumber,
   selectedCompany,
+  transferCode,
+  setTransferCode,
 }) => {
   const router = useRouter();
   const { showToast } = useToast();
@@ -53,16 +58,12 @@ const OrderSummaryCard = ({
   const [domainFromApi, setDomainFromApi] = useState(null);
   const [transferDomainInput, setTransferDomainInput] = useState("");
 
-  const transferIdentifier =
-    cartDetails?.[0]?.transfer_code ??
-    cartDetails?.transfer_code ??
-    cartDetails?.[0]?.main_cart_id ??
-    cartDetails?.main_cart_id ??
-    "";
-
   const providerId = Number(cartDetails?.[0]?.plan?.provider_id);
   const skipDomainVerification = providerId === 2;
   const tizzyProviderId = providerId === 1;
+
+  const [transerCode, { isLoading: isLoadingTransferCode }] =
+    useTransferCodeMutation();
 
   const {
     currentData: domainCheckData,
@@ -120,9 +121,9 @@ const OrderSummaryCard = ({
   };
 
   const handleCopyTransferIdentifier = async () => {
-    if (!transferIdentifier) return;
+    if (!transferCode) return;
     try {
-      await navigator.clipboard.writeText(String(transferIdentifier));
+      await navigator.clipboard.writeText(String(transferCode));
       showToast("Identifier copied to clipboard", "success");
     } catch {
       showToast("Unable to copy identifier", "error");
@@ -160,6 +161,23 @@ const OrderSummaryCard = ({
     setDomainNames((prev) =>
       prev.map((row) => (row.id === id ? { ...row, prefix: value } : row)),
     );
+  };
+
+  const handleTransferCode = async () => {
+    try {
+      const res = await transerCode({
+        body: {
+          provider_type: tizzyProviderId ? 1 : skipDomainVerification ? 2 : 3,
+        },
+      });
+      if (res.data.success) {
+        setTransferCode(res.data.data.code);
+      } else {
+        showToast("Failed to apply transfer code", "error");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -305,7 +323,14 @@ const OrderSummaryCard = ({
         </button> */}
         <button
           className={styles.btnPrimary}
-          disabled={selectedCompany?.length < 1}
+          disabled={
+            router?.query?.type === "renew-plan" ||
+            router?.query?.type === "upgrade"
+              ? false
+              : selectedCompany?.length < 1
+                ? true
+                : false
+          }
           style={{
             opacity: selectedCompany?.length < 1 ? 0.5 : 1,
             cursor: selectedCompany?.length < 1 ? "not-allowed" : "pointer",
@@ -397,6 +422,7 @@ const OrderSummaryCard = ({
                 onClick={() => {
                   handleClosePopup();
                   setIsPopupOpen("transfer-service");
+                  handleTransferCode();
                 }}
               >
                 Transfer Service
@@ -526,13 +552,15 @@ const OrderSummaryCard = ({
                   </p>
                   <div className={styles.transferIdentifierBox}>
                     <span className={styles.transferIdentifierValue}>
-                      {transferIdentifier || "—"}
+                      {isLoadingTransferCode
+                        ? "Loading..."
+                        : transferCode || "—"}
                     </span>
                     <button
                       type="button"
                       className={styles.transferCopyBtn}
                       onClick={handleCopyTransferIdentifier}
-                      disabled={!transferIdentifier}
+                      disabled={!transferCode}
                       aria-label="Copy identifier"
                     >
                       <FiCopy size={16} />

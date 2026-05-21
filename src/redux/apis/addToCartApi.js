@@ -88,6 +88,16 @@ const addToCartApi = apiSlice.injectEndpoints({
       },
       providesTags: ["addToCart"],
     }),
+    transferCode: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/transfer-code`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -102,4 +112,5 @@ export const {
   useGetUpgradeAddToCartDetailsMutation,
   useCheckIsDomainAvailableQuery,
   useLazyCheckIsDomainAvailableQuery,
+  useTransferCodeMutation,
 } = addToCartApi;
