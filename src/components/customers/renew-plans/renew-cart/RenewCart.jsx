@@ -163,48 +163,76 @@ const RenewCart = ({
                   {/* {cartItemList?.map(
                     (item) => item?.domain_name?.length > 0,
                   ) && ( */}
-                  {domainList?.length > 0 && (
-                    <div>
-                      <p className={styles.domainNamesLabel}>
-                        Domain Names <span className={styles.required}>*</span>
-                      </p>
+                  <div>
+                    {domainList?.length > 0 && (
+                      <div>
+                        <p className={styles.domainNamesLabel}>
+                          Domain Names{" "}
+                          <span className={styles.required}>*</span>
+                        </p>
 
-                      {domainList?.map((domain, index) => (
-                        <div
-                          key={`${domain}-${index}`}
-                          className={styles.domainNamesMainContainer}
-                        >
-                          <div className={styles.domainNameContainer}>
-                            <p className="m-0">{domain}</p>
+                        {domainList?.map((domain, index) => (
+                          <div
+                            key={`${domain}-${index}`}
+                            className={styles.domainNamesMainContainer}
+                          >
+                            <div className={styles.domainNameContainer}>
+                              <p className="m-0">{domain}</p>
 
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteDomain(domain)}
+                              >
+                                <IoClose />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                        {cartDetails?.[0]?.plan?.provider_id === 2 &&
+                          domainList?.length < 3 && (
                             <button
                               type="button"
-                              onClick={() => handleDeleteDomain(domain)}
+                              onClick={() => {
+                                setDomainNames((prev) =>
+                                  prev?.length > 0
+                                    ? prev
+                                    : [{ id: Date.now(), prefix: "" }],
+                                );
+                                setIsPopupOpen("new-service");
+                              }}
+                              className={styles.addDomainBtn}
                             >
-                              <IoClose />
+                              Add New Domain +
                             </button>
-                          </div>
-                        </div>
-                      ))}
-                      {cartDetails?.[0]?.plan?.provider_id === 2 &&
-                        domainList?.length < 3 && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setDomainNames((prev) =>
-                                prev?.length > 0
-                                  ? prev
-                                  : [{ id: Date.now(), prefix: "" }],
-                              );
-                              setIsPopupOpen("new-service");
-                            }}
-                            className={styles.addDomainBtn}
-                          >
-                            Add New Domain +
-                          </button>
-                        )}
-                    </div>
-                  )}
+                          )}
+                      </div>
+                    )}
+                    {cartDetails?.[0]?.plan?.provider_id === 1 &&
+                      domainList?.length < 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDomainNames((prev) =>
+                              prev?.length > 0
+                                ? prev
+                                : [{ id: Date.now(), prefix: "" }],
+                            );
+                            setIsPopupOpen("new-service");
+                          }}
+                          disabled={selectedCompany?.length < 1}
+                          className={styles.addDomainBtn}
+                          style={{
+                            opacity: selectedCompany?.length < 1 ? 0.5 : 1,
+                            cursor:
+                              selectedCompany?.length < 1
+                                ? "not-allowed"
+                                : "pointer",
+                          }}
+                        >
+                          Add New Domain +
+                        </button>
+                      )}
+                  </div>
                 </div>
               </div>
             </>

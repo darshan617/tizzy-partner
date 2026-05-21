@@ -88,6 +88,26 @@ const addToCartApi = apiSlice.injectEndpoints({
       },
       providesTags: ["addToCart"],
     }),
+    transferCode: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/transfer-code`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
+    promoCode: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/promo-code`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -102,4 +122,6 @@ export const {
   useGetUpgradeAddToCartDetailsMutation,
   useCheckIsDomainAvailableQuery,
   useLazyCheckIsDomainAvailableQuery,
+  useTransferCodeMutation,
+  usePromoCodeMutation,
 } = addToCartApi;
