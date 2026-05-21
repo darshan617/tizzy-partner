@@ -259,7 +259,7 @@ const OrderSummaryCard = ({
 
           <span
             className={styles.value}
-            style={{ color: discountedAmount > 0 ? "#43a910f5" : "#444444" }}
+            style={{ color: discountedAmount > 0 ? "#2dc718" : "#444444" }}
           >
             ₹ -{discountedAmount?.toFixed(2) || 0}
           </span>
