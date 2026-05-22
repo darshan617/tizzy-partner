@@ -101,6 +101,13 @@ const VerifyOtp = () => {
       });
       if (res?.data?.success) {
         showToast(res?.data?.message, "success");
+        router?.push({
+          pathname: "/order-complete",
+          query: {
+            po: res?.data?.po_link,
+          },
+        });
+        setOtpArray(["", "", "", "", "", ""]);
       } else {
         showToast(res?.error?.data?.message, "error");
       }

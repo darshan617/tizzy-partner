@@ -69,3 +69,16 @@
     border-radius: 10px;
     border: 1px solid #E7E9EB;
 }
+.downloadInvoiceBtn{
+    background: var(--primaryColor);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+.downloadInvoiceBtn:hover{
+    background: #035097;
+}
