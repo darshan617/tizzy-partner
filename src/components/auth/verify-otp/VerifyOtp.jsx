@@ -47,6 +47,7 @@ const VerifyOtp = () => {
 
     return newErrors;
   };
+
   const handleSubmit = async () => {
     const formErrors = validateOtp();
 
@@ -98,6 +99,11 @@ const VerifyOtp = () => {
           partner_id: userData?.id,
         },
       });
+      if (res?.data?.success) {
+        showToast(res?.data?.message, "success");
+      } else {
+        showToast(res?.error?.data?.message, "error");
+      }
     } catch (error) {
       console.log(error, "error");
       showToast("Failed to verify aadhar number OTP", "error");

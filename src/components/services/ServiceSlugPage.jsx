@@ -317,6 +317,7 @@ export default function ServiceSlugPage({
           partner_id: userData?.id,
           plan_id: planId,
           customer_id: router?.query?.customer_id,
+          order_id: router?.query?.order_id,
         },
       });
       if (res?.data?.success) {
