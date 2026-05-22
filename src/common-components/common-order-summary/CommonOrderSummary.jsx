@@ -494,6 +494,7 @@ const CommonOrderSummary = () => {
     } catch (error) {}
   };
 
+  console.log(cartDetails, "cartDetails");
   //handle aadhar number
   const handleAadharNumber = async () => {
     try {
@@ -503,7 +504,9 @@ const CommonOrderSummary = () => {
         body: {
           main_cart_id: main_cart_id,
           aadhaar_number: aadharNumber,
-          customer_id: cartDetails?.[0]?.customer_id,
+          customer_id:
+            cartDetails?.[0]?.customer_id ||
+            cartData?.company_info?.customer_id,
         },
       });
       if (res?.data?.success) {
