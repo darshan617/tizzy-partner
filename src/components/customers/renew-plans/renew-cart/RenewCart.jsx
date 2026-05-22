@@ -109,6 +109,11 @@ const RenewCart = ({
         </div>
       ) : (
         <div>
+          {router?.query?.type === "upgrade" && (
+            <div>
+              <p>Company Name: {selectedCompany}</p>
+            </div>
+          )}
           {!router?.query?.type && (
             <>
               <div className={styles.customerDetailsCard}>
