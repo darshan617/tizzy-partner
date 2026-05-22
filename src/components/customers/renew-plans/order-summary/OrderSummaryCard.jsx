@@ -385,9 +385,24 @@ const OrderSummaryCard = ({
             router?.query?.type !== "upgrade" &&
             selectedCompany?.length < 1
           }
+          // style={{
+          //   opacity: selectedCompany?.length < 1 ? 0.5 : 1,
+          //   cursor: selectedCompany?.length < 1 ? "not-allowed" : "pointer",
+          // }}
           style={{
-            opacity: selectedCompany?.length < 1 ? 0.5 : 1,
-            cursor: selectedCompany?.length < 1 ? "not-allowed" : "pointer",
+            opacity:
+              router?.query?.type !== "renew-plan" &&
+              router?.query?.type !== "upgrade" &&
+              selectedCompany?.length < 1
+                ? 0.5
+                : 1,
+
+            cursor:
+              router?.query?.type !== "renew-plan" &&
+              router?.query?.type !== "upgrade" &&
+              selectedCompany?.length < 1
+                ? "not-allowed"
+                : "pointer",
           }}
           onClick={() => {
             if (tempDomainNames?.length >= 1) {

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, ChevronUp } from "lucide-react";
+import { Plus, ChevronUp, Info } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "@/common-components/summary-counts/SummaryCounts.module.css";
 import Cookies from "js-cookie";
@@ -140,6 +140,115 @@ const ClosedCustomerIcon = () => (
     />
   </svg>
 );
+const DraftInvoiceIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 80 80"
+    className="icon"
+    fill="none"
+  >
+    {/* Background */}
+    <path
+      d="M12 0H48L76 28V68C76 74.6274 70.6274 80 64 80H12C5.37258 80 0 74.6274 0 68V12C0 5.37258 5.37258 0 12 0Z"
+      fill="currentColor"
+      opacity="0.25"
+    />
+
+    {/* Fold */}
+    <path
+      d="M48 0L76 28H58C52.4772 28 48 23.5228 48 18V0Z"
+      fill="currentColor"
+    />
+
+    {/* Lines */}
+    <path
+      d="M18 46H42"
+      stroke="currentColor"
+      strokeWidth="5"
+      strokeLinecap="round"
+    />
+    <path
+      d="M18 58H34"
+      stroke="currentColor"
+      strokeWidth="5"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const PaidInvoiceIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 80 80"
+    className="icon"
+    fill="none"
+  >
+    {/* Background */}
+    <path
+      d="M12 0H48L76 28V68C76 74.6274 70.6274 80 64 80H12C5.37258 80 0 74.6274 0 68V12C0 5.37258 5.37258 0 12 0Z"
+      fill="currentColor"
+      opacity="0.40"
+    />
+
+    {/* Fold */}
+    <path
+      d="M48 0L76 28H58C52.4772 28 48 23.5228 48 18V0Z"
+      fill="currentColor"
+    />
+
+    {/* Check */}
+    <path
+      d="M16 52L24 60L40 44"
+      stroke="currentColor"
+      strokeWidth="6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+const UploadInvoiceIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 80 80"
+    className="icon"
+    fill="none"
+  >
+    {/* Background */}
+    <path
+      d="M12 0H48L76 28V68C76 74.6274 70.6274 80 64 80H12C5.37258 80 0 74.6274 0 68V12C0 5.37258 5.37258 0 12 0Z"
+      fill="currentColor"
+      opacity="0.25"
+    />
+
+    {/* Fold */}
+    <path
+      d="M48 0L76 28H58C52.4772 28 48 23.5228 48 18V0Z"
+      fill="currentColor"
+    />
+
+    {/* Upload Arrow */}
+    <path
+      d="M40 58V34"
+      stroke="currentColor"
+      strokeWidth="6"
+      strokeLinecap="round"
+    />
+
+    <path
+      d="M30 44L40 34L50 44"
+      stroke="currentColor"
+      strokeWidth="6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
 const Counter = ({ target, suffix, prefix }) => {
   const ref = useRef();
@@ -180,6 +289,7 @@ export default function SummaryCounts({
   isFetchingCountData = false,
   title = "Summary",
   additionalBtns = [],
+  infoBtn = null,
 }) {
   const router = useRouter();
   const userData = Cookies.get("userData")
@@ -264,6 +374,27 @@ export default function SummaryCounts({
       icon: <CustomerIcon />,
       redirectUrl: null,
     },
+    "paid invoices": {
+      boxClass: "successGrad",
+      iconClass: "successColor",
+      badgeClass: "up",
+      icon: <PaidInvoiceIcon />,
+      redirectUrl: null,
+    },
+    "pending invoices": {
+      boxClass: "warningGrad",
+      iconClass: "warningColor",
+      badgeClass: "up",
+      icon: <UploadInvoiceIcon />,
+      redirectUrl: null,
+    },
+    "overdue invoices": {
+      boxClass: "dangerGrad",
+      iconClass: "dangerColor",
+      badgeClass: "up",
+      icon: <DraftInvoiceIcon />,
+      redirectUrl: null,
+    },
   };
 
   return (
@@ -278,6 +409,30 @@ export default function SummaryCounts({
           </div>
 
           <div className="row row-cols-md-4 row-cols-sm-4 row-cols-2 g-sm-4 g-3">
+            {infoBtn && (
+              <div className="col pt-4">
+                <div
+                  className={`boxLink primaryBg ${styles.creditBalanceCard} border-0 outline-0`}
+                >
+                  <p className={styles.creditBalanceTitle}>{infoBtn?.title}</p>
+                  <p className={`${styles.creditBalanceAmount} fs-3`}>
+                    {infoBtn?.amount}
+                  </p>
+                  <div className={styles.creditBalanceInfo}>
+                    <span
+                      className={styles.creditBalanceInfoIcon}
+                      aria-hidden="true"
+                    >
+                      <Info size={14} strokeWidth={2.5} color="#fff" />
+                    </span>
+                    <p className={styles.creditBalanceInfoText}>
+                      {infoBtn?.info}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {countData?.map((card, index) => {
               const normalizedKey = card?.key?.trim().toLowerCase();
               const config = summaryCardConfig[normalizedKey];

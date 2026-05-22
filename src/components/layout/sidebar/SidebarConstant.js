@@ -28,7 +28,7 @@ export const SIDEBAR_MENU_CONSTANTS = [
     id: 4,
     title: "Invoices",
     icon: LuReceiptIndianRupee,
-    href: "/invoices",
+    href: "/invoice",
   },
   {
     id: 5,

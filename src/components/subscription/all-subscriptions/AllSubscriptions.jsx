@@ -86,8 +86,15 @@ const AllSubscriptions = ({
               <div
                 className={`${styles.searchCount} col-sm-auto order-sm-1 text-center my-2 my-sm-0`}
               >
-                Showing <span className="fw-medium darkColor">1 - 10</span> from{" "}
-                <span className="fw-medium darkColor">12400</span> Subscriptions
+                Showing{" "}
+                <span className="fw-medium darkColor">
+                  1 - {allSubscriptionsData?.length}
+                </span>{" "}
+                from{" "}
+                <span className="fw-medium darkColor">
+                  {allSubscriptionsData?.length}
+                </span>{" "}
+                Subscriptions
               </div>
             </div>
           </div>

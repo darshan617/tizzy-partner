@@ -15,22 +15,21 @@ const Subscriptions = () => {
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
-
-  useEffect(() => {
-    const fetchAllSubscriptions = async () => {
-      try {
-        const res = await getAllSubscriptions({
-          body: {
-            partner_id: userData?.id,
-          },
-        });
-        if (res?.data?.success) {
-          setAllSubscriptionsData(res?.data);
-        }
-      } catch (error) {
-        console.log("Error", error);
+  const fetchAllSubscriptions = async () => {
+    try {
+      const res = await getAllSubscriptions({
+        body: {
+          partner_id: userData?.id,
+        },
+      });
+      if (res?.data?.success) {
+        setAllSubscriptionsData(res?.data);
       }
-    };
+    } catch (error) {
+      console.log("Error", error);
+    }
+  };
+  useEffect(() => {
     fetchAllSubscriptions();
   }, []);
   return (
