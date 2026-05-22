@@ -23,12 +23,12 @@ const VerifyOtp = () => {
     otp: "",
   });
   const [otpArray, setOtpArray] = useState(["", "", "", "", "", ""]);
-  // const userData = useSelector(selectUserData);
+  const userData = useSelector(selectUserData);
   const [verifyOtp, { isLoading: isVerifyOtpLoading }] = useVerifyOtpMutation();
   const [resendOtp, { isLoading: isResendOtpLoading }] = useResendOtpMutation();
   const [errors, setErrors] = useState({});
 
-  const userData = Cookies.get("userData")
+  const userDataFromCookie = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
     : {};
 
@@ -96,7 +96,7 @@ const VerifyOtp = () => {
         body: {
           otp: otpDetails?.otp,
           main_cart_id: router?.query?.main_cart_id,
-          partner_id: userData?.id,
+          partner_id: userDataFromCookie?.id,
         },
       });
       if (res?.data?.success) {
