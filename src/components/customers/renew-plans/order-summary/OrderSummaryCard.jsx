@@ -323,7 +323,8 @@ const OrderSummaryCard = ({
               </div>
             </>
           ) : (
-            tempDomainNames?.length > 0 && (
+            tempDomainNames?.length > 0 ||
+            (router?.query?.type === "upgrade" && (
               <form
                 className={styles.singleInputForm}
                 style={{ marginBottom: "16px" }}
@@ -358,7 +359,7 @@ const OrderSummaryCard = ({
                   onChange={(e) => setAadharNumber(e.target.value)}
                 />
               </form>
-            )
+            ))
           )}
         </div>
 
