@@ -108,6 +108,16 @@ const addToCartApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["addToCart"],
     }),
+    aadharNumber: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/orders-aadhaar-init`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -124,4 +134,5 @@ export const {
   useLazyCheckIsDomainAvailableQuery,
   useTransferCodeMutation,
   usePromoCodeMutation,
+  useAadharNumberMutation,
 } = addToCartApi;

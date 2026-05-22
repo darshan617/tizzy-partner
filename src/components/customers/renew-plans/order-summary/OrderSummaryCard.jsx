@@ -44,6 +44,7 @@ const OrderSummaryCard = ({
   selectedCompany,
   transferCode,
   setTransferCode,
+  handleAadharNumber,
 }) => {
   const router = useRouter();
   const { showToast } = useToast();
@@ -323,8 +324,9 @@ const OrderSummaryCard = ({
               </div>
             </>
           ) : (
-            tempDomainNames?.length > 0 ||
-            (router?.query?.type === "upgrade" && (
+            (router?.query?.type === "renew-plan" ||
+              router?.query?.type === "upgrade" ||
+              tempDomainNames?.length > 0) && (
               <form
                 className={styles.singleInputForm}
                 style={{ marginBottom: "16px" }}
@@ -347,6 +349,7 @@ const OrderSummaryCard = ({
                   placeholder=""
                   title="Enter Aadhar number"
                   className={styles.inputField}
+                  maxLength={12}
                   style={{
                     width: "100%",
                     padding: "10px 12px",
@@ -359,7 +362,7 @@ const OrderSummaryCard = ({
                   onChange={(e) => setAadharNumber(e.target.value)}
                 />
               </form>
-            ))
+            )
           )}
         </div>
 
@@ -407,23 +410,13 @@ const OrderSummaryCard = ({
           }}
           onClick={() => {
             if (tempDomainNames?.length >= 1) {
-              router.push({
-                pathname: "/verify-otp",
-                query: {
-                  type: "order",
-                },
-              });
+              handleAadharNumber();
             } else {
               if (
                 router?.query?.type === "renew-plan" ||
                 router?.query?.type === "upgrade"
               ) {
-                router.push({
-                  pathname: "/verify-otp",
-                  query: {
-                    type: "order",
-                  },
-                });
+                handleAadharNumber();
               } else {
                 if (tizzyProviderId) {
                   ensureDomainInputRow();

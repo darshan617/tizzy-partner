@@ -325,6 +325,7 @@ export default function ServiceSlugPage({
           query: {
             type: "upgrade",
             customer_id: router?.query?.customer_id,
+            order_id: router?.query?.order_id,
           },
         });
       } else {

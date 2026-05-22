@@ -403,18 +403,21 @@ const RenewCart = ({
                     </div>
                   </div>
 
-                  <button
-                    className={styles.removeBtn}
-                    onClick={() => {
-                      setIsPopupOpen("delete-cart");
-                      setCartToDelete({
-                        cart_id: item?.cart_id,
-                        main_cart_id: item?.main_cart_id,
-                      });
-                    }}
-                  >
-                    ×
-                  </button>
+                  {router?.query?.type !== "renew-plan" &&
+                    router?.query?.type !== "upgrade" && (
+                      <button
+                        className={styles.removeBtn}
+                        onClick={() => {
+                          setIsPopupOpen("delete-cart");
+                          setCartToDelete({
+                            cart_id: item?.cart_id,
+                            main_cart_id: item?.main_cart_id,
+                          });
+                        }}
+                      >
+                        ×
+                      </button>
+                    )}
                 </div>
               </div>
             );

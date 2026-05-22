@@ -2,6 +2,7 @@ import OrderSummaryCard from "@/components/customers/renew-plans/order-summary/O
 import RenewCart from "@/components/customers/renew-plans/renew-cart/RenewCart";
 import layoutStyles from "@/common-components/common-order-summary/CommonOrderSummary.module.css";
 import {
+  useAadharNumberMutation,
   useAddToCartMutation,
   useGetCartDetailsMutation,
   useGetUpdateCartDetailsQuery,
@@ -199,6 +200,10 @@ const CommonOrderSummary = () => {
       skip: !userData?.id || !router?.query?.plan_id,
     },
   );
+
+  //aadhar number api
+  const [aadharNumberApi, { isLoading: isAadharNumberLoading }] =
+    useAadharNumberMutation();
 
   const handleAddToCart = async () => {
     try {
@@ -482,6 +487,32 @@ const CommonOrderSummary = () => {
     } catch (error) {}
   };
 
+  //handle aadhar number
+  const handleAadharNumber = async () => {
+    try {
+      const main_cart_id = resolveMainCartId(cartDetails, cartData);
+
+      const res = await aadharNumberApi({
+        body: {
+          order_id: main_cart_id,
+          aadhar_number: aadharNumber,
+        },
+      });
+      if (res?.data?.success) {
+        router.push({
+          pathname: "/verify-otp",
+          query: {
+            type: "order",
+          },
+        });
+      } else {
+        console.log(res?.data?.message, "res?.data?.message");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const isDataLoading =
     isGettingCartDetailsApi ||
     isGettingUpgradeCartDetailsApi ||
@@ -664,6 +695,7 @@ const CommonOrderSummary = () => {
               selectedCompany={selectedCompany}
               transferCode={transferCode}
               setTransferCode={setTransferCode}
+              handleAadharNumber={handleAadharNumber}
             />
           </aside>
         </div>
