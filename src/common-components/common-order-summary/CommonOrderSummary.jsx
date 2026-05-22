@@ -2,6 +2,7 @@ import OrderSummaryCard from "@/components/customers/renew-plans/order-summary/O
 import RenewCart from "@/components/customers/renew-plans/renew-cart/RenewCart";
 import layoutStyles from "@/common-components/common-order-summary/CommonOrderSummary.module.css";
 import {
+  useAadharNumberMutation,
   useAddToCartMutation,
   useGetCartDetailsMutation,
   useGetUpdateCartDetailsQuery,
@@ -9,6 +10,7 @@ import {
   useGetUpgradeAddToCartDetailsQuery,
   useRenewCustomerDetailsMutation,
   useUpdateCartMutation,
+  useVerifyAadharNumberOtpMutation,
 } from "@/redux/apis/addToCartApi";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import { selectCartData, setCartData } from "@/redux/slices/cartSlice";
@@ -17,6 +19,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../loader/Loader";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
 
 const normalizeCompanyName = (name) => {
   const t = String(name ?? "").trim();
@@ -87,6 +90,7 @@ const buildAutoUpdateCartBody = ({
 };
 
 const CommonOrderSummary = () => {
+  const { showToast } = useToast();
   const router = useRouter();
   const dispatch = useDispatch();
   const cartData = useSelector(selectCartData);
@@ -199,6 +203,14 @@ const CommonOrderSummary = () => {
       skip: !userData?.id || !router?.query?.plan_id,
     },
   );
+  console.log(cartDetails?.[0], "cartDetails");
+
+  //aadhar number api
+  const [aadharNumberApi, { isLoading: isAadharNumberLoading }] =
+    useAadharNumberMutation();
+
+  const [verifyAadharNumberOtp, { isLoading: isVerifyAadharNumberOtpLoading }] =
+    useVerifyAadharNumberOtpMutation();
 
   const handleAddToCart = async () => {
     try {
@@ -482,6 +494,35 @@ const CommonOrderSummary = () => {
     } catch (error) {}
   };
 
+  //handle aadhar number
+  const handleAadharNumber = async () => {
+    try {
+      const main_cart_id = resolveMainCartId(cartDetails, cartData);
+
+      const res = await aadharNumberApi({
+        body: {
+          main_cart_id: main_cart_id,
+          aadhaar_number: aadharNumber,
+          customer_id: cartDetails?.[0]?.customer_id,
+        },
+      });
+      if (res?.data?.success) {
+        router.push({
+          pathname: "/verify-otp",
+          query: {
+            type: "order",
+            main_cart_id: main_cart_id,
+          },
+        });
+      } else {
+        showToast(res?.error?.data?.message, "error");
+      }
+    } catch (error) {
+      console.log(error, "error");
+      showToast("Failed to verify aadhar number", "error");
+    }
+  };
+
   const isDataLoading =
     isGettingCartDetailsApi ||
     isGettingUpgradeCartDetailsApi ||
@@ -664,6 +705,7 @@ const CommonOrderSummary = () => {
               selectedCompany={selectedCompany}
               transferCode={transferCode}
               setTransferCode={setTransferCode}
+              handleAadharNumber={handleAadharNumber}
             />
           </aside>
         </div>
