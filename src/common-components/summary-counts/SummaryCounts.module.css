@@ -294,6 +294,67 @@
     color: var(--textBody);
     cursor: pointer;
 }
+
+.creditBalanceCard {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    padding: 1.5rem;
+    border-radius: 10px;
+    min-height: 140px;
+    box-shadow: 0 4px 12px rgba(0, 67, 140, 0.2);
+}
+
+.creditBalanceCard * {
+    position: relative;
+    z-index: 1;
+}
+
+.creditBalanceTitle {
+    margin: 0 0 0.5rem;
+    /* font-size: var(--fs16); */
+    font-weight: 500;
+    color: var(--whiteColor);
+    line-height: 1.4;
+}
+
+.creditBalanceAmount {
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.75rem, 4vw, 2rem);
+    font-weight: 600;
+    color: var(--whiteColor);
+    line-height: 1.2;
+}
+
+.creditBalanceInfo {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: auto;
+}
+
+.creditBalanceInfoIcon {
+    flex-shrink: 0;
+    /* width: 1.25rem; */
+    /* height: 1.25rem; */
+    border-radius: 50%;
+    /* background: var(--whiteColor); */
+    color: var(--primaryColor);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.1rem;
+}
+
+.creditBalanceInfoText {
+    margin: 0;
+    font-size: var(--fs14);
+    font-weight: 400;
+    color: var(--whiteColor);
+    line-height: 1.45;
+    max-width: 28rem;
+}
 @media (min-width: 768px) {
     .statBox {
         padding: 15px;

@@ -290,14 +290,14 @@ export default function ServiceSlugPage({
         if (res?.data?.success) {
           if (router?.query?.type === "upgrade") {
             router.push({
-              pathname: "/my-cart",
+              pathname: "/order-summary",
               query: {
                 type: "upgrade",
                 plan_id: planId,
               },
             });
           } else {
-            router.push("/my-cart");
+            router.push("/order-summary");
             showToast("Plan added to cart", "success");
           }
         } else {
@@ -317,14 +317,16 @@ export default function ServiceSlugPage({
           partner_id: userData?.id,
           plan_id: planId,
           customer_id: router?.query?.customer_id,
+          order_id: router?.query?.order_id,
         },
       });
       if (res?.data?.success) {
         router.push({
-          pathname: "/my-cart",
+          pathname: "/order-summary",
           query: {
             type: "upgrade",
             customer_id: router?.query?.customer_id,
+            order_id: router?.query?.order_id,
           },
         });
       } else {

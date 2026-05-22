@@ -73,7 +73,11 @@ export default function CustomerList({
               <div
                 className={`${styles.searchCount} col-sm-auto order-sm-1 text-center my-2 my-sm-0 `}
               >
-                Showing <span className="fw-medium darkColor">1 - 10</span> from{" "}
+                Showing{" "}
+                <span className="fw-medium darkColor">
+                  1 - {allCustomers?.data?.customers?.length}
+                </span>{" "}
+                from{" "}
                 <span className="fw-medium darkColor">
                   {allCustomers?.data?.customers?.length}
                 </span>{" "}

@@ -79,6 +79,55 @@ const addToCartApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["addToCart"],
     }),
+    checkIsDomainAvailable: builder.query({
+      query: ({ domain_name }) => {
+        return {
+          url: `/orders-check-domain?domain_name=${domain_name}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["addToCart"],
+    }),
+    transferCode: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/transfer-code`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
+    promoCode: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/promo-code`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
+    aadharNumber: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/orders-aadhaar-init`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
+    verifyAadharNumberOtp: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/orders-aadhaar-otp-verify`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -91,4 +140,10 @@ export const {
   useDeleteFromCartMutation,
   useUpgradeAddToCartMutation,
   useGetUpgradeAddToCartDetailsMutation,
+  useCheckIsDomainAvailableQuery,
+  useLazyCheckIsDomainAvailableQuery,
+  useTransferCodeMutation,
+  usePromoCodeMutation,
+  useAadharNumberMutation,
+  useVerifyAadharNumberOtpMutation,
 } = addToCartApi;

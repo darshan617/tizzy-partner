@@ -117,7 +117,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                     </button>
                   </div>
                   <div className="">
-                    <Link className={styles.navBtns} href="/my-cart">
+                    <Link className={styles.navBtns} href="/order-summary">
                       <BsHandbag size={20} color="#000" />
                       <span className={`${styles.navLabel} d-none`}></span>
                     </Link>

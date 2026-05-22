@@ -68,7 +68,7 @@ export default function PricingPlanCard({
           className={styles.cta}
           onClick={() => {
             if (plan_is_in_cart) {
-              router.push("/my-cart");
+              router.push("/order-summary");
             } else if (
               isProviderInCart === false ||
               router?.query?.type === "upgrade"

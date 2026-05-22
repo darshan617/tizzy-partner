@@ -303,7 +303,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 24px 24px 20px;
+    padding: 15px 24px;
     border-bottom: 1px solid #f0f0f0;
 }
 
@@ -314,24 +314,27 @@
     color: #111827;
     line-height: 1.3;
 }
+.addDomainIconBtnContainer{
+    padding: 0px 24px 8px;
+}
 
 .addDomainIconBtn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
     border: none;
-    border-radius: 50%;
-    background: #e8f0fe;
+    border-radius: 5px;
+    background:none;
     color: var(--primaryColor);
     cursor: pointer;
-    flex-shrink: 0;
-    transition: background 0.15s;
+    font-size: 14px;
+    transition: text-decoration 0.15s;
 }
 
 .addDomainIconBtn:hover {
-    background: #d6e6fc;
+    text-decoration: underline;
+    color: var(--primaryColor);
+    text-underline-offset: 4px;
 }
 
 .newServicePopupBody {
@@ -373,6 +376,186 @@
 
 .newServicePopupFooter {
     padding: 8px 24px 28px;
+}
+
+.transferServicePopup {
+    margin: -16px -18px -16px;
+}
+
+.transferServicePopupHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 24px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.transferServicePopupTitle {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.3;
+}
+
+.transferServicePopupBody {
+    display: flex;
+    align-items: stretch;
+}
+
+.transferServicePopupLeft {
+    flex: 1;
+    min-width: 0;
+    padding: 24px;
+}
+
+.transferServicePopupRight {
+    flex: 1;
+    min-width: 0;
+    padding: 24px;
+    background: #f9fafb;
+    border-left: 1px solid #f0f0f0;
+}
+
+.transferServiceSection {
+    margin-bottom: 22px;
+}
+
+.transferServiceSection:last-of-type {
+    margin-bottom: 28px;
+}
+
+.transferServiceLabel {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.3;
+}
+
+.transferServiceHint {
+    margin: 0 0 12px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #6b7280;
+    line-height: 1.45;
+}
+
+.transferIdentifierBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px dashed #d1d5db;
+    border-radius: 10px;
+    background: #f9fafb;
+}
+
+.transferIdentifierValue {
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #111827;
+    word-break: break-all;
+}
+
+.transferCopyBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    color: var(--primaryColor);
+    cursor: pointer;
+    padding: 4px;
+}
+
+.transferCopyBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.transferCopyBtn:hover:not(:disabled) {
+    color: #054891;
+}
+
+.transferDomainInput {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #111827;
+    outline: none;
+    background: #ffffff;
+}
+
+.transferDomainInput:focus {
+    border-color: var(--primaryColor);
+}
+
+.transferInfoSection {
+    margin-bottom: 24px;
+}
+
+.transferInfoSection:last-child {
+    margin-bottom: 0;
+}
+
+.transferInfoTitle {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.3;
+}
+
+.transferInfoText {
+    margin: 0 0 12px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.transferInfoText:last-child {
+    margin-bottom: 0;
+}
+
+.transferInfoText strong {
+    font-weight: 600;
+    color: #374151;
+}
+
+.transferSupportLink {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0355ac;
+    text-decoration: none;
+}
+
+.transferSupportLink:hover {
+    text-decoration: underline;
+    color: #1e40af;
+}
+
+@media (max-width: 768px) {
+    .transferServicePopupBody {
+        flex-direction: column;
+    }
+
+    .transferServicePopupRight {
+        border-left: none;
+        border-top: 1px solid #f0f0f0;
+    }
 }
  
 @media (max-width: 480px) {

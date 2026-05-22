@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "@/components/customers/renew-plans/renew-cart/RenewCart.module.css";
 import Link from "next/link";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
@@ -10,6 +10,13 @@ import Image from "next/image";
 import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarConstant";
 import { useDeleteFromCartMutation } from "@/redux/apis/addToCartApi";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
+import { IoClose } from "react-icons/io5";
+
+const toDomainArray = (value) => {
+  if (Array.isArray(value)) return value.filter(Boolean);
+  if (typeof value === "string" && value.trim()) return [value.trim()];
+  return [];
+};
 
 const RenewCart = ({
   total,
@@ -20,17 +27,24 @@ const RenewCart = ({
   onLineLicensesChange,
   getAllCustomers,
   selectedCompany,
-  setSelectedCompany,
-  domainName,
-  setDomainName,
+  onCompanyChange,
+  domainNames,
+  setDomainNames,
   isGettingCartDetails,
   hideInlineSubtotal = false,
+  isPopupOpen,
+  setIsPopupOpen,
+  tempDomainNames,
+  setTempDomainNames,
+  onRemoveDomain,
 }) => {
-  console.log("cartDetails", cartDetails);
   const router = useRouter();
   const { showToast } = useToast();
-  const [isPopupOpen, setIsPopupOpen] = useState("");
-  const [cartIdToDelete, setCartIdToDelete] = useState(null);
+
+  const [cartToDelete, setCartToDelete] = useState({
+    cart_id: null,
+    main_cart_id: null,
+  });
   const [deleteFromCart, { isLoading: isDeletingFromCart }] =
     useDeleteFromCartMutation();
   const handleClosePopup = () => {
@@ -53,12 +67,14 @@ const RenewCart = ({
       : [];
 
   const listMode = Array.isArray(cartDetails);
+  const domainList = toDomainArray(tempDomainNames);
 
-  const handleDeleteFromCart = async (cart_id) => {
+  const handleDeleteFromCart = async (cart_id, main_cart_id) => {
     try {
       const res = await deleteFromCart({
         body: {
           cart_id,
+          main_cart_id,
         },
       });
       if (res?.data?.success) {
@@ -72,6 +88,19 @@ const RenewCart = ({
     }
   };
 
+  const handleDeleteDomain = (domainToDelete) => {
+    const updatedDomains = domainList.filter(
+      (domain) => domain !== domainToDelete,
+    );
+    setTempDomainNames(updatedDomains);
+    onRemoveDomain?.(updatedDomains);
+  };
+
+  useEffect(() => {
+    if (cartItemList?.length > 0) {
+      setTempDomainNames(toDomainArray(cartItemList[0]?.domain_name));
+    }
+  }, [cartItemList?.[0]?.cart_id]);
   return (
     <>
       {isGettingCartDetails ? (
@@ -80,6 +109,11 @@ const RenewCart = ({
         </div>
       ) : (
         <div>
+          {router?.query?.type === "upgrade" && (
+            <div>
+              <p>Company Name: {selectedCompany}</p>
+            </div>
+          )}
           {!router?.query?.type && (
             <>
               <div className={styles.customerDetailsCard}>
@@ -103,7 +137,7 @@ const RenewCart = ({
                     placeholder="Select Company Name"
                     label="Company Name"
                     onChange={(option) =>
-                      setSelectedCompany(option?.label || "")
+                      onCompanyChange?.(option?.label || "", option?.value)
                     }
                   />
                   {/* <div className={styles.fieldGroup}>
@@ -131,13 +165,85 @@ const RenewCart = ({
                   onChange={(e) => setDomainName(e.target.value)}
                 />
               </div> */}
+                  {/* {cartItemList?.map(
+                    (item) => item?.domain_name?.length > 0,
+                  ) && ( */}
+                  <div>
+                    {domainList?.length > 0 && (
+                      <div>
+                        <p className={styles.domainNamesLabel}>
+                          Domain Names{" "}
+                          <span className={styles.required}>*</span>
+                        </p>
+
+                        {domainList?.map((domain, index) => (
+                          <div
+                            key={`${domain}-${index}`}
+                            className={styles.domainNamesMainContainer}
+                          >
+                            <div className={styles.domainNameContainer}>
+                              <p className="m-0">{domain}</p>
+
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteDomain(domain)}
+                              >
+                                <IoClose />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                        {cartDetails?.[0]?.plan?.provider_id === 2 &&
+                          domainList?.length < 3 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setDomainNames((prev) =>
+                                  prev?.length > 0
+                                    ? prev
+                                    : [{ id: Date.now(), prefix: "" }],
+                                );
+                                setIsPopupOpen("new-service");
+                              }}
+                              className={styles.addDomainBtn}
+                            >
+                              Add New Domain +
+                            </button>
+                          )}
+                      </div>
+                    )}
+                    {cartDetails?.[0]?.plan?.provider_id === 1 &&
+                      domainList?.length < 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDomainNames((prev) =>
+                              prev?.length > 0
+                                ? prev
+                                : [{ id: Date.now(), prefix: "" }],
+                            );
+                            setIsPopupOpen("new-service");
+                          }}
+                          disabled={selectedCompany?.length < 1}
+                          className={styles.addDomainBtn}
+                          style={{
+                            opacity: selectedCompany?.length < 1 ? 0.5 : 1,
+                            cursor:
+                              selectedCompany?.length < 1
+                                ? "not-allowed"
+                                : "pointer",
+                          }}
+                        >
+                          Add New Domain +
+                        </button>
+                      )}
+                  </div>
                 </div>
               </div>
             </>
           )}
 
-          {cartItemList.map((item, idx) => {
-            console.log("item", item);
+          {cartItemList?.map((item, idx) => {
             const customerLimit =
               item?.customerLimit ?? item?.customer_limit ?? undefined;
             const lineKey = item?.cart_id ?? item?.id ?? idx;
@@ -157,7 +263,7 @@ const RenewCart = ({
                   ></div> */}
                   <div>
                     <span className={`${styles.iconCircle} `}>
-                      {SIDEBAR_SERVICES_CONSTANTS.find(
+                      {SIDEBAR_SERVICES_CONSTANTS?.find(
                         (menu) =>
                           menu?.id ===
                           Number(
@@ -172,12 +278,24 @@ const RenewCart = ({
                     <div className={styles.productName}>
                       {item?.plan_name || "-"}
                     </div>
-                    {item?.domain_name &&
+                    {/* {item?.domain_name &&
                       router?.query?.variant !== "new-plan" && (
                         <p className={`${styles.productLink} m-0`}>
-                          {item?.domain_name || "-"}
+                          {(domainList.length > 0
+                            ? domainList
+                            : toDomainArray(item?.domain_name)
+                          ).join(", ") || "-"}
                         </p>
-                      )}
+                      )} */}
+                    {item?.domain_name &&
+                      toDomainArray(item?.domain_name)?.map((domain, index) => (
+                        <p
+                          key={`${domain}-${index}`}
+                          className={`${styles.productLink} m-0`}
+                        >
+                          {domain || "-"}
+                        </p>
+                      ))}
                     <div className={styles.productDate}>
                       {item?.subscription_start_date} –{" "}
                       {item?.subscription_end_date}
@@ -285,15 +403,21 @@ const RenewCart = ({
                     </div>
                   </div>
 
-                  <button
-                    className={styles.removeBtn}
-                    onClick={() => {
-                      setIsPopupOpen("delete-cart");
-                      setCartIdToDelete(item?.cart_id);
-                    }}
-                  >
-                    ×
-                  </button>
+                  {router?.query?.type !== "renew-plan" &&
+                    router?.query?.type !== "upgrade" && (
+                      <button
+                        className={styles.removeBtn}
+                        onClick={() => {
+                          setIsPopupOpen("delete-cart");
+                          setCartToDelete({
+                            cart_id: item?.cart_id,
+                            main_cart_id: item?.main_cart_id,
+                          });
+                        }}
+                      >
+                        ×
+                      </button>
+                    )}
                 </div>
               </div>
             );
@@ -327,7 +451,12 @@ const RenewCart = ({
               <p>Are you sure you want to delete the plan from the cart?</p>
               <div className="d-flex gap-2 justify-content-end">
                 <button
-                  onClick={() => handleDeleteFromCart(cartIdToDelete)}
+                  onClick={() =>
+                    handleDeleteFromCart(
+                      cartToDelete?.cart_id,
+                      cartToDelete?.main_cart_id,
+                    )
+                  }
                   className={`${styles.deleteBtn}`}
                 >
                   Yes, Delete

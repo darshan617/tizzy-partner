@@ -2,6 +2,7 @@ import OrderSummaryCard from "@/components/customers/renew-plans/order-summary/O
 import RenewCart from "@/components/customers/renew-plans/renew-cart/RenewCart";
 import layoutStyles from "@/common-components/common-order-summary/CommonOrderSummary.module.css";
 import {
+  useAadharNumberMutation,
   useAddToCartMutation,
   useGetCartDetailsMutation,
   useGetUpdateCartDetailsQuery,
@@ -9,16 +10,18 @@ import {
   useGetUpgradeAddToCartDetailsQuery,
   useRenewCustomerDetailsMutation,
   useUpdateCartMutation,
+  useVerifyAadharNumberOtpMutation,
 } from "@/redux/apis/addToCartApi";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import { selectCartData, setCartData } from "@/redux/slices/cartSlice";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Loader from "../loader/Loader";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
 
 const normalizeCompanyName = (name) => {
-  console.log(name, "nameeeeeeeeeeeeeeee");
   const t = String(name ?? "").trim();
   return t && t !== "-" ? t : "";
 };
@@ -26,7 +29,68 @@ const normalizeCompanyName = (name) => {
 const getCartLineUnitPrice = (item) =>
   Number(item?.price_per_unit ?? item?.unit_price ?? 0) || 0;
 
+const resolveMainCartId = (cartDetails, cartData) => {
+  if (cartData?.main_cart_id) return cartData.main_cart_id;
+  if (Array.isArray(cartDetails)) {
+    return cartDetails[0]?.main_cart_id;
+  }
+  return cartDetails?.main_cart_id;
+};
+
+const buildDomainsFromInput = (domainRows, providerId, suffix) =>
+  (domainRows || [])
+    .map((domain) => {
+      const prefix = String(domain?.prefix ?? "").trim();
+      if (!prefix) return null;
+      return providerId === 2 ? `${prefix}${suffix}` : prefix;
+    })
+    .filter(Boolean);
+
+const hasDomainPrefixInput = (domainRows) =>
+  buildDomainsFromInput(domainRows, 1, "").length > 0;
+
+const toDomainArray = (value) => {
+  if (Array.isArray(value)) return value.filter(Boolean);
+  if (typeof value === "string" && value.trim()) return [value.trim()];
+  return [];
+};
+
+const resolveCartDomains = (item, tempDomains = []) => {
+  const fromItem = toDomainArray(item?.domain_name);
+  const fromTemp = toDomainArray(tempDomains);
+  return [...new Set([...fromTemp, ...fromItem])];
+};
+
+const buildAutoUpdateCartBody = ({
+  item,
+  itemIndex,
+  selectedCompany,
+  tempDomains,
+  customerId,
+}) => {
+  const domain_name = resolveCartDomains(
+    item,
+    itemIndex === 0 ? tempDomains : [],
+  );
+
+  const body = {
+    cart_id: item?.cart_id,
+    main_cart_id: item?.main_cart_id,
+    licenses: Number(item?.licenses) || 1,
+    company_name: normalizeCompanyName(selectedCompany || item?.company_name),
+    customer_id: customerId ?? item?.customer_id,
+    transfer_domain: item?.transfer_domain ?? "no",
+  };
+
+  if (domain_name.length > 0) {
+    body.domain_name = domain_name;
+  }
+
+  return body;
+};
+
 const CommonOrderSummary = () => {
+  const { showToast } = useToast();
   const router = useRouter();
   const dispatch = useDispatch();
   const cartData = useSelector(selectCartData);
@@ -40,10 +104,58 @@ const CommonOrderSummary = () => {
   const [cartDetails, setCartDetails] = useState({});
   const [pricePerUser, setPricePerUser] = useState(null);
   const [selectedCompany, setSelectedCompany] = useState("");
-  console.log(selectedCompany, "selectedCompany");
   const [lisceneCounter, setLisceneCounter] = useState(1);
-  const [promoCode, setPromoCode] = useState(10);
-  const [domainName, setDomainName] = useState("");
+  const [promoCode, setPromoCode] = useState(null);
+  const [isPopupOpen, setIsPopupOpen] = useState("");
+  const [domainNames, setDomainNames] = useState([]);
+  const [tempDomainNames, setTempDomainNames] = useState([]);
+  const tempDomainNamesRef = useRef([]);
+  const selectedCompanyRef = useRef("");
+  const [aadharNumber, setAadharNumber] = useState("");
+  const [transferCode, setTransferCode] = useState("");
+
+  console.log(transferCode, "transferCode");
+
+  const DOMAIN_SUFFIX = ".onmicrosoft.com";
+  useEffect(() => {
+    tempDomainNamesRef.current = tempDomainNames;
+  }, [tempDomainNames]);
+
+  useEffect(() => {
+    selectedCompanyRef.current = selectedCompany;
+  }, [selectedCompany]);
+
+  useEffect(() => {
+    const firstItem = Array.isArray(cartDetails)
+      ? cartDetails[0]
+      : cartDetails &&
+          typeof cartDetails === "object" &&
+          Object.keys(cartDetails).length > 0
+        ? cartDetails
+        : null;
+    const fromCart = normalizeCompanyName(firstItem?.company_name);
+    if (!fromCart) return;
+
+    setSelectedCompany((prev) => {
+      if (prev) return prev;
+      selectedCompanyRef.current = fromCart;
+      return fromCart;
+    });
+  }, [cartDetails]);
+
+  const handleCompanyChange = (companyName, companyId) => {
+    const normalized = normalizeCompanyName(companyName);
+    setSelectedCompany(normalized);
+    selectedCompanyRef.current = normalized;
+    setCartDetails((prev) => {
+      if (!Array.isArray(prev)) return prev;
+      return prev.map((item, idx) =>
+        idx === 0
+          ? { ...item, company_name: normalized, customer_id: companyId }
+          : item,
+      );
+    });
+  };
 
   const isListCart = Array.isArray(cartDetails);
   const total = isListCart
@@ -77,7 +189,7 @@ const CommonOrderSummary = () => {
     {
       skip:
         !userData?.id ||
-        (!router?.pathname === "/my-cart" &&
+        (!router?.pathname === "/order-summary" &&
           !router?.query?.variant === "new-plan"),
     },
   );
@@ -91,6 +203,14 @@ const CommonOrderSummary = () => {
       skip: !userData?.id || !router?.query?.plan_id,
     },
   );
+  console.log(cartDetails?.[0], "cartDetails");
+
+  //aadhar number api
+  const [aadharNumberApi, { isLoading: isAadharNumberLoading }] =
+    useAadharNumberMutation();
+
+  const [verifyAadharNumberOtp, { isLoading: isVerifyAadharNumberOtpLoading }] =
+    useVerifyAadharNumberOtpMutation();
 
   const handleAddToCart = async () => {
     try {
@@ -117,15 +237,172 @@ const CommonOrderSummary = () => {
     }
   };
 
-  const handleUpdateCart = async () => {
+  // const handleUpdateCart = async () => {
+  //   try {
+  //     const finalDomains =
+  //       cartDetails?.[0]?.plan?.provider_id === 2
+  //         ? domainNames.map((domain) => `${domain?.prefix}${DOMAIN_SUFFIX}`)
+  //         : domainNames.map((domain) => domain?.prefix);
+  //     const main_cart_id = resolveMainCartId(cartDetails, cartData);
+  //     if (!main_cart_id) return;
+
+  //     const res = await updateCart({
+  //       body: {
+  //         main_cart_id,
+  //         licenses: lisceneCounter,
+  //         domain_name: finalDomains,
+  //         company_name: normalizeCompanyName(selectedCompany),
+  //         customer_id: customerData?.customer_id,
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  // const handleUpdateCart = async (cart_id) => {
+  //   try {
+  //     const finalDomains =
+  //       cartDetails?.[0]?.plan?.provider_id === 2
+  //         ? domainNames.map((domain) => `${domain?.prefix}${DOMAIN_SUFFIX}`)
+  //         : domainNames.map((domain) => domain?.prefix);
+
+  //     const main_cart_id = resolveMainCartId(cartDetails, cartData);
+
+  //     if (!main_cart_id) return;
+
+  //     const res = await updateCart({
+  //       body: {
+  //         cart_id, // 👈 added
+  //         main_cart_id,
+  //         licenses: lisceneCounter,
+  //         domain_name: finalDomains,
+  //         company_name: normalizeCompanyName(selectedCompany),
+  //         customer_id: customerData?.customer_id,
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  // const handleUpdateCart = async (cart_id) => {
+  //   try {
+  //     const currentItem = cartDetails?.find(
+  //       (item) => item?.cart_id === cart_id,
+  //     );
+
+  //     const finalDomains =
+  //       currentItem?.plan?.provider_id === 2
+  //         ? domainNames.map((domain) => `${domain?.prefix}${DOMAIN_SUFFIX}`)
+  //         : tempDomainNames?.length > 0
+  //           ? tempDomainNames
+  //           : domainNames.map((domain) => domain?.prefix);
+
+  //     const main_cart_id = resolveMainCartId(cartDetails, cartData);
+
+  //     if (!main_cart_id) return;
+
+  //     await updateCart({
+  //       body: {
+  //         cart_id,
+  //         main_cart_id,
+  //         licenses: currentItem?.licenses || lisceneCounter,
+  //         domain_name: finalDomains,
+  //         company_name: normalizeCompanyName(selectedCompany),
+  //         customer_id: customerData?.customer_id,
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  const handleUpdateCart = async (
+    cart_id,
+    domainOverride,
+    isTransferDomain = false,
+  ) => {
     try {
-      const res = await updateCart({
+      const currentItem = Array.isArray(cartDetails)
+        ? (cartDetails.find((item) => item?.cart_id === cart_id) ??
+          cartDetails[0])
+        : cartDetails;
+      const resolvedCartId = cart_id ?? currentItem?.cart_id;
+      if (!resolvedCartId) return;
+
+      const overrideDomains = toDomainArray(domainOverride);
+      const newDomains = overrideDomains.length
+        ? overrideDomains
+        : buildDomainsFromInput(
+            domainNames,
+            currentItem?.plan?.provider_id,
+            DOMAIN_SUFFIX,
+          );
+
+      if (!overrideDomains.length && !hasDomainPrefixInput(domainNames)) return;
+
+      const existingDomains = tempDomainNames || [];
+      const finalDomains = [...new Set([...existingDomains, ...newDomains])];
+
+      const main_cart_id = resolveMainCartId(cartDetails, cartData);
+      if (!main_cart_id) return;
+
+      await updateCart({
         body: {
-          cart_id: cartData?.cart_id || cartDetails?.cart_id,
-          licenses: lisceneCounter,
-          domain_name: domainName,
-          company_name: normalizeCompanyName(selectedCompany),
-          customer_id: customerData?.customer_id,
+          cart_id: resolvedCartId,
+          main_cart_id,
+          licenses: currentItem?.licenses || lisceneCounter,
+          domain_name: finalDomains,
+          company_name: normalizeCompanyName(
+            currentItem?.company_name ?? selectedCompany,
+          ),
+          customer_id: currentItem?.customer_id ?? customerData?.customer_id,
+          transfer_domain: isTransferDomain ? "yes" : "no",
+        },
+      });
+
+      setTempDomainNames(finalDomains);
+      tempDomainNamesRef.current = finalDomains;
+      setDomainNames([]);
+      setCartDetails((prev) => {
+        if (!Array.isArray(prev)) {
+          return prev?.cart_id ? { ...prev, domain_name: finalDomains } : prev;
+        }
+        return prev.map((item) => ({ ...item, domain_name: finalDomains }));
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleRemoveDomainFromCart = async (updatedDomains) => {
+    try {
+      const currentItem = Array.isArray(cartDetails)
+        ? cartDetails[0]
+        : cartDetails;
+
+      const resolvedCartId = currentItem?.cart_id;
+      const main_cart_id = resolveMainCartId(cartDetails, cartData);
+      if (!resolvedCartId || !main_cart_id) return;
+
+      setTempDomainNames(updatedDomains);
+      tempDomainNamesRef.current = updatedDomains;
+
+      setCartDetails((prev) => {
+        if (!Array.isArray(prev)) return prev;
+        return prev.map((item, idx) =>
+          idx === 0 ? { ...item, domain_name: updatedDomains } : item,
+        );
+      });
+
+      await updateCart({
+        body: {
+          cart_id: resolvedCartId,
+          main_cart_id,
+          licenses: currentItem?.licenses || lisceneCounter,
+          domain_name: updatedDomains,
+          company_name: normalizeCompanyName(
+            currentItem?.company_name ?? selectedCompany,
+          ),
+          customer_id: currentItem?.customer_id ?? customerData?.customer_id,
         },
       });
     } catch (error) {
@@ -184,6 +461,16 @@ const CommonOrderSummary = () => {
         customerLimit: item?.customer_limit,
       }));
       setCartDetails(allData);
+      const initialDomains = [
+        ...new Set(allData.flatMap((item) => toDomainArray(item?.domain_name))),
+      ];
+      setTempDomainNames(initialDomains);
+      tempDomainNamesRef.current = initialDomains;
+      const loadedCompany = normalizeCompanyName(allData[0]?.company_name);
+      if (loadedCompany) {
+        setSelectedCompany(loadedCompany);
+        selectedCompanyRef.current = loadedCompany;
+      }
     } else {
       console.log(res?.data?.message, "res?.data?.message");
     }
@@ -199,7 +486,6 @@ const CommonOrderSummary = () => {
         },
       });
       if (res?.data?.success) {
-        console.log(res, "res?.data?.data");
         const data = res?.data?.data;
         setCartDetails(data);
       } else {
@@ -208,54 +494,92 @@ const CommonOrderSummary = () => {
     } catch (error) {}
   };
 
+  //handle aadhar number
+  const handleAadharNumber = async () => {
+    try {
+      const main_cart_id = resolveMainCartId(cartDetails, cartData);
+
+      const res = await aadharNumberApi({
+        body: {
+          main_cart_id: main_cart_id,
+          aadhaar_number: aadharNumber,
+          customer_id: cartDetails?.[0]?.customer_id,
+        },
+      });
+      if (res?.data?.success) {
+        router.push({
+          pathname: "/verify-otp",
+          query: {
+            type: "order",
+            main_cart_id: main_cart_id,
+          },
+        });
+      } else {
+        showToast(res?.error?.data?.message, "error");
+      }
+    } catch (error) {
+      console.log(error, "error");
+      showToast("Failed to verify aadhar number", "error");
+    }
+  };
+
+  const isDataLoading =
+    isGettingCartDetailsApi ||
+    isGettingUpgradeCartDetailsApi ||
+    isRenewingCustomerDetails ||
+    isGettingCartDetails;
   useEffect(() => {
     if (router?.query?.plan_id && router?.query?.variant) {
       handleAddToCart();
     }
   }, []);
 
-  useEffect(() => {
-    if (Array.isArray(cartDetails)) return undefined;
-    if (!cartData?.cart_id && !cartDetails?.cart_id) return undefined;
+  // useEffect(() => {
+  //   if (Array.isArray(cartDetails)) return undefined;
+  //   if (!resolveMainCartId(cartDetails, cartData)) return undefined;
 
-    const timer = setTimeout(() => {
-      handleUpdateCart();
-    }, 1500);
+  //   const timer = setTimeout(() => {
+  //     handleUpdateCart();
+  //   }, 1500);
 
-    return () => clearTimeout(timer);
-  }, [
-    cartData?.cart_id,
-    lisceneCounter,
-    domainName,
-    selectedCompany,
-    cartDetails?.cart_id,
-    cartDetails,
-  ]);
+  //   return () => clearTimeout(timer);
+  // }, [
+  //   cartData?.main_cart_id,
+  //   lisceneCounter,
+  //   domainNames,
+  //   selectedCompany,
+  //   cartDetails?.main_cart_id,
+  //   cartDetails,
+  // ]);
+
+  const cartLicenseKey = Array.isArray(cartDetails)
+    ? cartDetails
+        .map((item) => `${item?.cart_id ?? ""}:${item?.licenses ?? ""}`)
+        .join("|")
+    : "";
 
   useEffect(() => {
     if (!Array.isArray(cartDetails) || cartDetails.length === 0)
       return undefined;
 
     const timer = setTimeout(() => {
-      cartDetails.forEach((item) => {
-        const cart_id = item?.cart_id;
-        if (!cart_id) return;
-        updateCart({
-          body: {
-            cart_id,
-            licenses: Number(item?.licenses) || 1,
-            domain_name: item?.domain_name ?? domainName,
-            company_name: normalizeCompanyName(
-              item?.company_name ?? selectedCompany,
-            ),
-            customer_id: item?.customer_id ?? customerData?.customer_id,
-          },
+      cartDetails.forEach((item, idx) => {
+        if (!item?.main_cart_id) return;
+
+        const body = buildAutoUpdateCartBody({
+          item,
+          itemIndex: idx,
+          selectedCompany: selectedCompanyRef.current,
+          tempDomains: tempDomainNamesRef.current,
+          customerId: customerData?.customer_id,
         });
+
+        updateCart({ body });
       });
     }, 1500);
 
     return () => clearTimeout(timer);
-  }, [cartDetails, domainName, selectedCompany, customerData?.customer_id]);
+  }, [cartLicenseKey, selectedCompany, customerData?.customer_id]);
 
   useEffect(() => {
     if (router?.query?.type === "renew-plan" && router?.query?.order_id) {
@@ -279,8 +603,13 @@ const CommonOrderSummary = () => {
       setPricePerUser(Number(data?.unit_price) || 0);
       dispatch(setCartData(data));
       setLisceneCounter(data?.licenses || 1);
-      setDomainName(data?.domain_name || "");
-      setSelectedCompany(normalizeCompanyName(data?.company_name));
+      setDomainNames([]);
+      const loadedDomains = toDomainArray(data?.domain_name);
+      setTempDomainNames(loadedDomains);
+      tempDomainNamesRef.current = loadedDomains;
+      const loadedCompany = normalizeCompanyName(data?.company_name);
+      setSelectedCompany(loadedCompany);
+      selectedCompanyRef.current = loadedCompany;
     }
   }, [getUpdateCartDetails, router?.query?.plan_id, dispatch]);
 
@@ -312,11 +641,13 @@ const CommonOrderSummary = () => {
 
   return (
     <div className={layoutStyles.shell}>
-      {(
-        Array.isArray(cartDetails)
-          ? cartDetails.length
-          : Object.keys(cartDetails || {}).length
-      ) ? (
+      {isDataLoading ? (
+        <Loader />
+      ) : (
+          Array.isArray(cartDetails)
+            ? cartDetails.length
+            : Object.keys(cartDetails || {}).length
+        ) ? (
         <div className={layoutStyles.split}>
           <div className={layoutStyles.leftScroll}>
             <RenewCart
@@ -328,9 +659,9 @@ const CommonOrderSummary = () => {
               onLineLicensesChange={updateLineLicenses}
               getAllCustomers={getAllCustomers}
               selectedCompany={selectedCompany}
-              setSelectedCompany={setSelectedCompany}
-              domainName={domainName}
-              setDomainName={setDomainName}
+              onCompanyChange={handleCompanyChange}
+              domainNames={domainNames}
+              setDomainNames={setDomainNames}
               isGettingCartDetails={
                 isGettingCartDetailsApi ||
                 isGettingUpgradeCartDetailsApi ||
@@ -340,12 +671,18 @@ const CommonOrderSummary = () => {
               // hideInlineSubtotal={
               //   router?.query?.type === "upgrade" ? false : true
               // }
+              isPopupOpen={isPopupOpen}
+              setIsPopupOpen={setIsPopupOpen}
+              tempDomainNames={tempDomainNames}
+              setTempDomainNames={setTempDomainNames}
+              onRemoveDomain={handleRemoveDomainFromCart}
             />
           </div>
           <aside className={layoutStyles.rightSticky}>
             <OrderSummaryCard
               total={total}
               promoCode={promoCode}
+              setPromoCode={setPromoCode}
               _creditBalance_={Number(
                 (Array.isArray(cartDetails)
                   ? (cartDetails[0]?.wallet_info?.wallet_balance ??
@@ -355,6 +692,20 @@ const CommonOrderSummary = () => {
                     cartDetails?.pricing?.wallet_balance ||
                     cartDetails?.wallet_balance) ?? 0,
               )}
+              cartDetails={cartDetails}
+              handleUpdateCart={handleUpdateCart}
+              setDomainNames={setDomainNames}
+              domainNames={domainNames}
+              domainSuffix={DOMAIN_SUFFIX}
+              isPopupOpen={isPopupOpen}
+              setIsPopupOpen={setIsPopupOpen}
+              tempDomainNames={tempDomainNames}
+              aadharNumber={aadharNumber}
+              setAadharNumber={setAadharNumber}
+              selectedCompany={selectedCompany}
+              transferCode={transferCode}
+              setTransferCode={setTransferCode}
+              handleAadharNumber={handleAadharNumber}
             />
           </aside>
         </div>
