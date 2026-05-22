@@ -118,6 +118,16 @@ const addToCartApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["addToCart"],
     }),
+    verifyAadharNumberOtp: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/orders-aadhaar-otp-verify`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -135,4 +145,5 @@ export const {
   useTransferCodeMutation,
   usePromoCodeMutation,
   useAadharNumberMutation,
+  useVerifyAadharNumberOtpMutation,
 } = addToCartApi;

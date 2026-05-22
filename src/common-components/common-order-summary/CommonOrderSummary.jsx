@@ -10,6 +10,7 @@ import {
   useGetUpgradeAddToCartDetailsQuery,
   useRenewCustomerDetailsMutation,
   useUpdateCartMutation,
+  useVerifyAadharNumberOtpMutation,
 } from "@/redux/apis/addToCartApi";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import { selectCartData, setCartData } from "@/redux/slices/cartSlice";
@@ -18,6 +19,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../loader/Loader";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
 
 const normalizeCompanyName = (name) => {
   const t = String(name ?? "").trim();
@@ -88,6 +90,7 @@ const buildAutoUpdateCartBody = ({
 };
 
 const CommonOrderSummary = () => {
+  const { showToast } = useToast();
   const router = useRouter();
   const dispatch = useDispatch();
   const cartData = useSelector(selectCartData);
@@ -200,10 +203,14 @@ const CommonOrderSummary = () => {
       skip: !userData?.id || !router?.query?.plan_id,
     },
   );
+  console.log(cartDetails?.[0], "cartDetails");
 
   //aadhar number api
   const [aadharNumberApi, { isLoading: isAadharNumberLoading }] =
     useAadharNumberMutation();
+
+  const [verifyAadharNumberOtp, { isLoading: isVerifyAadharNumberOtpLoading }] =
+    useVerifyAadharNumberOtpMutation();
 
   const handleAddToCart = async () => {
     try {
@@ -494,8 +501,9 @@ const CommonOrderSummary = () => {
 
       const res = await aadharNumberApi({
         body: {
-          order_id: main_cart_id,
-          aadhar_number: aadharNumber,
+          main_cart_id: main_cart_id,
+          aadhaar_number: aadharNumber,
+          customer_id: cartDetails?.[0]?.customer_id,
         },
       });
       if (res?.data?.success) {
@@ -503,13 +511,15 @@ const CommonOrderSummary = () => {
           pathname: "/verify-otp",
           query: {
             type: "order",
+            main_cart_id: main_cart_id,
           },
         });
       } else {
-        console.log(res?.data?.message, "res?.data?.message");
+        showToast(res?.error?.data?.message, "error");
       }
     } catch (error) {
-      console.log(error);
+      console.log(error, "error");
+      showToast("Failed to verify aadhar number", "error");
     }
   };
 

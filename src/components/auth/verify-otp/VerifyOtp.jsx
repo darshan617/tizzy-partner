@@ -12,6 +12,7 @@ import styles from "@/components/auth/verify-otp/VerifyOtp.module.css";
 import AuthLayout from "../authLayout/AuthLayout";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import Layout from "@/components/layout/Layout";
+import { useVerifyAadharNumberOtpMutation } from "@/redux/apis/addToCartApi";
 
 const VerifyOtp = () => {
   const router = useRouter();
@@ -22,13 +23,20 @@ const VerifyOtp = () => {
     otp: "",
   });
   const [otpArray, setOtpArray] = useState(["", "", "", "", "", ""]);
-
-  const userData = useSelector(selectUserData);
-  const [getOtpVerified, { isLoading: isGetOtpVerifiedLoading }] =
-    useGetOtpVerifiedMutation();
+  // const userData = useSelector(selectUserData);
   const [verifyOtp, { isLoading: isVerifyOtpLoading }] = useVerifyOtpMutation();
   const [resendOtp, { isLoading: isResendOtpLoading }] = useResendOtpMutation();
   const [errors, setErrors] = useState({});
+
+  const userData = Cookies.get("userData")
+    ? JSON.parse(Cookies.get("userData"))
+    : {};
+
+  const [getOtpVerified, { isLoading: isGetOtpVerifiedLoading }] =
+    useGetOtpVerifiedMutation();
+
+  const [verifyAadharNumberOtp, { isLoading: isVerifyAadharNumberOtpLoading }] =
+    useVerifyAadharNumberOtpMutation();
 
   const validateOtp = () => {
     const newErrors = {};
@@ -77,6 +85,22 @@ const VerifyOtp = () => {
     } catch (error) {
       console.log(error);
       showToast("Failed to verify email", "error");
+    }
+  };
+
+  // aadhar number otp submit
+  const handleSubmitAadharNumberOtp = async () => {
+    try {
+      const res = await verifyAadharNumberOtp({
+        body: {
+          otp: otpDetails?.otp,
+          main_cart_id: router?.query?.main_cart_id,
+          partner_id: userData?.id,
+        },
+      });
+    } catch (error) {
+      console.log(error, "error");
+      showToast("Failed to verify aadhar number OTP", "error");
     }
   };
 
@@ -165,7 +189,7 @@ const VerifyOtp = () => {
         <p className={styles.subtitle}>
           Please enter the 6-digit code, we have sent on your
           <br />
-          registered mobile number <b>9865648848</b> for verification.
+          registered mobile number for verification.
         </p>
       ) : (
         <p className={styles.subtitle}>
@@ -174,8 +198,10 @@ const VerifyOtp = () => {
           Please enter it below to confirm your email.
         </p>
       )}
+      {!router?.query?.type === "order" && (
+        <p className={styles.email}>{otpDetails?.email}</p>
+      )}
 
-      <p className={styles.email}>{otpDetails?.email}</p>
       <p className={styles.label}>
         Enter your 6-digit code <span>*</span>
       </p>
@@ -198,10 +224,20 @@ const VerifyOtp = () => {
 
       <button
         className={styles.confirmBtn}
-        onClick={handleSubmit}
-        disabled={isGetOtpVerifiedLoading || isVerifyOtpLoading}
+        onClick={
+          router?.query?.type === "order"
+            ? handleSubmitAadharNumberOtp
+            : handleSubmit
+        }
+        disabled={
+          isGetOtpVerifiedLoading ||
+          isVerifyOtpLoading ||
+          isVerifyAadharNumberOtpLoading
+        }
       >
-        {isGetOtpVerifiedLoading || isVerifyOtpLoading
+        {isGetOtpVerifiedLoading ||
+        isVerifyOtpLoading ||
+        isVerifyAadharNumberOtpLoading
           ? "Verifying..."
           : "Confirm"}
       </button>
