@@ -15,6 +15,7 @@ import VerifyOtp from "@/components/auth/verify-otp/VerifyOtp";
 import { BsPlusCircleDotted } from "react-icons/bs";
 import { setCustomerData } from "@/redux/slices/customerSlice";
 import { useDispatch } from "react-redux";
+import { FaPen } from "react-icons/fa";
 
 export default function CustomerDetail() {
   const router = useRouter();
@@ -211,13 +212,13 @@ export default function CustomerDetail() {
               <div
                 className={`${styles.custProfBox} col-md-4 col-12 mb-3 mb-lg-0 position-relative `}
               >
-                <a
-                  href="add_new_customer.html"
+                <Link
+                  href={`/customers/edit-customer?customerId=${router?.query?.customerId}`}
                   className="btn small me-4 btnWhite pfEditBtn"
                 >
-                  <FaPencil />
-                  <span className="d-md-none d-lg-inline-block">Edit</span>
-                </a>
+                  <FaPen />
+                  {/* <span className="d-md-none d-lg-inline-block">Edit</span> */}
+                </Link>
 
                 <div className="d-flex align-items-center mb-3">
                   <div

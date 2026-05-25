@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import styles from "@/components/customers/customer-form/CustomerForm.module.css";
 import { BsArrowLeft } from "react-icons/bs";
 import { useSearchGstinMutation } from "@/redux/apis/signupApi";
-import { useCreateCustomerMutation } from "@/redux/apis/customerApi";
+import {
+  useCreateCustomerMutation,
+  useUpdateCustomerMutation,
+} from "@/redux/apis/customerApi";
 import Cookies from "js-cookie";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 
@@ -29,18 +32,24 @@ const initialFormData = {
   trade_name: "",
 };
 
-const CustomerForm = () => {
+const CustomerForm = ({ type = "create", customerDetails = {} }) => {
   const router = useRouter();
   const { showToast } = useToast();
-  const [searchGstin, { isLoading: isSearchingGstin }] =
-    useSearchGstinMutation();
-  const [createCustomer, { isLoading: isCreatingCustomer }] =
-    useCreateCustomerMutation();
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
   const [isGstinVerified, setIsGstinVerified] = useState(false);
   const gstinRegex =
     /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+  const shouldShowPadding =
+    router?.asPath === "/customers/create-customer" ||
+    router?.asPath?.includes("/customers/edit-customer");
+
+  const [searchGstin, { isLoading: isSearchingGstin }] =
+    useSearchGstinMutation();
+  const [createCustomer, { isLoading: isCreatingCustomer }] =
+    useCreateCustomerMutation();
+  const [updateCustomer, { isLoading: isUpdatingCustomer }] =
+    useUpdateCustomerMutation();
 
   const validateForm = () => {
     const newErrors = {};
@@ -282,20 +291,71 @@ const CustomerForm = () => {
     }
   };
 
-  console.log(router, "router");
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+    try {
+      const res = await updateCustomer({
+        body: {
+          customer_id: router?.query?.customerId,
+          name: formData?.name,
+          email: formData?.email,
+          mobile: formData?.mobile,
+        },
+      });
+      if (res?.data?.success) {
+        showToast(
+          res?.data?.message || "Customer updated successfully",
+          "success",
+        );
+        router?.push("/customers");
+        setErrors({});
+        setFormData(initialFormData);
+      }
+    } catch (error) {
+      console.log("error", error);
+      showToast("Unable to update customer", "error");
+    }
+  };
+
+  // useEffect(() => {
+  //   if (
+  //     type === "edit" &&
+  //     customerDetails &&
+  //     Object.keys(customerDetails).length > 0
+  //   ) {
+  //     setFormData(customerDetails);
+  //   }
+  // }, [type, customerDetails]);
+  useEffect(() => {
+    if (type === "edit" && customerDetails?.id) {
+      setFormData(customerDetails);
+      handleGstinBlur();
+      setIsGstinVerified(true);
+      setErrors((prev) => ({
+        ...prev,
+        gstin: "",
+      }));
+    }
+  }, [type, customerDetails?.id]);
 
   return (
     <div className={styles.wrapper}>
       <div
         className={`sectionCard ${styles.formCard}`}
         style={{
-          padding:
-            router?.asPath !== "/customers/create-customer" ? "0" : "20px",
-          boxShadow:
-            router?.asPath !== "/customers/create-customer" ? "none" : "",
+          padding: shouldShowPadding ? "20px" : "0",
+          boxShadow: shouldShowPadding ? "" : "none",
         }}
       >
-        <form onSubmit={handleSubmit} noValidate>
+        <form
+          onSubmit={type === "edit" ? handleUpdate : handleSubmit}
+          noValidate
+        >
           <h2 className={`${styles.sectionTitle} sectionCardHead`}>
             Contact Details
           </h2>
@@ -368,6 +428,8 @@ const CustomerForm = () => {
                 onChange={handleChange}
                 onBlur={handleGstinBlur}
                 className={`form-control`}
+                disabled={type === "edit"}
+                style={{ backgroundColor: type === "edit" ? "#f5f5f5" : "" }}
               />
               {isSearchingGstin && (
                 <span className={styles.infoMessage}>Searching GSTIN...</span>
@@ -527,13 +589,17 @@ const CustomerForm = () => {
               className={styles.submitBtn}
               disabled={isCreatingCustomer || formData?.country?.trim() === ""}
             >
-              {router?.asPath !== "/customers/create-customer"
-                ? isCreatingCustomer
-                  ? "Adding..."
-                  : "Add Customer"
-                : isCreatingCustomer
-                  ? "Creating..."
-                  : "Create Profile"}
+              {router?.asPath.includes("/customers/edit-customer")
+                ? isUpdatingCustomer
+                  ? "Updating..."
+                  : "Update Customer"
+                : router?.asPath !== "/customers/create-customer"
+                  ? isCreatingCustomer
+                    ? "Adding..."
+                    : "Add Customer"
+                  : isCreatingCustomer
+                    ? "Creating..."
+                    : "Create Profile"}
             </button>
           </div>
         </form>
