@@ -1,13 +1,27 @@
 import CustomerForm from "@/components/customers/customer-form/CustomerForm";
 import Layout from "@/components/layout/Layout";
-import Link from "next/link";
+import { useGetSpecificCustomerDetailsQuery } from "@/redux/apis/customerApi";
+import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import React from "react";
 import styles from "@/components/customers/customer-form/CustomerForm.module.css";
 import { BsArrowLeft } from "react-icons/bs";
+import Link from "next/link";
 
-const CreateCustomer = () => {
+const EditCustomer = () => {
   const router = useRouter();
+  const userData = Cookies.get("userData")
+    ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
+    : {};
+  const { data: customerDetailsData } = useGetSpecificCustomerDetailsQuery(
+    {
+      customer_id: router?.query?.customerId,
+      partner_id: userData?.id,
+    },
+    {
+      skip: !router?.isReady || !router?.query?.customerId || !userData?.id,
+    },
+  );
   return (
     <Layout>
       <div className={styles.headerRow}>
@@ -19,7 +33,7 @@ const CreateCustomer = () => {
             Customers
           </Link>
           <h1 className="breadcrumb-item active" aria-current="page">
-            Add New Customer
+            Edit Customer
           </h1>
         </nav>
         <button
@@ -30,9 +44,12 @@ const CreateCustomer = () => {
           <BsArrowLeft /> Back
         </button>
       </div>
-      <CustomerForm type="create" />
+      <CustomerForm
+        type="edit"
+        customerDetails={customerDetailsData?.data?.customer}
+      />
     </Layout>
   );
 };
 
-export default CreateCustomer;
+export default EditCustomer;
