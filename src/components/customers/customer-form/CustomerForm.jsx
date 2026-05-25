@@ -10,6 +10,8 @@ import {
 } from "@/redux/apis/customerApi";
 import Cookies from "js-cookie";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
+import { useDispatch } from "react-redux";
+import { setIsPopupVisible } from "@/redux/slices/popupSlice";
 
 const initialFormData = {
   name: "",
@@ -35,6 +37,7 @@ const initialFormData = {
 const CustomerForm = ({ type = "create", customerDetails = {} }) => {
   const router = useRouter();
   const { showToast } = useToast();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
   const [isGstinVerified, setIsGstinVerified] = useState(false);
@@ -244,6 +247,7 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
           res?.data?.message || "Customer created successfully",
           "success",
         );
+        dispatch(setIsPopupVisible(""));
         if (router?.asPath === "/customers/create-customer") {
           router?.push("/customers");
         }
