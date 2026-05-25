@@ -5,6 +5,7 @@ import { apiSlice } from "./apiSlice";
 import servicesSlice from "./slices/servicesSlice";
 import customerSlice from "./slices/customerSlice";
 import cartSlice from "./slices/cartSlice";
+import popupSlice from "./slices/popupSlice";
 
 const makeStore = () => {
   const store = configureStore({
@@ -13,6 +14,7 @@ const makeStore = () => {
       services: servicesSlice,
       customer: customerSlice,
       cart: cartSlice,
+      popup: popupSlice,
       [apiSlice.reducerPath]: apiSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>
