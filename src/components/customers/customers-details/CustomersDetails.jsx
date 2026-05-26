@@ -340,7 +340,7 @@ export default function CustomerDetail() {
               <p className="m-0">No Subscriptions</p>
               <button
                 className="small btnDefault btn"
-                onClick={() => router.push("/services/goole-cloud-partner")}
+                onClick={() => router.push("/services/google-cloud-partner")}
               >
                 <BsPlusCircleDotted className="me-2" size={14} />
                 <span>Buy New Subscription</span>

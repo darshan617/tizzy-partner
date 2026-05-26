@@ -162,10 +162,7 @@ const AllSubscriptions = ({
               {!isAllSubscriptionDataLoading ? (
                 allSubscriptionsData?.length > 0 ? (
                   allSubscriptionsData?.map((subscription, idx) => {
-                    const customer = subscription?.customer;
-                    const order_details = subscription?.order_details;
-                    const partner = subscription?.partner;
-                    const plan = subscription?.plan;
+                    console.log(subscription, "subscription");
 
                     return (
                       <div
@@ -189,25 +186,25 @@ const AllSubscriptions = ({
                                   <div
                                     className={`avatarSmall flex-shrink-0 ${styles.avatarBg}`}
                                   >
-                                    {order_details?.domain_name
+                                    {subscription?.domain
                                       ?.charAt(0)
                                       ?.toUpperCase()}
                                   </div>
                                   <div
                                     className={`${styles.crDomainName} ps-2`}
                                   >
-                                    {order_details?.domain_name}
+                                    {subscription?.domain}
                                   </div>
                                 </div>
                                 <div className={`${styles.crName} ms-4 ps-2`}>
-                                  {plan?.name}
+                                  {subscription?.currentPlan}
                                 </div>
                               </div>
 
                               <div className="col-md-2 col-6 text-center">
                                 <div className={styles.metaHead}>License</div>
                                 <div className={styles.licenseValue}>
-                                  <span>{order_details?.quantity}</span>
+                                  <span>{subscription?.licenses}</span>
                                   <button
                                     type="button"
                                     className={styles.editBtn}
@@ -220,7 +217,7 @@ const AllSubscriptions = ({
                               <div className="col-md-2 col-6 text-center">
                                 <div className={styles.metaHead}>Due on</div>
                                 <div className={styles.dueValue}>
-                                  {plan?.due_date || "-"}
+                                  {subscription?.due_date || "-"}
                                 </div>
                               </div>
 
@@ -230,9 +227,9 @@ const AllSubscriptions = ({
                                 <div className={styles.statusInner}>
                                   <div className={styles.statusBadgeGroup}>
                                     <span
-                                      className={`${styles.statusBadge} ${order_details?.status?.toLowerCase() === "active" ? styles.activeBadge : ""} ${order_details?.status?.toLowerCase() === "expiring" ? styles.expiringBadge : ""}  ${order_details?.status?.toLowerCase() === "expired" ? styles.expired : ""} ${order_details?.status === "inactive" ? styles.inactiveBadge : ""}`}
+                                      className={`${styles.statusBadge} ${subscription?.status?.toLowerCase() === "active" ? styles.activeBadge : ""} ${subscription?.status?.toLowerCase() === "expiring" ? styles.expiringBadge : ""}  ${subscription?.status?.toLowerCase() === "expired" ? styles.expired : ""} ${subscription?.status === "inactive" ? styles.inactiveBadge : ""}`}
                                     >
-                                      {order_details?.status}
+                                      {subscription?.status}
                                     </span>
                                     {subscription?.subtext ? (
                                       <div className={styles.statusSubtext}>
@@ -248,7 +245,7 @@ const AllSubscriptions = ({
                                         pathname: "/order-summary",
                                         query: {
                                           type: "renew-plan",
-                                          order_id: order_details?.order_id,
+                                          order_id: subscription?.id,
                                         },
                                       })
                                     }
@@ -269,7 +266,7 @@ const AllSubscriptions = ({
                                 router.push({
                                   pathname: "/customers/customer-details",
                                   query: {
-                                    customerId: customer?.customer_id,
+                                    customerId: subscription?.customer_id,
                                   },
                                 })
                               }

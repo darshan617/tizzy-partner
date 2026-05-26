@@ -13,8 +13,9 @@ import styles from "@/components/layout/navbar/Navbar.module.css";
 import { LuPencilRuler, LuUserRoundPen } from "react-icons/lu";
 import { useRouter } from "next/router";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
+import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi";
 
-const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
+const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const router = useRouter();
   const { showToast } = useToast();
   const [user, setUser] = useState(null);
@@ -113,13 +114,17 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                   <div className="">
                     <button className={styles.navBtns}>
                       <FiBell size={20} />
-                      <span className={styles.navLabel}>5</span>
+                      <span className={styles.navLabel}>
+                        {balanceAndCartData?.notifications || 0}
+                      </span>
                     </button>
                   </div>
                   <div className="">
                     <Link className={styles.navBtns} href="/order-summary">
                       <BsHandbag size={20} color="#000" />
-                      <span className={`${styles.navLabel} d-none`}></span>
+                      <span className={`${styles.navLabel} `}>
+                        {balanceAndCartData?.cart_item_count || 0}
+                      </span>
                     </Link>
                   </div>
                   <div className="vr  "></div>
