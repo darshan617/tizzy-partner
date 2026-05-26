@@ -35,7 +35,7 @@ const Subscriptions = () => {
   return (
     <Layout>
       <SummaryCounts
-        countData={allSubscriptionsData?.summary}
+        countData={allSubscriptionsData?.data?.summary}
         isFetchingCountData={isAllSubscriptionDataLoading}
         additionalBtns={[
           {
@@ -46,7 +46,7 @@ const Subscriptions = () => {
         ]}
       />
       <AllSubcriptions
-        allSubscriptionsData={allSubscriptionsData?.data}
+        allSubscriptionsData={allSubscriptionsData?.data?.order_details}
         isAllSubscriptionDataLoading={isAllSubscriptionDataLoading}
       />
     </Layout>
