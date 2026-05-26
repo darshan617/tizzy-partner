@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
       skip: !userData?.id,
     },
   );
-  console.log(balanceAndCartData, "balanceAndCartData");
+
   return (
     <>
       <div style={{ position: "sticky", top: 0, zIndex: 100 }}>

@@ -173,11 +173,12 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                   ₹ {balanceAndCartData?.wallet_balance || 0}
                 </span>
               </div>
-
               <div className={`${styles.credScale} my-2`}>
                 <div
                   className={styles.credscaleBar}
-                  style={{ width: "55%" }}
+                  style={{
+                    width: `55%`,
+                  }}
                 ></div>
               </div>
 
