@@ -6,10 +6,11 @@ const partnerApproveRequestApi = apiSlice.injectEndpoints({
       query: ({ body }) => {
         return {
           url: `/partner-approval-status`,
-          method: "s",
+          method: "POST",
           body: body,
         };
       },
+      invalidatesTags: ["partnerApprovalRequest"],
     }),
   }),
 });
