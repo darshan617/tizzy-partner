@@ -507,6 +507,7 @@ const CommonOrderSummary = () => {
           customer_id:
             cartDetails?.[0]?.customer_id ||
             cartData?.company_info?.customer_id,
+          order_id: router?.query?.renewal_order_id,
         },
       });
       if (res?.data?.success) {

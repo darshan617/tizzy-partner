@@ -246,6 +246,8 @@ const AllSubscriptions = ({
                                         query: {
                                           type: "renew-plan",
                                           order_id: subscription?.id,
+                                          renewal_order_id:
+                                            subscription?.renewal_order_id,
                                         },
                                       })
                                     }
