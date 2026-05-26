@@ -717,6 +717,13 @@ const CommonOrderSummary = () => {
           <p className="text-center mt-5">
             No cart records found for the given partner and provider.
           </p>
+
+          <button
+            onClick={() => router.push("/services/google-cloud-partner")}
+            className="btnDefault btn"
+          >
+            Buy New Service
+          </button>
         </div>
       )}
     </div>

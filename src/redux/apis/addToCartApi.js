@@ -126,7 +126,7 @@ const addToCartApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
-      invalidatesTags: ["addToCart"],
+      invalidatesTags: ["addToCart", "balanceAndCart"],
     }),
   }),
 });

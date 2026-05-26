@@ -99,12 +99,13 @@ const VerifyOtp = () => {
           partner_id: userDataFromCookie?.id,
         },
       });
+      console.log(res);
       if (res?.data?.success) {
         showToast(res?.data?.message, "success");
         router?.push({
           pathname: "/order-complete",
           query: {
-            po: res?.data?.po_link,
+            po: res?.data?.data?.po_link,
           },
         });
         setOtpArray(["", "", "", "", "", ""]);
