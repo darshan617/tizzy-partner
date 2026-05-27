@@ -5,6 +5,7 @@ import { IoClose } from "react-icons/io5";
 import { LuPencil } from "react-icons/lu";
 import Loader from "@/common-components/loader/Loader";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const statusLabelMap = {
   active: "Active",
@@ -262,16 +263,14 @@ const AllSubscriptions = ({
                           <div
                             className={`col-auto align-self-stretch d-flex align-items-center justify-content-end order-sm-3 mobAction ${styles.arrowCol}`}
                           >
-                            <button
+                            <Link
                               className={styles.crBtn}
-                              onClick={() =>
-                                router.push({
-                                  pathname: "/customers/customer-details",
-                                  query: {
-                                    customerId: subscription?.customer_id,
-                                  },
-                                })
-                              }
+                              href={{
+                                pathname: "/customers/customer-details",
+                                query: {
+                                  customerId: subscription?.customer_id,
+                                },
+                              }}
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -287,7 +286,7 @@ const AllSubscriptions = ({
                               >
                                 <path d="m9 18 6-6-6-6" />
                               </svg>
-                            </button>
+                            </Link>
                           </div>
                         </div>
                       </div>
