@@ -187,8 +187,10 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
               >
                 <div>
                   Used ₹{" "}
-                  {balanceAndCartData?.credit_limit -
-                    balanceAndCartData?.wallet_balance || 0}{" "}
+                  {Number(
+                    balanceAndCartData?.credit_limit -
+                      balanceAndCartData?.wallet_balance,
+                  ).toFixed(2) || 0}{" "}
                   of ₹ {balanceAndCartData?.credit_limit || 0}
                 </div>
               </div>
