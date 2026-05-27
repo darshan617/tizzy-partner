@@ -311,6 +311,7 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
           mobile: formData?.mobile,
         },
       });
+      console.log(res);
       if (res?.data?.success) {
         showToast(
           res?.data?.message || "Customer updated successfully",
@@ -319,6 +320,33 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
         router?.push("/customers");
         setErrors({});
         setFormData(initialFormData);
+      } else {
+        const responseData = res?.error?.data || res?.data || {};
+        const backendErrors = {};
+
+        Object.entries(responseData).forEach(([key, value]) => {
+          if (
+            typeof value === "string" &&
+            value.trim() &&
+            !["error", "message", "success"].includes(key)
+          ) {
+            backendErrors[key] = value;
+          }
+        });
+
+        if (Object.keys(backendErrors).length > 0) {
+          setErrors((prev) => ({
+            ...prev,
+            ...backendErrors,
+          }));
+        }
+
+        showToast(
+          responseData?.message ||
+            Object.values(backendErrors)?.[0] ||
+            "Unable to create customer",
+          "error",
+        );
       }
     } catch (error) {
       console.log("error", error);

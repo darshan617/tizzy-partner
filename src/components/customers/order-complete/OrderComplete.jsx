@@ -69,15 +69,17 @@ const OrderComplete = () => {
           </div>
           <div className={`${styles.orderHead}  mb-3 text-center`}>
             <div>
-              <span className={`${styles.value}`}>₹19,938.8 </span>
+              <span className={`${styles.value}`}>
+                ₹ {router?.query?.crdUsage}{" "}
+              </span>
               <span className={`${styles.valueContent}`}>
                 deducted from your credits
               </span>
             </div>
             <div className={`${styles.BalInfo}`}>
-              <span>Credit Balance - </span>
+              <span>Credit Balance: </span>
               <span className={`${styles.CreditValue}`}>
-                {balanceAndCartData?.data?.wallet_balance}
+                ₹{balanceAndCartData?.data?.wallet_balance}
               </span>
             </div>
           </div>

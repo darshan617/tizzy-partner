@@ -94,6 +94,10 @@
     background: var(--warningSubtleColor);
     color: var(--warningColor);
 }
+.expiring {
+    background: var(--warningSubtleColor);
+    color: var(--warningColor);
+}
 
 .sectionCard {
     width: 100%;

@@ -74,7 +74,7 @@ const VerifyOtp = () => {
       if (res?.data?.success) {
         Cookies.set("userData", JSON.stringify(res?.data?.data?.partner));
         showToast("Email verified successfully", "success");
-        router?.push("/dashboard");
+        router?.push("/partner-approval-request");
         setOtpDetails((prev) => ({
           ...prev,
           email: "",
@@ -97,6 +97,9 @@ const VerifyOtp = () => {
           otp: otpDetails?.otp,
           main_cart_id: router?.query?.main_cart_id,
           partner_id: userDataFromCookie?.id,
+          order_id: router?.query?.order_id,
+          renew: router?.query?.renew,
+          aadhar_number: router?.query?.aadhar_number,
         },
       });
       console.log(res);
@@ -106,6 +109,7 @@ const VerifyOtp = () => {
           pathname: "/order-complete",
           query: {
             po: res?.data?.data?.po_link,
+            crdUsage: res?.data?.data?.credits_used,
           },
         });
         setOtpArray(["", "", "", "", "", ""]);

@@ -2,75 +2,84 @@
 
 // export function proxy(request) {
 //   const token = request.cookies.get("userData")?.value;
-//   console.log(token, "token");
+//   const partnerApprovalStatus = request.cookies.get("partnerApproval")?.value;
+//   console.log(partnerApprovalStatus, "partnerApprovalStatus");
 
 //   const { pathname } = request.nextUrl;
-//   const isHomeRoute = pathname === "/";
-//   const isDashboardRoute = pathname === "/dashboard";
-//   const isLoginAuthRoute = pathname === "/auth/login";
-//   const isSignupAuthRoute = pathname === "/auth/signup";
-//   const verfiyOtpRoute = pathname === "/auth/otp-verification";
 
-//   if (!token && isHomeRoute) {
+//   const publicRoutes = [
+//     "/auth/login",
+//     "/auth/signup",
+//     "/auth/otp-verification",
+//   ];
+
+//   const isPublicRoute = publicRoutes.includes(pathname);
+
+//   if (!token && !isPublicRoute) {
 //     return NextResponse.redirect(new URL("/auth/login", request.url));
 //   }
-//   if (!token && isDashboardRoute) {
-//     return NextResponse.redirect(new URL("/auth/login", request.url));
-//   }
-//   if (token && isHomeRoute) {
+
+//   if (token && isPublicRoute) {
 //     return NextResponse.redirect(new URL("/dashboard", request.url));
 //   }
-//   if (token && isLoginAuthRoute) {
-//     return NextResponse.redirect(new URL("/dashboard", request.url));
-//   }
-//   if (token && isSignupAuthRoute) {
-//     return NextResponse.redirect(new URL("/dashboard", request.url));
-//   }
-//   if (token && verfiyOtpRoute) {
+
+//   if (token && pathname === "/") {
 //     return NextResponse.redirect(new URL("/dashboard", request.url));
 //   }
 
 //   return NextResponse.next();
 // }
-
 // export const config = {
-//   matcher: [
-//     "/",
-//     "/auth/login",
-//     "/auth/signup",
-//     "/dashboard",
-//     "/auth/otp-verification",
-//   ],
+//   matcher: ["/((?!_next|api|favicon.ico).*)"],
 // };
-
 import { NextResponse } from "next/server";
+
+const readCookie = (request, name) => {
+  const raw = request.cookies.get(name)?.value;
+  if (!raw) return undefined;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return raw;
+  }
+};
 
 export function proxy(request) {
   const token = request.cookies.get("userData")?.value;
+  const partnerApprovalStatus = readCookie(request, "partnerApproval");
   const { pathname } = request.nextUrl;
 
-  const publicRoutes = [
-    "/auth/login",
-    "/auth/signup",
-    "/auth/otp-verification",
-  ];
+  const authRoutes = ["/auth/login", "/auth/signup", "/auth/otp-verification"];
+  const approvalRoute = "/partner-approval-request";
 
-  const isPublicRoute = publicRoutes.includes(pathname);
+  const isAuthRoute = authRoutes.includes(pathname);
+  const isApprovalRoute = pathname === approvalRoute;
 
-  if (!token && !isPublicRoute) {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
+  if (!token) {
+    return isAuthRoute
+      ? NextResponse.next()
+      : NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
-  if (token && isPublicRoute) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  if (isAuthRoute) {
+    const target =
+      partnerApprovalStatus === "approved" ? "/dashboard" : approvalRoute;
+    return NextResponse.redirect(new URL(target, request.url));
   }
 
-  if (token && pathname === "/") {
+  if (partnerApprovalStatus !== "approved") {
+    return isApprovalRoute
+      ? NextResponse.next()
+      : NextResponse.redirect(new URL(approvalRoute, request.url));
+  }
+
+  if (pathname === "/") {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();
 }
+
 export const config = {
   matcher: ["/((?!_next|api|favicon.ico).*)"],
 };

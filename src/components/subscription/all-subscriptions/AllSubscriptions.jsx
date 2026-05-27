@@ -5,6 +5,7 @@ import { IoClose } from "react-icons/io5";
 import { LuPencil } from "react-icons/lu";
 import Loader from "@/common-components/loader/Loader";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const statusLabelMap = {
   active: "Active",
@@ -245,7 +246,7 @@ const AllSubscriptions = ({
                                         pathname: "/order-summary",
                                         query: {
                                           type: "renew-plan",
-                                          order_id: subscription?.id,
+                                          order_id: subscription?.order_id,
                                           renewal_order_id:
                                             subscription?.renewal_order_id,
                                         },
@@ -262,16 +263,14 @@ const AllSubscriptions = ({
                           <div
                             className={`col-auto align-self-stretch d-flex align-items-center justify-content-end order-sm-3 mobAction ${styles.arrowCol}`}
                           >
-                            <button
+                            <Link
                               className={styles.crBtn}
-                              onClick={() =>
-                                router.push({
-                                  pathname: "/customers/customer-details",
-                                  query: {
-                                    customerId: subscription?.customer_id,
-                                  },
-                                })
-                              }
+                              href={{
+                                pathname: "/customers/customer-details",
+                                query: {
+                                  customerId: subscription?.customer_id,
+                                },
+                              }}
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -287,7 +286,7 @@ const AllSubscriptions = ({
                               >
                                 <path d="m9 18 6-6-6-6" />
                               </svg>
-                            </button>
+                            </Link>
                           </div>
                         </div>
                       </div>
