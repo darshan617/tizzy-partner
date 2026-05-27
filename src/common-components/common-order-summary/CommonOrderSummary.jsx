@@ -418,25 +418,52 @@ const CommonOrderSummary = () => {
         },
       });
       if (res?.data?.success) {
-        const resCartDetails = {
-          ...res?.data?.data,
-          plan_name: res?.data?.data?.plan_info?.plan_name,
-          domain_name: res?.data?.data?.company_info?.domain,
-          subscription_start_date:
-            res?.data?.data?.plan_info?.billing_cycle?.start_date,
-          subscription_end_date:
-            res?.data?.data?.plan_info?.billing_cycle?.end_date,
-          customerLimit: res?.data?.data?.plan_info?.customer_limit,
-        };
+        const apiData = res?.data?.data || {};
+        const {
+          company_info,
+          plans = [],
+          renewal_summary,
+          wallet_info,
+        } = apiData;
 
-        setCartDetails(resCartDetails);
-        setPricePerUser(
-          Number(
-            res?.data?.data?.renewal_summary?.price_per_license_per_year,
-          ) || 0,
-        );
-        setLisceneCounter(res?.data?.data?.plan_info?.licenses);
-        dispatch(setCartData(res?.data?.data));
+        const allData = plans.map((item) => ({
+          ...item,
+          plan_name: item?.plan_name,
+          domain_name: item?.domain,
+          subscription_start_date: item?.subscription_start_date,
+          subscription_end_date: item?.subscription_end_date,
+          customerLimit: item?.customer_limit,
+          unit_price: Number(item?.price_per_license_per_year) || 0,
+          company_name: company_info?.company_name,
+          customer_id: company_info?.customer_id,
+          renewal_summary,
+          wallet_info,
+        }));
+
+        setCartDetails(allData);
+
+        const initialDomains = [
+          ...new Set(
+            allData.flatMap((item) => toDomainArray(item?.domain_name)),
+          ),
+        ];
+        setTempDomainNames(initialDomains);
+        tempDomainNamesRef.current = initialDomains;
+
+        const loadedCompany = normalizeCompanyName(company_info?.company_name);
+        if (loadedCompany) {
+          setSelectedCompany(loadedCompany);
+          selectedCompanyRef.current = loadedCompany;
+        }
+
+        const firstPrice =
+          allData?.[0]?.unit_price ||
+          allData?.[0]?.price_per_license_per_year ||
+          0;
+        setPricePerUser(Number(firstPrice) || 0);
+        setLisceneCounter(allData?.[0]?.licenses || 1);
+
+        dispatch(setCartData(apiData));
       }
     } catch (error) {
       console.log(error);
@@ -507,7 +534,9 @@ const CommonOrderSummary = () => {
           customer_id:
             cartDetails?.[0]?.customer_id ||
             cartData?.company_info?.customer_id,
-          order_id: router?.query?.renewal_order_id,
+          order_id: router?.query?.order_id,
+          partner_id: userData?.id,
+          renew: router?.query?.type === "renew-plan" ? 1 : 0,
         },
       });
       if (res?.data?.success) {
@@ -516,6 +545,9 @@ const CommonOrderSummary = () => {
           query: {
             type: "order",
             main_cart_id: main_cart_id,
+            order_id: router?.query?.order_id,
+            renew: router?.query?.type === "renew-plan" ? 1 : 0,
+            aadhar_number: aadharNumber,
           },
         });
       } else {

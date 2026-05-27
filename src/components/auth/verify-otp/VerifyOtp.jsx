@@ -97,6 +97,9 @@ const VerifyOtp = () => {
           otp: otpDetails?.otp,
           main_cart_id: router?.query?.main_cart_id,
           partner_id: userDataFromCookie?.id,
+          order_id: router?.query?.order_id,
+          renew: router?.query?.renew,
+          aadhar_number: router?.query?.aadhar_number,
         },
       });
       console.log(res);

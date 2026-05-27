@@ -246,7 +246,7 @@ const AllSubscriptions = ({
                                         pathname: "/order-summary",
                                         query: {
                                           type: "renew-plan",
-                                          order_id: subscription?.id,
+                                          order_id: subscription?.order_id,
                                           renewal_order_id:
                                             subscription?.renewal_order_id,
                                         },
