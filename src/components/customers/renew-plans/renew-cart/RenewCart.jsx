@@ -431,6 +431,29 @@ const RenewCart = ({
               </div>
             );
           })}
+          {!router?.query?.type && (
+            <>
+              <button
+                className={`${styles.addMorePlansBtn} d-flex bg-transparent border-0  p-0 justify-content-end w-100`}
+                onClick={() => {
+                  if (cartDetails?.[0]?.plan?.provider_id === 1) {
+                    router.push("/services/tizzy");
+                  } else if (cartDetails?.[0]?.plan?.provider_id === 2) {
+                    router.push("/services/microsoft-solution-partner");
+                  } else if (cartDetails?.[0]?.plan?.provider_id === 3) {
+                    router.push("/services/google-cloud-partner");
+                  }
+                }}
+                style={{
+                  cursor: "pointer",
+                  color: "#0355ac",
+                }}
+              >
+                + Add More Plans
+              </button>
+            </>
+          )}
+
           {!hideInlineSubtotal && (
             <>
               <hr className={styles.divider} />

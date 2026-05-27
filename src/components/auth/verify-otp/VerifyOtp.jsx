@@ -109,6 +109,7 @@ const VerifyOtp = () => {
           pathname: "/order-complete",
           query: {
             po: res?.data?.data?.po_link,
+            crdUsage: res?.data?.data?.credits_used,
           },
         });
         setOtpArray(["", "", "", "", "", ""]);
