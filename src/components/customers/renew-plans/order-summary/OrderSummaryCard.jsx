@@ -8,10 +8,12 @@ import requestCredit from "@/assets/cart/request_credit.svg";
 import { useRouter } from "next/router";
 import {
   useCheckIsDomainAvailableQuery,
+  useCreditRequestMutation,
   usePromoCodeMutation,
   useTransferCodeMutation,
 } from "@/redux/apis/addToCartApi";
 import { BiCheck, BiX } from "react-icons/bi";
+import Cookies from "js-cookie";
 
 const toDomainArray = (value) => {
   if (Array.isArray(value)) return value.filter(Boolean);
@@ -48,6 +50,9 @@ const OrderSummaryCard = ({
 }) => {
   const router = useRouter();
   const { showToast } = useToast();
+  const userData = Cookies?.get("userData")
+    ? JSON.parse(decodeURIComponent(Cookies?.get("userData")))
+    : {};
   const savedDomainCount = toDomainArray(tempDomainNames).length;
   const pendingDomainCount = domainNames?.length || 0;
   const totalDomainCount = savedDomainCount + pendingDomainCount;
@@ -73,6 +78,9 @@ const OrderSummaryCard = ({
 
   const [applyPromoCode, { isLoading: isLoadingPromoCode }] =
     usePromoCodeMutation();
+
+  const [creditRequest, { isLoading: isLoadingCreditRequest }] =
+    useCreditRequestMutation();
 
   const {
     currentData: domainCheckData,
@@ -166,6 +174,12 @@ const OrderSummaryCard = ({
     ? cartDetails[0]?.cart_id
     : cartDetails?.cart_id;
 
+  const mainCartId = Array.isArray(cartDetails)
+    ? cartDetails[0]?.main_cart_id
+    : cartDetails?.main_cart_id;
+
+  console.log(mainCartId, "mainCartId");
+
   const handleDomainPrefixChange = (id, value) => {
     setDomainNames((prev) =>
       prev.map((row) => (row.id === id ? { ...row, prefix: value } : row)),
@@ -208,6 +222,28 @@ const OrderSummaryCard = ({
     } catch (error) {
       console.log(error);
       showToast("Failed to apply promo code", "error");
+    }
+  };
+
+  const handleRequestCredit = async () => {
+    try {
+      const res = await creditRequest({
+        body: {
+          partner_id: userData?.id,
+          order_id: router?.query?.order_id,
+          requested_amount: (totals - _creditBalance_).toFixed(2),
+          main_cart_id: mainCartId,
+        },
+      });
+      if (res?.data?.success) {
+        showToast("Credit request sent successfully", "success");
+        setIsPopupOpen("request-credit");
+      } else {
+        showToast("Failed to send credit request", "error");
+      }
+    } catch (error) {
+      console.log(error);
+      showToast("Failed to send credit request", "error");
     }
   };
 
@@ -445,7 +481,7 @@ const OrderSummaryCard = ({
             <p>Want to complete purchase urgently?</p>
             <button
               className={styles.requestLink}
-              onClick={() => setIsPopupOpen("request-credit")}
+              onClick={handleRequestCredit}
             >
               Request Credits
             </button>
@@ -453,11 +489,11 @@ const OrderSummaryCard = ({
         )}
       </div>
       {isPopupOpen === "request-credit" && (
-        <CustomPopup onClose={handleClosePopup} maxWidth="200px">
+        <CustomPopup onClose={handleClosePopup} maxWidth="500px">
           <div className={styles.creditRequestPopup}>
             <Image src={requestCredit} className="mb-3" alt="" />
             <h3 className={styles.creditRequestAmount}>
-              ₹ {totals.toFixed(2)}
+              ₹ {(totals - _creditBalance_).toFixed(2)}
             </h3>
             <p className={styles.creditRequestTitle}>
               YOUR CREDIT REQUEST IS SENT SUCCESSFULLY.

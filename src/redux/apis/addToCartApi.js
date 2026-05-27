@@ -128,6 +128,16 @@ const addToCartApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["addToCart", "balanceAndCart"],
     }),
+    creditRequest: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/credit-request`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart", "balanceAndCart"],
+    }),
   }),
 });
 
@@ -146,4 +156,5 @@ export const {
   usePromoCodeMutation,
   useAadharNumberMutation,
   useVerifyAadharNumberOtpMutation,
+  useCreditRequestMutation,
 } = addToCartApi;
