@@ -74,7 +74,7 @@ const VerifyOtp = () => {
       if (res?.data?.success) {
         Cookies.set("userData", JSON.stringify(res?.data?.data?.partner));
         showToast("Email verified successfully", "success");
-        router?.push("/dashboard");
+        router?.push("/partner-approval-request");
         setOtpDetails((prev) => ({
           ...prev,
           email: "",
