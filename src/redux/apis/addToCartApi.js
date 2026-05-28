@@ -126,6 +126,26 @@ const addToCartApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
+      invalidatesTags: ["addToCart", "balanceAndCart"],
+    }),
+    creditRequest: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/credit-request`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart", "balanceAndCart"],
+    }),
+    resendOrderOtp: builder?.mutation({
+      query: ({ body }) => {
+        return {
+          url: "/orders-aadhaar-resend-otp",
+          method: "POST",
+          body: body,
+        };
+      },
       invalidatesTags: ["addToCart"],
     }),
   }),
@@ -146,4 +166,6 @@ export const {
   usePromoCodeMutation,
   useAadharNumberMutation,
   useVerifyAadharNumberOtpMutation,
+  useCreditRequestMutation,
+  useResendOrderOtpMutation,
 } = addToCartApi;

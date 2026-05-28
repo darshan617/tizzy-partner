@@ -9,7 +9,7 @@ import {
 import { useRouter } from "next/router";
 import { MdOutlineContactSupport } from "react-icons/md";
 
-const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
+const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const sidebarRef = useRef(null);
@@ -163,28 +163,36 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
               className={` ${styles.titleBar} px-3 py-1 mb-2 d-flex align-items-center`}
             >
               <span className="col">CREDITS</span>
-              <Link href="#">PAY NOW</Link>
+              <Link href="/invoice">PAY NOW</Link>
             </div>
 
             <div className="px-3">
               <div className={styles.credBaln}>
                 Balance
                 <span className={`${styles.credBalnvalue} d-block`}>
-                  ₹ 5,50,00.00
+                  ₹ {balanceAndCartData?.wallet_balance || 0}
                 </span>
               </div>
-
               <div className={`${styles.credScale} my-2`}>
                 <div
                   className={styles.credscaleBar}
-                  style={{ width: "55%" }}
+                  style={{
+                    width: `55%`,
+                  }}
                 ></div>
               </div>
 
               <div
                 className={`${styles.credLimits} d-flex justify-content-between`}
               >
-                <div>Used ₹ 4,50,000 of ₹ 10,00,000</div>
+                <div>
+                  Used ₹{" "}
+                  {Number(
+                    balanceAndCartData?.credit_limit -
+                      balanceAndCartData?.wallet_balance,
+                  ).toFixed(2) || 0}{" "}
+                  of ₹ {balanceAndCartData?.credit_limit || 0}
+                </div>
               </div>
             </div>
           </div>

@@ -45,7 +45,7 @@ const Invoice = () => {
       <SummaryCounts
         infoBtn={{
           title: "Credit Balance",
-          amount: "₹ 4,35,048.00",
+          amount: ` ${invoiceDetailsData?.credit_balance}`,
           info: "Pay your unpaid invoices to restore your credit balance.",
         }}
         countData={invoiceDetailsData?.summary}

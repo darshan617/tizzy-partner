@@ -213,9 +213,17 @@
   display: inline-block;
 }
 
-.statusBadge.subtleSuccess {
+.statusBadge.active {
   background: var(--successSubtleColor);
   color: var(--successColor);
+}
+.statusBadge.expiring_soon {
+  background: var(--warningSubtleColor);
+  color: var(--warningColor);
+}
+.statusBadge.expired {
+  background: var(--dangerSubtleColor);
+  color: var(--dangerColor);
 }
 
 .contentRow {
@@ -261,9 +269,9 @@
   color: var(--primaryColor);
 }
 
-.crRenew {
+/* .crRenew {
   width: 120px;
-}
+} */
 
 .crBtn {
   width: 30px;

@@ -73,7 +73,9 @@
   position: absolute;
   right: -10%;
   bottom: 60%;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0 3px;
 }
 
@@ -114,6 +116,7 @@
 
 .profComp {
   font-size: var(--fs12);
+  text-align: center;
 }
 
 .profDesg {

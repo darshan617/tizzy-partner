@@ -11,6 +11,11 @@ import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarC
 import { useDeleteFromCartMutation } from "@/redux/apis/addToCartApi";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import { IoClose } from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectIsPopupVisible,
+  setIsPopupVisible,
+} from "@/redux/slices/popupSlice";
 
 const toDomainArray = (value) => {
   if (Array.isArray(value)) return value.filter(Boolean);
@@ -40,6 +45,9 @@ const RenewCart = ({
 }) => {
   const router = useRouter();
   const { showToast } = useToast();
+  const isPopupVisiblle = useSelector(selectIsPopupVisible);
+  const dispatch = useDispatch();
+  console.log(isPopupVisiblle);
 
   const [cartToDelete, setCartToDelete] = useState({
     cart_id: null,
@@ -49,6 +57,7 @@ const RenewCart = ({
     useDeleteFromCartMutation();
   const handleClosePopup = () => {
     setIsPopupOpen("");
+    dispatch(setIsPopupVisible(""));
   };
   const companyNames = getAllCustomers?.data?.customers?.map(
     (customer, index) => ({
@@ -124,7 +133,7 @@ const RenewCart = ({
                   <button
                     type="button"
                     className={styles.newCustomerBtn}
-                    onClick={() => setIsPopupOpen("new-customer")}
+                    onClick={() => dispatch(setIsPopupVisible("new-customer"))}
                   >
                     + New Customer
                   </button>
@@ -422,6 +431,29 @@ const RenewCart = ({
               </div>
             );
           })}
+          {!router?.query?.type && (
+            <>
+              <button
+                className={`${styles.addMorePlansBtn} d-flex bg-transparent border-0  p-0 justify-content-end w-100`}
+                onClick={() => {
+                  if (cartDetails?.[0]?.plan?.provider_id === 1) {
+                    router.push("/services/tizzy");
+                  } else if (cartDetails?.[0]?.plan?.provider_id === 2) {
+                    router.push("/services/microsoft-solution-partner");
+                  } else if (cartDetails?.[0]?.plan?.provider_id === 3) {
+                    router.push("/services/google-cloud-partner");
+                  }
+                }}
+                style={{
+                  cursor: "pointer",
+                  color: "#0355ac",
+                }}
+              >
+                + Add More Plans
+              </button>
+            </>
+          )}
+
           {!hideInlineSubtotal && (
             <>
               <hr className={styles.divider} />
@@ -435,7 +467,7 @@ const RenewCart = ({
             </>
           )}
 
-          {isPopupOpen === "new-customer" && (
+          {isPopupVisiblle === "new-customer" && (
             <CustomPopup onClose={handleClosePopup}>
               <h3 className="fs-5 fw-600 mb-3 border-bottom pb-3">
                 Add New Customer

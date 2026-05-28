@@ -5,9 +5,20 @@ import invoice from "@/assets/images/invoice.png";
 import styles from "@/components/customers/order-complete/OrderComplete.module.css";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi";
+import Cookies from "js-cookie";
 
 const OrderComplete = () => {
   const router = useRouter();
+  const userData = Cookies?.get("userData")
+    ? JSON.parse(decodeURIComponent(Cookies?.get("userData")))
+    : {};
+  const { data: balanceAndCartData } = useGetBalanceAndCartDetailsQuery(
+    { partner_id: userData?.id },
+    {
+      skip: !userData?.id,
+    },
+  );
   return (
     <div>
       {/* <div className="col">
@@ -58,14 +69,18 @@ const OrderComplete = () => {
           </div>
           <div className={`${styles.orderHead}  mb-3 text-center`}>
             <div>
-              <span className={`${styles.value}`}>₹19,938.8 </span>
+              <span className={`${styles.value}`}>
+                ₹ {router?.query?.crdUsage}{" "}
+              </span>
               <span className={`${styles.valueContent}`}>
                 deducted from your credits
               </span>
             </div>
             <div className={`${styles.BalInfo}`}>
-              <span>Credit Balance - </span>
-              <span className={`${styles.CreditValue}`}>₹1,979.8</span>
+              <span>Credit Balance: </span>
+              <span className={`${styles.CreditValue}`}>
+                ₹{balanceAndCartData?.data?.wallet_balance}
+              </span>
             </div>
           </div>
           <div className={`${styles.InvoiceImg} my-4`}>
@@ -81,7 +96,7 @@ const OrderComplete = () => {
                 rel="noopener noreferrer"
                 className={styles.downloadInvoiceBtn}
               >
-                Download Invoice PDF
+                Download Purchase Order PDF
               </Link>
             ) : null}
           </div>

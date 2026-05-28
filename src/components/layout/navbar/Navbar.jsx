@@ -8,13 +8,14 @@ import Image from "next/image";
 import Cookies from "js-cookie";
 import { RxHamburgerMenu } from "react-icons/rx";
 import Link from "next/link";
-import { RiUserAddLine } from "react-icons/ri";
+import { RiBankLine, RiUserAddLine } from "react-icons/ri";
 import styles from "@/components/layout/navbar/Navbar.module.css";
-import { LuPencilRuler, LuUserRoundPen } from "react-icons/lu";
+import { LuCalendarCog, LuPencilRuler, LuUserRoundPen } from "react-icons/lu";
 import { useRouter } from "next/router";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
+import { IoHelpBuoyOutline } from "react-icons/io5";
 
-const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
+const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const router = useRouter();
   const { showToast } = useToast();
   const [user, setUser] = useState(null);
@@ -35,6 +36,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const handleSignOut = () => {
     Cookies.remove("userData");
     Cookies.remove("customerData");
+    Cookies.remove("partnerApproval");
     router?.push("/auth/login");
     showToast("Signed Out successfully", "success");
   };
@@ -113,13 +115,17 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                   <div className="">
                     <button className={styles.navBtns}>
                       <FiBell size={20} />
-                      <span className={styles.navLabel}>5</span>
+                      <span className={styles.navLabel}>
+                        {balanceAndCartData?.notifications || 0}
+                      </span>
                     </button>
                   </div>
                   <div className="">
                     <Link className={styles.navBtns} href="/order-summary">
                       <BsHandbag size={20} color="#000" />
-                      <span className={`${styles.navLabel} d-none`}></span>
+                      <span className={`${styles.navLabel} `}>
+                        {balanceAndCartData?.cart_item_count || 0}
+                      </span>
                     </Link>
                   </div>
                   <div className="vr  "></div>
@@ -174,24 +180,52 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                       </div>
                       <ul className="my-3">
                         <li>
-                          <a href="#">
+                          <Link href="#">
                             <FaRegCircleUser
                               className={`${styles.icon} me-2`}
                               size={20}
                             />
                             My Account
-                          </a>
+                          </Link>
                         </li>
                         <li>
-                          <a href="#">
+                          <Link href="#">
                             <BiKey
                               className={`${styles.icon} me-2`}
                               size={20}
                             />
                             Change Password
-                          </a>
+                          </Link>
                         </li>
                         <li>
+                          <Link href="#">
+                            <RiBankLine
+                              className={`${styles.icon} me-2`}
+                              size={20}
+                            />
+                            Bank Details
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/notifications-settings">
+                            <LuCalendarCog
+                              className={`${styles.icon} me-2`}
+                              size={20}
+                            />
+                            Notifications Settings
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="#">
+                            <IoHelpBuoyOutline
+                              className={`${styles.icon} me-2`}
+                              size={20}
+                              style={{ transform: "rotate(45deg)" }}
+                            />
+                            Help Center
+                          </Link>
+                        </li>
+                        {/* <li>
                           <a href="#">
                             <RiUserAddLine
                               className={`${styles.icon} me-2`}
@@ -217,7 +251,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                             />
                             Customize Profile
                           </a>
-                        </li>
+                        </li> */}
                       </ul>
                       <div className="p-3 text-center subtleBg">
                         <button

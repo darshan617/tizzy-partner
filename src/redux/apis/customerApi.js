@@ -12,39 +12,50 @@ const customerApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["customer"],
     }),
+    updateCustomer: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/update-customer`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["customer"],
+    }),
     getAllCustomers: builder.query({
-      query: ({partner_id}) => {
-        return{
-          url:`/customers?partner_id=${partner_id}`,
-          method:"GET",
-        }
+      query: ({ partner_id }) => {
+        return {
+          url: `/customers?partner_id=${partner_id}`,
+          method: "GET",
+        };
       },
       providesTags: ["customer", "customer"],
     }),
     getSpecificCustomerDetails: builder.query({
-      query: ({customer_id, partner_id}) => {
-        return{
-          url:`/getCustomerDetail?customer_id=${customer_id}&partner_id=${partner_id}`,
-          method:"GET",
-        }
+      query: ({ customer_id, partner_id }) => {
+        return {
+          url: `/getCustomerDetail?customer_id=${customer_id}&partner_id=${partner_id}`,
+          method: "GET",
+        };
       },
       providesTags: ["customer"],
     }),
     upgradeDowngradePlan: builder.query({
-      query: ({type, order_id}) => {
-        return{
-          url:`/${type}?order_id=${order_id}`,
-          method:"GET",
-        }
+      query: ({ type, order_id }) => {
+        return {
+          url: `/${type}?order_id=${order_id}`,
+          method: "GET",
+        };
       },
       providesTags: ["customer"],
-    })
+    }),
   }),
 });
 
 export const {
-    useCreateCustomerMutation,
-    useGetAllCustomersQuery,
-    useGetSpecificCustomerDetailsQuery,
-    useLazyUpgradeDowngradePlanQuery
+  useCreateCustomerMutation,
+  useUpdateCustomerMutation,
+  useGetAllCustomersQuery,
+  useGetSpecificCustomerDetailsQuery,
+  useLazyUpgradeDowngradePlanQuery,
 } = customerApi;
