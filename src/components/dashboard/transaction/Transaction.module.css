@@ -98,6 +98,10 @@
     background: var(--warningSubtleColor);
     color: var(--warningColor);
 }
+.pending {
+    background: var(--warningSubtleColor);
+    color: var(--warningColor);
+}
 
 .sectionCard {
     width: 100%;
