@@ -133,7 +133,7 @@ export default function CustomerList({
                     </ul>
                   </div>
 
-                  <div className={`${styles.filterPart} col-auto`}>
+                  {/* <div className={`${styles.filterPart} col-auto`}>
                     <span className={`${styles.filterHead}`}>Services :</span>
                     <ul className={`${styles.filterGroup} gap-2`} role="group">
                       {[
@@ -168,7 +168,7 @@ export default function CustomerList({
                         </li>
                       ))}
                     </ul>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -201,13 +201,18 @@ export default function CustomerList({
             >
               {isFetchingAllCustomers ? (
                 <Loader />
-              ) : allCustomers?.data?.customers?.length > 0 ? (
+              ) : allCustomers?.data?.customers?.filter((customer) =>
+                  selectedStatuses === "all"
+                    ? true
+                    : customer?.status === selectedStatuses,
+                ).length > 0 ? (
                 allCustomers?.data?.customers
                   ?.filter((customer) =>
                     selectedStatuses === "all"
                       ? true
                       : customer?.status === selectedStatuses,
                   )
+
                   .map((customer, idx) => (
                     <div
                       key={idx}
@@ -321,7 +326,7 @@ export default function CustomerList({
                     </div>
                   ))
               ) : (
-                "No Customer Data"
+                <p className="text-center m-0">No Customer Data</p>
               )}
             </div>
           </div>

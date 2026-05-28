@@ -18,6 +18,21 @@ import {
 } from "@/redux/apis/addToCartApi";
 
 const VerifyOtp = () => {
+  const getSafeUserDataFromCookie = () => {
+    const rawUserData = Cookies.get("userData");
+
+    if (!rawUserData || rawUserData === "undefined" || rawUserData === "null") {
+      return {};
+    }
+
+    try {
+      return JSON.parse(rawUserData);
+    } catch (error) {
+      console.error("Invalid userData cookie JSON:", error);
+      return {};
+    }
+  };
+
   const router = useRouter();
   const inputsRef = useRef([]);
   const { showToast } = useToast();
@@ -31,9 +46,7 @@ const VerifyOtp = () => {
   const [resendOtp, { isLoading: isResendOtpLoading }] = useResendOtpMutation();
   const [errors, setErrors] = useState({});
 
-  const userDataFromCookie = Cookies.get("userData")
-    ? JSON.parse(Cookies.get("userData"))
-    : {};
+  const userDataFromCookie = getSafeUserDataFromCookie();
 
   const [getOtpVerified, { isLoading: isGetOtpVerifiedLoading }] =
     useGetOtpVerifiedMutation();

@@ -8,12 +8,12 @@ import Image from "next/image";
 import Cookies from "js-cookie";
 import { RxHamburgerMenu } from "react-icons/rx";
 import Link from "next/link";
-import { RiUserAddLine } from "react-icons/ri";
+import { RiBankLine, RiUserAddLine } from "react-icons/ri";
 import styles from "@/components/layout/navbar/Navbar.module.css";
-import { LuPencilRuler, LuUserRoundPen } from "react-icons/lu";
+import { LuCalendarCog, LuPencilRuler, LuUserRoundPen } from "react-icons/lu";
 import { useRouter } from "next/router";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
-import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi";
+import { IoHelpBuoyOutline } from "react-icons/io5";
 
 const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const router = useRouter();
@@ -180,24 +180,52 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                       </div>
                       <ul className="my-3">
                         <li>
-                          <a href="#">
+                          <Link href="#">
                             <FaRegCircleUser
                               className={`${styles.icon} me-2`}
                               size={20}
                             />
                             My Account
-                          </a>
+                          </Link>
                         </li>
                         <li>
-                          <a href="#">
+                          <Link href="#">
                             <BiKey
                               className={`${styles.icon} me-2`}
                               size={20}
                             />
                             Change Password
-                          </a>
+                          </Link>
                         </li>
                         <li>
+                          <Link href="#">
+                            <RiBankLine
+                              className={`${styles.icon} me-2`}
+                              size={20}
+                            />
+                            Bank Details
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/notifications-settings">
+                            <LuCalendarCog
+                              className={`${styles.icon} me-2`}
+                              size={20}
+                            />
+                            Notifications Settings
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="#">
+                            <IoHelpBuoyOutline
+                              className={`${styles.icon} me-2`}
+                              size={20}
+                              style={{ transform: "rotate(45deg)" }}
+                            />
+                            Help Center
+                          </Link>
+                        </li>
+                        {/* <li>
                           <a href="#">
                             <RiUserAddLine
                               className={`${styles.icon} me-2`}
@@ -223,7 +251,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                             />
                             Customize Profile
                           </a>
-                        </li>
+                        </li> */}
                       </ul>
                       <div className="p-3 text-center subtleBg">
                         <button

@@ -16,6 +16,7 @@ import { BsPlusCircleDotted } from "react-icons/bs";
 import { setCustomerData } from "@/redux/slices/customerSlice";
 import { useDispatch } from "react-redux";
 import { FaPen } from "react-icons/fa";
+import { MdAutorenew } from "react-icons/md";
 
 export default function CustomerDetail() {
   const router = useRouter();
@@ -364,13 +365,36 @@ export default function CustomerDetail() {
                           </h3>
                         </div>
                       </div>
-                      <div className="col-md-3 col-auto text-end">
+                      <div className="col-md-3 col-auto d-flex gap-2 justify-content-end">
+                        <button
+                          onClick={() =>
+                            router?.push({
+                              pathname: "/order-summary",
+                              query: {
+                                type: "renew-plan",
+                                order_id: otherPlans?.[0]?.order_id,
+                              },
+                            })
+                          }
+                          className={`${styles.crRenew} btn small btnWhite`}
+                        >
+                          <MdAutorenew
+                            className="me-2"
+                            size={14}
+                            style={{ minWidth: "14px" }}
+                          />
+                          <span>Renew</span>
+                        </button>
                         <button
                           className="btn small btnWhite"
                           data-bs-toggle="modal"
                           data-bs-target="#modalTransferCode"
                         >
-                          <BiTransfer />
+                          <BiTransfer
+                            className="me-2"
+                            size={14}
+                            style={{ minWidth: "14px" }}
+                          />
                           <span>Transfer Code</span>
                         </button>
                       </div>
@@ -390,7 +414,6 @@ export default function CustomerDetail() {
                         </small>
                       </div>
                     </div>
-
                     {otherPlans?.map((innerPlan, idx) => {
                       return (
                         <div className={`${styles.contentRow} noHover`}>
@@ -445,7 +468,7 @@ export default function CustomerDetail() {
                                       })
                                     }
                                   >
-                                    <FaPencil />
+                                    <FaPen size={10} />
                                   </button>
                                 </div>
                                 <div className="col-md-auto col-sm-6 col-8">
@@ -459,7 +482,7 @@ export default function CustomerDetail() {
                                 </div>
                                 <div className="col-md-auto col-sm-6 col-4 align-self-center">
                                   <div
-                                    className={`${styles.statusBadge} ${styles.subtleSuccess}`}
+                                    className={`${styles.statusBadge} ${styles?.[innerPlan?.status?.toLowerCase()?.replace(" ", "_")]}`}
                                   >
                                     {innerPlan?.status || "-"}
                                   </div>
@@ -467,22 +490,8 @@ export default function CustomerDetail() {
                               </div>
                             </div>
                             <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
-                              <button
-                                onClick={() =>
-                                  router?.push({
-                                    pathname: "/order-summary",
-                                    query: {
-                                      type: "renew-plan",
-                                      order_id: innerPlan?.order_id,
-                                    },
-                                  })
-                                }
-                                className={`${styles.crRenew} btn small btnWhite`}
-                              >
-                                <span>Renew</span>
-                              </button>
                               <div
-                                className={`${styles.updwngrade} mt-2 text-uppercase`}
+                                className={`${styles.updwngrade} text-uppercase`}
                               >
                                 <Link
                                   href={{
@@ -544,6 +553,11 @@ export default function CustomerDetail() {
                         </div>
                       );
                     })}
+                    {otherPlans?.length === 0 && (
+                      <div className="text-center">
+                        <p className="text-muted">No plans found</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

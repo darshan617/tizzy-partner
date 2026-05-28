@@ -1,0 +1,107 @@
+.notificationsSettingsWrapper {
+  width: 100%;
+}
+
+.policyText {
+  color: #4a4a4a;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+.policyLink {
+  margin-left: 4px;
+  color: var(--primaryColor);
+  text-decoration: none;
+}
+
+.policyLink:hover {
+  text-decoration: underline;
+}
+
+.preferenceRowWrapper{
+  margin: 20px 0 ;
+  padding-right: 10px;
+}
+
+.preferenceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.preferenceTitle {
+  margin: 0 0 6px;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: #2f3540;
+}
+
+.preferenceInfo p {
+  margin: 0;
+  color: #656565;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.channelsWrapper {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  flex-shrink: 0;
+}
+
+.channelOption {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #4f4f4f;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.channelOption input {
+  width: 16px;
+  height: 16px;
+  accent-color: #0a61b9;
+  cursor: pointer;
+}
+
+.saveButtonWrapper {
+  text-align: center;
+}
+
+.saveButton {
+  background-color: var(--primaryColor);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.saveButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 992px) {
+  .preferenceRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .channelsWrapper {
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+}
