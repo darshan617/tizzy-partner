@@ -12,7 +12,10 @@ import styles from "@/components/auth/verify-otp/VerifyOtp.module.css";
 import AuthLayout from "../authLayout/AuthLayout";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import Layout from "@/components/layout/Layout";
-import { useVerifyAadharNumberOtpMutation } from "@/redux/apis/addToCartApi";
+import {
+  useResendOrderOtpMutation,
+  useVerifyAadharNumberOtpMutation,
+} from "@/redux/apis/addToCartApi";
 
 const VerifyOtp = () => {
   const router = useRouter();
@@ -37,6 +40,9 @@ const VerifyOtp = () => {
 
   const [verifyAadharNumberOtp, { isLoading: isVerifyAadharNumberOtpLoading }] =
     useVerifyAadharNumberOtpMutation();
+
+  const [resendOrderOtp, { isLoading: isResendOrderOtpLoading }] =
+    useResendOrderOtpMutation();
 
   const validateOtp = () => {
     const newErrors = {};
@@ -150,23 +156,48 @@ const VerifyOtp = () => {
     }
   };
 
-  const handlePaste = (e) => {
-    const paste = e.clipboardData.getData("text").slice(0, 6);
-    if (!/^\d+$/.test(paste)) return;
+  // const handlePaste = (e) => {
+  //   const paste = e.clipboardData.getData("text").slice(0, 6);
+  //   if (!/^\d+$/.test(paste)) return;
 
-    const newOtp = paste.split("");
+  //   const newOtp = paste.split("");
+  //   setOtpArray(newOtp);
+
+  //   setOtpDetails((prev) => ({
+  //     ...prev,
+  //     otp: newOtp.join(""),
+  //   }));
+
+  //   newOtp.forEach((val, i) => {
+  //     if (inputsRef.current[i]) {
+  //       inputsRef.current[i].value = val;
+  //     }
+  //   });
+  // };
+  const handlePaste = (e) => {
+    e.preventDefault();
+
+    const paste = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, 6);
+
+    const newOtp = ["", "", "", "", "", ""];
+
+    paste.split("").forEach((digit, index) => {
+      newOtp[index] = digit;
+    });
+
     setOtpArray(newOtp);
 
     setOtpDetails((prev) => ({
       ...prev,
-      otp: newOtp.join(""),
+      otp: paste,
     }));
 
-    newOtp.forEach((val, i) => {
-      if (inputsRef.current[i]) {
-        inputsRef.current[i].value = val;
-      }
-    });
+    // Focus next empty field
+    const nextIndex = paste.length >= 6 ? 5 : paste.length;
+    inputsRef.current[nextIndex]?.focus();
   };
 
   const handleResend = async () => {
@@ -188,6 +219,36 @@ const VerifyOtp = () => {
     } catch (error) {
       showToast("Failed to resend OTP", "error");
       console.log("error", error);
+    }
+  };
+
+  const handleOrderOtpResend = async () => {
+    try {
+      let body;
+      if (router?.query?.renew === "0") {
+        body = {
+          main_cart_id: router?.query?.main_cart_id,
+          resend_otp: 1,
+        };
+      } else {
+        body = {
+          partner_id: userDataFromCookie?.id,
+          order_id: router?.query?.order_id,
+          renew: router?.query?.renew,
+          resend_otp: 1,
+        };
+      }
+      const res = await resendOrderOtp({
+        body: body,
+      });
+      if (res?.data?.success) {
+        showToast("OTP resent successfully", "success");
+      } else {
+        showToast("Error while resending OTP", "error");
+      }
+    } catch (error) {
+      console.log("error", error);
+      showToast(error, "error");
     }
   };
 
@@ -235,6 +296,7 @@ const VerifyOtp = () => {
             ref={(el) => (inputsRef.current[index] = el)}
             onChange={(e) => handleChange(e.target.value, index)}
             onKeyDown={(e) => handleKeyDown(e, index)}
+            autoFocus={index === 0}
           />
         ))}
       </div>
@@ -264,10 +326,16 @@ const VerifyOtp = () => {
         Didn’t receive a code?{" "}
         <button
           className={styles.resendBtn}
-          onClick={handleResend}
-          disabled={isResendOtpLoading}
+          onClick={
+            router?.query?.type === "order"
+              ? handleOrderOtpResend
+              : handleResend
+          }
+          disabled={isResendOtpLoading || isResendOrderOtpLoading}
         >
-          {isResendOtpLoading ? "Resending..." : "Resend"}
+          {isResendOtpLoading || isResendOrderOtpLoading
+            ? "Resending..."
+            : "Resend"}
         </button>
       </p>
 

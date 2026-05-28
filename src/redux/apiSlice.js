@@ -15,7 +15,7 @@ export const apiSlice = createApi({
     "addToCart",
     "invoice",
     "balanceAndCart",
-    "transaction",
+    "transactions",
     "partnerApprovalRequest",
   ],
   endpoints: (builder) => ({}),
