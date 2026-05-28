@@ -96,7 +96,7 @@ const OrderComplete = () => {
                 rel="noopener noreferrer"
                 className={styles.downloadInvoiceBtn}
               >
-                Download Invoice PDF
+                Download Purchase Order PDF
               </Link>
             ) : null}
           </div>

@@ -5,6 +5,7 @@ import { IoClose } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
 import Loader from "@/common-components/loader/Loader";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const statusLabelMap = {
   active: "Active",
@@ -319,15 +320,17 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                                   Pay Now
                                 </button>
                               ) : null}
-                              <button
-                                type="button"
+                              <Link
+                                href={`${invoice?.invoice_pdf_url}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className={styles.downloadBtn}
                                 aria-label="Download invoice"
                               >
                                 <MdOutlineFileDownload
                                   className={styles.downloadBtnIcon}
                                 />
-                              </button>
+                              </Link>
                             </div>
                           </div>
                         </div>
