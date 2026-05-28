@@ -153,9 +153,9 @@ const SalesReport = ({ data, isDataLoading }) => {
                       <div className={styles.invoiceCardContent}>
                         <p className={styles.invoiceLabel}>
                           {card.label}
-                          <span className={styles.invoiceCount}>
+                          {/* <span className={styles.invoiceCount}>
                             ({card.count})
-                          </span>
+                          </span> */}
                         </p>
                         <p className={styles.statValue}>
                           ₹
@@ -176,7 +176,7 @@ const SalesReport = ({ data, isDataLoading }) => {
                         </div> */}
                       </div>
                       <div className={styles.invoiceCardActions}>
-                        <Link href="#" className={styles.crBtn}>
+                        <Link href="/invoice" className={styles.crBtn}>
                           <ChevronRight className={styles.crBtnIcon} />
                         </Link>
                         <div

@@ -10,9 +10,15 @@ import { useRouter } from "next/router";
 
 const PartnerApproval = () => {
   const router = useRouter();
-  const userData = Cookies?.get("userData")
-    ? JSON.parse(decodeURIComponent(Cookies?.get("userData")))
-    : {};
+  const userDataCookie = Cookies?.get("userData");
+  let userData = {};
+  try {
+    if (userDataCookie && userDataCookie !== "undefined") {
+      userData = JSON.parse(decodeURIComponent(userDataCookie));
+    }
+  } catch (error) {
+    console.log("Invalid userData cookie", error);
+  }
   const [getPartnerApprovalRequest, { isLoading }] =
     useGetPartnerApprovalRequestMutation();
   const handleGetPartnerApprovalRequest = async () => {
