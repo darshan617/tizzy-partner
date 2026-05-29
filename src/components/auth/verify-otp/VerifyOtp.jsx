@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
 import { selectUserData } from "@/redux/slices/userSlice";
-import { useGetOtpVerifiedMutation } from "@/redux/apis/signupApi";
 import { useRouter } from "next/router";
+import { useGetOtpVerifiedMutation } from "@/redux/apis/signupApi";
 import {
   useResendOtpMutation,
   useVerifyOtpMutation,
