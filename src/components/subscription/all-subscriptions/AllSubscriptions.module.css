@@ -246,6 +246,7 @@
   -webkit-line-clamp: 1;
   line-clamp: 1;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .crName {

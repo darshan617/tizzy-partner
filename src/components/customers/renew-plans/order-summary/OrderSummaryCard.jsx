@@ -178,8 +178,6 @@ const OrderSummaryCard = ({
     ? cartDetails[0]?.main_cart_id
     : cartDetails?.main_cart_id;
 
-  console.log(mainCartId, "mainCartId");
-
   const handleDomainPrefixChange = (id, value) => {
     setDomainNames((prev) =>
       prev.map((row) => (row.id === id ? { ...row, prefix: value } : row)),
@@ -214,7 +212,6 @@ const OrderSummaryCard = ({
       if (res?.data?.success) {
         setDiscountedPercent(res?.data?.data?.discount_percent);
         showToast("Promo code applied successfully", "success");
-        setPromoCode("");
         setIsPromoCodeAdded(false);
       } else {
         showToast("Failed to apply promo code", "error");
@@ -297,9 +294,17 @@ const OrderSummaryCard = ({
 
           <span
             className={styles.value}
-            style={{ color: discountedAmount > 0 ? "#2dc718" : "#444444" }}
+            style={{
+              color:
+                cartDetails?.[0]?.cart_discount_amount || discountedAmount > 0
+                  ? "#2dc718"
+                  : "#444444",
+            }}
           >
-            ₹ -{discountedAmount?.toFixed(2) || 0}
+            ₹ -
+            {cartDetails?.[0]?.cart_discount_amount
+              ? cartDetails?.[0]?.cart_discount_amount
+              : discountedAmount?.toFixed(2) || 0}
           </span>
         </div>
 
