@@ -118,7 +118,7 @@ const VerifyOtp = () => {
           partner_id: userDataFromCookie?.id,
           order_id: router?.query?.order_id,
           renew: router?.query?.renew,
-          aadhar_number: router?.query?.aadhar_number,
+          aadhaar_number: router?.query?.aadhar_number,
         },
       });
       console.log(res);
