@@ -48,8 +48,6 @@ const OrderSummaryCard = ({
   setTransferCode,
   handleAadharNumber,
 }) => {
-  console.log(cartDetails, "carttttttt");
-
   const router = useRouter();
   const { showToast } = useToast();
   const userData = Cookies?.get("userData")
@@ -179,8 +177,6 @@ const OrderSummaryCard = ({
   const mainCartId = Array.isArray(cartDetails)
     ? cartDetails[0]?.main_cart_id
     : cartDetails?.main_cart_id;
-
-  console.log(mainCartId, "mainCartId");
 
   const handleDomainPrefixChange = (id, value) => {
     setDomainNames((prev) =>

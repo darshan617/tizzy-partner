@@ -69,8 +69,6 @@ const buildAutoUpdateCartBody = ({
   customerId,
   coupen,
 }) => {
-  console.log(coupen, "11");
-
   const domain_name = resolveCartDomains(
     item,
     itemIndex === 0 ? tempDomains : [],
@@ -117,8 +115,6 @@ const CommonOrderSummary = () => {
   const selectedCompanyRef = useRef("");
   const [aadharNumber, setAadharNumber] = useState("");
   const [transferCode, setTransferCode] = useState("");
-
-  console.log(transferCode, "transferCode");
 
   const DOMAIN_SUFFIX = ".onmicrosoft.com";
   useEffect(() => {
@@ -207,8 +203,6 @@ const CommonOrderSummary = () => {
       skip: !userData?.id || !router?.query?.plan_id,
     },
   );
-  console.log(cartDetails?.[0], "cartDetails");
-
   //aadhar number api
   const [aadharNumberApi, { isLoading: isAadharNumberLoading }] =
     useAadharNumberMutation();
@@ -528,7 +522,6 @@ const CommonOrderSummary = () => {
     } catch (error) {}
   };
 
-  console.log(cartDetails, "cartDetails");
   //handle aadhar number
   const handleAadharNumber = async () => {
     try {
