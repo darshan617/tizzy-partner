@@ -2,6 +2,11 @@ import { useState } from "react";
 import CustomPopup from "../custom-popup/CustomPopup";
 import styles from "./PricingPlanCard.module.css";
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectIsPopupVisible,
+  setIsPopupVisible,
+} from "@/redux/slices/popupSlice";
 
 function CheckIcon() {
   return (
@@ -28,8 +33,12 @@ export default function PricingPlanCard({
   onCtaClick,
   isProviderInCart,
   plan_is_in_cart,
+  provider_id,
+  enquiry,
 }) {
   const router = useRouter();
+  const isPopupVisible = useSelector(selectIsPopupVisible);
+  const dispatch = useDispatch();
   const showDiscount =
     typeof discountPercent === "number" && discountPercent > 0;
 
@@ -49,7 +58,6 @@ export default function PricingPlanCard({
             <span className={styles.discountBadge}>{discountPercent}% off</span>
           </div>
         ) : null}
-
         <div className={styles.priceBlock}>
           <div className={styles.priceRow}>
             {originalPriceLabel ? (
@@ -66,17 +74,37 @@ export default function PricingPlanCard({
         <button
           type="button"
           className={styles.cta}
+          // onClick={() => {
+          //   if (plan_is_in_cart) {
+          //     router.push("/order-summary");
+          //   } else if (
+          //     isProviderInCart === false ||
+          //     router?.query?.type === "upgrade"
+          //   ) {
+          //     onCtaClick();
+          //   } else {
+          //     setIsPopupOpen(true);
+          //   }
+          // }}
           onClick={() => {
             if (plan_is_in_cart) {
               router.push("/order-summary");
-            } else if (
+              return;
+            }
+            if (enquiry) {
+              dispatch(setIsPopupVisible("enquiry"));
+              return;
+            }
+
+            if (
               isProviderInCart === false ||
               router?.query?.type === "upgrade"
             ) {
               onCtaClick();
-            } else {
-              setIsPopupOpen(true);
+              return;
             }
+
+            setIsPopupOpen(true);
           }}
         >
           {ctaLabel}
@@ -94,12 +122,24 @@ export default function PricingPlanCard({
         ))}
       </ul>
 
+      {isPopupVisible === "enquiry" && (
+        <CustomPopup onClose={() => dispatch(setIsPopupVisible(""))}>
+          Enquiry Form will be here
+        </CustomPopup>
+      )}
+
       {isPopupOpen && isProviderInCart === true && (
         <CustomPopup onClose={() => setIsPopupOpen(false)} maxWidth="400px">
           <h3 className="fs-5 fw-600 mb-3 border-bottom pb-3">
-            Some plans are already in your cart
+            {provider_id === 3 && isProviderInCart === true
+              ? "You can add only one Google Plan"
+              : "Some plans are already in your cart"}
           </h3>
-          <p>Please remove the plans from the cart to add a new one</p>
+          <p>
+            {provider_id === 3 && isProviderInCart === true
+              ? "You can only add one Google Workspace plan to your cart at a time. Please remove the existing Google plan before adding a different one."
+              : " Please remove the plans from the cart to add a new one"}
+          </p>
         </CustomPopup>
       )}
     </article>

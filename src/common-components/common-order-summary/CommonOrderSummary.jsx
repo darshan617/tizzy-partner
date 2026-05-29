@@ -67,7 +67,10 @@ const buildAutoUpdateCartBody = ({
   selectedCompany,
   tempDomains,
   customerId,
+  coupen,
 }) => {
+  console.log(coupen, "11");
+
   const domain_name = resolveCartDomains(
     item,
     itemIndex === 0 ? tempDomains : [],
@@ -80,6 +83,7 @@ const buildAutoUpdateCartBody = ({
     company_name: normalizeCompanyName(selectedCompany || item?.company_name),
     customer_id: customerId ?? item?.customer_id,
     transfer_domain: item?.transfer_domain ?? "no",
+    coupen: coupen,
   };
 
   if (domain_name.length > 0) {
@@ -356,6 +360,7 @@ const CommonOrderSummary = () => {
           ),
           customer_id: currentItem?.customer_id ?? customerData?.customer_id,
           transfer_domain: isTransferDomain ? "yes" : "no",
+          coupen: promoCode,
         },
       });
 
@@ -487,6 +492,8 @@ const CommonOrderSummary = () => {
         subscription_end_date: item?.end_date,
         customerLimit: item?.customer_limit,
       }));
+      const coupon = allData?.[0]?.coupon_code || "";
+      setPromoCode(coupon);
       setCartDetails(allData);
       const initialDomains = [
         ...new Set(allData.flatMap((item) => toDomainArray(item?.domain_name))),
@@ -608,6 +615,7 @@ const CommonOrderSummary = () => {
           selectedCompany: selectedCompanyRef.current,
           tempDomains: tempDomainNamesRef.current,
           customerId: customerData?.customer_id,
+          coupen: promoCode,
         });
 
         updateCart({ body });
@@ -615,7 +623,7 @@ const CommonOrderSummary = () => {
     }, 1500);
 
     return () => clearTimeout(timer);
-  }, [cartLicenseKey, selectedCompany, customerData?.customer_id]);
+  }, [cartLicenseKey, selectedCompany, customerData?.customer_id, promoCode]);
 
   useEffect(() => {
     if (router?.query?.type === "renew-plan" && router?.query?.order_id) {
