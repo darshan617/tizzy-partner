@@ -385,7 +385,7 @@ export default function CustomerDetail() {
                           />
                           <span>Renew</span>
                         </button>
-                        <button
+                        {/* <button
                           className="btn small btnWhite"
                           data-bs-toggle="modal"
                           data-bs-target="#modalTransferCode"
@@ -396,7 +396,7 @@ export default function CustomerDetail() {
                             style={{ minWidth: "14px" }}
                           />
                           <span>Transfer Code</span>
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                   </div>
