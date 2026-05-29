@@ -9,7 +9,7 @@ const balanceAndCartApi = apiSlice.injectEndpoints({
           method: "GET",
         };
       },
-      providesTags: ["balanceAndCart"],
+      providesTags: ["balanceAndCart", "addToCart"],
     }),
   }),
 });

@@ -426,6 +426,8 @@ export default function ServiceSlugPage({
               features={plan?.features}
               isProviderInCart={plan?.provider_in_cart}
               plan_is_in_cart={plan?.plan_is_in_cart}
+              provider_id={plan?.provider_id}
+              enquiry={plan?.enquiry}
               onCtaClick={() => {
                 if (router?.query?.type === "upgrade") {
                   handleUpgradeAddToCart(plan?.plan_id || plan?.id);
@@ -456,7 +458,9 @@ export default function ServiceSlugPage({
                       : "Add to Cart"
                     : plan?.plan_is_in_cart
                       ? "View Cart"
-                      : "Buy Plan"
+                      : plan?.enquiry
+                        ? "Enquire Now"
+                        : "Buy Plan"
               }
             />
           ))}

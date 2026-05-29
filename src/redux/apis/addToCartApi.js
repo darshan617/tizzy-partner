@@ -10,7 +10,7 @@ const addToCartApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
-      invalidatesTags: ["addToCart"],
+      invalidatesTags: ["addToCart", "balanceAndCart"],
     }),
     getCartDetails: builder.mutation({
       query: ({ body }) => {
@@ -59,7 +59,7 @@ const addToCartApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
-      invalidatesTags: ["addToCart"],
+      invalidatesTags: ["addToCart", "balanceAndCart"],
     }),
     upgradeAddToCart: builder.mutation({
       query: ({ body }) => {
