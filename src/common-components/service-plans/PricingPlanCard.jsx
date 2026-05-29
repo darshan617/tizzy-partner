@@ -129,15 +129,15 @@ export default function PricingPlanCard({
       )}
 
       {isPopupOpen && isProviderInCart === true && (
-        <CustomPopup onClose={() => setIsPopupOpen(false)} maxWidth="400px">
+        <CustomPopup onClose={() => setIsPopupOpen(false)} maxWidth="450px">
           <h3 className="fs-5 fw-600 mb-3 border-bottom pb-3">
             {provider_id === 3 && isProviderInCart === true
-              ? "You can add only one Google Plan"
+              ? "You can add only one Google Cloud Partner Plan"
               : "Some plans are already in your cart"}
           </h3>
           <p>
             {provider_id === 3 && isProviderInCart === true
-              ? "You can only add one Google Workspace plan to your cart at a time. Please remove the existing Google plan before adding a different one."
+              ? "You can only add one Google Cloud Partner plan to your cart at a time. Please remove the existing Google Cloud Partner plan before adding a different one."
               : " Please remove the plans from the cart to add a new one"}
           </p>
         </CustomPopup>
