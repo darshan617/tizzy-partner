@@ -46,6 +46,47 @@
   border-color: var(--primaryColor);
 }
 
+.mobileInputWrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+
+.mobileInputWrapper:focus-within {
+  border-color: var(--primaryColor);
+}
+
+
+
+.countryCode {
+  flex-shrink: 0;
+  width: auto;
+  min-width: 72px;
+  padding: 8px 10px 8px 14px;
+  border: none;
+  border-right: 1px solid #ddd;
+  background: transparent;
+  font-size: 14px;
+  color: #4c4c5c;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+}
+
+.mobileInput {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 14px;
+  border: none;
+  font-size: 14px;
+  outline: none;
+  background: transparent;
+}
+
 .otpBtn {
   width: 100%;
   padding: 8px 14px;
