@@ -7,7 +7,13 @@ import { useEffect } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
 import { ToastProvider } from "@/custom-hooks/toast/ToastProvider";
-
+import Script from "next/script";
+{
+  /* <Script
+  src="https://checkout.razorpay.com/v1/checkout.js"
+  strategy="lazyOnload"
+/>; */
+}
 export default function App({ Component, pageProps, ...rest }) {
   const { store } = storeWrapper.useWrappedStore(rest);
   useEffect(() => {
@@ -19,7 +25,7 @@ export default function App({ Component, pageProps, ...rest }) {
   return (
     <Provider store={store}>
       <ToastProvider>
-          <Component {...pageProps} />
+        <Component {...pageProps} />
       </ToastProvider>
     </Provider>
   );
