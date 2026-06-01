@@ -37,6 +37,7 @@ const VerifyOtp = () => {
   const inputsRef = useRef([]);
   const { showToast } = useToast();
   const [otpDetails, setOtpDetails] = useState({
+    mobile: "",
     email: "",
     otp: "",
   });
@@ -216,7 +217,10 @@ const VerifyOtp = () => {
   const handleResend = async () => {
     try {
       const res = await resendOtp({
-        body: { email: otpDetails.email },
+        body: {
+          mobile: otpDetails?.mobile,
+          email: otpDetails?.email,
+        },
       });
       if (res?.data?.success) {
         setOtpArray(["", "", "", "", "", ""]);
@@ -362,6 +366,7 @@ const VerifyOtp = () => {
     setOtpDetails((prev) => ({
       ...prev,
       email: userData?.email,
+      mobile: userData?.mobile,
     }));
   }, []);
 

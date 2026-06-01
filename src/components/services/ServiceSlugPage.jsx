@@ -198,7 +198,7 @@ export default function ServiceSlugPage({
         if (isPlanChangeRequest && hasOrderId) {
           res = await triggerUpgradeDowngradePlan({
             type: router?.query?.type,
-            order_id: router?.query?.order_id,
+            plan_id: router?.query?.plan_id,
           });
           if (res?.data?.success) {
             setPlanDetails(res?.data?.data?.current_plan || null);
@@ -327,6 +327,7 @@ export default function ServiceSlugPage({
             type: "upgrade",
             customer_id: router?.query?.customer_id,
             order_id: router?.query?.order_id,
+            order_sub_id: router?.query?.order_sub_id,
           },
         });
       } else {
@@ -409,11 +410,11 @@ export default function ServiceSlugPage({
     <ServicePageLayout header={header}>
       {isPlansSectionLoading ? (
         <p className={styles.loading}>Loading plans…</p>
-      ) : allPlans.length === 0 ? (
+      ) : allPlans?.length === 0 ? (
         <p className={styles.empty}>No plans match your search or category.</p>
       ) : (
         <div className={styles.grid}>
-          {allPlans.map((plan) => (
+          {allPlans?.map((plan) => (
             <PricingPlanCard
               key={plan?.plan_id ?? plan?.id}
               plan_id={plan?.plan_id || plan?.id}
@@ -428,6 +429,7 @@ export default function ServiceSlugPage({
               plan_is_in_cart={plan?.plan_is_in_cart}
               provider_id={plan?.provider_id}
               enquiry={plan?.enquiry}
+              hasgoogleplans={plan?.hasgoogleplans}
               onCtaClick={() => {
                 if (router?.query?.type === "upgrade") {
                   handleUpgradeAddToCart(plan?.plan_id || plan?.id);

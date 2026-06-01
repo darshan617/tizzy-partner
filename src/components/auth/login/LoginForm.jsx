@@ -11,17 +11,24 @@ import { useToast } from "@/custom-hooks/toast/ToastProvider";
 const LoginForm = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [email, setEmail] = useState("");
+  const [input, setInput] = useState("");
   const [errors, setErrors] = useState({});
   const { showToast } = useToast();
+  const [inputType, setInputType] = useState("email");
+  console.log("inputType", inputType);
 
   const [sendOtp, { isLoading }] = useSendOtpMutation();
   const validateForm = () => {
     const newErrors = {};
-    if (!email?.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Please enter a valid email";
+    if (!input?.trim()) {
+      newErrors.input = "Field is required";
+    } else if (
+      inputType === "email" &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input)
+    ) {
+      newErrors.input = "Please enter a valid email";
+    } else if (inputType === "mobile" && !/^\d{10}$/.test(input)) {
+      newErrors.input = "Please enter a valid mobile number";
     }
 
     return newErrors;
@@ -38,13 +45,28 @@ const LoginForm = () => {
     setErrors({});
     try {
       const res = await sendOtp({
-        body: { email: email },
+        body: {
+          ...(inputType === "mobile"
+            ? {
+                mobile: input,
+              }
+            : {}),
+          ...(inputType === "email"
+            ? {
+                email: input,
+              }
+            : {}),
+        },
       });
 
       if (res?.data?.success) {
         router?.push("/auth/otp-verification?type=login");
-        setEmail("");
-        dispatch(setUserData({ email: email }));
+        setInput("");
+        if (inputType === "mobile") {
+          dispatch(setUserData({ mobile: input }));
+        } else {
+          dispatch(setUserData({ email: input }));
+        }
       } else {
         showToast(res?.error?.data?.message, "error");
       }
@@ -65,22 +87,64 @@ const LoginForm = () => {
 
         <div className={styles.formGroup}>
           <label className={styles.label}>
-            Email
+            Email / Mobile Number
             <span className={styles.required} style={{ color: "#f6051d" }}>
               *
             </span>
           </label>
-          <input
-            type="text"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setErrors((prev) => ({ ...prev, email: "" }));
-            }}
-            className={styles.input}
-            placeholder="Enter your email"
-          />
-          {errors.email && <p className={styles.errorMsg}>{errors.email}</p>}
+          {inputType === "email" ? (
+            <>
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => {
+                  setInput(e?.target?.value);
+                  setErrors((prev) => ({ ...prev, input: "" }));
+                  setInputType(
+                    new RegExp(/^[0-9].*$/).test(e?.target?.value)
+                      ? "mobile"
+                      : "email",
+                  );
+                }}
+                className={styles.input}
+                placeholder="Enter your email or mobile number"
+                autoFocus={true}
+              />
+              {errors.input && (
+                <p className={styles.errorMsg}>{errors.input}</p>
+              )}
+            </>
+          ) : (
+            <>
+              <div className={`${styles.mobileInputWrapper} `}>
+                <select
+                  className={styles.countryCode}
+                  aria-label="Country code"
+                >
+                  <option value="+91">+91</option>
+                </select>
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  maxLength={10}
+                  value={input}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "");
+                    setInput(value);
+                    setErrors((prev) => ({ ...prev, input: "" }));
+                    setInputType(/^[0-9].*$/.test(value) ? "mobile" : "email");
+                  }}
+                  className={styles.mobileInput}
+                  placeholder="Enter your mobile number"
+                  autoFocus
+                />
+              </div>
+
+              {errors.input && (
+                <p className={styles.errorMsg}>{errors.input}</p>
+              )}
+            </>
+          )}
         </div>
 
         <button
