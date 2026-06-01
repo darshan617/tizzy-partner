@@ -41,9 +41,9 @@ const customerApi = apiSlice.injectEndpoints({
       providesTags: ["customer"],
     }),
     upgradeDowngradePlan: builder.query({
-      query: ({ type, order_id }) => {
+      query: ({ type, plan_id }) => {
         return {
-          url: `/${type}?order_id=${order_id}`,
+          url: `/${type}?plan_id=${plan_id}`,
           method: "GET",
         };
       },

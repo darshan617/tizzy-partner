@@ -35,6 +35,7 @@ export default function PricingPlanCard({
   plan_is_in_cart,
   provider_id,
   enquiry,
+  hasgoogleplans,
 }) {
   const router = useRouter();
   const isPopupVisible = useSelector(selectIsPopupVisible);
@@ -127,16 +128,16 @@ export default function PricingPlanCard({
           Enquiry Form will be here
         </CustomPopup>
       )}
-
+      {console.log(isProviderInCart, provider_id, "isProviderInCart")}
       {isPopupOpen && isProviderInCart === true && (
         <CustomPopup onClose={() => setIsPopupOpen(false)} maxWidth="450px">
           <h3 className="fs-5 fw-600 mb-3 border-bottom pb-3">
-            {provider_id === 3 && isProviderInCart === true
+            {provider_id === 3 && hasgoogleplans
               ? "You can add only one Google Cloud Partner Plan"
               : "Some plans are already in your cart"}
           </h3>
           <p>
-            {provider_id === 3 && isProviderInCart === true
+            {provider_id === 3 && hasgoogleplans
               ? "You can only add one Google Cloud Partner plan to your cart at a time. Please remove the existing Google Cloud Partner plan before adding a different one."
               : " Please remove the plans from the cart to add a new one"}
           </p>
