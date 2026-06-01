@@ -115,6 +115,7 @@ const CommonOrderSummary = () => {
   const selectedCompanyRef = useRef("");
   const [aadharNumber, setAadharNumber] = useState("");
   const [transferCode, setTransferCode] = useState("");
+  const [currentPlanDetails, setCurrentPlanDetails] = useState({});
 
   const DOMAIN_SUFFIX = ".onmicrosoft.com";
   useEffect(() => {
@@ -511,11 +512,13 @@ const CommonOrderSummary = () => {
         body: {
           partner_id: userData?.id,
           customer_id: router?.query?.customer_id,
+          order_sub_id: router?.query?.order_sub_id,
         },
       });
       if (res?.data?.success) {
-        const data = res?.data?.data;
+        const data = res?.data?.data?.plans;
         setCartDetails(data);
+        setCurrentPlanDetails(res?.data?.data?.currentplandetails);
       } else {
         console.log(res?.data?.message, "res?.data?.message");
       }
@@ -713,6 +716,7 @@ const CommonOrderSummary = () => {
               tempDomainNames={tempDomainNames}
               setTempDomainNames={setTempDomainNames}
               onRemoveDomain={handleRemoveDomainFromCart}
+              currentPlanDetails={currentPlanDetails}
             />
           </div>
           <aside className={layoutStyles.rightSticky}>
