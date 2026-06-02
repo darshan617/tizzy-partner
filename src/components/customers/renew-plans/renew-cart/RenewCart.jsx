@@ -44,13 +44,15 @@ const RenewCart = ({
   onRemoveDomain,
   currentPlanDetails,
 }) => {
-  console.log(cartDetails, "cartDetails");
-
   const router = useRouter();
   const { showToast } = useToast();
   const isPopupVisiblle = useSelector(selectIsPopupVisible);
   const dispatch = useDispatch();
   console.log(isPopupVisiblle);
+  useEffect(() => {
+    console.log("cartDetails", cartDetails);
+    console.log("transfer_domain", cartDetails?.[0]?.transfer_domain);
+  }, [cartDetails]);
 
   const [cartToDelete, setCartToDelete] = useState({
     cart_id: null,
@@ -140,19 +142,32 @@ const RenewCart = ({
                     type="button"
                     className={styles.newCustomerBtn}
                     onClick={() => dispatch(setIsPopupVisible("new-customer"))}
+                    disabled={selectedCompany}
                   >
                     + New Customer
                   </button>
                 </div>
 
                 <div className={styles.customerFieldsRow}>
-                  <CustomDropdown
+                  {/* <CustomDropdown
                     options={companyNames}
                     value={selectedCompany || ""}
                     placeholder="Select Company Name"
                     label="Company Name"
                     onChange={(option) =>
                       onCompanyChange?.(option?.label || "", option?.value)
+                    }
+                  /> */}
+                  <CustomDropdown
+                    options={companyNames}
+                    value={selectedCompany || ""}
+                    placeholder="Select Company Name"
+                    label="Company Name"
+                    onChange={(option) =>
+                      onCompanyChange?.(
+                        option?.label || "",
+                        option?.value || null,
+                      )
                     }
                   />
                   {/* <div className={styles.fieldGroup}>
@@ -208,7 +223,25 @@ const RenewCart = ({
                             </div>
                           </div>
                         ))}
+                        {/* {cartDetails?.[0]?.plan?.provider_id === 2 &&
+                          domainList?.length < 3 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setDomainNames((prev) =>
+                                  prev?.length > 0
+                                    ? prev
+                                    : [{ id: Date.now(), prefix: "" }],
+                                );
+                                setIsPopupOpen("new-service");
+                              }}
+                              className={styles.addDomainBtn}
+                            >
+                              Add New Domain +
+                            </button>
+                          )} */}
                         {cartDetails?.[0]?.plan?.provider_id === 2 &&
+                          cartDetails?.[0]?.transfer_domain !== "yes" &&
                           domainList?.length < 3 && (
                             <button
                               type="button"
@@ -227,6 +260,7 @@ const RenewCart = ({
                           )}
                       </div>
                     )}
+
                     {cartDetails?.[0]?.plan?.provider_id === 1 &&
                       domainList?.length < 1 && (
                         <button
@@ -407,8 +441,8 @@ const RenewCart = ({
                               ? lineLicenses <= 1
                               : lisceneCounter === 1) ||
                             router?.query?.variant === "upgrade" ||
-                            router?.query?.variant === "downgrade" ||
-                            router?.query?.type === "renew-plan"
+                            router?.query?.variant === "downgrade"
+                            // router?.query?.type === "renew-plan"
                           }
                           onClick={() => {
                             if (listMode) {
@@ -450,8 +484,8 @@ const RenewCart = ({
                           max={customerLimit}
                           disabled={
                             router?.query?.variant === "upgrade" ||
-                            router?.query?.variant === "downgrade" ||
-                            router?.query?.type === "renew-plan"
+                            router?.query?.variant === "downgrade"
+                            // router?.query?.type === "renew-plan"
                           }
                         />
                         <button
@@ -484,8 +518,8 @@ const RenewCart = ({
                               ? lineLicenses === customerLimit
                               : lisceneCounter === customerLimit) ||
                             router?.query?.variant === "upgrade" ||
-                            router?.query?.variant === "downgrade" ||
-                            router?.query?.type === "renew-plan"
+                            router?.query?.variant === "downgrade"
+                            // router?.query?.type === "renew-plan"
                           }
                         >
                           +

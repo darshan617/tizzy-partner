@@ -14,6 +14,12 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const router = useRouter();
   const sidebarRef = useRef(null);
 
+  const creditLimit = Number(balanceAndCartData?.credit_limit || 0);
+  const walletBalance = Number(balanceAndCartData?.wallet_balance || 0);
+
+  const availablePercentage =
+    creditLimit > 0 ? (walletBalance / creditLimit) * 100 : 0;
+
   // Handle click outside to close sidebar
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -177,7 +183,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                 <div
                   className={styles.credscaleBar}
                   style={{
-                    width: `55%`,
+                    width: `${Math.min(availablePercentage, 100)}%`,
                   }}
                 ></div>
               </div>
@@ -190,8 +196,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                   {Number(
                     balanceAndCartData?.credit_limit -
                       balanceAndCartData?.wallet_balance,
-                  ).toFixed(2) || 0}{" "}
-                  of ₹ {balanceAndCartData?.credit_limit || 0}
+                  )?.toFixed(2) || 0}{" "}
+                  of ₹{" "}
+                  {Number(balanceAndCartData?.credit_limit)?.toFixed(2) || 0}
                 </div>
               </div>
             </div>

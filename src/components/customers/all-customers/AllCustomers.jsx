@@ -250,6 +250,9 @@ export default function CustomerList({
                                 <div className={`${styles.crName} ms-4 ps-2`}>
                                   {customer?.name}
                                 </div>
+                                <p className="m-0 ms-4 ps-2 text-secondary small">
+                                  Customer Id:{customer?.customer_no ?? " -"}
+                                </p>
                               </div>
                               <div className="col-lg-6 col-12">
                                 <div
