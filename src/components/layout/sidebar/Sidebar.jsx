@@ -177,7 +177,12 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                 <div
                   className={styles.credscaleBar}
                   style={{
-                    width: `55%`,
+                    width: `${
+                      balanceAndCartData?.credit_limit -
+                      (balanceAndCartData?.credit_limit -
+                        balanceAndCartData?.wallet_balance) /
+                        100
+                    }%`,
                   }}
                 ></div>
               </div>
@@ -190,8 +195,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                   {Number(
                     balanceAndCartData?.credit_limit -
                       balanceAndCartData?.wallet_balance,
-                  ).toFixed(2) || 0}{" "}
-                  of ₹ {balanceAndCartData?.credit_limit || 0}
+                  )?.toFixed(2) || 0}{" "}
+                  of ₹{" "}
+                  {Number(balanceAndCartData?.credit_limit)?.toFixed(2) || 0}
                 </div>
               </div>
             </div>

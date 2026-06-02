@@ -142,19 +142,32 @@ const RenewCart = ({
                     type="button"
                     className={styles.newCustomerBtn}
                     onClick={() => dispatch(setIsPopupVisible("new-customer"))}
+                    disabled={selectedCompany}
                   >
                     + New Customer
                   </button>
                 </div>
 
                 <div className={styles.customerFieldsRow}>
-                  <CustomDropdown
+                  {/* <CustomDropdown
                     options={companyNames}
                     value={selectedCompany || ""}
                     placeholder="Select Company Name"
                     label="Company Name"
                     onChange={(option) =>
                       onCompanyChange?.(option?.label || "", option?.value)
+                    }
+                  /> */}
+                  <CustomDropdown
+                    options={companyNames}
+                    value={selectedCompany || ""}
+                    placeholder="Select Company Name"
+                    label="Company Name"
+                    onChange={(option) =>
+                      onCompanyChange?.(
+                        option?.label || "",
+                        option?.value || null,
+                      )
                     }
                   />
                   {/* <div className={styles.fieldGroup}>

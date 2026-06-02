@@ -212,7 +212,6 @@ const OrderSummaryCard = ({
       if (res?.data?.success) {
         setDiscountedPercent(res?.data?.data?.discount_percent);
         showToast("Promo code applied successfully", "success");
-        setIsPromoCodeAdded(false);
       } else {
         showToast("Failed to apply promo code", "error");
       }
@@ -285,7 +284,15 @@ const OrderSummaryCard = ({
             Promo Code{" "}
             <button
               type="button"
-              onClick={() => setIsPromoCodeAdded(!isPromoCodeAdded)}
+              onClick={() => {
+                if (isPromoCodeAdded) {
+                  setPromoCode("");
+                  setDiscountedPercent(0);
+                  setIsPromoCodeAdded(false);
+                } else {
+                  setIsPromoCodeAdded(true);
+                }
+              }}
               className={styles.addLinkBtn}
             >
               ({isPromoCodeAdded ? "Remove" : "Add"})
@@ -387,10 +394,12 @@ const OrderSummaryCard = ({
                 <input
                   id="aadhaarInput"
                   type="text"
-                  placeholder=""
+                  placeholder="XXXX-XXXX-XXXX"
+                  maxLength={14}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   title="Enter Aadhar number"
                   className={styles.inputField}
-                  maxLength={12}
                   style={{
                     width: "100%",
                     padding: "10px 12px",
@@ -399,62 +408,79 @@ const OrderSummaryCard = ({
                     outline: "none",
                     fontSize: "15px",
                   }}
-                  value={aadharNumber}
-                  onChange={(e) => setAadharNumber(e.target.value)}
+                  // value={aadharNumber}
+                  value={aadharNumber.replace(/(\d{4})(?=\d)/g, "$1 ")}
+                  // onChange={(e) => {
+                  //   const value = e.target.value.replace(/\D/g, "");
+                  //   setAadharNumber(value);
+                  // }}
+                  onChange={(e) => {
+                    const digits = e.target.value
+                      .replace(/\D/g, "")
+                      .slice(0, 12);
+                    setAadharNumber(digits);
+                  }}
                 />
+                <p className="m-0 mt-1 small text-secondary text-start">
+                  <span className="fw-bold">NOTE: </span> Aadhaar verification
+                  is mandatory for identity verification and processing your
+                  domain registration request.
+                </p>
               </form>
             )
           )}
         </div>
 
-        {/* <button
-          className={styles.btnPrimary}
-          onClick={() => {
-            !isInsufficient && setIsPopupOpen("proceed");
-          }}
-        >
-          {isInsufficient ? "Clear Pending Invoices" : "Proceed"}
-        </button> */}
         <button
           className={styles.btnPrimary}
           // disabled={
-          //   router?.query?.type === "renew-plan" ||
-          //   router?.query?.type === "upgrade"
-          //     ? false
-          //     : selectedCompany?.length < 1
-          //       ? true
-          //       : false
+          //   isInsufficient ||
+          //   (router?.query?.type !== "renew-plan" &&
+          //     router?.query?.type !== "upgrade" &&
+          //     selectedCompany?.length < 1)
           // }
           disabled={
-            isInsufficient ||
-            (router?.query?.type !== "renew-plan" &&
-              router?.query?.type !== "upgrade" &&
-              selectedCompany?.length < 1)
+            router?.query?.type !== "renew-plan" &&
+            router?.query?.type !== "upgrade" &&
+            selectedCompany?.length < 1
           }
           // style={{
-          //   opacity: selectedCompany?.length < 1 ? 0.5 : 1,
-          //   cursor: selectedCompany?.length < 1 ? "not-allowed" : "pointer",
+          //   opacity:
+          //     isInsufficient ||
+          //     (router?.query?.type !== "renew-plan" &&
+          //       router?.query?.type !== "upgrade" &&
+          //       selectedCompany?.length < 1)
+          //       ? 0.5
+          //       : 1,
+
+          //   cursor:
+          //     isInsufficient ||
+          //     (router?.query?.type !== "renew-plan" &&
+          //       router?.query?.type !== "upgrade" &&
+          //       selectedCompany?.length < 1)
+          //       ? "not-allowed"
+          //       : "pointer",
           // }}
           style={{
             opacity:
-              isInsufficient ||
-              (router?.query?.type !== "renew-plan" &&
-                router?.query?.type !== "upgrade" &&
-                selectedCompany?.length < 1)
+              router?.query?.type !== "renew-plan" &&
+              router?.query?.type !== "upgrade" &&
+              selectedCompany?.length < 1
                 ? 0.5
                 : 1,
 
             cursor:
-              isInsufficient ||
-              (router?.query?.type !== "renew-plan" &&
-                router?.query?.type !== "upgrade" &&
-                selectedCompany?.length < 1)
+              router?.query?.type !== "renew-plan" &&
+              router?.query?.type !== "upgrade" &&
+              selectedCompany?.length < 1
                 ? "not-allowed"
                 : "pointer",
           }}
           onClick={() => {
             if (tempDomainNames?.length >= 1) {
               handleAadharNumber();
+            } else if (isInsufficient) {
+              router?.push("/invoice");
             } else {
               if (
                 router?.query?.type === "renew-plan" ||

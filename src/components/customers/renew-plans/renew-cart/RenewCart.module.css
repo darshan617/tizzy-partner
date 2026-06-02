@@ -314,6 +314,10 @@
 .newCustomerBtn:hover {
     background: #004591;
 }
+.newCustomerBtn:disabled{
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 
 .customerFieldsRow {
     display: grid;
