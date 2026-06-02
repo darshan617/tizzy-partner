@@ -260,6 +260,7 @@ const RenewCart = ({
                           )}
                       </div>
                     )}
+
                     {cartDetails?.[0]?.plan?.provider_id === 1 &&
                       domainList?.length < 1 && (
                         <button
@@ -440,8 +441,8 @@ const RenewCart = ({
                               ? lineLicenses <= 1
                               : lisceneCounter === 1) ||
                             router?.query?.variant === "upgrade" ||
-                            router?.query?.variant === "downgrade" ||
-                            router?.query?.type === "renew-plan"
+                            router?.query?.variant === "downgrade"
+                            // router?.query?.type === "renew-plan"
                           }
                           onClick={() => {
                             if (listMode) {
@@ -483,8 +484,8 @@ const RenewCart = ({
                           max={customerLimit}
                           disabled={
                             router?.query?.variant === "upgrade" ||
-                            router?.query?.variant === "downgrade" ||
-                            router?.query?.type === "renew-plan"
+                            router?.query?.variant === "downgrade"
+                            // router?.query?.type === "renew-plan"
                           }
                         />
                         <button
@@ -517,8 +518,8 @@ const RenewCart = ({
                               ? lineLicenses === customerLimit
                               : lisceneCounter === customerLimit) ||
                             router?.query?.variant === "upgrade" ||
-                            router?.query?.variant === "downgrade" ||
-                            router?.query?.type === "renew-plan"
+                            router?.query?.variant === "downgrade"
+                            // router?.query?.type === "renew-plan"
                           }
                         >
                           +

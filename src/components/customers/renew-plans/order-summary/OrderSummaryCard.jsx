@@ -14,6 +14,11 @@ import {
 } from "@/redux/apis/addToCartApi";
 import { BiCheck, BiX } from "react-icons/bi";
 import Cookies from "js-cookie";
+import {
+  selectIsPopupVisible,
+  setIsPopupVisible,
+} from "@/redux/slices/popupSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const toDomainArray = (value) => {
   if (Array.isArray(value)) return value.filter(Boolean);
@@ -48,6 +53,8 @@ const OrderSummaryCard = ({
   setTransferCode,
   handleAadharNumber,
 }) => {
+  const dispatch = useDispatch();
+  const isPopupVisible = useSelector(selectIsPopupVisible);
   const router = useRouter();
   const { showToast } = useToast();
   const userData = Cookies?.get("userData")
@@ -64,6 +71,8 @@ const OrderSummaryCard = ({
   const [domainFromApi, setDomainFromApi] = useState(null);
   const [transferDomainInput, setTransferDomainInput] = useState("");
   const [discountedPercent, setDiscountedPercent] = useState(0);
+  const [isConcernedAboutAadhar, setIsConcernedAboutAadhar] = useState(false);
+  console.log(isConcernedAboutAadhar, "isConcernedAboutAadhar");
 
   const providerId = Number(cartDetails?.[0]?.plan?.provider_id);
   const skipDomainVerification = providerId === 2;
@@ -242,6 +251,10 @@ const OrderSummaryCard = ({
       showToast("Failed to send credit request", "error");
     }
   };
+  const isAadharRequired =
+    router?.query?.type === "renew-plan" ||
+    router?.query?.type === "upgrade" ||
+    tempDomainNames?.length > 0;
 
   useEffect(() => {
     if (isPopupOpen !== "new-service" && isPopupOpen !== "transfer-service") {
@@ -421,11 +434,31 @@ const OrderSummaryCard = ({
                     setAadharNumber(digits);
                   }}
                 />
-                <p className="m-0 mt-1 small text-secondary text-start">
-                  <span className="fw-bold">NOTE: </span> Aadhaar verification
-                  is mandatory for identity verification and processing your
-                  domain registration request.
-                </p>
+
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    checked={isConcernedAboutAadhar}
+                    onChange={(e) =>
+                      setIsConcernedAboutAadhar(e.target.checked)
+                    }
+                  />
+                  <label className="form-check-label m-0 mt-1 small text-secondary text-start">
+                    I am concerned about{" "}
+                    <span
+                      className="text-primary"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        dispatch(setIsPopupVisible("terms-and-conditions"))
+                      }
+                    >
+                      {" "}
+                      terms and conditions
+                    </span>{" "}
+                    of Aadhaar verification.
+                  </label>
+                </div>
               </form>
             )
           )}
@@ -440,9 +473,10 @@ const OrderSummaryCard = ({
           //     selectedCompany?.length < 1)
           // }
           disabled={
-            router?.query?.type !== "renew-plan" &&
-            router?.query?.type !== "upgrade" &&
-            selectedCompany?.length < 1
+            (router?.query?.type !== "renew-plan" &&
+              router?.query?.type !== "upgrade" &&
+              selectedCompany?.length < 1) ||
+            (isAadharRequired && !isConcernedAboutAadhar)
           }
           // style={{
           //   opacity:
@@ -463,16 +497,18 @@ const OrderSummaryCard = ({
           // }}
           style={{
             opacity:
-              router?.query?.type !== "renew-plan" &&
-              router?.query?.type !== "upgrade" &&
-              selectedCompany?.length < 1
+              (router?.query?.type !== "renew-plan" &&
+                router?.query?.type !== "upgrade" &&
+                selectedCompany?.length < 1) ||
+              (isAadharRequired && !isConcernedAboutAadhar)
                 ? 0.5
                 : 1,
 
             cursor:
-              router?.query?.type !== "renew-plan" &&
-              router?.query?.type !== "upgrade" &&
-              selectedCompany?.length < 1
+              (router?.query?.type !== "renew-plan" &&
+                router?.query?.type !== "upgrade" &&
+                selectedCompany?.length < 1) ||
+              (isAadharRequired && !isConcernedAboutAadhar)
                 ? "not-allowed"
                 : "pointer",
           }}
@@ -507,6 +543,7 @@ const OrderSummaryCard = ({
                 : "Proceed"
               : "Proceed"}
         </button>
+
         {isInsufficient && (
           <div className={styles.requestBox}>
             <p>Want to complete purchase urgently?</p>
@@ -800,6 +837,22 @@ const OrderSummaryCard = ({
                 </div>
               </div>
             </div>
+          </div>
+        </CustomPopup>
+      )}
+      {isPopupVisible === "terms-and-conditions" && (
+        <CustomPopup
+          onClose={() => dispatch(setIsPopupVisible(""))}
+          maxWidth="400px"
+        >
+          <div className={styles.termsAndConditionsPopup}>
+            <h4 className={styles.termsAndConditionsPopupTitle}>
+              Terms and Conditions
+            </h4>
+            <p className="m-0 mt-3  text-secondary text-start">
+              Aadhaar verification is mandatory for identity verification and
+              processing your domain registration request.
+            </p>
           </div>
         </CustomPopup>
       )}
