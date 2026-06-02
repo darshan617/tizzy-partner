@@ -44,13 +44,15 @@ const RenewCart = ({
   onRemoveDomain,
   currentPlanDetails,
 }) => {
-  console.log(cartDetails, "cartDetails");
-
   const router = useRouter();
   const { showToast } = useToast();
   const isPopupVisiblle = useSelector(selectIsPopupVisible);
   const dispatch = useDispatch();
   console.log(isPopupVisiblle);
+  useEffect(() => {
+    console.log("cartDetails", cartDetails);
+    console.log("transfer_domain", cartDetails?.[0]?.transfer_domain);
+  }, [cartDetails]);
 
   const [cartToDelete, setCartToDelete] = useState({
     cart_id: null,
@@ -208,7 +210,25 @@ const RenewCart = ({
                             </div>
                           </div>
                         ))}
+                        {/* {cartDetails?.[0]?.plan?.provider_id === 2 &&
+                          domainList?.length < 3 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setDomainNames((prev) =>
+                                  prev?.length > 0
+                                    ? prev
+                                    : [{ id: Date.now(), prefix: "" }],
+                                );
+                                setIsPopupOpen("new-service");
+                              }}
+                              className={styles.addDomainBtn}
+                            >
+                              Add New Domain +
+                            </button>
+                          )} */}
                         {cartDetails?.[0]?.plan?.provider_id === 2 &&
+                          cartDetails?.[0]?.transfer_domain !== "yes" &&
                           domainList?.length < 3 && (
                             <button
                               type="button"

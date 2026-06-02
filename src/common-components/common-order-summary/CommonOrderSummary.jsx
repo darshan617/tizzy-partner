@@ -358,6 +358,7 @@ const CommonOrderSummary = () => {
           coupen: promoCode,
         },
       });
+      await handleGetCartDetails(); //this is called to get the updated isTransferdomain 'yes/no'
 
       setTempDomainNames(finalDomains);
       tempDomainNamesRef.current = finalDomains;
