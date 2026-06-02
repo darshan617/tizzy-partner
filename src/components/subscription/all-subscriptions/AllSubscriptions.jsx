@@ -180,7 +180,7 @@ const AllSubscriptions = ({
 
                           <div className="col">
                             <div className="row align-items-center py-3">
-                              <div className="col-md-5 col-12">
+                              <div className="col-md-4 col-12">
                                 <div
                                   className={`${styles.crDomain} d-flex align-items-center`}
                                 >
@@ -197,6 +197,10 @@ const AllSubscriptions = ({
                                     {subscription?.domain}
                                   </div>
                                 </div>
+                                <p className="m-0 ms-4 ps-2 text-secondary small">
+                                  {" "}
+                                  Order Id: {subscription?.order_no}
+                                </p>
                                 <div className={`${styles.crName} ms-4 ps-2`}>
                                   {subscription?.currentPlan}
                                 </div>
@@ -238,23 +242,25 @@ const AllSubscriptions = ({
                                       </div>
                                     ) : null}
                                   </div>
-                                  <button
-                                    type="button"
-                                    className={styles.renewBtn}
-                                    onClick={() =>
-                                      router.push({
-                                        pathname: "/order-summary",
-                                        query: {
-                                          type: "renew-plan",
-                                          order_id: subscription?.order_id,
-                                          renewal_order_id:
-                                            subscription?.renewal_order_id,
-                                        },
-                                      })
-                                    }
-                                  >
-                                    Renew
-                                  </button>
+                                  {subscription?.status === "expiring" && (
+                                    <button
+                                      type="button"
+                                      className={styles.renewBtn}
+                                      onClick={() =>
+                                        router.push({
+                                          pathname: "/order-summary",
+                                          query: {
+                                            type: "renew-plan",
+                                            order_id: subscription?.order_id,
+                                            renewal_order_id:
+                                              subscription?.renewal_order_id,
+                                          },
+                                        })
+                                      }
+                                    >
+                                      Renew
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                             </div>
