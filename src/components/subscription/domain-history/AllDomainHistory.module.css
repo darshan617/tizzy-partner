@@ -1,0 +1,324 @@
+.sectionCard {
+  max-width: 1100px;
+  margin: auto;
+  width: 100%;
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 0 18px 54px rgba(15, 23, 42, 0.04);
+  padding: 1rem;
+}
+
+.breadcrumbHeader {
+  max-width: 1100px;
+  margin: auto;
+  padding-inline: 0.25rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.titleGroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.5rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.sectionLabel {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #444444;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.pageTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0355ac;
+  margin: 0;
+  word-break: break-word;
+}
+
+.historyCard {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+}
+
+.domainSection + .domainSection {
+  margin-top: 1.5rem;
+}
+
+.historyRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 10px 15px;
+  border-radius: 10px;
+  background: #fbfbfb;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.historyRow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.rowLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  min-width: 0;
+  flex: 1 1 280px;
+  max-width: 100%;
+}
+
+.productInfo {
+  min-width: 0;
+  flex: 1;
+}
+
+.statusIcon {
+  display: inline-flex;
+  height: 35px;
+  width: 35px;
+  padding: 8px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.statusLabel {
+  display: inline-flex;
+  margin-bottom: 0.35rem;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #365314;
+  background: #f9bf591a;
+}
+
+.productName {
+  font-size: 14px;
+  color: #444444;
+  font-weight: 500;
+  margin: 0;
+  word-break: break-word;
+}
+
+.historyBtn {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.historyBtn button {
+  border: none;
+  background: none;
+  color: #0355ac;
+  font-size: 12px;
+  font-weight: 400;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.rowGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: start;
+  flex: 1 1 320px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.rowValue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-weight: 400;
+  font-size: 14px;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: #cccccc;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.valueGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.valueText {
+  word-break: break-word;
+}
+
+.subText {
+  font-size: 12px;
+  color: #444444;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: #64748b;
+  font-size: 14px;
+}
+
+@media screen and (min-width: 993px) {
+  .rowLeft {
+    flex: 0 1 375px;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .historyCard {
+    padding: 1rem;
+  }
+
+  .historyRow {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .rowLeft {
+    flex: none;
+    width: 100%;
+  }
+
+  .rowGrid {
+    flex: none;
+    width: 100%;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .rowValue {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .sectionCard {
+    padding: 0.75rem;
+    border-radius: 14px;
+  }
+
+  .historyCard {
+    padding: 0.75rem;
+    gap: 8px;
+  }
+
+  .cardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .titleGroup {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    width: 100%;
+  }
+
+  .sectionLabel {
+    font-size: 12px;
+    white-space: normal;
+  }
+
+  .pageTitle {
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .historyBtn {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 1.25rem;
+  }
+
+  .historyRow:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+@media screen and (max-width: 575px) {
+  .breadcrumbHeader {
+    padding-inline: 0;
+  }
+
+  .rowGrid {
+    grid-template-columns: 1fr;
+    gap: 0;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    padding-top: 0.75rem;
+  }
+
+  .rowValue {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    gap: 0.75rem;
+  }
+
+  .rowValue:last-child {
+    border-bottom: none;
+  }
+
+  .rowValue .fieldLabel {
+    flex-shrink: 0;
+  }
+
+  .valueGroup,
+  .valueText {
+    text-align: right;
+    max-width: 65%;
+  }
+
+  .valueGroup {
+    align-items: flex-end;
+  }
+
+  .subText {
+    font-size: 11px;
+    color: #888;
+  }
+}

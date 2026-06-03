@@ -22,10 +22,21 @@ const subscriptionsApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["subscriptions"],
     }),
+    getDomainHistory: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: "/domain-history",
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
 export const {
   useGetAllSubscriptionsMutation,
   useGetSubscriptionDetailsMutation,
+  useGetDomainHistoryMutation,
 } = subscriptionsApi;

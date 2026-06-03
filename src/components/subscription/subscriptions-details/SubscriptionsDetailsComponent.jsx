@@ -291,7 +291,17 @@ const SubscriptionsDetailsComponent = () => {
                 </div>
                 <div>
                   <small className="text-decoration-underline">
-                    <Link href="">View History</Link>
+                    <Link
+                      href={{
+                        pathname: "/subscriptions/domain-history",
+                        query: {
+                          domains: domainName,
+                          customerId: router?.query?.customerId,
+                        },
+                      }}
+                    >
+                      View History
+                    </Link>
                   </small>
                 </div>
               </div>
