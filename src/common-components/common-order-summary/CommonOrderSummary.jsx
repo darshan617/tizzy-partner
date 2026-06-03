@@ -208,9 +208,6 @@ const CommonOrderSummary = () => {
   const [aadharNumberApi, { isLoading: isAadharNumberLoading }] =
     useAadharNumberMutation();
 
-  const [verifyAadharNumberOtp, { isLoading: isVerifyAadharNumberOtpLoading }] =
-    useVerifyAadharNumberOtpMutation();
-
   const handleAddToCart = async () => {
     try {
       const res = await addToCart({
@@ -748,6 +745,7 @@ const CommonOrderSummary = () => {
               transferCode={transferCode}
               setTransferCode={setTransferCode}
               handleAadharNumber={handleAadharNumber}
+              isAadharNumberLoading={isAadharNumberLoading}
             />
           </aside>
         </div>

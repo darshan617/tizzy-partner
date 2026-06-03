@@ -12,9 +12,20 @@ const subscriptionsApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["subscriptions"],
     }),
+    getSubscriptionDetails: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/subscription-details`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["subscriptions"],
+    }),
   }),
 });
 
 export const {
-useGetAllSubscriptionsMutation
+  useGetAllSubscriptionsMutation,
+  useGetSubscriptionDetailsMutation,
 } = subscriptionsApi;

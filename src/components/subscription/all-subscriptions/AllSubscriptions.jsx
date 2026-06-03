@@ -272,9 +272,12 @@ const AllSubscriptions = ({
                             <Link
                               className={styles.crBtn}
                               href={{
-                                pathname: "/customers/customer-details",
+                                // pathname: "/customers/customer-details",
+                                pathname:
+                                  "/subscriptions/subscriptions-details",
                                 query: {
                                   customerId: subscription?.customer_id,
+                                  orderId: subscription?.order_id,
                                 },
                               }}
                             >
