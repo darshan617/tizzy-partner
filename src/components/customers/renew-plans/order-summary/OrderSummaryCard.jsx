@@ -445,7 +445,7 @@ const OrderSummaryCard = ({
                     }
                   />
                   <label className="form-check-label m-0 mt-1 small text-secondary text-start">
-                    I am concerned about{" "}
+                    I have read and agree to th{" "}
                     <span
                       className="text-primary"
                       style={{ cursor: "pointer" }}
@@ -454,9 +454,8 @@ const OrderSummaryCard = ({
                       }
                     >
                       {" "}
-                      terms and conditions
+                      Aadhaar Verification Consent.
                     </span>{" "}
-                    of Aadhaar verification.
                   </label>
                 </div>
               </form>
@@ -847,11 +846,14 @@ const OrderSummaryCard = ({
         >
           <div className={styles.termsAndConditionsPopup}>
             <h4 className={styles.termsAndConditionsPopupTitle}>
-              Terms and Conditions
+              Aadhaar Verification Consent
             </h4>
             <p className="m-0 mt-3  text-secondary text-start">
-              Aadhaar verification is mandatory for identity verification and
-              processing your domain registration request.
+              I hereby provide my voluntary consent to verify my identity using
+              my Aadhaar number as per applicable regulations. I understand that
+              my Aadhaar details will be used solely for identity verification
+              purposes and will be handled securely in accordance with
+              applicable data protection and privacy requirements.
             </p>
           </div>
         </CustomPopup>
