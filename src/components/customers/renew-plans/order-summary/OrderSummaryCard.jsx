@@ -52,6 +52,7 @@ const OrderSummaryCard = ({
   transferCode,
   setTransferCode,
   handleAadharNumber,
+  isAadharNumberLoading,
 }) => {
   const dispatch = useDispatch();
   const isPopupVisible = useSelector(selectIsPopupVisible);
@@ -475,7 +476,8 @@ const OrderSummaryCard = ({
             (router?.query?.type !== "renew-plan" &&
               router?.query?.type !== "upgrade" &&
               selectedCompany?.length < 1) ||
-            (isAadharRequired && !isConcernedAboutAadhar)
+            (isAadharRequired && !isConcernedAboutAadhar) ||
+            isAadharNumberLoading
           }
           // style={{
           //   opacity:
@@ -499,7 +501,8 @@ const OrderSummaryCard = ({
               (router?.query?.type !== "renew-plan" &&
                 router?.query?.type !== "upgrade" &&
                 selectedCompany?.length < 1) ||
-              (isAadharRequired && !isConcernedAboutAadhar)
+              (isAadharRequired && !isConcernedAboutAadhar) ||
+              isAadharNumberLoading
                 ? 0.5
                 : 1,
 
@@ -507,7 +510,8 @@ const OrderSummaryCard = ({
               (router?.query?.type !== "renew-plan" &&
                 router?.query?.type !== "upgrade" &&
                 selectedCompany?.length < 1) ||
-              (isAadharRequired && !isConcernedAboutAadhar)
+              (isAadharRequired && !isConcernedAboutAadhar) ||
+              isAadharNumberLoading
                 ? "not-allowed"
                 : "pointer",
           }}
@@ -539,8 +543,12 @@ const OrderSummaryCard = ({
                 router?.query?.type === "upgrade"
               ? isInsufficient
                 ? "Clear Pending Invoices"
-                : "Proceed"
-              : "Proceed"}
+                : isAadharNumberLoading
+                  ? "Verifying..."
+                  : "Proceed"
+              : isAadharNumberLoading
+                ? "Verifying..."
+                : "Proceed"}
         </button>
 
         {isInsufficient && (
