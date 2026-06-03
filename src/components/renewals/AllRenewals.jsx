@@ -4,26 +4,57 @@ import { FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { LuPencil } from "react-icons/lu";
 import Loader from "@/common-components/loader/Loader";
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useGetAllRenewalsListMutation } from "@/redux/apis/renewalsApi";
+import Cookies from "js-cookie";
+import React, { useEffect } from "react";
 
 const statusLabelMap = {
-  active: "Active",
   expiring: "Expiring",
+  active: "Active",
   inactive: "Inactive",
+  expired: "Expired",
 };
 
-const statusOrder = ["active", "expiring", "inactive"];
+const statusOrder = ["expiring", "active", "inactive", "expired"];
 
-const AllSubscriptions = ({
-  allSubscriptionsData,
-  isAllSubscriptionDataLoading,
-}) => {
+const formatDueDate = (dateStr) => {
+  if (!dateStr) return "-";
+  const [year, month, day] = dateStr.split("-");
+  if (!year || !month || !day) return dateStr;
+  return `${day}-${month}-${year}`;
+};
+
+const AllRenewals = () => {
   const router = useRouter();
+  const userData = Cookies.get("userData")
+    ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
+    : {};
 
+  const [getAllRenewalsList, { isLoading: isAllRenewalsListLoading }] =
+    useGetAllRenewalsListMutation();
+  const [renewalsList, setRenewalsList] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
+
+  const fetchAllRenewalsList = async () => {
+    try {
+      const res = await getAllRenewalsList({
+        body: { partner_id: userData?.id },
+      });
+      if (res?.data?.success) {
+        setRenewalsList(res?.data?.data || []);
+      }
+    } catch (error) {
+      console.log("Error", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllRenewalsList();
+  }, []);
 
   const toggleStatus = (status) => {
     setSelectedStatuses((prev) =>
@@ -33,22 +64,29 @@ const AllSubscriptions = ({
     );
   };
 
-  const filteredSubscriptions = useMemo(
+  const filteredRenewals = useMemo(
     () =>
-      []?.filter((subscription) => {
+      renewalsList.filter((renewal) => {
         const q = searchQuery.trim().toLowerCase();
         const matchesSearch =
           q === "" ||
-          subscription.domain.toLowerCase().includes(q) ||
-          subscription.plan.toLowerCase().includes(q);
+          renewal.domain?.toLowerCase().includes(q) ||
+          renewal.plan?.toLowerCase().includes(q) ||
+          renewal.order_no?.toLowerCase().includes(q) ||
+          renewal.customer_name?.toLowerCase().includes(q) ||
+          renewal.email?.toLowerCase().includes(q);
+        const renewalStatus = renewal.status?.toLowerCase();
         const matchesStatus =
           selectedStatuses.length === 0 ||
-          selectedStatuses.includes(subscription.status);
+          selectedStatuses.includes(renewalStatus);
 
         return matchesSearch && matchesStatus;
       }),
-    [searchQuery, selectedStatuses],
+    [renewalsList, searchQuery, selectedStatuses],
   );
+
+  const totalCount = renewalsList.length;
+  const showingCount = filteredRenewals.length;
 
   return (
     <div className="col">
@@ -61,7 +99,7 @@ const AllSubscriptions = ({
                   <input
                     type="text"
                     className={`${styles.pageSearch} form-control`}
-                    placeholder="Search Subscription"
+                    placeholder="Search Renewal"
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)}
                   />
@@ -89,13 +127,10 @@ const AllSubscriptions = ({
               >
                 Showing{" "}
                 <span className="fw-medium darkColor">
-                  1 - {allSubscriptionsData?.length}
+                  {showingCount > 0 ? 1 : 0} - {showingCount}
                 </span>{" "}
-                from{" "}
-                <span className="fw-medium darkColor">
-                  {allSubscriptionsData?.length}
-                </span>{" "}
-                Subscriptions
+                from <span className="fw-medium darkColor">{totalCount}</span>{" "}
+                Renewals
               </div>
             </div>
           </div>
@@ -115,14 +150,14 @@ const AllSubscriptions = ({
                           <input
                             type="checkbox"
                             className="btn-check"
-                            id={`status_${status}`}
+                            id={`renewal_status_${status}`}
                             autoComplete="off"
                             checked={selectedStatuses.includes(status)}
                             onChange={() => toggleStatus(status)}
                           />
                           <label
                             className={`${styles.filterItem} rounded-pill`}
-                            htmlFor={`status_${status}`}
+                            htmlFor={`renewal_status_${status}`}
                           >
                             {statusLabelMap[status]}
                           </label>
@@ -160,26 +195,19 @@ const AllSubscriptions = ({
             <div
               className={`${styles.subscriptionList} d-flex flex-column gap-3 mb-5`}
             >
-              {!isAllSubscriptionDataLoading ? (
-                allSubscriptionsData?.length > 0 ? (
-                  allSubscriptionsData?.map((subscription, idx) => {
-                    console.log(subscription, "subscription");
+              {!isAllRenewalsListLoading ? (
+                filteredRenewals.length > 0 ? (
+                  filteredRenewals.map((renewal) => {
+                    const statusKey = renewal.status?.toLowerCase();
 
                     return (
                       <div
-                        key={idx}
+                        key={renewal.order_id}
                         className={`${styles.contentRow} ${styles.btnDisplay}`}
                       >
                         <div className="row align-items-center">
-                          <div className={`${styles.ckbCol} col-auto`}>
-                            <input
-                              type="checkbox"
-                              className="form-check-input"
-                            />
-                          </div>
-
                           <div className="col">
-                            <div className="row align-items-center py-3">
+                            <div className="row align-items-center py-3 px-3">
                               <div className="col-md-4 col-12">
                                 <div
                                   className={`${styles.crDomain} d-flex align-items-center`}
@@ -187,29 +215,26 @@ const AllSubscriptions = ({
                                   <div
                                     className={`avatarSmall flex-shrink-0 ${styles.avatarBg}`}
                                   >
-                                    {subscription?.domain
-                                      ?.charAt(0)
-                                      ?.toUpperCase()}
+                                    {renewal?.domain?.charAt(0)?.toUpperCase()}
                                   </div>
                                   <div
                                     className={`${styles.crDomainName} ps-2`}
                                   >
-                                    {subscription?.domain}
+                                    {renewal?.domain}
                                   </div>
                                 </div>
                                 <p className="m-0 ms-4 ps-2 text-secondary small">
-                                  {" "}
-                                  Order Id: {subscription?.order_no}
+                                  Order Id: {renewal?.order_no}
                                 </p>
                                 <div className={`${styles.crName} ms-4 ps-2`}>
-                                  {subscription?.currentPlan}
+                                  {renewal?.plan}
                                 </div>
                               </div>
 
                               <div className="col-md-2 col-6 text-center">
                                 <div className={styles.metaHead}>License</div>
                                 <div className={styles.licenseValue}>
-                                  <span>{subscription?.licenses}</span>
+                                  <span>{renewal?.license_count}</span>
                                   <button
                                     type="button"
                                     className={styles.editBtn}
@@ -222,7 +247,10 @@ const AllSubscriptions = ({
                               <div className="col-md-2 col-6 text-center">
                                 <div className={styles.metaHead}>Due on</div>
                                 <div className={styles.dueValue}>
-                                  {subscription?.due_date || "-"}
+                                  {formatDueDate(
+                                    renewal?.renewal_date ||
+                                      renewal?.subscription_end_date,
+                                  )}
                                 </div>
                               </div>
 
@@ -232,20 +260,18 @@ const AllSubscriptions = ({
                                 <div className={styles.statusInner}>
                                   <div className={styles.statusBadgeGroup}>
                                     <span
-                                      className={`${styles.statusBadge} ${subscription?.status?.toLowerCase() === "active" ? styles.activeBadge : ""} ${subscription?.status?.toLowerCase() === "expiring" ? styles.expiringBadge : ""}  ${subscription?.status?.toLowerCase() === "expired" ? styles.expired : ""} ${subscription?.status === "inactive" ? styles.inactiveBadge : ""}`}
+                                      className={`${styles.statusBadge} ${statusKey === "active" ? styles.activeBadge : ""} ${statusKey === "expiring" ? styles.expiringBadge : ""} ${statusKey === "expired" ? styles.expired : ""} ${statusKey === "inactive" ? styles.inactiveBadge : ""}`}
                                     >
-                                      {subscription?.status}
+                                      {renewal?.status}
                                     </span>
-                                    {subscription?.subtext ? (
+                                    {renewal?.days_left != null ? (
                                       <div className={styles.statusSubtext}>
-                                        {subscription?.subtext}
+                                        {renewal.days_left} days left
                                       </div>
                                     ) : null}
                                   </div>
-                                  {(subscription?.status?.toLowerCase() ===
-                                    "expiring" ||
-                                    subscription?.status?.toLowerCase() ===
-                                      "expired") && (
+                                  {(statusKey === "expiring" ||
+                                    statusKey === "expired") && (
                                     <button
                                       type="button"
                                       className={styles.renewBtn}
@@ -254,9 +280,7 @@ const AllSubscriptions = ({
                                           pathname: "/order-summary",
                                           query: {
                                             type: "renew-plan",
-                                            order_id: subscription?.order_id,
-                                            renewal_order_id:
-                                              subscription?.renewal_order_id,
+                                            order_id: renewal?.order_id,
                                           },
                                         })
                                       }
@@ -275,12 +299,11 @@ const AllSubscriptions = ({
                             <Link
                               className={styles.crBtn}
                               href={{
-                                // pathname: "/customers/customer-details",
                                 pathname:
                                   "/subscriptions/subscriptions-details",
                                 query: {
-                                  customerId: subscription?.customer_id,
-                                  orderId: subscription?.order_id,
+                                  orderId: renewal?.order_id,
+                                  type: "renewals",
                                 },
                               }}
                             >
@@ -305,7 +328,7 @@ const AllSubscriptions = ({
                     );
                   })
                 ) : (
-                  <p className="text-center m-0">No Subscriptions Data</p>
+                  <p className="text-center m-0">No Renewals Data</p>
                 )
               ) : (
                 <Loader />
@@ -318,4 +341,4 @@ const AllSubscriptions = ({
   );
 };
 
-export default AllSubscriptions;
+export default AllRenewals;
