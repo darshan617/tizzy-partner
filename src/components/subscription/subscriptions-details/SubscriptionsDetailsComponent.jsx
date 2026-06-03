@@ -142,18 +142,28 @@ const SubscriptionsDetailsComponent = () => {
             <div className="col">
               <nav className={`${styles.breadcrumb} mb-0`}>
                 <Link href="/dashboard">Dashboard</Link> /{" "}
-                <Link href="/subscriptions">Subscriptions</Link>
+                {router?.query?.type === "renewals" ? (
+                  <Link href="/renewals">Renewals</Link>
+                ) : (
+                  <Link href="/subscriptions">Subscriptions</Link>
+                )}
                 <span className="breadcrumb-item" />
                 <h1 className="breadcrumb-item active" aria-current="page">
-                  Subscription - {router?.query?.orderId}
+                  {router?.query?.type === "renewals"
+                    ? "Renewal"
+                    : "Subscription"}{" "}
+                  - {router?.query?.orderId}
                 </h1>
               </nav>
             </div>
             <div className="col-auto">
-              <Link href="/subscriptions" className="btn small btnWhite">
+              <button
+                onClick={() => router?.back()}
+                className="btn small btnWhite"
+              >
                 <IoMdArrowBack />
                 <span>Back</span>
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -177,14 +187,16 @@ const SubscriptionsDetailsComponent = () => {
                     >
                       <p className="mb-1">{customer?.company_name || "-"}</p>
                     </div>
-                    <div className={`${styles.idBadge} mt-1`}>
-                      Customer Id :{" "}
-                      <strong>
-                        {customer?.customer_id ||
-                          router?.query?.customerId ||
-                          "-"}
-                      </strong>
-                    </div>
+                    {router?.query?.type !== "renewals" && (
+                      <div className={`${styles.idBadge} mt-1`}>
+                        Customer Id :{" "}
+                        <strong>
+                          {customer?.customer_id ||
+                            router?.query?.customerId ||
+                            "-"}
+                        </strong>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -242,28 +254,31 @@ const SubscriptionsDetailsComponent = () => {
                     </h3>
                   </div>
                 </div>
-                <div className="col-md-3 col-auto d-flex gap-2 justify-content-end">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      router?.push({
-                        pathname: "/order-summary",
-                        query: {
-                          type: "renew-plan",
-                          order_id: subscriptionDetails?.order_id,
-                        },
-                      })
-                    }
-                    className={`${styles.crRenew} btn small btnWhite`}
-                  >
-                    <MdAutorenew
-                      className="me-2"
-                      size={14}
-                      style={{ minWidth: "14px" }}
-                    />
-                    <span>Renew</span>
-                  </button>
-                </div>
+                {(plans?.[0]?.status?.toLowerCase() === "expiring" ||
+                  plans?.[0]?.status?.toLowerCase() === "expired") && (
+                  <div className="col-md-3 col-auto d-flex gap-2 justify-content-end">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        router?.push({
+                          pathname: "/order-summary",
+                          query: {
+                            type: "renew-plan",
+                            order_id: subscriptionDetails?.order_id,
+                          },
+                        })
+                      }
+                      className={`${styles.crRenew} btn small btnWhite`}
+                    >
+                      <MdAutorenew
+                        className="me-2"
+                        size={14}
+                        style={{ minWidth: "14px" }}
+                      />
+                      <span>Renew</span>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 

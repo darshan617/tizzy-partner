@@ -4,6 +4,7 @@ import { LuLayoutDashboard, LuUsers } from "react-icons/lu";
 import { VscFiles } from "react-icons/vsc";
 import { PiHandCoinsLight } from "react-icons/pi";
 import { LuReceiptIndianRupee } from "react-icons/lu";
+import { MdAutorenew } from "react-icons/md";
 
 export const SIDEBAR_MENU_CONSTANTS = [
   {
@@ -23,6 +24,12 @@ export const SIDEBAR_MENU_CONSTANTS = [
     title: "Subscriptions",
     icon: VscFiles,
     href: "/subscriptions",
+  },
+  {
+    id: 7,
+    title: "Renewals",
+    icon: MdAutorenew,
+    href: "/renewals",
   },
   {
     id: 4,
