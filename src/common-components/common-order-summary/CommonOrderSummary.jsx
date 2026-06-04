@@ -756,7 +756,7 @@ const CommonOrderSummary = () => {
           </p>
 
           <button
-            onClick={() => router.push("/services/google-cloud-partner")}
+            onClick={() => router.push("/services/google-workspace")}
             className="btnDefault btn"
           >
             Buy New Service

@@ -341,7 +341,7 @@ export default function CustomerDetail() {
               <p className="m-0">No Subscriptions</p>
               <button
                 className="small btnDefault btn"
-                onClick={() => router.push("/services/google-cloud-partner")}
+                onClick={() => router.push("/services/google-workspace")}
               >
                 <BsPlusCircleDotted className="me-2" size={14} />
                 <span>Buy New Subscription</span>
@@ -501,7 +501,7 @@ export default function CustomerDetail() {
                                         : innerPlan?.provider_name ===
                                             "Microsoft 365"
                                           ? "microsoft-solution-partner"
-                                          : "google-cloud-partner"
+                                          : "google-workspace"
                                     }`,
                                     query: {
                                       type: "upgrade",
