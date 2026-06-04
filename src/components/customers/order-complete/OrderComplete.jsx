@@ -7,6 +7,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi";
 import Cookies from "js-cookie";
+import Loader from "@/common-components/loader/Loader";
+import { MdOutlineFileDownload } from "react-icons/md";
 
 const OrderComplete = () => {
   const router = useRouter();
@@ -19,6 +21,7 @@ const OrderComplete = () => {
       skip: !userData?.id,
     },
   );
+  console.log(router.query.po);
   return (
     <div>
       {/* <div className="col">
@@ -83,12 +86,7 @@ const OrderComplete = () => {
               </span>
             </div>
           </div>
-          <div className={`${styles.InvoiceImg} my-4`}>
-            {/* <Image
-                            src={invoice}
-                            alt="Tax Invoice" width={300} height={425}
-                           
-                        /> */}
+          {/* <div className={`${styles.InvoiceImg} my-4`}>
             {router?.query?.po ? (
               <Link
                 href={router.query.po}
@@ -99,7 +97,32 @@ const OrderComplete = () => {
                 Download Purchase Order PDF
               </Link>
             ) : null}
-          </div>
+          </div> */}
+          <Link
+            href={router?.query?.po || "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ display: "block" }}
+            className={styles.downloadInvoiceLink}
+          >
+            <button className={styles.downloadInvoiceBtn}>
+              <MdOutlineFileDownload size={20} />
+            </button>
+            {router?.query?.po ? (
+              <iframe
+                src={`${router?.query?.po}#toolbar=0`}
+                width="100%"
+                height="423px"
+                frameBorder="0"
+                style={{ pointerEvents: "none" }} // makes the iframe itself non-interactive
+              />
+            ) : (
+              <div>
+                <Loader />
+                <p>Loading Purchase Order PDF...</p>
+              </div>
+            )}
+          </Link>
         </div>
       </div>
     </div>

@@ -144,8 +144,6 @@ const SalesReport = ({ data, isDataLoading }) => {
         <div className="col-xl d-xl-flex">
           <div className="row row-cols-xl-2 row-cols-md-4 row-cols-2 g-3 g-sm-4">
             {invoiceCards?.map((card, idx) => {
-              console.log(invoiceCardsData[card?.label?.toLocaleUpperCase()]);
-
               return (
                 <div className="col" key={idx}>
                   <div className={`${styles.invoiceCard} ${styles.btnDisplay}`}>
@@ -153,9 +151,11 @@ const SalesReport = ({ data, isDataLoading }) => {
                       <div className={styles.invoiceCardContent}>
                         <p className={styles.invoiceLabel}>
                           {card.label}
-                          {/* <span className={styles.invoiceCount}>
-                            ({card.count})
-                          </span> */}
+                          <span className={styles.invoiceCount}>
+                            (
+                            {invoiceCardsData[card?.label?.toLocaleUpperCase()]}
+                            )
+                          </span>
                         </p>
                         <p className={styles.statValue}>
                           ₹
