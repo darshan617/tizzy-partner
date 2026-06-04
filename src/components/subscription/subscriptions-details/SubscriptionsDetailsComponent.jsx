@@ -246,14 +246,21 @@ const SubscriptionsDetailsComponent = () => {
             <div className="border-bottom py-sm-2 py-3">
               <div className="row align-items-center position-relative">
                 <div className="col-md-3 d-none d-md-block" />
-                <div className="col-md-6 col text-center d-flex align-items-center justify-content-md-center">
+                <div className="col-md-6 col text-center d-flex align-items-center justify-content-md-center flex-column">
                   <div className="d-inline-flex align-items-center domainSection">
                     <CiGlobe />
                     <h3 className="mb-0 ms-2 fw-semibold primaryColor">
                       {domainName || ""}
                     </h3>
                   </div>
+                  <p className="m-0 text-center small mt-1">
+                    Order Id:{" "}
+                    <span className="fw-bold">
+                      {subscriptionDetails?.order_no}
+                    </span>
+                  </p>
                 </div>
+
                 {(plans?.[0]?.status?.toLowerCase() === "expiring" ||
                   plans?.[0]?.status?.toLowerCase() === "expired") && (
                   <div className="col-md-3 col-auto d-flex gap-2 justify-content-end">
@@ -400,6 +407,33 @@ const SubscriptionsDetailsComponent = () => {
                           >
                             UPGRADE
                           </Link>
+                          {/* /
+                          <Link
+                            className={styles.downgradeBtn}
+                            href={{
+                              pathname: "/services/tizzy",
+                              query: {
+                                type: "downgrade",
+                                order_id: subscriptionDetails?.order_id,
+                                customer_id: router?.query?.customerId,
+                                plan_id: plan?.plan_id,
+                                order_sub_id: plan?.order_sub_id,
+                              },
+                            }}
+                            onClick={() => {
+                              Cookies.remove("customerData");
+                              Cookies.set(
+                                "customerData",
+                                JSON.stringify({
+                                  partner_id: userData?.id,
+                                  customer_id: router?.query?.customerId,
+                                  domain_name: domainName,
+                                }),
+                              );
+                            }}
+                          >
+                            DOWNGRADE
+                          </Link> */}
                         </div>
                       </div>
                     </div>
