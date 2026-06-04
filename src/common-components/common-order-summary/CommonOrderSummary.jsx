@@ -7,7 +7,6 @@ import {
   useGetCartDetailsMutation,
   useGetUpdateCartDetailsQuery,
   useGetUpgradeAddToCartDetailsMutation,
-  useGetUpgradeAddToCartDetailsQuery,
   useRenewCustomerDetailsMutation,
   useUpdateCartMutation,
   useVerifyAadharNumberOtpMutation,
@@ -89,6 +88,14 @@ const buildAutoUpdateCartBody = ({
   }
 
   return body;
+};
+
+const normalizeUpgradePlans = (plans, walletBalance) => {
+  const list = Array.isArray(plans) ? plans : plans ? [plans] : [];
+  return list.map((item) => ({
+    ...item,
+    wallet_balance: item?.wallet_balance ?? walletBalance,
+  }));
 };
 
 const CommonOrderSummary = () => {
@@ -503,24 +510,68 @@ const CommonOrderSummary = () => {
     }
   };
 
+  const applyUpgradeCartState = (payload, walletBalance) => {
+    const plans = normalizeUpgradePlans(payload?.plans, walletBalance);
+    if (plans.length === 0) return false;
+
+    setCartDetails(plans);
+    setCurrentPlanDetails(payload?.currentplandetails ?? {});
+    setPricePerUser(Number(plans[0]?.unit_price) || 0);
+    setLisceneCounter(plans[0]?.licenses || 1);
+
+    const initialDomains = [
+      ...new Set(plans.flatMap((item) => toDomainArray(item?.domain_name))),
+    ];
+    setTempDomainNames(initialDomains);
+    tempDomainNamesRef.current = initialDomains;
+
+    const loadedCompany = normalizeCompanyName(
+      plans[0]?.company_name || customerData?.company_name,
+    );
+    if (loadedCompany) {
+      setSelectedCompany(loadedCompany);
+      selectedCompanyRef.current = loadedCompany;
+    }
+
+    dispatch(
+      setCartData({
+        ...payload,
+        plans,
+        wallet_balance: walletBalance,
+      }),
+    );
+    return true;
+  };
+
   //get upgrade cart details api
   const handleGetUpgradeCartDetails = async () => {
     try {
+      const customerId =
+        router?.query?.customer_id || customerData?.customer_id;
       const res = await getUpgradeCartDetailsApi({
         body: {
           partner_id: userData?.id,
-          customer_id: router?.query?.customer_id,
+          customer_id: customerId,
+          order_id: router?.query?.order_id,
           order_sub_id: router?.query?.order_sub_id,
         },
       });
+      const walletBalance = res?.data?.wallet_balance;
       if (res?.data?.success) {
-        const data = res?.data?.data?.plans;
-        setCartDetails(data);
-        setCurrentPlanDetails(res?.data?.data?.currentplandetails);
+        const applied = applyUpgradeCartState(res?.data?.data, walletBalance);
+        if (!applied && cartData?.plans?.length) {
+          applyUpgradeCartState(cartData, cartData?.wallet_balance);
+        }
+      } else if (cartData?.plans?.length) {
+        applyUpgradeCartState(cartData, cartData?.wallet_balance);
       } else {
         console.log(res?.data?.message, "res?.data?.message");
       }
-    } catch (error) {}
+    } catch (error) {
+      if (cartData?.plans?.length) {
+        applyUpgradeCartState(cartData, cartData?.wallet_balance);
+      }
+    }
   };
 
   //handle aadhar number
@@ -596,6 +647,7 @@ const CommonOrderSummary = () => {
     : "";
 
   useEffect(() => {
+    if (router?.query?.type === "upgrade") return undefined;
     if (!Array.isArray(cartDetails) || cartDetails.length === 0)
       return undefined;
 
@@ -659,12 +711,38 @@ const CommonOrderSummary = () => {
     handleGetCartDetails();
   }, [userData?.id, router?.isReady, router?.query?.type]);
 
+  // Show upgrade cart from upgrade-add-to-cart (Redux) while upgrade-cart-details loads
+  useEffect(() => {
+    if (!router?.isReady || router?.query?.type !== "upgrade") return;
+    if (!cartData?.plans?.length) return;
+
+    setCartDetails((prev) => {
+      if (Array.isArray(prev) && prev.length > 0) return prev;
+      return normalizeUpgradePlans(cartData.plans, cartData?.wallet_balance);
+    });
+    if (cartData?.currentplandetails) {
+      setCurrentPlanDetails(cartData.currentplandetails);
+    }
+    setPricePerUser(Number(cartData.plans[0]?.unit_price) || 0);
+    setLisceneCounter(cartData.plans[0]?.licenses || 1);
+  }, [router?.isReady, router?.query?.type]);
+
   //get upgrade cart details api
   useEffect(() => {
-    if (router?.query?.type === "upgrade" && router?.query?.customer_id) {
+    if (!router?.isReady) return;
+    const customerId =
+      router?.query?.customer_id || customerData?.customer_id;
+    if (router?.query?.type === "upgrade" && customerId) {
       handleGetUpgradeCartDetails();
     }
-  }, [router?.query?.type, router?.query?.customer_id]);
+  }, [
+    router?.isReady,
+    router?.query?.type,
+    router?.query?.customer_id,
+    router?.query?.order_id,
+    router?.query?.order_sub_id,
+    customerData?.customer_id,
+  ]);
 
   const updateLineLicenses = (lineKey, nextLicenses) => {
     setCartDetails((prev) => {

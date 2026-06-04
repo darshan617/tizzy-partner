@@ -36,6 +36,7 @@ import {
   useGetCartDetailsMutation,
   useUpgradeAddToCartMutation,
 } from "@/redux/apis/addToCartApi";
+import { setCartData } from "@/redux/slices/cartSlice";
 
 function formatInr(amount) {
   if (typeof amount !== "number" || Number.isNaN(amount)) return "";
@@ -318,9 +319,17 @@ export default function ServiceSlugPage({
           plan_id: planId,
           customer_id: router?.query?.customer_id,
           order_id: router?.query?.order_id,
+          order_sub_id: router?.query?.order_sub_id,
         },
       });
       if (res?.data?.success) {
+        const payload = res?.data?.data;
+        dispatch(
+          setCartData({
+            ...payload,
+            wallet_balance: res?.data?.wallet_balance,
+          }),
+        );
         router.push({
           pathname: "/order-summary",
           query: {

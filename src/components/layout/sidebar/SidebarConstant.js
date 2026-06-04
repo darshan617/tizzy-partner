@@ -43,12 +43,12 @@ export const SIDEBAR_MENU_CONSTANTS = [
     icon: PiHandCoinsLight,
     href: "/transactions",
   },
-  {
-    id: 6,
-    title: "Reports",
-    icon: BsFileEarmarkBarGraph,
-    href: "/reports",
-  },
+  // {
+  //   id: 6,
+  //   title: "Reports",
+  //   icon: BsFileEarmarkBarGraph,
+  //   href: "/reports",
+  // },
 ];
 
 export const SIDEBAR_SERVICES_CONSTANTS = [
