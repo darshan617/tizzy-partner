@@ -54,7 +54,7 @@ export const SIDEBAR_MENU_CONSTANTS = [
 export const SIDEBAR_SERVICES_CONSTANTS = [
   {
     id: 3,
-    title: "Google Cloud",
+    title: "Google Workspace",
     image: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -98,7 +98,7 @@ export const SIDEBAR_SERVICES_CONSTANTS = [
         ></path>
       </svg>
     ),
-    href: "/services/google-cloud-partner",
+    href: "/services/google-workspace",
   },
   {
     id: 2,

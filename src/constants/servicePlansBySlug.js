@@ -1,4 +1,3 @@
-
 const m365Features = [
   "Advanced identity and access management with conditional access",
   "Web, mobile, and desktop versions of Word, Excel, PowerPoint, and Outlook",
@@ -9,8 +8,16 @@ const m365Features = [
 
 export const SERVICE_NAV_ITEMS = [
   { slug: "tizzy-mail", label: "Tizzy Mail", href: "/services/tizzy-mail" },
-  { slug: "microsoft-365", label: "Microsoft 365", href: "/services/microsoft-365" },
-  { slug: "google-workspace", label: "Google Workspace", href: "/services/google-workspace" },
+  {
+    slug: "microsoft-365",
+    label: "Microsoft 365",
+    href: "/services/microsoft-365",
+  },
+  {
+    slug: "google-workspace",
+    label: "Google Workspace",
+    href: "/services/google-workspace",
+  },
 ];
 
 export const SERVICE_CATALOG_BY_SLUG = {
@@ -19,9 +26,7 @@ export const SERVICE_CATALOG_BY_SLUG = {
     breadcrumbLabel: "Microsoft 365",
     searchPlaceholder: "Search plan",
     intro: {
-      headline: [
-        "Find the Perfect Microsoft 365 Plan for Your Business"
-      ],
+      headline: ["Find the Perfect Microsoft 365 Plan for Your Business"],
       subline:
         "Flexible productivity, collaboration, and security tools designed for modern teams.",
     },
@@ -81,13 +86,14 @@ export const SERVICE_CATALOG_BY_SLUG = {
     ],
   },
 
-  "google-cloud-partner": {
+  "google-workspace": {
     pageTitle: "Google Workspace",
     breadcrumbLabel: "Google Workspace",
     searchPlaceholder: "Search plan",
     intro: {
-      headline: ['Choose the Right Google Workspace Plan'],
-      subline: "Simple, secure and powerful tools to Support your business grow",
+      headline: ["Choose the Right Google Workspace Plan"],
+      subline:
+        "Simple, secure and powerful tools to Support your business grow",
     },
     categories: [
       { id: "business", label: "Business" },
@@ -143,7 +149,7 @@ export const SERVICE_CATALOG_BY_SLUG = {
     ],
   },
 
-  "tizzy": {
+  tizzy: {
     pageTitle: "Tizzy Mail",
     breadcrumbLabel: "Tizzy Mail",
     searchPlaceholder: "Search plan",
@@ -152,7 +158,8 @@ export const SERVICE_CATALOG_BY_SLUG = {
         "Tizzy® Mail INDIA",
         "Cloud Business Email Hosting Plans on Amazon AWS",
       ],
-      subline: "AI & Machine Learning–based Email Security with Tizzy Mail Enterprise & Corporate Plans.",
+      subline:
+        "AI & Machine Learning–based Email Security with Tizzy Mail Enterprise & Corporate Plans.",
     },
     categories: [
       { id: "standard", label: "Standard" },

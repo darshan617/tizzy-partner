@@ -565,7 +565,7 @@ const RenewCart = ({
                     } else if (cartDetails?.[0]?.plan?.provider_id === 2) {
                       router.push("/services/microsoft-solution-partner");
                     } else if (cartDetails?.[0]?.plan?.provider_id === 3) {
-                      router.push("/services/google-cloud-partner");
+                      router.push("/services/google-workspace");
                     }
                   }}
                   style={{

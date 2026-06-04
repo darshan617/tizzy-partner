@@ -39,7 +39,7 @@ const Subscriptions = () => {
         isFetchingCountData={isAllSubscriptionDataLoading}
         additionalBtns={[
           {
-            href: "/services/google-cloud-partner",
+            href: "/services/google-workspace",
             label: "Buy New Subscription",
             icon: <BsPlusCircleDotted size={18} />,
           },
