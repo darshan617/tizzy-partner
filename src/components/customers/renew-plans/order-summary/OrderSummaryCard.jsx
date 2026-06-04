@@ -14,6 +14,11 @@ import {
 } from "@/redux/apis/addToCartApi";
 import { BiCheck, BiX } from "react-icons/bi";
 import Cookies from "js-cookie";
+import {
+  selectIsPopupVisible,
+  setIsPopupVisible,
+} from "@/redux/slices/popupSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const toDomainArray = (value) => {
   if (Array.isArray(value)) return value.filter(Boolean);
@@ -47,7 +52,10 @@ const OrderSummaryCard = ({
   transferCode,
   setTransferCode,
   handleAadharNumber,
+  isAadharNumberLoading,
 }) => {
+  const dispatch = useDispatch();
+  const isPopupVisible = useSelector(selectIsPopupVisible);
   const router = useRouter();
   const { showToast } = useToast();
   const userData = Cookies?.get("userData")
@@ -64,6 +72,8 @@ const OrderSummaryCard = ({
   const [domainFromApi, setDomainFromApi] = useState(null);
   const [transferDomainInput, setTransferDomainInput] = useState("");
   const [discountedPercent, setDiscountedPercent] = useState(0);
+  const [isConcernedAboutAadhar, setIsConcernedAboutAadhar] = useState(false);
+  console.log(isConcernedAboutAadhar, "isConcernedAboutAadhar");
 
   const providerId = Number(cartDetails?.[0]?.plan?.provider_id);
   const skipDomainVerification = providerId === 2;
@@ -212,7 +222,6 @@ const OrderSummaryCard = ({
       if (res?.data?.success) {
         setDiscountedPercent(res?.data?.data?.discount_percent);
         showToast("Promo code applied successfully", "success");
-        setIsPromoCodeAdded(false);
       } else {
         showToast("Failed to apply promo code", "error");
       }
@@ -243,6 +252,10 @@ const OrderSummaryCard = ({
       showToast("Failed to send credit request", "error");
     }
   };
+  const isAadharRequired =
+    router?.query?.type === "renew-plan" ||
+    router?.query?.type === "upgrade" ||
+    tempDomainNames?.length > 0;
 
   useEffect(() => {
     if (isPopupOpen !== "new-service" && isPopupOpen !== "transfer-service") {
@@ -285,7 +298,15 @@ const OrderSummaryCard = ({
             Promo Code{" "}
             <button
               type="button"
-              onClick={() => setIsPromoCodeAdded(!isPromoCodeAdded)}
+              onClick={() => {
+                if (isPromoCodeAdded) {
+                  setPromoCode("");
+                  setDiscountedPercent(0);
+                  setIsPromoCodeAdded(false);
+                } else {
+                  setIsPromoCodeAdded(true);
+                }
+              }}
               className={styles.addLinkBtn}
             >
               ({isPromoCodeAdded ? "Remove" : "Add"})
@@ -387,10 +408,12 @@ const OrderSummaryCard = ({
                 <input
                   id="aadhaarInput"
                   type="text"
-                  placeholder=""
+                  placeholder="XXXX-XXXX-XXXX"
+                  maxLength={14}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   title="Enter Aadhar number"
                   className={styles.inputField}
-                  maxLength={12}
                   style={{
                     width: "100%",
                     padding: "10px 12px",
@@ -399,62 +422,104 @@ const OrderSummaryCard = ({
                     outline: "none",
                     fontSize: "15px",
                   }}
-                  value={aadharNumber}
-                  onChange={(e) => setAadharNumber(e.target.value)}
+                  // value={aadharNumber}
+                  value={aadharNumber.replace(/(\d{4})(?=\d)/g, "$1 ")}
+                  // onChange={(e) => {
+                  //   const value = e.target.value.replace(/\D/g, "");
+                  //   setAadharNumber(value);
+                  // }}
+                  onChange={(e) => {
+                    const digits = e.target.value
+                      .replace(/\D/g, "")
+                      .slice(0, 12);
+                    setAadharNumber(digits);
+                  }}
                 />
+
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    checked={isConcernedAboutAadhar}
+                    onChange={(e) =>
+                      setIsConcernedAboutAadhar(e.target.checked)
+                    }
+                  />
+                  <label className="form-check-label m-0 mt-1 small text-secondary text-start">
+                    I have read and agree to th{" "}
+                    <span
+                      className="text-primary"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        dispatch(setIsPopupVisible("terms-and-conditions"))
+                      }
+                    >
+                      {" "}
+                      Aadhaar Verification Consent.
+                    </span>{" "}
+                  </label>
+                </div>
               </form>
             )
           )}
         </div>
 
-        {/* <button
-          className={styles.btnPrimary}
-          onClick={() => {
-            !isInsufficient && setIsPopupOpen("proceed");
-          }}
-        >
-          {isInsufficient ? "Clear Pending Invoices" : "Proceed"}
-        </button> */}
         <button
           className={styles.btnPrimary}
           // disabled={
-          //   router?.query?.type === "renew-plan" ||
-          //   router?.query?.type === "upgrade"
-          //     ? false
-          //     : selectedCompany?.length < 1
-          //       ? true
-          //       : false
+          //   isInsufficient ||
+          //   (router?.query?.type !== "renew-plan" &&
+          //     router?.query?.type !== "upgrade" &&
+          //     selectedCompany?.length < 1)
           // }
           disabled={
-            isInsufficient ||
             (router?.query?.type !== "renew-plan" &&
               router?.query?.type !== "upgrade" &&
-              selectedCompany?.length < 1)
+              selectedCompany?.length < 1) ||
+            (isAadharRequired && !isConcernedAboutAadhar) ||
+            isAadharNumberLoading
           }
           // style={{
-          //   opacity: selectedCompany?.length < 1 ? 0.5 : 1,
-          //   cursor: selectedCompany?.length < 1 ? "not-allowed" : "pointer",
+          //   opacity:
+          //     isInsufficient ||
+          //     (router?.query?.type !== "renew-plan" &&
+          //       router?.query?.type !== "upgrade" &&
+          //       selectedCompany?.length < 1)
+          //       ? 0.5
+          //       : 1,
+
+          //   cursor:
+          //     isInsufficient ||
+          //     (router?.query?.type !== "renew-plan" &&
+          //       router?.query?.type !== "upgrade" &&
+          //       selectedCompany?.length < 1)
+          //       ? "not-allowed"
+          //       : "pointer",
           // }}
           style={{
             opacity:
-              isInsufficient ||
               (router?.query?.type !== "renew-plan" &&
                 router?.query?.type !== "upgrade" &&
-                selectedCompany?.length < 1)
+                selectedCompany?.length < 1) ||
+              (isAadharRequired && !isConcernedAboutAadhar) ||
+              isAadharNumberLoading
                 ? 0.5
                 : 1,
 
             cursor:
-              isInsufficient ||
               (router?.query?.type !== "renew-plan" &&
                 router?.query?.type !== "upgrade" &&
-                selectedCompany?.length < 1)
+                selectedCompany?.length < 1) ||
+              (isAadharRequired && !isConcernedAboutAadhar) ||
+              isAadharNumberLoading
                 ? "not-allowed"
                 : "pointer",
           }}
           onClick={() => {
             if (tempDomainNames?.length >= 1) {
               handleAadharNumber();
+            } else if (isInsufficient) {
+              router?.push("/invoice");
             } else {
               if (
                 router?.query?.type === "renew-plan" ||
@@ -478,9 +543,14 @@ const OrderSummaryCard = ({
                 router?.query?.type === "upgrade"
               ? isInsufficient
                 ? "Clear Pending Invoices"
-                : "Proceed"
-              : "Proceed"}
+                : isAadharNumberLoading
+                  ? "Verifying..."
+                  : "Proceed"
+              : isAadharNumberLoading
+                ? "Verifying..."
+                : "Proceed"}
         </button>
+
         {isInsufficient && (
           <div className={styles.requestBox}>
             <p>Want to complete purchase urgently?</p>
@@ -774,6 +844,25 @@ const OrderSummaryCard = ({
                 </div>
               </div>
             </div>
+          </div>
+        </CustomPopup>
+      )}
+      {isPopupVisible === "terms-and-conditions" && (
+        <CustomPopup
+          onClose={() => dispatch(setIsPopupVisible(""))}
+          maxWidth="400px"
+        >
+          <div className={styles.termsAndConditionsPopup}>
+            <h4 className={styles.termsAndConditionsPopupTitle}>
+              Aadhaar Verification Consent
+            </h4>
+            <p className="m-0 mt-3  text-secondary text-start">
+              I hereby provide my voluntary consent to verify my identity using
+              my Aadhaar number as per applicable regulations. I understand that
+              my Aadhaar details will be used solely for identity verification
+              purposes and will be handled securely in accordance with
+              applicable data protection and privacy requirements.
+            </p>
           </div>
         </CustomPopup>
       )}

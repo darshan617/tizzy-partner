@@ -12,9 +12,31 @@ const subscriptionsApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["subscriptions"],
     }),
+    getSubscriptionDetails: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/subscription-details`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["subscriptions"],
+    }),
+    getDomainHistory: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: "/domain-history",
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
 export const {
-useGetAllSubscriptionsMutation
+  useGetAllSubscriptionsMutation,
+  useGetSubscriptionDetailsMutation,
+  useGetDomainHistoryMutation,
 } = subscriptionsApi;

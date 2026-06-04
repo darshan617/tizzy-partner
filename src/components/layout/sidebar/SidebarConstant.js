@@ -4,6 +4,7 @@ import { LuLayoutDashboard, LuUsers } from "react-icons/lu";
 import { VscFiles } from "react-icons/vsc";
 import { PiHandCoinsLight } from "react-icons/pi";
 import { LuReceiptIndianRupee } from "react-icons/lu";
+import { MdAutorenew } from "react-icons/md";
 
 export const SIDEBAR_MENU_CONSTANTS = [
   {
@@ -25,6 +26,12 @@ export const SIDEBAR_MENU_CONSTANTS = [
     href: "/subscriptions",
   },
   {
+    id: 7,
+    title: "Renewals",
+    icon: MdAutorenew,
+    href: "/renewals",
+  },
+  {
     id: 4,
     title: "Invoices",
     icon: LuReceiptIndianRupee,
@@ -36,18 +43,18 @@ export const SIDEBAR_MENU_CONSTANTS = [
     icon: PiHandCoinsLight,
     href: "/transactions",
   },
-  {
-    id: 6,
-    title: "Reports",
-    icon: BsFileEarmarkBarGraph,
-    href: "/reports",
-  },
+  // {
+  //   id: 6,
+  //   title: "Reports",
+  //   icon: BsFileEarmarkBarGraph,
+  //   href: "/reports",
+  // },
 ];
 
 export const SIDEBAR_SERVICES_CONSTANTS = [
   {
     id: 3,
-    title: "Google Cloud",
+    title: "Google Workspace",
     image: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -91,7 +98,7 @@ export const SIDEBAR_SERVICES_CONSTANTS = [
         ></path>
       </svg>
     ),
-    href: "/services/google-cloud-partner",
+    href: "/services/google-workspace",
   },
   {
     id: 2,

@@ -332,7 +332,7 @@ export default function SummaryCounts({
         router?.pathname === "/subscriptions" ? "successColor" : "warningColor",
       badgeClass: "up",
       icon: <SubscriptionIcon />,
-      redirectUrl: "/services/google-cloud-partner",
+      redirectUrl: "/services/google-workspace",
     },
 
     "renewals this month": {
