@@ -159,10 +159,10 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
         </div>
 
         <div className="d-flex flex-column gap-4 p-3 mt-auto">
-          <Link href="#" className="btn btnWhite">
+          {/* <Link href="#" className="btn btnWhite">
             <MdOutlineContactSupport size={18} className="me-2" />
             <span>SUPPORT</span>
-          </Link>
+          </Link> */}
 
           <div className={`${styles.creditBox} py-2`}>
             <div

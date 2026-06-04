@@ -387,7 +387,9 @@ const SubscriptionsDetailsComponent = () => {
                               query: {
                                 type: "upgrade",
                                 order_id: subscriptionDetails?.order_id,
-                                customer_id: router?.query?.customerId,
+                                customer_id:
+                                  router?.query?.customerId ||
+                                  plan?.customer_id,
                                 plan_id: plan?.plan_id,
                                 order_sub_id: plan?.order_sub_id,
                               },
