@@ -178,7 +178,7 @@ export default function CustomerDetail() {
                 <Link href={"/customers"}>Customer</Link>
                 <span className="breadcrumb-item"></span>
                 <h1 className="breadcrumb-item active" aria-current="page">
-                  Customer - {router?.query?.customerId}
+                  Customer - {customerDetails?.name}
                 </h1>
               </nav>
             </div>
