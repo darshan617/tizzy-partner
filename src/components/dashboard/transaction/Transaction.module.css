@@ -81,12 +81,14 @@
 }
 
 .subtleDanger,
-.expired {
+.expired,
+.cancelled {
     background: var(--dangerSubtleColor);
     color: var(--dangerColor);
 }
 
-.completed {
+.completed,
+.success {
     background: var(--successSubtleColor);
     color: var(--successColor);
 }

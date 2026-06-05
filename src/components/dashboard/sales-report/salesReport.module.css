@@ -135,6 +135,7 @@
     color: var(--textBody);
     line-height: 1;
     margin: 0;
+    word-break: break-all;
 }
 
 

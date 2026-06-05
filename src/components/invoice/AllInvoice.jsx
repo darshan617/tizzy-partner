@@ -44,17 +44,14 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedStatuses, setSelectedStatuses] = useState([]);
+  const [selectedStatuses, setSelectedStatuses] = useState("all");
   const [selectedIds, setSelectedIds] = useState([]);
+  console.log("seleeeee", selectedStatuses);
 
   const invoices = invoiceData || [];
 
   const toggleStatus = (status) => {
-    setSelectedStatuses((prev) =>
-      prev.includes(status)
-        ? prev.filter((item) => item !== status)
-        : [...prev, status],
-    );
+    setSelectedStatuses((prev) => (prev === status ? "all" : status));
   };
 
   const filteredInvoices = useMemo(() => {
@@ -70,7 +67,7 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
 
       const statusKey = getStatusKey(invoice?.status);
       const matchesStatus =
-        selectedStatuses?.length === 0 || selectedStatuses?.includes(statusKey);
+        selectedStatuses === "all" || selectedStatuses === statusKey;
 
       return matchesSearch && matchesStatus;
     });
@@ -166,20 +163,22 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                     <ul className={`${styles.filterGroup} gap-2`} role="group">
                       {statusOrder.map((status) => (
                         <li key={status}>
-                          <input
-                            type="checkbox"
-                            className="btn-check"
-                            id={`invoice_status_${status}`}
-                            autoComplete="off"
-                            checked={selectedStatuses.includes(status)}
-                            onChange={() => toggleStatus(status)}
-                          />
-                          <label
+                          <button
                             className={`${styles.filterItem} rounded-pill`}
-                            htmlFor={`invoice_status_${status}`}
+                            onClick={() => toggleStatus(status)}
+                            style={{
+                              backgroundColor:
+                                selectedStatuses === status
+                                  ? "var(--primaryColor)"
+                                  : "",
+                              color:
+                                selectedStatuses === status
+                                  ? "var(--whiteColor)"
+                                  : "var(--darkColor)",
+                            }}
                           >
                             {statusLabelMap[status]}
-                          </label>
+                          </button>
                         </li>
                       ))}
                     </ul>
@@ -236,107 +235,115 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
             <div className="d-flex flex-column gap-3 mb-4">
               {!isInvoiceDataLoading ? (
                 filteredInvoices?.length > 0 ? (
-                  filteredInvoices?.map((invoice, idx) => (
-                    <div
-                      key={invoice?.invoice_no || idx}
-                      className={`${styles.contentRow} btnDisplay`}
-                    >
-                      <div className="row align-items-center g-0">
-                        <div className={`${styles.ckbCol} col-auto`}>
-                          <input
-                            type="checkbox"
-                            className="form-check-input"
-                            checked={selectedIds?.includes(invoice?.invoice_no)}
-                            onChange={() =>
-                              toggleSelectOne(invoice?.invoice_no)
-                            }
-                          />
-                        </div>
+                  filteredInvoices
+                    ?.filter((invoice) =>
+                      selectedStatuses === "all"
+                        ? true
+                        : invoice?.status?.toLowerCase() === selectedStatuses,
+                    )
+                    ?.map((invoice, idx) => (
+                      <div
+                        key={invoice?.invoice_no || idx}
+                        className={`${styles.contentRow} btnDisplay`}
+                      >
+                        <div className="row align-items-center g-0">
+                          <div className={`${styles.ckbCol} col-auto`}>
+                            <input
+                              type="checkbox"
+                              className="form-check-input"
+                              checked={selectedIds?.includes(
+                                invoice?.invoice_no,
+                              )}
+                              onChange={() =>
+                                toggleSelectOne(invoice?.invoice_no)
+                              }
+                            />
+                          </div>
 
-                        <div className="col">
-                          <div className="row align-items-center py-3 px-2">
-                            <div className="col-lg-2 col-md-3 col-12 mb-2 mb-md-0">
-                              <div className={styles.invoiceMeta}>
-                                <div className={styles.crDate}>
-                                  {invoice?.date}
-                                </div>
-                                <div className={styles.crNumber}>
-                                  {invoice?.invoice_no}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="col-lg-4 col-md-5 col-12 mb-2 mb-md-0">
-                              <div className="d-flex align-items-center">
-                                <div
-                                  className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
-                                >
-                                  {invoice?.domain_name
-                                    ?.charAt(0)
-                                    ?.toUpperCase()}
-                                </div>
-                                <div className="ps-2 min-w-0">
-                                  <div className={styles.crDomainName}>
-                                    {invoice?.domain_name}
+                          <div className="col">
+                            <div className="row align-items-center py-3 px-2">
+                              <div className="col-lg-2 col-md-3 col-12 mb-2 mb-md-0">
+                                <div className={styles.invoiceMeta}>
+                                  <div className={styles.crDate}>
+                                    {invoice?.date}
                                   </div>
-                                  <div className={`${styles.crName} mt-1`}>
-                                    {invoice?.plan_name}
+                                  <div className={styles.crNumber}>
+                                    {invoice?.invoice_no}
                                   </div>
                                 </div>
                               </div>
-                            </div>
 
-                            <div className="col-lg-2 col-md-2 col-6 text-md-center">
-                              <span
-                                className={`${styles.statusBadge} ${getStatusBadgeClass(invoice?.status)}`}
-                              >
-                                {invoice?.status}
-                              </span>
-                            </div>
+                              <div className="col-lg-4 col-md-5 col-12 mb-2 mb-md-0">
+                                <div className="d-flex align-items-center">
+                                  <div
+                                    className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
+                                  >
+                                    {invoice?.domain_name
+                                      ?.charAt(0)
+                                      ?.toUpperCase()}
+                                  </div>
+                                  <div className="ps-2 min-w-0">
+                                    <div className={styles.crDomainName}>
+                                      {invoice?.domain_name}
+                                    </div>
+                                    <div className={`${styles.crName} mt-1`}>
+                                      {invoice?.plan_name}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
 
-                            <div className="col-lg-2 col-md-2 col-6 text-md-center text-end text-md-center">
-                              <span className={styles.amountValue}>
-                                {invoice?.formatted_amount ||
-                                  `₹ ${Number(invoice?.amount || 0).toFixed(2)}`}
-                              </span>
-                            </div>
-
-                            <div
-                              className={`col-lg-2 col-md-12 col-12 ${styles.actionsCol} mt-2 mt-lg-0`}
-                            >
-                              {showPayNow(invoice?.status) ? (
-                                <button
-                                  type="button"
-                                  className={styles.payNowBtn}
-                                  onClick={() =>
-                                    router.push({
-                                      pathname: "/order-summary",
-                                      query: {
-                                        order_id: invoice?.order_id,
-                                      },
-                                    })
-                                  }
+                              <div className="col-lg-2 col-md-2 col-6 text-md-center">
+                                <span
+                                  className={`${styles.statusBadge} ${getStatusBadgeClass(invoice?.status)}`}
                                 >
-                                  Pay Now
-                                </button>
-                              ) : null}
-                              <Link
-                                href={`${invoice?.invoice_pdf_url}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={styles.downloadBtn}
-                                aria-label="Download invoice"
+                                  {invoice?.status}
+                                </span>
+                              </div>
+
+                              <div className="col-lg-2 col-md-2 col-6 text-md-center text-end text-md-center">
+                                <span className={styles.amountValue}>
+                                  {invoice?.formatted_amount ||
+                                    `₹ ${Number(invoice?.amount || 0).toFixed(2)}`}
+                                </span>
+                              </div>
+
+                              <div
+                                className={`col-lg-2 col-md-12 col-12 ${styles.actionsCol} mt-2 mt-lg-0`}
                               >
-                                <MdOutlineFileDownload
-                                  className={styles.downloadBtnIcon}
-                                />
-                              </Link>
+                                {showPayNow(invoice?.status) ? (
+                                  <button
+                                    type="button"
+                                    className={styles.payNowBtn}
+                                    onClick={() =>
+                                      router.push({
+                                        pathname: "/order-summary",
+                                        query: {
+                                          order_id: invoice?.order_id,
+                                        },
+                                      })
+                                    }
+                                  >
+                                    Pay Now
+                                  </button>
+                                ) : null}
+                                <Link
+                                  href={`${invoice?.invoice_pdf_url}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={styles.downloadBtn}
+                                  aria-label="Download invoice"
+                                >
+                                  <MdOutlineFileDownload
+                                    className={styles.downloadBtnIcon}
+                                  />
+                                </Link>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    ))
                 ) : (
                   <p className="text-center m-0">No Invoice Data</p>
                 )

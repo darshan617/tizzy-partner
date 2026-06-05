@@ -10,6 +10,7 @@ import Cookies from "js-cookie";
 import { FaPen } from "react-icons/fa";
 import { MdAutorenew } from "react-icons/md";
 import Loader from "@/common-components/loader/Loader";
+import { BiDownload } from "react-icons/bi";
 
 const planProviderIcons = [
   <svg
@@ -259,6 +260,16 @@ const SubscriptionsDetailsComponent = () => {
                       {subscriptionDetails?.order_no}
                     </span>
                   </p>
+                </div>
+                <div className="position-absolute top-1 end-0 w-auto">
+                  <Link
+                    href={subscriptionDetails?.po_link || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn small btnWhite d-flex align-items-center gap-2"
+                  >
+                    View PO <BiDownload size={14} />
+                  </Link>
                 </div>
 
                 {(plans?.[0]?.status?.toLowerCase() === "expiring" ||

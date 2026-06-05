@@ -44,7 +44,8 @@ const Support = () => {
         <div className="d-flex px-sm-4 px-3 mb-3 align-items-center">
           <div className="col">
             <h2 className="sectionCardHead">
-              Support (DEVELOPMENT UNDER PROGRESS)
+              Support{" "}
+              <span className="text-muted">(DEVELOPMENT UNDER PROGRESS)</span>
             </h2>
           </div>
           <div className="col-auto">

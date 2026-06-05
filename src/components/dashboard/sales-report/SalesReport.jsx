@@ -183,11 +183,11 @@ const SalesReport = ({ data, isDataLoading }) => {
                       <div className={styles.invoiceCardContent}>
                         <p className={styles.invoiceLabel}>
                           {card.label}
-                          <span className={styles.invoiceCount}>
+                          {/* <span className={styles.invoiceCount}>
                             (
                             {invoiceCardsData[card?.label?.toLocaleUpperCase()]}
                             )
-                          </span>
+                          </span> */}
                         </p>
                         <p className={styles.statValue}>
                           ₹
