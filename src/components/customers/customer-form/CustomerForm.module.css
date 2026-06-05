@@ -139,10 +139,26 @@
 .submitBtn:hover {
   background: #1260b8;
 }
+
 .submitBtn:disabled {
   background: #1260b8;
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.searchGstinBtn {
+  border: 1px solid var(--primaryColor);
+  border-radius: 5px;
+  background: #fff;
+  color: var(--primaryColor);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 5px 10px;
+  transition: background 0.2s ease;
+}
+
+.searchGstinBtn:hover {
+  background: #f0f7fe;
 }
 
 @media (min-width: 768px) {

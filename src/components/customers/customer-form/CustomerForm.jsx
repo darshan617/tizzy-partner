@@ -453,16 +453,24 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
               <label className={styles.label}>
                 GSTIN<span className={styles.required}>*</span>
               </label>
-              <input
-                type="text"
-                name="gstin"
-                value={formData.gstin}
-                onChange={handleChange}
-                onBlur={handleGstinBlur}
-                className={`form-control`}
-                disabled={type === "edit"}
-                style={{ backgroundColor: type === "edit" ? "#f5f5f5" : "" }}
-              />
+              <div className="d-flex gap-1">
+                <input
+                  type="text"
+                  name="gstin"
+                  value={formData.gstin}
+                  onChange={handleChange}
+                  // onBlur={handleGstinBlur}
+                  className={`form-control`}
+                  disabled={type === "edit"}
+                  style={{ backgroundColor: type === "edit" ? "#f5f5f5" : "" }}
+                />
+                <button
+                  className={styles.searchGstinBtn}
+                  onClick={handleGstinBlur}
+                >
+                  Search
+                </button>
+              </div>
               {isSearchingGstin && (
                 <span className={styles.infoMessage}>Searching GSTIN...</span>
               )}

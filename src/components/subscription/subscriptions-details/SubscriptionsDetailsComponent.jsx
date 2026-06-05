@@ -344,7 +344,7 @@ const SubscriptionsDetailsComponent = () => {
                           <div className="col-md-auto col-sm-6 col-4">
                             <small className="d-block textLight">License</small>
                             <span>{plan?.licenses ?? "-"}</span>
-                            <button
+                            {/* <button
                               type="button"
                               className={`${styles.iconBtn} btnWhite btn`}
                               onClick={() =>
@@ -358,7 +358,7 @@ const SubscriptionsDetailsComponent = () => {
                               }
                             >
                               <FaPen size={10} />
-                            </button>
+                            </button> */}
                           </div>
                           <div className="col-md-auto col-sm-6 col-8">
                             <small className="d-block textLight">Period</small>

@@ -402,6 +402,7 @@ const OrderSummaryCard = ({
                     color: "#666666",
                     fontWeight: 400,
                   }}
+                  className="text-start"
                 >
                   Enter Aadhar No. <span style={{ color: "red" }}>*</span>
                 </label>
@@ -446,7 +447,7 @@ const OrderSummaryCard = ({
                     }
                   />
                   <label className="form-check-label m-0 mt-1 small text-secondary text-start">
-                    I have read and agree to th{" "}
+                    I have read and agree to the{" "}
                     <span
                       className="text-primary"
                       style={{ cursor: "pointer" }}
