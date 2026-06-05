@@ -44,7 +44,8 @@ export default function CustomerList({
           customer?.company?.toLowerCase()?.includes(q) ||
           customer?.name?.toLowerCase()?.includes(q) ||
           customer?.email?.toLowerCase()?.includes(q) ||
-          customer?.mobile?.toLowerCase()?.includes(q);
+          customer?.mobile?.toLowerCase()?.includes(q) ||
+          customer?.customer_no?.toLowerCase()?.includes(q);
         const matchesStatus =
           selectedStatuses === "all"
             ? true
