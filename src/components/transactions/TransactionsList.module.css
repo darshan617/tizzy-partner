@@ -178,7 +178,7 @@
   background: var(--whiteColor);
 }
 
-.btn-check:checked + .filterItem {
+.btn-check:checked+.filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -279,17 +279,20 @@
   white-space: nowrap;
 }
 
-.successBadge {
+.successBadge,
+.success {
   color: var(--successColor);
   background: var(--successSubtleColor);
 }
 
-.pendingBadge {
+.pendingBadge,
+.pending {
   color: var(--warningColor);
   background: var(--warningSubtleColor);
 }
 
-.failedBadge {
+.failedBadge,
+.cancelled {
   color: var(--dangerColor);
   background: var(--dangerSubtleColor);
 }

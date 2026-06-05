@@ -119,9 +119,10 @@ const OrderComplete = () => {
                 <iframe
                   src={`${router?.query?.po}#toolbar=0`}
                   width="100%"
-                  height="1000px" // enough to contain multiple pages
+                  height="100%"
+                  maxHeight="1000px"
                   frameBorder="0"
-                  style={{ pointerEvents: "none" }} // makes the iframe itself non-interactive
+                  style={{ pointerEvents: "none" }}
                 />
               </div>
             ) : (

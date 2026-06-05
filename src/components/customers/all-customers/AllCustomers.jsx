@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "@/components/customers/all-customers/AllCustomers.module.css";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import Cookies from "js-cookie";
@@ -34,6 +34,26 @@ export default function CustomerList({
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
   }
+
+  const filteredCustomers = useMemo(
+    () =>
+      allCustomers?.data?.customers?.filter((customer) => {
+        const q = searchQuery?.trim()?.toLowerCase();
+        const matchesSearch =
+          q === "" ||
+          customer?.company?.toLowerCase()?.includes(q) ||
+          customer?.name?.toLowerCase()?.includes(q) ||
+          customer?.email?.toLowerCase()?.includes(q) ||
+          customer?.mobile?.toLowerCase()?.includes(q);
+        const matchesStatus =
+          selectedStatuses === "all"
+            ? true
+            : selectedStatuses === customer?.status?.toLowerCase();
+
+        return matchesSearch && matchesStatus;
+      }),
+    [searchQuery, selectedStatuses, allCustomers?.data?.customers],
+  );
 
   return (
     <div className="col">
@@ -201,25 +221,14 @@ export default function CustomerList({
             >
               {isFetchingAllCustomers ? (
                 <Loader />
-              ) : allCustomers?.data?.customers?.filter((customer) =>
-                  selectedStatuses === "all"
-                    ? true
-                    : customer?.status === selectedStatuses,
-                ).length > 0 ? (
-                allCustomers?.data?.customers
-                  ?.filter((customer) =>
-                    selectedStatuses === "all"
-                      ? true
-                      : customer?.status === selectedStatuses,
-                  )
-
-                  .map((customer, idx) => (
-                    <div
-                      key={idx}
-                      className={`${styles.contentRow} ${styles.btnDisplay}`}
-                    >
-                      <div className="row align-items-center">
-                        {/* <div className={`${styles.ckbCol} col-sm-auto col-6  order-sm-1 `}>
+              ) : filteredCustomers?.length > 0 ? (
+                filteredCustomers?.map((customer, idx) => (
+                  <div
+                    key={idx}
+                    className={`${styles.contentRow} ${styles.btnDisplay}`}
+                  >
+                    <div className="row align-items-center">
+                      {/* <div className={`${styles.ckbCol} col-sm-auto col-6  order-sm-1 `}>
                         <input
                           type="checkbox"
                           className="form-check-input"
@@ -229,47 +238,45 @@ export default function CustomerList({
                         />
                       </div> */}
 
-                        <div className="col-sm order-sm-2">
-                          <div className="row align-items-center py-3">
-                            <div className="col-8 col-sm-7 d-flex align-items-center flex-wrap">
-                              <div className="col-lg-6 col-12">
+                      <div className="col-sm order-sm-2">
+                        <div className="row align-items-center py-3">
+                          <div className="col-8 col-sm-7 d-flex align-items-center flex-wrap">
+                            <div className="col-lg-6 col-12">
+                              <div
+                                className={`${styles.crDomain} d-flex align-items-center`}
+                              >
                                 <div
-                                  className={`${styles.crDomain} d-flex align-items-center`}
+                                  className={`avatarSmall flex-shrink-0 ${styles.avatarBg}`}
                                 >
-                                  <div
-                                    className={`avatarSmall flex-shrink-0 ${styles.avatarBg}`}
-                                  >
-                                    {customer?.name?.charAt(0)}
-                                  </div>
-                                  <div
-                                    className={`${styles.crDomainName} ps-2`}
-                                  >
-                                    {toCamelCase(customer?.company)}
-                                  </div>
+                                  {customer?.name?.charAt(0)}
                                 </div>
-                                <div className={`${styles.crName} ms-4 ps-2`}>
-                                  {customer?.name}
+                                <div className={`${styles.crDomainName} ps-2`}>
+                                  {toCamelCase(customer?.company)}
                                 </div>
-                                <p className="m-0 ms-4 ps-2 text-secondary small">
-                                  Customer Id:{customer?.customer_no ?? " -"}
-                                </p>
                               </div>
-                              <div className="col-lg-6 col-12">
-                                <div
-                                  className={`${styles.crDescription}  ms-4 ps-2`}
-                                >
-                                  {customer?.email}
-                                </div>
-                                <div
-                                  className={`${styles.crDescription}  ms-4 ps-2`}
-                                >
-                                  {customer?.mobile}
-                                </div>
+                              <div className={`${styles.crName} ms-4 ps-2`}>
+                                {customer?.name}
+                              </div>
+                              <p className="m-0 ms-4 ps-2 text-secondary small">
+                                Customer Id:{customer?.customer_no ?? " -"}
+                              </p>
+                            </div>
+                            <div className="col-lg-6 col-12">
+                              <div
+                                className={`${styles.crDescription}  ms-4 ps-2`}
+                              >
+                                {customer?.email}
+                              </div>
+                              <div
+                                className={`${styles.crDescription}  ms-4 ps-2`}
+                              >
+                                {customer?.mobile}
                               </div>
                             </div>
+                          </div>
 
-                            <div className="col-4 col-sm-5 d-flex align-items-center flex-wrap gap-2 gap-md-0">
-                              {/* <div className="col-md col-12 text-center">
+                          <div className="col-4 col-sm-5 d-flex align-items-center flex-wrap gap-2 gap-md-0">
+                            {/* <div className="col-md col-12 text-center">
                               {customer?.services?.map((service) => (
                                 <div
                                   key={service}
@@ -278,56 +285,56 @@ export default function CustomerList({
                                 />
                               ))}
                             </div> */}
-                              <div className="col-md col-12 text-center">
-                                <div className="d-flex flex-column align-items-center">
-                                  <span
-                                    className={`${styles.statusBadgeStyle} ${customer?.status === "active" ? "successBg" : "dangerBg"}`}
-                                  >
-                                    {customer?.status?.toUpperCase()}
+                            <div className="col-md col-12 text-center">
+                              <div className="d-flex flex-column align-items-center">
+                                <span
+                                  className={`${styles.statusBadgeStyle} ${customer?.status === "active" ? "successBg" : "dangerBg"}`}
+                                >
+                                  {customer?.status?.toUpperCase()}
+                                </span>
+                                <small className="textSecondary mt-1">
+                                  Created on{" "}
+                                  <span className="d-inline-block">
+                                    {customer?.created_date}
                                   </span>
-                                  <small className="textSecondary mt-1">
-                                    Created on{" "}
-                                    <span className="d-inline-block">
-                                      {customer?.created_date}
-                                    </span>
-                                  </small>
-                                </div>
+                                </small>
                               </div>
                             </div>
                           </div>
                         </div>
+                      </div>
 
-                        <div className="col-sm-auto col-6 align-self-stretch d-flex align-items-center justify-content-end order-sm-3 mobAction">
-                          <button
-                            className="crBtn"
-                            onClick={() =>
-                              router.push({
-                                pathname: "/customers/customer-details",
-                                query: {
-                                  customerId: customer?.id,
-                                },
-                              })
-                            }
+                      <div className="col-sm-auto col-6 align-self-stretch d-flex align-items-center justify-content-end order-sm-3 mobAction">
+                        <button
+                          className="crBtn"
+                          onClick={() =>
+                            router.push({
+                              pathname: "/customers/customer-details",
+                              query: {
+                                customerId: customer?.id,
+                              },
+                            })
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="icon me-0"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className="icon me-0"
-                            >
-                              <path d="m9 18 6-6-6-6" />
-                            </svg>
-                          </button>
-                        </div>
+                            <path d="m9 18 6-6-6-6" />
+                          </svg>
+                        </button>
                       </div>
                     </div>
-                  ))
+                  </div>
+                ))
               ) : (
                 <p className="text-center m-0">No Customer Data</p>
               )}
