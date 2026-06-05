@@ -201,6 +201,10 @@ const AllSubscriptions = ({
                                   {" "}
                                   Order Id: {subscription?.order_no}
                                 </p>
+                                <p className="m-0 ms-4 ps-2 text-secondary small">
+                                  {" "}
+                                  Customer Name: {subscription?.customer_name}
+                                </p>
                                 <div className={`${styles.crName} ms-4 ps-2`}>
                                   {subscription?.currentPlan}
                                 </div>
@@ -210,12 +214,12 @@ const AllSubscriptions = ({
                                 <div className={styles.metaHead}>License</div>
                                 <div className={styles.licenseValue}>
                                   <span>{subscription?.licenses}</span>
-                                  <button
+                                  {/* <button
                                     type="button"
                                     className={styles.editBtn}
                                   >
                                     <LuPencil className={styles.editIcon} />
-                                  </button>
+                                  </button> */}
                                 </div>
                               </div>
 

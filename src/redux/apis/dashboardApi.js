@@ -10,7 +10,19 @@ const dashbaordApi = apiSlice.injectEndpoints({
         };
       },
     }),
+
+    salesReport: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/sales-report`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["salesReport"],
+    }),
   }),
 });
 
-export const { useGetDashboardDataQuery } = dashbaordApi;
+export const { useGetDashboardDataQuery, useSalesReportMutation } =
+  dashbaordApi;

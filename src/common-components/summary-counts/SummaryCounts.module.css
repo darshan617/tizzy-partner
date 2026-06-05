@@ -285,7 +285,7 @@
     display: inline-block;
 }
 
-.breadcrumbItem{
+.breadcrumbItem {
     background: none;
     border: none;
     padding: 0;
@@ -302,7 +302,6 @@
     text-align: left;
     padding: 1.5rem;
     border-radius: 10px;
-    min-height: 140px;
     box-shadow: 0 4px 12px rgba(0, 67, 140, 0.2);
 }
 
@@ -355,6 +354,7 @@
     line-height: 1.45;
     max-width: 28rem;
 }
+
 @media (min-width: 768px) {
     .statBox {
         padding: 15px;

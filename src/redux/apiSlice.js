@@ -19,6 +19,7 @@ export const apiSlice = createApi({
     "partnerApprovalRequest",
     "notification",
     "renewals",
+    "salesReport",
   ],
   endpoints: (builder) => ({}),
 });
