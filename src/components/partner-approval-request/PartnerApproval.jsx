@@ -46,6 +46,13 @@ const PartnerApproval = () => {
     handleGetPartnerApprovalRequest();
   }, [userData?.id]);
 
+  useEffect(() => {
+    const timerRef = setInterval(() => {
+      handleGetPartnerApprovalRequest();
+    }, 10000);
+    return () => clearInterval(timerRef);
+  }, [handleGetPartnerApprovalRequest]);
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.card}>

@@ -403,6 +403,7 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
                 value={formData.name}
                 onChange={handleChange}
                 className="form-control"
+                placeholder="Enter Name"
               />
               {errors.name && (
                 <span className={styles.errorMessage}>{errors.name}</span>
@@ -418,6 +419,7 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
                 value={formData.email}
                 onChange={handleChange}
                 className="form-control"
+                placeholder="Enter Email"
               />
               {errors.email && (
                 <span className={styles.errorMessage}>{errors.email}</span>
@@ -437,6 +439,7 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
                 value={formData.mobile}
                 onChange={handleChange}
                 className="form-control"
+                placeholder="Enter Mobile Number"
               />
               {errors.mobile && (
                 <span className={styles.errorMessage}>{errors.mobile}</span>
@@ -457,6 +460,7 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
                 <input
                   type="text"
                   name="gstin"
+                  placeholder="Enter GSTIN"
                   value={formData.gstin}
                   onChange={handleChange}
                   // onBlur={handleGstinBlur}

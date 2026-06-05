@@ -418,7 +418,7 @@ export default function SummaryCounts({
                   <p className={`${styles.creditBalanceAmount} fs-3`}>
                     {infoBtn?.amount}
                   </p>
-                  <div className={styles.creditBalanceInfo}>
+                  {/* <div className={styles.creditBalanceInfo}>
                     <span
                       className={styles.creditBalanceInfoIcon}
                       aria-hidden="true"
@@ -428,7 +428,7 @@ export default function SummaryCounts({
                     <p className={styles.creditBalanceInfoText}>
                       {infoBtn?.info}
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             )}

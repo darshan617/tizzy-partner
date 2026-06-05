@@ -214,14 +214,14 @@ const TransactionsList = () => {
           </div>
         </div>
 
-        <div
+        {/* <div
           className={`${styles.toolbar} py-2 px-sm-4 px-3 d-flex align-items-center justify-content-end`}
         >
           <button type="button" className={styles.downloadListBtn}>
             <MdOutlineFileDownload className={styles.downloadListIcon} />
             Download List
           </button>
-        </div>
+        </div> */}
 
         <div className={styles.listScrollArea}>
           <div className="py-4 px-sm-4 px-3">
