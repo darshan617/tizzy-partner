@@ -12,9 +12,10 @@ const statusLabelMap = {
   paid: "Paid",
   pending: "Pending",
   overdue: "Overdue",
+  completed: "Completed",
 };
 
-const statusOrder = ["paid", "pending", "overdue", "active"];
+const statusOrder = ["paid", "pending", "overdue", "active", "completed"];
 
 const avatarBgClasses = [
   "warningBg",
@@ -29,7 +30,8 @@ const getStatusKey = (status) => (status || "").toString().trim().toLowerCase();
 
 const getStatusBadgeClass = (status) => {
   const key = getStatusKey(status);
-  if (key === "paid" || key === "active") return styles.paidBadge;
+  if (key === "paid" || key === "active" || key === "completed")
+    return styles.paidBadge;
   if (key === "pending") return styles.pendingBadge;
   if (key === "overdue") return styles.overdueBadge;
   return styles.defaultBadge;
