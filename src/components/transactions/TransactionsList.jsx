@@ -11,10 +11,10 @@ const statusLabelMap = {
   completed: "Success",
   success: "Success",
   pending: "Pending",
-  failed: "Failed",
+  cancelled: "Cancelled",
 };
 
-const statusOrder = ["completed", "pending", "failed"];
+const statusOrder = ["success", "pending", "cancelled"];
 
 const avatarBgClasses = [
   "warningBg",
@@ -26,14 +26,6 @@ const avatarBgClasses = [
 ];
 
 const getStatusKey = (status) => (status || "").toString().trim().toLowerCase();
-
-const getStatusBadgeClass = (status) => {
-  const key = getStatusKey(status);
-  if (key === "completed" || key === "success") return styles.successBadge;
-  if (key === "pending") return styles.pendingBadge;
-  if (key === "failed") return styles.failedBadge;
-  return styles.defaultBadge;
-};
 
 const formatAmount = (amount) => {
   const num = Number(amount || 0);
@@ -49,7 +41,7 @@ const TransactionsList = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedStatuses, setSelectedStatuses] = useState([]);
+  const [selectedStatuses, setSelectedStatuses] = useState("all");
 
   const [getTransactionsList, { isLoading }] =
     useGetTransactionHistoryMutation();
@@ -80,11 +72,7 @@ const TransactionsList = () => {
   }, []);
 
   const toggleStatus = (status) => {
-    setSelectedStatuses((prev) =>
-      prev.includes(status)
-        ? prev.filter((item) => item !== status)
-        : [...prev, status],
-    );
+    setSelectedStatuses((prev) => (prev === status ? "all" : status));
   };
 
   const filteredTransactions = useMemo(() => {
@@ -102,7 +90,7 @@ const TransactionsList = () => {
 
       const statusKey = getStatusKey(tx?.status);
       const matchesStatus =
-        selectedStatuses?.length === 0 || selectedStatuses?.includes(statusKey);
+        selectedStatuses === "all" || selectedStatuses === statusKey;
 
       return matchesSearch && matchesStatus;
     });
@@ -171,20 +159,22 @@ const TransactionsList = () => {
                     <ul className={`${styles.filterGroup} gap-2`} role="group">
                       {statusOrder.map((status) => (
                         <li key={status}>
-                          <input
-                            type="checkbox"
-                            className="btn-check"
-                            id={`tx_status_${status}`}
-                            autoComplete="off"
-                            checked={selectedStatuses.includes(status)}
-                            onChange={() => toggleStatus(status)}
-                          />
-                          <label
+                          <button
                             className={`${styles.filterItem} rounded-pill`}
-                            htmlFor={`tx_status_${status}`}
+                            onClick={() => toggleStatus(status)}
+                            style={{
+                              backgroundColor:
+                                selectedStatuses === status
+                                  ? "var(--primaryColor)"
+                                  : "",
+                              color:
+                                selectedStatuses === status
+                                  ? "var(--whiteColor)"
+                                  : "var(--darkColor)",
+                            }}
                           >
                             {statusLabelMap[status]}
-                          </label>
+                          </button>
                         </li>
                       ))}
                     </ul>
@@ -214,71 +204,76 @@ const TransactionsList = () => {
           </div>
         </div>
 
-        <div
+        {/* <div
           className={`${styles.toolbar} py-2 px-sm-4 px-3 d-flex align-items-center justify-content-end`}
         >
           <button type="button" className={styles.downloadListBtn}>
             <MdOutlineFileDownload className={styles.downloadListIcon} />
             Download List
           </button>
-        </div>
+        </div> */}
 
         <div className={styles.listScrollArea}>
           <div className="py-4 px-sm-4 px-3">
             <div className="d-flex flex-column gap-3 mb-4">
               {!isLoading ? (
                 filteredTransactions?.length > 0 ? (
-                  filteredTransactions?.map((tx, idx) => (
-                    <div
-                      key={tx?.order_id || idx}
-                      className={`${styles.contentRow} btnDisplay`}
-                    >
-                      <div className="row align-items-center py-3 px-sm-4 px-3 g-2">
-                        <div className="col-lg-2 col-md-3 col-12">
-                          <div className={styles.txMeta}>
-                            <div className={styles.txDate}>{tx?.date}</div>
-                            <div className={styles.txNumber}>
-                              {tx?.order_no}
+                  filteredTransactions
+                    ?.filter((tx) =>
+                      selectedStatuses === "all"
+                        ? true
+                        : tx?.status?.toLowerCase() === selectedStatuses,
+                    )
+                    ?.map((tx, idx) => (
+                      <div
+                        key={tx?.order_id || idx}
+                        className={`${styles.contentRow} btnDisplay`}
+                      >
+                        <div className="row align-items-center py-3 px-sm-4 px-3 g-2">
+                          <div className="col-lg-2 col-md-3 col-12">
+                            <div className={styles.txMeta}>
+                              <div className={styles.txDate}>{tx?.date}</div>
+                              <div className={styles.txNumber}>
+                                {tx?.order_no}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        <div className="col-lg-5 col-md-5 col-12">
-                          <div className="d-flex align-items-center">
-                            <div
-                              className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
+                          <div className="col-lg-5 col-md-5 col-12">
+                            <div className="d-flex align-items-center">
+                              <div
+                                className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
+                              >
+                                {tx?.domain?.charAt(0)?.toUpperCase()}
+                              </div>
+                              <div className="ps-2 min-w-0">
+                                <div className={styles.txDomainName}>
+                                  {tx?.domain}
+                                </div>
+                                <div className={styles.txDesc}>
+                                  Received payment for invoice no. INV
+                                  {tx?.invoice_no}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="col-lg-2 col-md-2 col-6 text-md-center">
+                            <span
+                              className={`${styles.statusBadge} ${styles[tx?.status?.toLowerCase()]}`}
                             >
-                              {tx?.domain?.charAt(0)?.toUpperCase()}
-                            </div>
-                            <div className="ps-2 min-w-0">
-                              <div className={styles.txDomainName}>
-                                {tx?.domain}
-                              </div>
-                              <div className={styles.txDesc}>
-                                Received payment for invoice no. INV
-                                {tx?.invoice_no}
-                              </div>
-                            </div>
+                              {tx?.status}
+                            </span>
                           </div>
-                        </div>
 
-                        <div className="col-lg-2 col-md-2 col-6 text-md-center">
-                          <span
-                            className={`${styles.statusBadge} ${getStatusBadgeClass(tx?.status)}`}
-                          >
-                            {statusLabelMap[getStatusKey(tx?.status)] ||
-                              tx?.status}
-                          </span>
-                        </div>
-
-                        <div className="col-lg-3 col-md-2 col-6 text-end">
-                          <span className={styles.amountValue}>
-                            {formatAmount(tx?.amount)}
-                          </span>
+                          <div className="col-lg-3 col-md-2 col-6 text-end">
+                            <span className={styles.amountValue}>
+                              {formatAmount(tx?.amount)}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    ))
                 ) : (
                   <p className="text-center m-0">No Transaction Data</p>
                 )

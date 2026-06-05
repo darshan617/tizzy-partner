@@ -60,7 +60,8 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   return (
     <>
       <header className={styles.pageHeader}>
-        <div className="row align-items-center">
+        {/* <div className="row align-items-center"> */}
+        <div className="row align-items-center justify-content-spacebetween">
           <div className="col-auto">
             <div className={styles.pageLogoBox}>
               <Link href="/dashboard" className="d-inline-block">
@@ -74,8 +75,9 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
             </div>
           </div>
           <div className="col d-flex justify-content-end d-md-block ps-lg-4">
-            <div className="row justify-content-md-between justify-content-end align-items-center">
-              <div className="col-auto">
+            {/* <div className="row justify-content-md-between justify-content-end align-items-center"> */}
+            <div className="row justify-content-md-end justify-content-end align-items-center">
+              {/* <div className="col-auto">
                 <div
                   className={`${styles.pgSearchWrap} offcanvas-md offcanvas-top gap-3 gap-md-0`}
                   id="pageSearchMain"
@@ -100,10 +102,10 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                     aria-label="Close"
                   ></button>
                 </div>
-              </div>
+              </div> */}
               <div className="col-auto d-flex align-items-center">
                 <div className="d-flex justify-content-between align-items-center headNavBtns gap-md-3 gap-2">
-                  <div className="d-md-none">
+                  {/* <div className="d-md-none">
                     <button
                       className={styles.navBtns}
                       data-bs-toggle="offcanvas"
@@ -119,7 +121,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                         {balanceAndCartData?.notifications || 0}
                       </span>
                     </button>
-                  </div>
+                  </div> */}
                   <div className="">
                     <Link className={styles.navBtns} href="/order-summary">
                       <BsHandbag size={20} color="#000" />

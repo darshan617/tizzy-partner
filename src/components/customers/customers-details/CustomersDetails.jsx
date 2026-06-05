@@ -25,18 +25,27 @@ export default function CustomerDetail() {
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
 
-  const { data: customerDetailsData } = useGetSpecificCustomerDetailsQuery(
-    {
-      customer_id: router?.query?.customerId,
-      partner_id: userData?.id,
-    },
-    {
-      skip: !router?.isReady || !router?.query?.customerId || !userData?.id,
-    },
-  );
+  const { data: customerDetailsData, refetch: refetchCustomerDetails } =
+    useGetSpecificCustomerDetailsQuery(
+      {
+        customer_id: router?.query?.customerId,
+        partner_id: userData?.id,
+      },
+      {
+        skip: !router?.isReady || !router?.query?.customerId || !userData?.id,
+      },
+    );
 
   const customerDetails = customerDetailsData?.data?.customer;
   const allPlans = customerDetailsData?.data?.current_plans;
+
+  useEffect(() => {
+    if (router?.isReady) {
+      if (router?.query?.customerId) {
+        refetchCustomerDetails();
+      }
+    }
+  }, [router?.isReady]);
 
   useEffect(() => {
     const initSwiper = async () => {
@@ -366,7 +375,7 @@ export default function CustomerDetail() {
                         </div>
                       </div>
                       <div className="col-md-3 col-auto d-flex gap-2 justify-content-end">
-                        <button
+                        {/* <button
                           onClick={() =>
                             router?.push({
                               pathname: "/order-summary",
@@ -384,7 +393,7 @@ export default function CustomerDetail() {
                             style={{ minWidth: "14px" }}
                           />
                           <span>Renew</span>
-                        </button>
+                        </button> */}
                         {/* <button
                           className="btn small btnWhite"
                           data-bs-toggle="modal"
@@ -410,7 +419,17 @@ export default function CustomerDetail() {
                       </div>
                       <div>
                         <small className="text-decoration-underline">
-                          <Link href="">View History</Link>
+                          <Link
+                            href={{
+                              pathname: "/subscriptions/domain-history",
+                              query: {
+                                domains: plan?.domain_name,
+                                customerId: router?.query?.customerId,
+                              },
+                            }}
+                          >
+                            View History
+                          </Link>
                         </small>
                       </div>
                     </div>
@@ -571,7 +590,12 @@ export default function CustomerDetail() {
           <div className={`${styles.sectionCard} py-4`}>
             <div className="d-flex px-sm-4 px-3 mb-3 align-items-center">
               <div className="col">
-                <h2 className={`${styles.sectionCardHead}`}>Support Tickets</h2>
+                <h2 className={`${styles.sectionCardHead}`}>
+                  Support Tickets{" "}
+                  <span className="text-muted">
+                    (DEVELOPMENT UNDER PROGRESS)
+                  </span>
+                </h2>
               </div>
               <div className="col-auto">
                 <Link

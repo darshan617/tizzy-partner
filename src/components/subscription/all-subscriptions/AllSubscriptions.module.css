@@ -174,7 +174,7 @@
   background: var(--whiteColor);
 }
 
-.btn-check:checked + .filterItem {
+.btn-check:checked+.filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -340,9 +340,9 @@
   background: var(--borderColor);
 }
 
-.expired{
-    color: var(--dangerColor);
-    background: var(--dangerSubtleColor);
+.expired {
+  color: var(--dangerColor);
+  background: var(--dangerSubtleColor);
 }
 
 .statusSubtext {
@@ -405,7 +405,7 @@
     font-size: var(--fs11);
   }
 
-  .contentRow > .row > .mobAction {
+  .contentRow>.row>.mobAction {
     background: #f5f6f9;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
@@ -432,7 +432,7 @@
   }
 }
 
-@media (min-width: 992px) {
+/* @media (min-width: 992px) {
   .btnDisplay .crBtn {
     opacity: 0;
     position: relative;
@@ -443,4 +443,4 @@
     opacity: 1;
     right: 0;
   }
-}
+} */

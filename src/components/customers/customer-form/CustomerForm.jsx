@@ -403,6 +403,7 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
                 value={formData.name}
                 onChange={handleChange}
                 className="form-control"
+                placeholder="Enter Name"
               />
               {errors.name && (
                 <span className={styles.errorMessage}>{errors.name}</span>
@@ -418,6 +419,7 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
                 value={formData.email}
                 onChange={handleChange}
                 className="form-control"
+                placeholder="Enter Email"
               />
               {errors.email && (
                 <span className={styles.errorMessage}>{errors.email}</span>
@@ -437,6 +439,7 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
                 value={formData.mobile}
                 onChange={handleChange}
                 className="form-control"
+                placeholder="Enter Mobile Number"
               />
               {errors.mobile && (
                 <span className={styles.errorMessage}>{errors.mobile}</span>
@@ -453,16 +456,25 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
               <label className={styles.label}>
                 GSTIN<span className={styles.required}>*</span>
               </label>
-              <input
-                type="text"
-                name="gstin"
-                value={formData.gstin}
-                onChange={handleChange}
-                onBlur={handleGstinBlur}
-                className={`form-control`}
-                disabled={type === "edit"}
-                style={{ backgroundColor: type === "edit" ? "#f5f5f5" : "" }}
-              />
+              <div className="d-flex gap-1">
+                <input
+                  type="text"
+                  name="gstin"
+                  placeholder="Enter GSTIN"
+                  value={formData.gstin}
+                  onChange={handleChange}
+                  // onBlur={handleGstinBlur}
+                  className={`form-control`}
+                  disabled={type === "edit"}
+                  style={{ backgroundColor: type === "edit" ? "#f5f5f5" : "" }}
+                />
+                <button
+                  className={styles.searchGstinBtn}
+                  onClick={handleGstinBlur}
+                >
+                  Search
+                </button>
+              </div>
               {isSearchingGstin && (
                 <span className={styles.infoMessage}>Searching GSTIN...</span>
               )}

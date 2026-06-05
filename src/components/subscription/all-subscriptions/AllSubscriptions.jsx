@@ -23,31 +23,30 @@ const AllSubscriptions = ({
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedStatuses, setSelectedStatuses] = useState([]);
+  const [selectedStatuses, setSelectedStatuses] = useState("all");
 
   const toggleStatus = (status) => {
-    setSelectedStatuses((prev) =>
-      prev.includes(status)
-        ? prev.filter((item) => item !== status)
-        : [...prev, status],
-    );
+    setSelectedStatuses((prev) => (prev === status ? "all" : status));
   };
 
   const filteredSubscriptions = useMemo(
     () =>
-      []?.filter((subscription) => {
-        const q = searchQuery.trim().toLowerCase();
+      allSubscriptionsData?.filter((subscription) => {
+        const q = searchQuery?.trim()?.toLowerCase();
         const matchesSearch =
           q === "" ||
-          subscription.domain.toLowerCase().includes(q) ||
-          subscription.plan.toLowerCase().includes(q);
+          subscription?.domain?.toLowerCase()?.includes(q) ||
+          subscription?.customer_name?.toLowerCase()?.includes(q) ||
+          subscription?.currentPlan?.toLowerCase()?.includes(q) ||
+          subscription?.order_no?.toLowerCase()?.includes(q);
         const matchesStatus =
-          selectedStatuses.length === 0 ||
-          selectedStatuses.includes(subscription.status);
+          selectedStatuses === "all"
+            ? true
+            : selectedStatuses === subscription?.status?.toLowerCase();
 
         return matchesSearch && matchesStatus;
       }),
-    [searchQuery, selectedStatuses],
+    [searchQuery, selectedStatuses, allSubscriptionsData],
   );
 
   return (
@@ -112,20 +111,23 @@ const AllSubscriptions = ({
                     <ul className={`${styles.filterGroup} gap-2`} role="group">
                       {statusOrder.map((status) => (
                         <li key={status}>
-                          <input
-                            type="checkbox"
-                            className="btn-check"
-                            id={`status_${status}`}
-                            autoComplete="off"
-                            checked={selectedStatuses.includes(status)}
-                            onChange={() => toggleStatus(status)}
-                          />
-                          <label
+                          <button
+                            key={status}
                             className={`${styles.filterItem} rounded-pill`}
-                            htmlFor={`status_${status}`}
+                            onClick={() => toggleStatus(status)}
+                            style={{
+                              backgroundColor:
+                                selectedStatuses === status
+                                  ? "var(--primaryColor)"
+                                  : "",
+                              color:
+                                selectedStatuses === status
+                                  ? "var(--whiteColor)"
+                                  : "var(--darkColor)",
+                            }}
                           >
                             {statusLabelMap[status]}
-                          </label>
+                          </button>
                         </li>
                       ))}
                     </ul>
@@ -161,149 +163,158 @@ const AllSubscriptions = ({
               className={`${styles.subscriptionList} d-flex flex-column gap-3 mb-5`}
             >
               {!isAllSubscriptionDataLoading ? (
-                allSubscriptionsData?.length > 0 ? (
-                  allSubscriptionsData?.map((subscription, idx) => {
-                    console.log(subscription, "subscription");
+                filteredSubscriptions?.length > 0 ? (
+                  filteredSubscriptions
+                    ?.filter((subscription) =>
+                      selectedStatuses === "all"
+                        ? true
+                        : subscription?.status?.toLowerCase() ===
+                          selectedStatuses,
+                    )
+                    ?.map((subscription, idx) => {
+                      return (
+                        <div
+                          key={idx}
+                          className={`${styles.contentRow} ${styles.btnDisplay}`}
+                        >
+                          <div className="row align-items-center">
+                            <div className={`${styles.ckbCol} col-auto`}>
+                              <input
+                                type="checkbox"
+                                className="form-check-input"
+                              />
+                            </div>
 
-                    return (
-                      <div
-                        key={idx}
-                        className={`${styles.contentRow} ${styles.btnDisplay}`}
-                      >
-                        <div className="row align-items-center">
-                          <div className={`${styles.ckbCol} col-auto`}>
-                            <input
-                              type="checkbox"
-                              className="form-check-input"
-                            />
-                          </div>
-
-                          <div className="col">
-                            <div className="row align-items-center py-3">
-                              <div className="col-md-4 col-12">
-                                <div
-                                  className={`${styles.crDomain} d-flex align-items-center`}
-                                >
+                            <div className="col">
+                              <div className="row align-items-center py-3">
+                                <div className="col-md-4 col-12">
                                   <div
-                                    className={`avatarSmall flex-shrink-0 ${styles.avatarBg}`}
+                                    className={`${styles.crDomain} d-flex align-items-center`}
                                   >
-                                    {subscription?.domain
-                                      ?.charAt(0)
-                                      ?.toUpperCase()}
+                                    <div
+                                      className={`avatarSmall flex-shrink-0 ${styles.avatarBg}`}
+                                    >
+                                      {subscription?.domain
+                                        ?.charAt(0)
+                                        ?.toUpperCase()}
+                                    </div>
+                                    <div
+                                      className={`${styles.crDomainName} ps-2`}
+                                    >
+                                      {subscription?.domain}
+                                    </div>
                                   </div>
-                                  <div
-                                    className={`${styles.crDomainName} ps-2`}
-                                  >
-                                    {subscription?.domain}
+                                  <p className="m-0 ms-4 ps-2 text-secondary small">
+                                    {" "}
+                                    Order Id: {subscription?.order_no}
+                                  </p>
+                                  <p className="m-0 ms-4 ps-2 text-secondary small">
+                                    {" "}
+                                    Customer Name: {subscription?.customer_name}
+                                  </p>
+                                  <div className={`${styles.crName} ms-4 ps-2`}>
+                                    {subscription?.currentPlan}
                                   </div>
                                 </div>
-                                <p className="m-0 ms-4 ps-2 text-secondary small">
-                                  {" "}
-                                  Order Id: {subscription?.order_no}
-                                </p>
-                                <div className={`${styles.crName} ms-4 ps-2`}>
-                                  {subscription?.currentPlan}
-                                </div>
-                              </div>
 
-                              <div className="col-md-2 col-6 text-center">
-                                <div className={styles.metaHead}>License</div>
-                                <div className={styles.licenseValue}>
-                                  <span>{subscription?.licenses}</span>
-                                  <button
+                                <div className="col-md-2 col-6 text-center">
+                                  <div className={styles.metaHead}>License</div>
+                                  <div className={styles.licenseValue}>
+                                    <span>{subscription?.licenses}</span>
+                                    {/* <button
                                     type="button"
                                     className={styles.editBtn}
                                   >
                                     <LuPencil className={styles.editIcon} />
-                                  </button>
-                                </div>
-                              </div>
-
-                              <div className="col-md-2 col-6 text-center">
-                                <div className={styles.metaHead}>Due on</div>
-                                <div className={styles.dueValue}>
-                                  {subscription?.due_date || "-"}
-                                </div>
-                              </div>
-
-                              <div
-                                className={`col-md-3 col-12 ${styles.statusCol}`}
-                              >
-                                <div className={styles.statusInner}>
-                                  <div className={styles.statusBadgeGroup}>
-                                    <span
-                                      className={`${styles.statusBadge} ${subscription?.status?.toLowerCase() === "active" ? styles.activeBadge : ""} ${subscription?.status?.toLowerCase() === "expiring" ? styles.expiringBadge : ""}  ${subscription?.status?.toLowerCase() === "expired" ? styles.expired : ""} ${subscription?.status === "inactive" ? styles.inactiveBadge : ""}`}
-                                    >
-                                      {subscription?.status}
-                                    </span>
-                                    {subscription?.subtext ? (
-                                      <div className={styles.statusSubtext}>
-                                        {subscription?.subtext}
-                                      </div>
-                                    ) : null}
+                                  </button> */}
                                   </div>
-                                  {(subscription?.status?.toLowerCase() ===
-                                    "expiring" ||
-                                    subscription?.status?.toLowerCase() ===
-                                      "expired") && (
-                                    <button
-                                      type="button"
-                                      className={styles.renewBtn}
-                                      onClick={() =>
-                                        router.push({
-                                          pathname: "/order-summary",
-                                          query: {
-                                            type: "renew-plan",
-                                            order_id: subscription?.order_id,
-                                            renewal_order_id:
-                                              subscription?.renewal_order_id,
-                                          },
-                                        })
-                                      }
-                                    >
-                                      Renew
-                                    </button>
-                                  )}
+                                </div>
+
+                                <div className="col-md-2 col-6 text-center">
+                                  <div className={styles.metaHead}>Due on</div>
+                                  <div className={styles.dueValue}>
+                                    {subscription?.due_date || "-"}
+                                  </div>
+                                </div>
+
+                                <div
+                                  className={`col-md-3 col-12 ${styles.statusCol}`}
+                                >
+                                  <div className={styles.statusInner}>
+                                    <div className={styles.statusBadgeGroup}>
+                                      <span
+                                        className={`${styles.statusBadge} ${subscription?.status?.toLowerCase() === "active" ? styles.activeBadge : ""} ${subscription?.status?.toLowerCase() === "expiring" ? styles.expiringBadge : ""}  ${subscription?.status?.toLowerCase() === "expired" ? styles.expired : ""} ${subscription?.status === "inactive" ? styles.inactiveBadge : ""}`}
+                                      >
+                                        {subscription?.status}
+                                      </span>
+                                      {subscription?.subtext ? (
+                                        <div className={styles.statusSubtext}>
+                                          {subscription?.subtext}
+                                        </div>
+                                      ) : null}
+                                    </div>
+                                    {(subscription?.status?.toLowerCase() ===
+                                      "expiring" ||
+                                      subscription?.status?.toLowerCase() ===
+                                        "expired") && (
+                                      <button
+                                        type="button"
+                                        className={styles.renewBtn}
+                                        onClick={() =>
+                                          router.push({
+                                            pathname: "/order-summary",
+                                            query: {
+                                              type: "renew-plan",
+                                              order_id: subscription?.order_id,
+                                              renewal_order_id:
+                                                subscription?.renewal_order_id,
+                                            },
+                                          })
+                                        }
+                                      >
+                                        Renew
+                                      </button>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
 
-                          <div
-                            className={`col-auto align-self-stretch d-flex align-items-center justify-content-end order-sm-3 mobAction ${styles.arrowCol}`}
-                          >
-                            <Link
-                              className={styles.crBtn}
-                              href={{
-                                // pathname: "/customers/customer-details",
-                                pathname:
-                                  "/subscriptions/subscriptions-details",
-                                query: {
-                                  customerId: subscription?.customer_id,
-                                  orderId: subscription?.order_id,
-                                },
-                              }}
+                            <div
+                              className={`col-auto align-self-stretch d-flex align-items-center justify-content-end order-sm-3 mobAction ${styles.arrowCol}`}
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className={styles.icon}
+                              <Link
+                                className={styles.crBtn}
+                                href={{
+                                  // pathname: "/customers/customer-details",
+                                  pathname:
+                                    "/subscriptions/subscriptions-details",
+                                  query: {
+                                    customerId: subscription?.customer_id,
+                                    orderId: subscription?.order_id,
+                                  },
+                                }}
                               >
-                                <path d="m9 18 6-6-6-6" />
-                              </svg>
-                            </Link>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className={styles.icon}
+                                >
+                                  <path d="m9 18 6-6-6-6" />
+                                </svg>
+                              </Link>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })
+                      );
+                    })
                 ) : (
                   <p className="text-center m-0">No Subscriptions Data</p>
                 )

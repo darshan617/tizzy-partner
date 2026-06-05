@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Minus, ChevronUp } from "lucide-react";
 import styles from "@/components/dashboard/sales-report/salesReport.module.css";
+import { useSalesReportMutation } from "@/redux/apis/dashboardApi";
+import Cookies from "js-cookie";
+import SalesChart from "@/components/sales-chart/SalesChart";
 
 const invoiceCards = [
   {
@@ -107,11 +110,40 @@ const TrendIcon = ({ trend }) => {
   );
 };
 
-const PERIODS = ["Weekly", "Monthly", "Yearly"];
+const PERIODS = ["weekly", "monthly", "yearly"];
 
 const SalesReport = ({ data, isDataLoading }) => {
+  const userData = Cookies?.get("userData")
+    ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
+    : null;
   const invoiceCardsData = data?.invoice_kpis || {};
-  const [activePeriod, setActivePeriod] = useState("Weekly");
+  const [activePeriod, setActivePeriod] = useState("yearly");
+  const [salesData, setSalesData] = useState();
+  console.log("salesData", salesData);
+
+  const [salesReport, { isLoading: isSalesReportLoading }] =
+    useSalesReportMutation();
+  const fetchSalesReport = async () => {
+    try {
+      const res = await salesReport({
+        body: {
+          partner_id: userData?.id,
+          period: activePeriod,
+        },
+      });
+      if (res?.data?.success || res?.data?.status) {
+        setSalesData(res?.data);
+      }
+    } catch (error) {
+      console.log("erorr", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userData?.id) {
+      fetchSalesReport();
+    }
+  }, [activePeriod, userData?.id]);
 
   return (
     <div className={styles.report}>
@@ -135,7 +167,7 @@ const SalesReport = ({ data, isDataLoading }) => {
               </div>
             </div>
             <div className={styles.chartContainer}>
-              <span>Chart Comes Here</span>
+              <SalesChart data={salesData} />
             </div>
           </div>
         </div>
@@ -151,11 +183,11 @@ const SalesReport = ({ data, isDataLoading }) => {
                       <div className={styles.invoiceCardContent}>
                         <p className={styles.invoiceLabel}>
                           {card.label}
-                          <span className={styles.invoiceCount}>
+                          {/* <span className={styles.invoiceCount}>
                             (
                             {invoiceCardsData[card?.label?.toLocaleUpperCase()]}
                             )
-                          </span>
+                          </span> */}
                         </p>
                         <p className={styles.statValue}>
                           ₹

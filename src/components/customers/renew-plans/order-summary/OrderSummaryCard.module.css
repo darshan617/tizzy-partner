@@ -6,7 +6,7 @@
     max-width: 100%;
     box-shadow: 0 2px 12px rgba(15, 23, 42, 0.08);
 }
- 
+
 .cardTitle {
     color: #111827;
     letter-spacing: .06em;
@@ -15,7 +15,7 @@
     font-size: 14px;
     font-weight: 600;
 }
- 
+
 .summaryRow {
     display: flex;
     justify-content: space-between;
@@ -30,13 +30,13 @@
     font-size: 14px;
     font-weight: 400;
 }
- 
+
 .value {
     font-size: 14px;
     font-weight: 500;
     color: #444444;
 }
- 
+
 .addLink {
     color: #3b82f6;
     font-weight: 600;
@@ -44,24 +44,24 @@
     text-decoration: none;
     margin-left: 4px;
 }
- 
+
 .addLink:hover {
     text-decoration: underline;
     color: #2563eb;
 }
- 
+
 .divider {
     border: none;
     border-top: 1px solid #f0f0f0;
     margin: 4px 0;
 }
- 
+
 .dividerHeavy {
     border: none;
     border-top: 1px solid #e5e7eb;
     margin: 6px 0 16px;
 }
- 
+
 .totalRow {
     display: flex;
     justify-content: space-between;
@@ -71,12 +71,12 @@
     font-weight: 600;
     color: #313A46;
 }
- 
+
 .creditBox {
     text-align: center;
     margin-bottom: 14px;
 }
- 
+
 .creditBalance {
     display: inline-flex;
     align-items: center;
@@ -86,13 +86,13 @@
     color: #F7577E;
     margin-bottom: 4px;
 }
- 
+
 .creditWarning {
     font-size: 12px;
     color: #F7577E;
     font-weight: 400;
 }
- 
+
 .btnPrimary {
     display: block;
     width: 100%;
@@ -109,28 +109,28 @@
     margin-bottom: 16px;
     letter-spacing: 0.01em;
 }
- 
+
 .btnPrimary:hover {
     background: #2d43a9;
 }
- 
+
 .btnPrimary:active {
     transform: scale(0.98);
 }
- 
+
 .requestBox {
     background: #FBFBFB;
     padding: 10px;
     text-align: center;
 }
- 
+
 .requestBox p {
     font-size: 12px;
     font-weight: 400;
     color: #666666;
     margin-bottom: 4px;
 }
- 
+
 .requestLink {
     font-size: 14px;
     font-weight: 500;
@@ -142,7 +142,7 @@
     padding: 0;
     transition: color 0.15s;
 }
- 
+
 .requestLink:hover {
     color: #1e40af;
 }
@@ -154,22 +154,22 @@
     border-radius: 8px;
     overflow: hidden;
     background: #fff;
-  }
-  
-  .promoInput {
+}
+
+.promoInput {
     flex: 1;
     border: none;
     outline: none;
     padding: 5px 2px 2px 5px;
     font-size: 14px;
     color: #111827;
-  }
-  
-  .promoInput::placeholder {
+}
+
+.promoInput::placeholder {
     color: #c0c0c0;
-  }
-  
-  .applyBtn {
+}
+
+.applyBtn {
     background: #0057b8;
     color: white;
     border: none;
@@ -178,20 +178,20 @@
     font-weight: 500;
     cursor: pointer;
     height: 100%;
-  }
-  
-  .applyBtn:hover {
+}
+
+.applyBtn:hover {
     background: #00489a;
-  }
-  
-  .addLinkBtn {
+}
+
+.addLinkBtn {
     background: transparent;
     border: none;
     color: #2563eb;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
     padding: 0;
-  }
+}
 
 .creditRequestPopup {
     text-align: center;
@@ -314,7 +314,8 @@
     color: #111827;
     line-height: 1.3;
 }
-.addDomainIconBtnContainer{
+
+.addDomainIconBtnContainer {
     padding: 0px 24px 8px;
 }
 
@@ -324,7 +325,7 @@
     justify-content: center;
     border: none;
     border-radius: 5px;
-    background:none;
+    background: none;
     color: var(--primaryColor);
     cursor: pointer;
     font-size: 14px;
@@ -557,21 +558,21 @@
         border-top: 1px solid #f0f0f0;
     }
 }
- 
+
 @media (max-width: 480px) {
     .card {
         padding: 18px 16px;
         border-radius: 12px;
     }
- 
+
     .cardTitle {
         font-size: 12px;
     }
- 
+
     .totalRow {
         font-size: 14.5px;
     }
- 
+
     .btnPrimary {
         font-size: 13.5px;
         padding: 11px;

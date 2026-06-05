@@ -109,13 +109,22 @@ const OrderComplete = () => {
               <MdOutlineFileDownload size={20} />
             </button>
             {router?.query?.po ? (
-              <iframe
-                src={`${router?.query?.po}#toolbar=0`}
-                width="100%"
-                height="423px"
-                frameBorder="0"
-                style={{ pointerEvents: "none" }} // makes the iframe itself non-interactive
-              />
+              <div
+                style={{
+                  width: "100%",
+                  height: "423px",
+                  overflowY: "auto",
+                }}
+              >
+                <iframe
+                  src={`${router?.query?.po}#toolbar=0`}
+                  width="100%"
+                  height="100%"
+                  maxHeight="1000px"
+                  frameBorder="0"
+                  style={{ pointerEvents: "none" }}
+                />
+              </div>
             ) : (
               <div>
                 <Loader />
