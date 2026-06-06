@@ -43,10 +43,7 @@ const Support = () => {
       <div className="sectionCard py-4">
         <div className="d-flex px-sm-4 px-3 mb-3 align-items-center">
           <div className="col">
-            <h2 className="sectionCardHead">
-              Support{" "}
-              <span className="text-muted">(DEVELOPMENT UNDER PROGRESS)</span>
-            </h2>
+            <h2 className="sectionCardHead">Support </h2>
           </div>
           <div className="col-auto">
             <a href="#" className="btn small btnDefault">
