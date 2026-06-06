@@ -119,7 +119,6 @@ const SalesReport = ({ data, isDataLoading }) => {
   const invoiceCardsData = data?.invoice_kpis || {};
   const [activePeriod, setActivePeriod] = useState("yearly");
   const [salesData, setSalesData] = useState();
-  console.log("salesData", salesData);
 
   const [salesReport, { isLoading: isSalesReportLoading }] =
     useSalesReportMutation();

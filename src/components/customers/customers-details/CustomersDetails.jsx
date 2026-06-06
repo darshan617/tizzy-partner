@@ -592,9 +592,6 @@ export default function CustomerDetail() {
               <div className="col">
                 <h2 className={`${styles.sectionCardHead}`}>
                   Support Tickets{" "}
-                  <span className="text-muted">
-                    (DEVELOPMENT UNDER PROGRESS)
-                  </span>
                 </h2>
               </div>
               <div className="col-auto">

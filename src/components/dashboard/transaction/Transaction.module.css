@@ -223,6 +223,13 @@
     font-size: var(--fs14);
     font-weight: 500;
     color: var(--primaryColor);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
 }
 
 .crDescription {
