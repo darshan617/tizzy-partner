@@ -73,7 +73,8 @@ const OrderSummaryCard = ({
   const [transferDomainInput, setTransferDomainInput] = useState("");
   const [discountedPercent, setDiscountedPercent] = useState(0);
   const [isConcernedAboutAadhar, setIsConcernedAboutAadhar] = useState(false);
-  console.log(isConcernedAboutAadhar, "isConcernedAboutAadhar");
+  const [isTermsAndConditionsChecked, setIsTermsAndConditionsChecked] =
+    useState(false);
 
   const providerId = Number(cartDetails?.[0]?.plan?.provider_id);
   const skipDomainVerification = providerId === 2;
@@ -745,7 +746,6 @@ const OrderSummaryCard = ({
                     </button>
                   </div>
                 </div>
-
                 <div className={styles.transferServiceSection}>
                   <label
                     htmlFor="transferDomainInput"
@@ -792,16 +792,48 @@ const OrderSummaryCard = ({
                       </span>
                     )}
                 </div>
-
+                <div className="d-flex align-center gap-2 mb-2">
+                  <input
+                    type="checkbox"
+                    id="termsAndConditions"
+                    name="termsAndConditions"
+                    checked={isTermsAndConditionsChecked}
+                    onChange={(e) =>
+                      setIsTermsAndConditionsChecked(e.target.checked)
+                    }
+                  />
+                  <label htmlFor="termsAndConditions">
+                    I consent to the{" "}
+                    <span
+                      className="text-primary"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        dispatch(
+                          setIsPopupVisible(
+                            "terms-and-conditions-transfer-service",
+                          ),
+                        )
+                      }
+                    >
+                      terms and conditions
+                    </span>
+                  </label>
+                </div>
                 <button
                   type="button"
                   className={styles.proceedPopupActionBtn}
-                  disabled={!canConfirmTransferDomain}
+                  disabled={
+                    !canConfirmTransferDomain || !isTermsAndConditionsChecked
+                  }
                   style={{
-                    opacity: !canConfirmTransferDomain ? 0.5 : 1,
-                    cursor: !canConfirmTransferDomain
-                      ? "not-allowed"
-                      : "pointer",
+                    opacity:
+                      !canConfirmTransferDomain || !isTermsAndConditionsChecked
+                        ? 0.5
+                        : 1,
+                    cursor:
+                      !canConfirmTransferDomain || !isTermsAndConditionsChecked
+                        ? "not-allowed"
+                        : "pointer",
                   }}
                   onClick={handleTransferAccount}
                 >
@@ -863,6 +895,26 @@ const OrderSummaryCard = ({
               my Aadhaar details will be used solely for identity verification
               purposes and will be handled securely in accordance with
               applicable data protection and privacy requirements.
+            </p>
+          </div>
+        </CustomPopup>
+      )}
+      {isPopupVisible === "terms-and-conditions-transfer-service" && (
+        <CustomPopup
+          onClose={() => dispatch(setIsPopupVisible(""))}
+          maxWidth="500px"
+        >
+          <div className={styles.termsAndConditionsPopup}>
+            <h4 className={styles.termsAndConditionsPopupTitle}>
+              Transfer Service Terms and Conditions
+            </h4>
+            <p className="m-0 mt-3  text-secondary text-start">
+              We securely migrate all your email accounts from your current
+              provider. No data loss - all emails, files, and settings remain
+              intact. Your admin account and login credentials stay unchanged.
+              Minimal to zero downtime during the transfer. <br />
+              <strong>Note:</strong> Your existing subscription tenure with the
+              previous provider will not be carried forward.
             </p>
           </div>
         </CustomPopup>
