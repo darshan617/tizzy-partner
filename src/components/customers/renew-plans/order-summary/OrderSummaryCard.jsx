@@ -815,7 +815,7 @@ const OrderSummaryCard = ({
                         )
                       }
                     >
-                      terms and conditions
+                      Terms and Conditions of Transfer Service
                     </span>
                   </label>
                 </div>
