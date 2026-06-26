@@ -16,9 +16,20 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
 
   const creditLimit = Number(balanceAndCartData?.credit_limit || 0);
   const walletBalance = Number(balanceAndCartData?.wallet_balance || 0);
+  const usedAmount = Math.max(creditLimit - walletBalance, 0);
 
-  const availablePercentage =
-    creditLimit > 0 ? (walletBalance / creditLimit) * 100 : 0;
+  const usedPercentage = creditLimit > 0 ? (usedAmount / creditLimit) * 100 : 0;
+
+  const formatBalance = (value) =>
+    Number(value || 0).toLocaleString("en-IN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+  const formatAmount = (value) =>
+    Number(value || 0).toLocaleString("en-IN", {
+      maximumFractionDigits: 0,
+    });
 
   // Handle click outside to close sidebar
   useEffect(() => {
@@ -79,16 +90,16 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
             <ul className={`${styles.sideMenuList} d-flex flex-column gap-1`}>
               {SIDEBAR_MENU_CONSTANTS?.map((menu, idx) => {
                 const ICON = menu?.icon || "";
+                const isActive = router?.pathname === menu?.href;
                 return (
                   <Link
                     href={menu?.href}
-                    className={`${styles.sideMenuItem}`}
+                    className={`${styles.sideMenuItem} ${isActive ? styles.active : ""}`}
                     key={idx}
                     style={{
-                      background:
-                        router?.pathname === menu?.href
-                          ? "var(--primaryColor)"
-                          : "transparent",
+                      background: isActive
+                        ? "var(--primaryColor)"
+                        : "transparent",
                     }}
                   >
                     <button
@@ -100,10 +111,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                       <span
                         className={`${styles.menuLabel}`}
                         style={{
-                          color:
-                            router?.pathname === menu?.href
-                              ? "var(--whiteColor)"
-                              : "var(--textBody)",
+                          color: isActive
+                            ? "var(--whiteColor)"
+                            : "var(--textBody)",
                         }}
                       >
                         {menu?.title}
@@ -121,31 +131,33 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
 
             <ul className={`${styles.sideMenuList} d-flex flex-column gap-1`}>
               {SIDEBAR_SERVICES_CONSTANTS?.map((menu, idx) => {
+                const isActive =
+                  `/services/${router?.query?.slug}` === menu?.href;
                 return (
                   <Link
                     href={menu?.href}
-                    className={`${styles.sideMenuItem}`}
+                    className={`${styles.sideMenuItem} ${isActive ? styles.active : ""}`}
                     key={idx}
                     style={{
-                      background:
-                        `/services/${router?.query?.slug}` === menu?.href
-                          ? "var(--primaryColor)"
-                          : "transparent",
+                      background: isActive
+                        ? "var(--primaryColor)"
+                        : "transparent",
                     }}
                   >
                     <button
                       className={`${styles.menuLink} d-flex align-items-center gap-3`}
                     >
-                      <span className={`${styles.iconCircle} `}>
+                      <span
+                        className={`${styles.iconCircle} ${isActive ? styles.active : ""}`}
+                      >
                         {menu?.image}
                       </span>
                       <span
                         className={`${styles.menuLabel}`}
                         style={{
-                          color:
-                            `/services/${router?.query?.slug}` === menu?.href
-                              ? "var(--whiteColor)"
-                              : "var(--textBody)",
+                          color: isActive
+                            ? "var(--whiteColor)"
+                            : "var(--textBody)",
                         }}
                       >
                         {menu?.title}
@@ -164,42 +176,33 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
             <span>SUPPORT</span>
           </Link> */}
 
-          <div className={`${styles.creditBox} py-2`}>
+          <div className={styles.creditBox}>
             <div
-              className={` ${styles.titleBar} px-3 py-1 mb-2 d-flex align-items-center`}
+              className={`${styles.titleBar} d-flex align-items-center justify-content-between`}
             >
-              <span className="col">CREDITS</span>
+              <span>CREDITS</span>
               <Link href="/invoice">PAY NOW</Link>
             </div>
 
-            <div className="px-3">
+            <div className={styles.creditBody}>
               <div className={styles.credBaln}>
                 Balance
-                <span className={`${styles.credBalnvalue} d-block`}>
-                  ₹ {balanceAndCartData?.wallet_balance || 0}
+                <span className={styles.credBalnvalue}>
+                  ₹ {formatBalance(walletBalance)}
                 </span>
               </div>
-              <div className={`${styles.credScale} my-2`}>
+
+              <div className={styles.credScale}>
                 <div
                   className={styles.credscaleBar}
                   style={{
-                    width: `${Math.min(availablePercentage, 100)}%`,
+                    width: `${Math.min(usedPercentage, 100)}%`,
                   }}
-                ></div>
+                />
               </div>
 
-              <div
-                className={`${styles.credLimits} d-flex justify-content-between`}
-              >
-                <div>
-                  Used ₹{" "}
-                  {Number(
-                    balanceAndCartData?.credit_limit -
-                      balanceAndCartData?.wallet_balance,
-                  )?.toFixed(2) || 0}{" "}
-                  of ₹{" "}
-                  {Number(balanceAndCartData?.credit_limit)?.toFixed(2) || 0}
-                </div>
+              <div className={styles.credLimits}>
+                Used ₹{formatAmount(usedAmount)} of ₹{formatAmount(creditLimit)}
               </div>
             </div>
           </div>

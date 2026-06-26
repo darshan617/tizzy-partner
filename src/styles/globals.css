@@ -36,7 +36,7 @@
   --fs22: 1.65rem;
   --fs24: 1.75rem;
   --primaryColor: #0355ac;
-  --primarySubtleColor: #b5d9ff;
+  --primarySubtleColor: #E6F1FD;
   --secondaryColor: #7b70ef;
   --secondarySubtleColor: #e7e5fd;
   --successColor: #02bc9c;
@@ -81,10 +81,7 @@ body {
   font-optical-sizing: auto;
   color: var(--textBody);
   line-height: 1.5;
-  background: linear-gradient(120deg,
-      #fff 0%,
-      #f5f6f7 15%,
-      #e8f6ff 80%) !important;
+  background: #F5F8FC
 }
 
 * {
@@ -745,13 +742,6 @@ strong {
   border-top: 1px solid #fff;
 }
 
-.sectionCard {
-  width: 100%;
-  min-height: 100px;
-  background: #fff;
-  box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-}
 
 .sectionCard.addGrad {
   background: linear-gradient(135deg, var(--whiteColor) 70%, #f3f3f3 100%);
@@ -1743,12 +1733,18 @@ strong {
   border-radius: 10px;
   width: 100%;
   min-height: 100px;
-  box-shadow: 0 2px 1px #0000001a;
+  box-shadow: 5px 5px 8px #5090c545;
   max-width: 1100px;
   margin: auto;
+  margin-bottom: 25px;
 }
 
 .rotate-180 {
   transform: rotate(180deg);
   transition: transform 0.3s ease;
+}
+
+.mainContainer {
+  max-width: 1100px;
+  margin: auto;
 }

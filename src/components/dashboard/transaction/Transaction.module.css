@@ -1,300 +1,539 @@
-.btn {
-    width: auto;
-    height: 40px;
-    border-radius: 50rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--fs14);
-    font-weight: 500;
-    border: 1px solid var(--borderColor);
-    position: relative;
+.transactionCard {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto 25px;
+    background: var(--whiteColor);
+    border-radius: 10px;
+    box-shadow: 5px 5px 8px #5090c545;
     overflow: hidden;
 }
 
+.headerBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: #ffffff;
+    padding: 16px 24px;
+}
 
-.btn .icon {
-    width: 16px;
-    aspect-ratio: 1;
-    margin-right: 5px;
+.tabTrack {
     display: inline-flex;
-    stroke-width: 1.5;
-    color: inherit;
+    align-items: center;
+    gap: 4px;
+    background: var(--primarySubtleColor);
+    border-radius: 8px;
+    padding: 4px;
 }
 
-.btnWhite {
-    background: var(--whiteColor);
-    color: var(--textBody);
-}
-
-.btn:hover,
-.btn:first-child:active {
-    background: var(--primaryColor);
-    color: var(--whiteColor);
-    border-color: var(--primaryColor);
-}
-
-.btn:hover:before,
-.btn:first-child:active:before {
-    content: "";
-    width: 100%;
-    height: 100%;
-    display: block;
-    background: rgba(0, 0, 0, 0.2);
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    bottom: 1px;
-    right: 1px;
-    margin: auto;
-}
-
-.btn.small {
-    height: 30px;
+.tab {
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--textBodySecondary);
     font-size: var(--fs12);
+    font-weight: 600;
+    text-transform: uppercase;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    padding: 5px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+        box-shadow 0.15s ease;
 }
 
-.btn.small .icon {
-    width: 12px;
-    margin-right: 2px;
-    stroke-width: 2;
+.tab:hover:not(.tabActive) {
+    color: var(--primaryColor);
 }
 
-.icon {
+.tabActive {
+    background: var(--whiteColor);
+    color: var(--primaryColor);
+    border-bottom: 2px solid var(--primaryColor);
+    box-shadow: 0 1px 4px rgba(3, 85, 172, 0.12);
+}
+
+.viewAllLink {
+    font-size: var(--fs14);
+    font-weight: 600;
+    color: var(--primaryColor);
+    text-decoration: underline;
+    white-space: nowrap;
+}
+
+.viewAllLink:hover {
+    color: #024a96;
+}
+
+.contentBody {
+    padding: 16px 24px 20px;
+    background: var(--whiteColor);
+}
+
+.contentList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.contentRow {
+    background: var(--whiteColor);
+    border: 1px solid var(--borderColor);
+    padding: 12px 18px;
+    border-radius: 8px;
+}
+
+.transactionRowInner {
+    display: grid;
+    grid-template-columns:
+        minmax(110px, 14%) minmax(180px, 36%) minmax(100px, 25%) minmax(100px, 25%);
+    align-items: center;
+    gap: 12px 16px;
     width: 100%;
-    height: 100%;
-    color: inherit;
-    line-height: 0;
-    display: block;
+}
+
+.colDateMeta {
+    min-width: 0;
+}
+
+.txDate {
+    margin: 0 0 4px;
+    font-size: var(--fs12);
+    color: var(--textBodySecondary);
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.txIdBadge {
+    display: inline-block;
+    padding: 3px 10px;
+    background: #E7E9EB;
+    border-radius: 4px;
+    font-size: var(--fs12);
+    font-weight: 600;
+    color: var(--darkColor);
+    line-height: 1.4;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.colDomainBlock {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.domainInfo {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.renewalRowInner {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr) minmax(0, 1fr) 72px 100px 96px 36px;
+    align-items: center;
+    gap: 12px 16px;
+    width: 100%;
+}
+
+.avatar {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--whiteColor);
+    font-size: var(--fs14);
+    font-weight: 600;
+    line-height: 1;
+}
+
+.avatar0 {
+    background: #c0392b;
+}
+
+.avatar1 {
+    background: #c9a227;
+}
+
+.avatar2 {
+    background: #4a90c4;
+}
+
+.avatar3 {
+    background: #7b70ef;
+}
+
+.avatar4 {
+    background: #d63384;
+}
+
+.colPlan {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.colLicense {
+    text-align: center;
+    justify-self: center;
+    width: 72px;
+}
+
+.colAmount {
+    text-align: right;
+    justify-self: end;
+}
+
+.colStatus {
+    display: flex;
+    justify-content: center;
+    justify-self: center;
+    width: 100%;
+}
+
+.colRenew {
+    justify-self: center;
+    width: 96px;
+}
+
+.colArrow {
+    justify-self: center;
+    width: 36px;
+}
+
+.domainName {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primaryColor);
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.subText {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: var(--textBodySecondary);
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.planText {
+    margin: 0;
+    font-size: var(--fs14);
+    font-weight: 500;
+    color: var(--textBody);
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.metaHead {
+    font-size: var(--fs12);
+    color: var(--textBodySecondary);
+    line-height: 1.3;
+    margin-bottom: 2px;
+}
+
+.metaValue {
+    font-size: var(--fs14);
+    font-weight: 600;
+    color: var(--textBody);
+    line-height: 1.3;
+}
+
+.amountValue {
+    font-size: var(--fs14);
+    font-weight: 600;
+    color: var(--textBody);
+    white-space: nowrap;
 }
 
 .statusBadge {
     display: inline-block;
-    padding: 0.28rem 0.35rem;
+    padding: 4px 12px;
     font-size: var(--fs11);
-    line-height: 1;
     font-weight: 500;
-    border-radius: 4px;
-    background: #666;
-    color: var(--whiteColor);
+    line-height: 1.3;
+    border-radius: 50rem;
     white-space: nowrap;
+    text-transform: capitalize;
 }
 
-.subtleDanger,
-.expired,
-.cancelled {
-    background: var(--dangerSubtleColor);
-    color: var(--dangerColor);
-}
-
-.completed,
-.success {
-    background: var(--successSubtleColor);
-    color: var(--successColor);
-}
-
-.subtleWarning,
 .expiring,
 .pending {
     background: var(--warningSubtleColor);
     color: var(--warningColor);
 }
 
-.sectionCard {
-    width: 100%;
-    min-height: 100px;
-    background: #fff;
-    box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    max-width: 1100px;
-    margin: auto;
+.expired,
+.overdue,
+.cancelled,
+.rejected {
+    background: var(--dangerSubtleColor);
+    color: var(--dangerColor);
 }
 
-.sectionCardHead {
-    font-size: var(--fs14);
-    line-height: 1.5;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: var(--darkColor);
-    display: inline;
-    margin-bottom: 0;
+.active,
+.completed,
+.success,
+.unpaid {
+    background: var(--successSubtleColor);
+    color: var(--successColor);
 }
 
-.dbdTabs .dbdNavtab {
-    background: none;
-    border: none;
-    opacity: 0.4;
-}
-
-.dbdTabs .dbdNavtab.active {
-    opacity: 1;
-}
-
-.tabBtnGroup {
-    display: flex;
-    align-items: center;
-    background: var(--grayColor);
-    overflow: hidden;
-    padding: 3px;
-}
-
-.tbgItem {
-    border: 1px solid transparent;
-    background: transparent;
-    font-size: var(--fs12);
-    line-height: 1.5;
-    padding: 7px 15px;
-    color: var(--textBodySecondary);
-    cursor: pointer;
-    text-align: center;
-}
-
-
-.tbgItem:hover {
+.draft {
     background: var(--borderColor);
+    color: var(--textBodySecondary);
 }
 
-.tbgItem.active,
-.btn-check:checked+.tbgItem {
-    background: var(--whiteColor);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 1px solid var(--borderColor);
-    color: var(--darkColor);
-}
-
-.filterItem.active,
-.btn-check:checked+.filterItem {
-    background: var(--whiteColor);
-    border: 1px solid var(--darkColor);
-    color: var(--darkColor);
-}
-
-.contentRow {
-    background: var(--grayColor);
-    border-radius: 8px;
-    transition: all 0.1s ease-in-out;
-    transform: scale(1);
-    overflow: hidden;
-    padding: 10px;
-}
-
-.contentRow:not(.noHover):hover {
-    box-shadow: 0 5px 15px #ddd;
-    background: #fff;
-}
-
-.contentRow .fw-medium {
-    font-weight: 500;
-}
-
-.contentRow>.row>div {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
-
-
-.avatarSmall {
-    width: 20px;
-    height: 20px;
-    color: #fff;
-    font-size: var(--fs14);
-    font-weight: 500;
-    border-radius: 50%;
-    background-color: #ccc;
-    line-height: 1;
-    text-align: center;
-    padding: 4px 0 0 0;
-}
-
-.crDate {
-    font-size: var(--fs12);
-}
-
-.crNumber {
-    font-weight: 500;
-}
-
-.crDomain {
-    display: flex;
-    align-items: center;
-}
-
-.crDomainName {
-    font-size: var(--fs14);
-    font-weight: 500;
-    color: var(--primaryColor);
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    overflow-wrap: anywhere;
-}
-
-.crDescription {
-    text-overflow: ellipsis;
-    max-width: 90%;
-    overflow: hidden;
-    display: block;
-}
-
-.crBtn {
-    width: 30px;
-    height: 30px;
+.renewBtn {
+    min-width: 96px;
+    height: 34px;
     border-radius: 50rem;
+    border: none;
+    background: var(--primaryColor);
+    color: var(--whiteColor);
+    font-size: var(--fs14);
+    font-weight: 500;
+    padding: 0 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease;
+}
+
+.renewBtn:hover {
+    background: #024a96;
+}
+
+.arrowBtn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-weight: 500;
-    color: var(--darkColor);
-    background: var(--grayColor);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     border: 1px solid var(--borderColor);
-    overflow: hidden;
-    transition: all 0.2s ease-in;
+    background: var(--whiteColor);
+    color: var(--textBodySecondary);
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: border-color 0.15s ease, color 0.15s ease;
 }
 
-.crBtn .icon {
-    width: 12px;
-    aspect-ratio: 1;
-    display: inline-flex;
-    stroke-width: 2;
-    color: inherit;
+.arrowBtn:hover {
+    border-color: var(--primaryColor);
+    color: var(--primaryColor);
 }
 
-.crBtn:hover {
-    background: var(--primaryColor);
-    color: var(--whiteColor);
+.emptyState {
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: var(--fs14);
+    color: var(--textBodySecondary);
 }
 
-.crRenew {
-    width: 120px;
+.loadMoreBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: 14px auto 0;
+    padding: 6px 16px;
+    border: 1px solid var(--borderColor);
+    border-radius: 50rem;
+    background: var(--whiteColor);
+    color: var(--textBody);
+    font-size: var(--fs12);
+    font-weight: 500;
+    cursor: pointer;
 }
 
-@media (min-width: 992px) {
-    .dbdTabMargin {
-        margin-bottom: -35px;
+.loadMoreBtn:hover {
+    border-color: var(--primaryColor);
+    color: var(--primaryColor);
+}
+
+.loadMoreIcon {
+    width: 14px;
+    height: 14px;
+}
+
+@media (max-width: 991px) and (min-width: 768px) {
+    .transactionRowInner {
+        grid-template-columns:
+            minmax(100px, 14%) minmax(160px, 34%) minmax(90px, 26%) minmax(90px, 26%);
+        gap: 12px 14px;
     }
 
-    .btnDisplay .crBtn {
-        opacity: 0;
-        position: relative;
-        right: -20px;
+    .renewalRowInner {
+        grid-template-columns:
+            minmax(0, 1fr) minmax(0, 1fr) 100px 88px 32px;
+        gap: 10px 12px;
     }
 
-    .btnDisplay:hover .crBtn {
-        opacity: 1;
-        right: 0;
+    .renewalRowInner .colLicense {
+        display: none;
+    }
+
+    .renewalRowInner .colStatus {
+        width: 100px;
+    }
+
+    .renewalRowInner .colRenew {
+        width: 88px;
+    }
+
+    .renewalRowInner .colArrow {
+        width: 32px;
     }
 }
 
-@media (min-width: 576px) {
-    .crBtn .icon {
-        width: 16px;
+@media (max-width: 767.98px) {
+    .headerBar {
+        padding: 14px 16px;
+    }
+
+    .contentBody {
+        padding: 12px 16px 16px;
+    }
+
+    .tab {
+        font-size: var(--fs11);
+        padding: 7px 12px;
+    }
+
+    .contentList {
+        gap: 10px;
+    }
+
+    .contentRow {
+        padding: 14px;
+    }
+
+    .transactionRowInner {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "date date"
+            "domain domain"
+            "status amount";
+        gap: 10px;
+        align-items: start;
+    }
+
+    .colDateMeta {
+        grid-area: date;
+    }
+
+    .transactionRowInner .colDomainBlock {
+        grid-area: domain;
+    }
+
+    .transactionRowInner .colStatus {
+        grid-area: status;
+        justify-content: flex-start;
+        justify-self: start;
+    }
+
+    .transactionRowInner .colAmount {
+        grid-area: amount;
+        justify-self: end;
+        text-align: right;
+    }
+
+    .renewalRowInner {
+        display: grid;
+        grid-template-columns: 30px 1fr;
+        grid-template-areas:
+            "avatar identity"
+            "plan plan"
+            "meta meta"
+            "status status"
+            "actions actions";
+        gap: 10px 12px;
+        align-items: start;
+    }
+
+    .renewalRowInner .avatar {
+        grid-area: avatar;
+        align-self: center;
+    }
+
+    .renewalRowInner .colDomainBlock {
+        grid-area: identity;
+    }
+
+    .renewalRowInner .colPlan {
+        grid-area: plan;
+    }
+
+    .renewalRowInner .colLicense {
+        grid-area: meta;
+        text-align: left;
+        justify-self: start;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .renewalRowInner .colLicense .metaHead {
+        margin-bottom: 0;
+    }
+
+    .renewalRowInner .colStatus {
+        grid-area: status;
+        justify-content: flex-start;
+        justify-self: start;
+    }
+
+    .renewalRowInner .colRenew {
+        grid-area: actions;
+        justify-self: start;
+    }
+
+    .renewalRowInner .colArrow {
+        grid-area: actions;
+        justify-self: end;
+    }
+
+    .renewalRowInner .colRenew,
+    .renewalRowInner .colArrow {
+        display: flex;
+        align-items: center;
     }
 }
 
-.rotate-180 {
-    transform: rotate(180deg);
-    transition: transform 0.3s ease;
+@media (max-width: 575.98px) {
+    .headerBar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .tabTrack {
+        width: 100%;
+    }
+
+    .tab {
+        flex: 1;
+        text-align: center;
+        padding: 8px 10px;
+    }
+
+    .viewAllLink {
+        align-self: flex-end;
+    }
 }

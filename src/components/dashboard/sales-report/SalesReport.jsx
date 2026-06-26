@@ -1,105 +1,143 @@
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { ChevronRight, Minus, ChevronUp } from "lucide-react";
+import { Minus, ChevronUp } from "lucide-react";
 import styles from "@/components/dashboard/sales-report/salesReport.module.css";
 import { useSalesReportMutation } from "@/redux/apis/dashboardApi";
 import Cookies from "js-cookie";
 import SalesChart from "@/components/sales-chart/SalesChart";
 
+const InvoiceDocIcon = ({ children }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 80 80"
+    fill="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M12 0H48L76 28V68C76 74.6274 70.6274 80 64 80H12C5.37258 80 0 74.6274 0 68V12C0 5.37258 5.37258 0 12 0Z"
+      fill="currentColor"
+      opacity="0.25"
+    />
+    <path
+      d="M48 0L76 28H58C52.4772 28 48 23.5228 48 18V0Z"
+      fill="currentColor"
+    />
+    {children}
+  </svg>
+);
+
 const invoiceCards = [
   {
     label: "Unpaid Invoices",
     count: 10,
-    value: "₹ 517.68k",
+    amount: "51,768",
     trend: "up",
     trendValue: "8.72%",
     colorClass: "infoColor",
     icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <InvoiceDocIcon>
         <path
-          fill="currentColor"
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M10 22h4c3.771 0 5.657 0 6.828-1.172S22 17.771 22 14v-.437c0-.873 0-1.529-.043-2.063h-4.052c-1.097 0-2.067 0-2.848-.105c-.847-.114-1.694-.375-2.385-1.066c-.692-.692-.953-1.539-1.067-2.386c-.105-.781-.105-1.75-.105-2.848l.01-2.834q0-.124.02-.244C11.121 2 10.636 2 10.03 2C6.239 2 4.343 2 3.172 3.172C2 4.343 2 6.229 2 10v4c0 3.771 0 5.657 1.172 6.828S6.229 22 10 22"
-          opacity="0.5"
+          d="M24 44L36 56M36 44L24 56"
+          stroke="currentColor"
+          strokeWidth="5"
+          strokeLinecap="round"
         />
+      </InvoiceDocIcon>
+    ),
+  },
+  {
+    label: "Paid Invoices",
+    count: 50,
+    amount: "80,254",
+    trend: "up",
+    trendValue: "8.72%",
+    colorClass: "successColor",
+    icon: (
+      <InvoiceDocIcon>
         <path
-          fill="currentColor"
-          d="M6.53 14.47a.75.75 0 0 0-1.06 1.06l.97.97l-.97.97a.75.75 0 1 0 1.06 1.06l.97-.97l.97.97a.75.75 0 0 0 1.06-1.06l-.97-.97l.97-.97a.75.75 0 1 0-1.06-1.06l-.97.97zm4.98-12.21l-.01 2.835c0 1.097 0 2.066.105 2.848c.114.847.375 1.694 1.067 2.385c.69.691 1.538.953 2.385 1.067c.781.105 1.751.105 2.848.105h4.052q.02.232.028.5H22c0-.268 0-.402-.01-.56a5.3 5.3 0 0 0-.958-2.641c-.094-.128-.158-.204-.285-.357C19.954 7.494 18.91 6.312 18 5.5c-.81-.724-1.921-1.515-2.89-2.161c-.832-.556-1.248-.834-1.819-1.04a6 6 0 0 0-.506-.154c-.384-.095-.758-.128-1.285-.14z"
+          d="M16 52L24 60L40 44"
+          stroke="currentColor"
+          strokeWidth="6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
-      </svg>
+      </InvoiceDocIcon>
     ),
   },
   {
     label: "Overdue Invoices",
     count: 5,
-    value: "₹ 517.68k",
+    amount: "10,542",
     trend: "down",
     trendValue: "8.72%",
     colorClass: "dangerColor",
     icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <InvoiceDocIcon>
         <path
-          fill="currentColor"
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M10 22h4c3.771 0 5.657 0 6.828-1.172S22 17.771 22 14v-.437c0-.873 0-1.529-.043-2.063h-4.052c-1.097 0-2.067 0-2.848-.105c-.847-.114-1.694-.375-2.385-1.066c-.692-.692-.953-1.539-1.067-2.386c-.105-.781-.105-1.75-.105-2.848l.01-2.834q0-.124.02-.244C11.121 2 10.636 2 10.03 2C6.239 2 4.343 2 3.172 3.172C2 4.343 2 6.229 2 10v4c0 3.771 0 5.657 1.172 6.828S6.229 22 10 22"
-          opacity="0.5"
+          d="M40 58V34"
+          stroke="currentColor"
+          strokeWidth="6"
+          strokeLinecap="round"
         />
         <path
-          fill="currentColor"
-          d="M7.987 12.953a.75.75 0 0 1 1.026 0l2 1.875a.75.75 0 0 1-1.026 1.094l-.737-.69V18.5a.75.75 0 0 1-1.5 0v-3.269l-.737.691a.75.75 0 0 1-1.026-1.094zM11.51 2.26l-.01 2.835c0 1.097 0 2.066.105 2.848c.114.847.375 1.694 1.067 2.385c.69.691 1.538.953 2.385 1.067c.781.105 1.751.105 2.848.105h4.052q.02.232.028.5H22c0-.268 0-.402-.01-.56a5.3 5.3 0 0 0-.958-2.641c-.094-.128-.158-.204-.285-.357C19.954 7.494 18.91 6.312 18 5.5c-.81-.724-1.921-1.515-2.89-2.161c-.832-.556-1.248-.834-1.819-1.04a6 6 0 0 0-.506-.154c-.384-.095-.758-.128-1.285-.14z"
+          d="M30 44L40 34L50 44"
+          stroke="currentColor"
+          strokeWidth="6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
-      </svg>
+      </InvoiceDocIcon>
     ),
   },
   {
     label: "Pending Invoices",
     count: 0,
-    value: "₹ 0",
+    amount: "0",
     trend: "neutral",
     trendValue: "0%",
     colorClass: "warningColor",
     icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <InvoiceDocIcon>
         <path
-          fill="currentColor"
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M14 22h-4c-3.771 0-5.657 0-6.828-1.172S2 17.771 2 14v-4c0-3.771 0-5.657 1.172-6.828S6.239 2 10.03 2c.606 0 1.091 0 1.5.017q-.02.12-.02.244l-.01 2.834c0 1.097 0 2.067.105 2.848c.114.847.375 1.694 1.067 2.386c.69.69 1.538.952 2.385 1.066c.781.105 1.751.105 2.848.105h4.052c.043.534.043 1.19.043 2.063V14c0 3.771 0 5.657-1.172 6.828S17.771 22 14 22"
-          opacity="0.5"
+          d="M18 46H42"
+          stroke="currentColor"
+          strokeWidth="5"
+          strokeLinecap="round"
         />
         <path
-          fill="currentColor"
-          d="M6 13.75a.75.75 0 0 0 0 1.5h8a.75.75 0 0 0 0-1.5zm0 3.5a.75.75 0 0 0 0 1.5h5.5a.75.75 0 0 0 0-1.5zm5.51-14.99l-.01 2.835c0 1.097 0 2.066.105 2.848c.114.847.375 1.694 1.067 2.385c.69.691 1.538.953 2.385 1.067c.781.105 1.751.105 2.848.105h4.052q.02.232.028.5H22c0-.268 0-.402-.01-.56a5.3 5.3 0 0 0-.958-2.641c-.094-.128-.158-.204-.285-.357C19.954 7.494 18.91 6.312 18 5.5c-.81-.724-1.921-1.515-2.89-2.161c-.832-.556-1.248-.834-1.819-1.04a6 6 0 0 0-.506-.154c-.384-.095-.758-.128-1.285-.14z"
+          d="M18 58H34"
+          stroke="currentColor"
+          strokeWidth="5"
+          strokeLinecap="round"
         />
-      </svg>
-    ),
-  },
-  {
-    label: "Paid Invoices",
-    count: 100,
-    value: "₹ 517.68k",
-    trend: "up",
-    trendValue: "8.72%",
-    colorClass: "successColor",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path
-          fill="currentColor"
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M14 22h-4c-3.771 0-5.657 0-6.828-1.172S2 17.771 2 14v-4c0-3.771 0-5.657 1.172-6.828S6.239 2 10.03 2c.606 0 1.091 0 1.5.017q-.02.12-.02.244l-.01 2.834c0 1.097 0 2.067.105 2.848c.114.847.375 1.694 1.067 2.386c.69.69 1.538.952 2.385 1.066c.781.105 1.751.105 2.848.105h4.052c.043.534.043 1.19.043 2.063V14c0 3.771 0 5.657-1.172 6.828S17.771 22 14 22"
-          opacity="0.5"
-        />
-        <path
-          fill="currentColor"
-          d="M10.56 15.498a.75.75 0 1 0-1.12-.996l-2.107 2.37l-.772-.87a.75.75 0 0 0-1.122.996l1.334 1.5a.75.75 0 0 0 1.12 0zm.95-13.238l-.01 2.835c0 1.097 0 2.066.105 2.848c.114.847.375 1.694 1.067 2.385c.69.691 1.538.953 2.385 1.067c.781.105 1.751.105 2.848.105h4.052q.02.232.028.5H22c0-.268 0-.402-.01-.56a5.3 5.3 0 0 0-.958-2.641c-.094-.128-.158-.204-.285-.357C19.954 7.494 18.91 6.312 18 5.5c-.81-.724-1.921-1.515-2.89-2.161c-.832-.556-1.248-.834-1.819-1.04a6 6 0 0 0-.506-.154c-.384-.095-.758-.128-1.285-.14z"
-        />
-      </svg>
+      </InvoiceDocIcon>
     ),
   },
 ];
+
+const formatAmount = (value) => {
+  if (value === null || value === undefined || value === "") return "0";
+  if (typeof value === "string") return value.replace(/^₹\s*/, "");
+  return Number(value).toLocaleString("en-IN");
+};
+
+const getInvoiceKpi = (invoiceKpis, label) => {
+  const key = label.toUpperCase();
+  const kpi = invoiceKpis?.[key] ?? invoiceKpis?.[label];
+
+  if (kpi && typeof kpi === "object") {
+    return {
+      count: kpi.count ?? kpi.total ?? 0,
+      amount: formatAmount(kpi.amount ?? kpi.value ?? kpi.total_amount ?? 0),
+      trendValue: kpi.growth ?? kpi.trend_value,
+    };
+  }
+
+  return {
+    amount: formatAmount(kpi),
+    count: null,
+    trendValue: null,
+  };
+};
 
 const TrendIcon = ({ trend }) => {
   if (trend === "neutral") return <Minus className={styles.trendIcon} />;
@@ -149,7 +187,7 @@ const SalesReport = ({ data, isDataLoading }) => {
       <div className="row g-4">
         {/* Chart Section */}
         <div className="col-xl">
-          <div className={`${styles.sectionCard} h-100 py-3 px-sm-4 px-3`}>
+          <div className={`sectionCard h-100 py-3 px-sm-4 px-3`}>
             <div className={styles.cardHeader}>
               <h2 className={styles.sectionCardHead}>Sales Reports</h2>
               <div className={styles.tabBtnGroup}>
@@ -173,51 +211,42 @@ const SalesReport = ({ data, isDataLoading }) => {
 
         {/* Invoice Cards Section */}
         <div className="col-xl d-xl-flex">
-          <div className="row row-cols-xl-2 row-cols-md-4 row-cols-2 g-3 g-sm-4">
-            {invoiceCards?.map((card, idx) => {
+          <div className={styles.invoiceCardsGrid}>
+            {invoiceCards.map((card) => {
+              const kpi = getInvoiceKpi(invoiceCardsData, card.label);
+              const count = kpi.count ?? card.count;
+              const amount = kpi.amount ?? card.amount;
+              const trendValue = kpi.trendValue ?? card.trendValue;
+
               return (
-                <div className="col" key={idx}>
-                  <div className={`${styles.invoiceCard} ${styles.btnDisplay}`}>
-                    <div className={styles.invoiceCardInner}>
-                      <div className={styles.invoiceCardContent}>
-                        <p className={styles.invoiceLabel}>
-                          {card.label}
-                          {/* <span className={styles.invoiceCount}>
-                            (
-                            {invoiceCardsData[card?.label?.toLocaleUpperCase()]}
-                            )
-                          </span> */}
-                        </p>
-                        <p className={styles.statValue}>
-                          ₹
-                          {invoiceCardsData[card?.label?.toLocaleUpperCase()] ||
-                            "0"}
-                        </p>
-                        {/* <div
-                          className={`${styles.statusBadge} ${
-                            card.trend === "up"
-                              ? styles.badgeUp
-                              : card.trend === "down"
-                                ? styles.badgeDown
-                                : styles.badgeNeutral
-                          }`}
-                        >
-                          <TrendIcon trend={card.trend} />
-                          <span>{card.trendValue}</span>
-                        </div> */}
-                      </div>
-                      <div className={styles.invoiceCardActions}>
-                        <Link href="/invoice" className={styles.crBtn}>
-                          <ChevronRight className={styles.crBtnIcon} />
-                        </Link>
-                        <div
-                          className={`${styles.invoiceIcon} ${styles[card.colorClass]}`}
-                        >
-                          {card.icon}
-                        </div>
-                      </div>
+                <div
+                  className={`sectionCard ${styles.invoiceCard}`}
+                  key={card.label}
+                >
+                  <div className={styles.invoiceCardHeader}>
+                    <div
+                      className={`${styles.invoiceIcon} ${styles[card.colorClass]}`}
+                    >
+                      {card.icon}
                     </div>
+                    {/* <div
+                      className={`${styles.statusBadge} ${
+                        card.trend === "up"
+                          ? styles.badgeUp
+                          : card.trend === "down"
+                            ? styles.badgeDown
+                            : styles.badgeNeutral
+                      }`}
+                    >
+                      <TrendIcon trend={card.trend} />
+                      <span>{trendValue}</span>
+                    </div> */}
                   </div>
+                  <p className={styles.invoiceLabel}>
+                    {card.label}
+                    {/* <span className={styles.invoiceCount}>({count})</span> */}
+                  </p>
+                  <p className={styles.statValue}>₹ {amount}</p>
                 </div>
               );
             })}
