@@ -210,7 +210,7 @@ const SalesReport = ({ data, isDataLoading }) => {
         </div>
 
         {/* Invoice Cards Section */}
-        <div className="col-xl d-xl-flex">
+        <div className={`col-xl ${styles.invoiceCardsColumn}`}>
           <div className={styles.invoiceCardsGrid}>
             {invoiceCards.map((card) => {
               const kpi = getInvoiceKpi(invoiceCardsData, card.label);

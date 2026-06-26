@@ -3,6 +3,11 @@
     margin: 20px auto;
 }
 
+.invoiceCardsColumn {
+    display: flex;
+    width: 100%;
+}
+
 .invoiceCardsGrid {
     display: grid;
     grid-template-columns: 1fr;
@@ -215,7 +220,15 @@
 }
 
 @media (min-width: 1200px) {
+    .invoiceCardsColumn {
+        flex-direction: column;
+    }
+
     .invoiceCardsGrid {
+        flex: 1;
+        height: 100%;
+        grid-template-rows: repeat(2, 1fr);
+        align-content: stretch;
         gap: 12px;
     }
 
