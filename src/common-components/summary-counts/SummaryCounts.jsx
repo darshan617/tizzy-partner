@@ -5,6 +5,7 @@ import styles from "@/common-components/summary-counts/SummaryCounts.module.css"
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
 
 const TotalRevenue = () => (
   <svg
@@ -480,11 +481,26 @@ export default function SummaryCounts({
               additionalBtns?.map((btn, index) => (
                 <div className="col pt-4 m-0">
                   <button
-                    className="boxLink primaryBg d-flex flex-column align-items-center justify-content-center border-0 outline-0"
+                    className={`${styles.boxLink} primaryBg d-flex flex-column align-items-center justify-content-center border-0 outline-0`}
                     onClick={() => router.push(`${btn?.href}`)}
                   >
+                    <Image
+                      src={createBtnBg}
+                      alt={btn?.label}
+                      width={500}
+                      height={500}
+                      className={styles.createBtnBg}
+                    />
                     <div className={`${styles.iconBx} mb-2`}>{btn?.icon}</div>
-                    <div>{btn?.label}</div>
+                    <div className={styles.boxLinkLabel}>{btn?.label}</div>
+                    <div className={styles.boxLinkDesc}>{btn?.desc}</div>
+                    <Image
+                      src={createBtnBg}
+                      alt={btn?.label}
+                      width={500}
+                      height={500}
+                      className={styles.createBtnBg2}
+                    />
                   </button>
                 </div>
               ))}
