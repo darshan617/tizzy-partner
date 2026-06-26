@@ -230,6 +230,7 @@
     color: var(--whiteColor);
     text-align: center;
     background: var(--primaryColor) !important;
+    overflow: hidden;
 }
 
 .boxLink:before {
@@ -246,17 +247,18 @@
 }
 
 .boxLink .iconBx {
-    width: 2rem;
-    height: auto;
+    width: 40px;
+    height: 40px;
     aspect-ratio: 1;
-    color: var(--whiteColor);
+    color: var(--primaryColor);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    border: 1px dashed #fff;
-    border-radius: 50%;
+    border-radius: 8px;
     transition: all 0.5s ease;
+    background: var(--whiteColor);
+
 }
 
 .boxLink .icon {
@@ -342,6 +344,37 @@
     color: var(--whiteColor);
     line-height: 1.45;
     max-width: 28rem;
+}
+
+.boxLinkLabel {
+    font-size: var(--fs14);
+    font-weight: 600;
+    color: var(--whiteColor);
+    line-height: 1.45;
+    margin-top: 5px;
+}
+
+.boxLinkDesc {
+    font-size: var(--fs12);
+    font-weight: 400;
+    color: #ffffffb6;
+    line-height: 1.45;
+}
+
+.createBtnBg {
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    top: 0;
+    left: -10px;
+}
+
+.createBtnBg2 {
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    top: 0;
+    right: -10px;
 }
 
 @media (min-width: 768px) {
