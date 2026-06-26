@@ -1,364 +1,250 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  ChevronDown,
-  ChevronRight,
-  ChevronsDown,
-  ChevronUp,
-} from "lucide-react";
 import styles from "@/components/dashboard/transaction/Transaction.module.css";
 import { useRouter } from "next/router";
 import { FiChevronsDown, FiChevronsUp } from "react-icons/fi";
 
-const transactions = [
-  {
-    date: "20 Mar, 2026",
-    number: "TNX00123",
-    domain: "ganeshenterprises.com",
-    avatar: "G",
-    avatarBg: "warningBg",
-    description: "Updated Plan to Tizzy® Mail Enterprise - 100 GB",
-    status: "Pending",
-    statusClass: "subtleWarning",
-    amount: "₹ 1254.00",
-  },
-  {
-    date: "20 Mar, 2026",
-    number: "TNX00124",
-    domain: "goyalinfotech.com",
-    avatar: "A",
-    avatarBg: "successBg",
-    description: "Updated Plan to Tizzy® Mail Enterprise - 100 GB",
-    status: "Overdue",
-    statusClass: "subtleDanger",
-    amount: "₹ 1254.00",
-  },
-  {
-    date: "20 Mar, 2026",
-    number: "TNX00124",
-    domain: "kingstonmarketing.net",
-    avatar: "K",
-    avatarBg: "successBg",
-    description: "Updated Plan to Tizzy® Mail Enterprise - 100 GB",
-    status: "Pending",
-    statusClass: "subtleWarning",
-    amount: "₹ 1254.00",
-  },
-  {
-    date: "20 Mar, 2026",
-    number: "TNX00124",
-    domain: "pinchthewallet.com",
-    avatar: "P",
-    avatarBg: "successBg",
-    description: "Updated Plan to Tizzy® Mail Enterprise - 100 GB",
-    status: "Unpaid",
-    statusClass: "subtleSuccess",
-    amount: "₹ 1254.00",
-  },
-  {
-    date: "20 Mar, 2026",
-    number: "TNX00124",
-    domain: "lorealpharma.in",
-    avatar: "A",
-    avatarBg: "successBg",
-    description: "Updated Plan to Tizzy® Mail Enterprise - 100 GB",
-    status: "Pending",
-    statusClass: "subtleWarning",
-    amount: "₹ 1254.00",
-  },
-  {
-    date: "20 Mar, 2026",
-    number: "TNX00124",
-    domain: "lorealpharma.in",
-    avatar: "A",
-    avatarBg: "successBg",
-    description: "Updated Plan to Tizzy® Mail Enterprise - 100 GB",
-    status: "Pending",
-    statusClass: "subtleWarning",
-    amount: "₹ 1254.00",
-  },
-  {
-    date: "20 Mar, 2026",
-    number: "TNX00124",
-    domain: "lorealpharma.in",
-    avatar: "A",
-    avatarBg: "successBg",
-    description: "Updated Plan to Tizzy® Mail Enterprise - 100 GB",
-    status: "Pending",
-    statusClass: "subtleWarning",
-    amount: "₹ 1254.00",
-  },
-];
+const getStatusClass = (status) => {
+  const key = status?.toLowerCase()?.replace(/\s+/g, "");
+  if (["pending", "expiring"].includes(key)) return styles.expiring;
+  if (["overdue", "expired", "cancelled", "rejected"].includes(key))
+    return styles.expired;
+  if (["completed", "success", "unpaid", "active"].includes(key))
+    return styles.active;
+  return styles.draft;
+};
 
-const renewals = [
-  {
-    domain: "ganeshenterprises.com",
-    avatar: "G",
-    avatarBg: "warningBg",
-    owner: "Ganesh Singh",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
-    date: "20 Mar, 2026",
-    status: "Expiring",
-    statusClass: "subtleWarning",
-  },
-  {
-    domain: "goyalinfotech.com",
-    avatar: "A",
-    avatarBg: "secondaryBg",
-    owner: "Ashwini Kumar",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
-    date: "20 Mar, 2026",
-    status: "Expiring",
-    wartext: "8 days left",
-    statusClass: "subtleWarning",
-  },
-  {
-    domain: "goyalinfotech.com",
-    avatar: "A",
-    avatarBg: "secondaryBg",
-    owner: "Ashwini Kumar",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
-    date: "20 Mar, 2026",
-    status: "Expiring",
-    statusClass: "subtleWarning",
-  },
-  {
-    domain: "goyalinfotech.com",
-    avatar: "A",
-    avatarBg: "secondaryBg",
-    owner: "Ashwini Kumar",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
-    date: "20 Mar, 2026",
-    status: "Expiring",
-    statusClass: "subtleWarning",
-  },
-  {
-    domain: "goyalinfotech.com",
-    avatar: "A",
-    avatarBg: "secondaryBg",
-    owner: "Ashwini Kumar",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
-    date: "20 Mar, 2026",
-    status: "Expiring",
-    statusClass: "subtleWarning",
-  },
-  {
-    domain: "goyalinfotech.com",
-    avatar: "A",
-    avatarBg: "secondaryBg",
-    owner: "Ashwini Kumar",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
-    date: "20 Mar, 2026",
-    status: "Expiring",
-    statusClass: "subtleWarning",
-  },
-];
+const formatDisplayDate = (item) => {
+  if (item?.date) return item.date;
+  if (item?.renewal_date) return item.renewal_date;
+  if (item?.subscription_end_date) return item.subscription_end_date;
+  if (item?.subscription_start_date) return item.subscription_start_date;
+  return "-";
+};
+
+const getCompanyName = (item) =>
+  item?.customer_name ||
+  item?.company_name ||
+  item?.customer ||
+  item?.owner ||
+  "-";
+
+const getTransactionDescription = (item) =>
+  item?.description ||
+  item?.plan ||
+  item?.plan_name ||
+  (item?.invoice_no
+    ? `Received payment for invoice no. INV${item.invoice_no}`
+    : "-");
+
+const formatAmount = (amount) => {
+  const num = Number(amount ?? 0);
+  return `₹ ${num.toFixed(2)}`;
+};
 
 export default function TransactionSection({ data, isDataLoading }) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("transactions");
   const [currentData, setCurrentData] = useState(data?.transaction_history);
-  const [showAllTransactions, setShowAllTransactions] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    setCurrentData(data?.transaction_history);
-  }, [data?.transaction_history]);
+    setCurrentData(
+      activeTab === "transactions"
+        ? data?.transaction_history
+        : data?.renewals_history,
+    );
+  }, [data?.transaction_history, data?.renewals_history, activeTab]);
 
-  return (
-    <div className="col">
-      <div className={`${styles.sectionCard} py-4 px-sm-4 px-3`}>
-        <div className="d-flex dbdTabMargin">
-          <div className="col-lg-6">
-            <div className="nav d-flex gap-3 dbdTabs">
-              <button
-                className={`dbdNavtab ${activeTab === "transactions" ? "active" : ""}`}
-                onClick={() => {
-                  setActiveTab("transactions");
-                  setCurrentData(data?.transaction_history);
-                }}
-              >
-                <h2 className={`${styles.sectionCardHead} mb-0`}>
-                  Recent Transactions
-                </h2>
-              </button>
+  const visibleData = currentData?.slice(0, showAll ? 10 : 5) || [];
+  const viewAllHref =
+    activeTab === "transactions" ? "/transactions" : "/subscriptions";
+  const isRenewals = activeTab === "renewals";
 
-              <div className="align-self-center">
-                <div className="vr h-25"></div>
-              </div>
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setShowAll(false);
+    setCurrentData(
+      tab === "transactions"
+        ? data?.transaction_history
+        : data?.renewals_history,
+    );
+  };
 
-              <button
-                className={`dbdNavtab ${activeTab === "renewals" ? "active" : ""}`}
-                onClick={() => {
-                  setActiveTab("renewals");
-                  setCurrentData(data?.renewals_history);
-                }}
-              >
-                <h2 className={`${styles.sectionCardHead} mb-0`}>
-                  Upcoming Renewals
-                </h2>
-              </button>
-            </div>
+  const handleRenew = (orderId) => {
+    router.push({
+      pathname: "/order-summary",
+      query: { type: "renew-plan", order_id: orderId },
+    });
+  };
+
+  const renderTransactionRow = (item, index) => (
+    <div className={styles.contentRow} key={item?.order_id || index}>
+      <div className={styles.transactionRowInner}>
+        <div className={styles.colDateMeta}>
+          <p className={styles.txDate}>{formatDisplayDate(item)}</p>
+          <span className={styles.txIdBadge}>{item?.order_no || "-"}</span>
+        </div>
+
+        <div className={styles.colDomainBlock}>
+          <div className={`${styles.avatar} ${styles[`avatar${index % 5}`]}`}>
+            {item?.domain?.charAt(0)?.toUpperCase() || "?"}
+          </div>
+          <div className={styles.domainInfo}>
+            <p className={styles.domainName}>{item?.domain}</p>
+            <p className={styles.subText}>{getTransactionDescription(item)}</p>
           </div>
         </div>
 
-        <>
-          <div className="w-100 d-flex justify-content-lg-end justify-content-center mb-3 mt-3 mt-lg-0">
-            <div className="col-lg-6 d-flex justify-content-end">
-              <div className={`${styles.tabBtnGroup} rounded-pill`}>
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="tnxRadio"
-                  id="tnxRadio1"
-                  autoComplete="off"
-                  defaultChecked
-                />
-                <label className="tbgItem rounded-pill" htmlFor="tnxRadio1">
-                  <span className="fw-medium">Last 7 Days</span> (10)
-                </label>
-
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="tnxRadio"
-                  id="tnxRadio2"
-                  autoComplete="off"
-                />
-                <label className="tbgItem rounded-pill" htmlFor="tnxRadio2">
-                  <span className="fw-medium">Last 15 Days</span> (50)
-                </label>
-
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="tnxRadio"
-                  id="tnxRadio3"
-                  autoComplete="off"
-                />
-                <label className="tbgItem rounded-pill" htmlFor="tnxRadio3">
-                  <span className="fw-medium">Last 30 Days</span> (100)
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div
-            className={`${styles.contentList} d-flex flex-column gap-3 mb-4`}
+        <div className={styles.colStatus}>
+          <span
+            className={`${styles.statusBadge} ${getStatusClass(item?.status)}`}
           >
-            {currentData?.length > 0 ? (
-              currentData
-                ?.slice(0, showAllTransactions ? 10 : 5)
-                ?.map((item, index) => (
-                  <div
-                    className={`${styles.contentRow} btnDisplay`}
-                    key={index}
-                  >
-                    <div className="row align-items-center">
-                      <div className="col-12 col-sm-2 d-flex align-items-center justify-content-between d-sm-block">
-                        <div className={`${styles.crDate}`}>
-                          {item?.date
-                            ? item?.date
-                            : item?.subscription_start_date}
-                        </div>
-                        <div className={`${styles.crNumber} fw-medium`}>
-                          {item?.order_no}
-                        </div>
-                      </div>
+            {item?.status}
+          </span>
+        </div>
 
-                      <div className="col-8 col-sm">
-                        <div
-                          className={`${styles.crDomain} d-flex align-items-center`}
-                        >
-                          <div
-                            className={`avatarSmall flex-shrink-0 bg-primary`}
-                          >
-                            {item?.domain?.charAt(0)?.toUpperCase()}
-                          </div>
-                          <div className={`${styles.crDomainName} ps-2`}>
-                            {item?.domain}
-                          </div>
-                        </div>
-                        <div
-                          className={`${styles.crDescription} ms-sm-4 ps-sm-2 mt-2 mt-md-0`}
-                        >
-                          {item?.plan || item?.plan_name}
-                        </div>
-                      </div>
+        <div className={styles.colAmount}>
+          <span className={styles.amountValue}>
+            {formatAmount(item?.amount)}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 
-                      <div className="col-4 col-sm d-flex gap-3 gap-sm-0 flex-wrap">
-                        <div className="col-sm-6 col-12 text-sm-center text-end">
-                          <span
-                            className={`statusBadge text-capitalize ${styles[item?.status?.toLowerCase()]}`}
-                          >
-                            {item?.status}
-                          </span>
-                        </div>
-                        <div className="col-sm-6 col-12 text-sm-center text-end">
-                          <span className="fw-medium">
-                            ₹ {item?.amount?.toFixed(2)}
-                          </span>
-                        </div>
-                      </div>
-
-                      {activeTab === "renewals" && (
-                        <div className="col-sm-auto col-12 text-end py-0">
-                          <button
-                            onClick={() =>
-                              router.push({
-                                pathname: "/order-summary",
-                                query: {
-                                  type: "renew-plan",
-                                  order_id: item?.order_id,
-                                },
-                              })
-                            }
-                            className="crBtn"
-                          >
-                            <ChevronRight className="icon me-0" />
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))
-            ) : (
-              <p className="text-center mt-4">No Data Found</p>
-            )}
-
-            {showAllTransactions && activeTab === "transactions" && (
-              <button
-                onClick={() => router.push("/transactions")}
-                className="bg-transparent text-primary outline-none border-0 w-fit mx-auto d-flex align-items-center gap-1 px-3"
-              >
-                View All Transactions
-              </button>
-            )}
-            {showAllTransactions && activeTab === "renewals" && (
-              <button
-                onClick={() => router.push("/subscriptions")}
-                className="bg-transparent text-primary outline-none border-0 w-fit mx-auto d-flex align-items-center gap-1 px-3"
-              >
-                View All Renewals
-              </button>
-            )}
-            {currentData?.length > 5 && (
-              <button
-                onClick={() => setShowAllTransactions(!showAllTransactions)}
-                className="btn w-fit mx-auto d-flex align-items-center gap-1 px-3"
-              >
-                {showAllTransactions ? (
-                  <span>
-                    <FiChevronsUp className="icon" /> Load Less
-                  </span>
-                ) : (
-                  <span>
-                    <FiChevronsDown size={12} className="icon" /> Load More
-                  </span>
-                )}
-              </button>
-            )}
+  const renderRenewalRow = (item, index) => (
+    <div className={styles.contentRow} key={item?.order_id || index}>
+      <div className={styles.renewalRowInner}>
+        <div className={styles.colDomainBlock}>
+          <div className={`${styles.avatar} ${styles[`avatar${index % 5}`]}`}>
+            {item?.domain?.charAt(0)?.toUpperCase() || "?"}
           </div>
-        </>
+          <div className={styles.domainInfo}>
+            <p className={styles.domainName}>{item?.domain}</p>
+            <p className={styles.subText}>{getCompanyName(item)}</p>
+          </div>
+        </div>
+
+        <div className={styles.colPlan}>
+          <p className={styles.planText}>
+            {item?.plan || item?.plan_name || item?.description}
+          </p>
+          <p className={styles.subText}>{formatDisplayDate(item)}</p>
+        </div>
+
+        <div className={styles.colLicense}>
+          <div className={styles.metaHead}>License</div>
+          <div className={styles.metaValue}>{item?.license_count ?? "-"}</div>
+        </div>
+
+        <div className={styles.colStatus}>
+          <span
+            className={`${styles.statusBadge} ${getStatusClass(item?.status)}`}
+          >
+            {item?.status}
+          </span>
+        </div>
+
+        <div className={styles.colRenew}>
+          <button
+            type="button"
+            className={styles.renewBtn}
+            onClick={() => handleRenew(item?.order_id)}
+          >
+            Renew
+          </button>
+        </div>
+
+        <div className={styles.colArrow}>
+          <Link
+            href={{
+              pathname: "/subscriptions/subscriptions-details",
+              query: { orderId: item?.order_id, type: "renewals" },
+            }}
+            className={styles.arrowBtn}
+            aria-label="View renewal details"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className={styles.transactionWrapper}>
+      <div className={styles.transactionCard}>
+        <div className={styles.headerBar}>
+          <div className={styles.tabTrack}>
+            <button
+              type="button"
+              className={`${styles.tab} ${activeTab === "transactions" ? styles.tabActive : ""}`}
+              onClick={() => handleTabChange("transactions")}
+            >
+              Recent Transactions
+            </button>
+            <button
+              type="button"
+              className={`${styles.tab} ${activeTab === "renewals" ? styles.tabActive : ""}`}
+              onClick={() => handleTabChange("renewals")}
+            >
+              Upcoming Renewals
+            </button>
+          </div>
+          <Link href={viewAllHref} className={styles.viewAllLink}>
+            View All
+          </Link>
+        </div>
+
+        <div className={styles.contentBody}>
+          {isDataLoading ? (
+            <p className={styles.emptyState}>Loading...</p>
+          ) : visibleData?.length > 0 ? (
+            <>
+              <div className={styles.contentList}>
+                {visibleData?.map((item, index) =>
+                  isRenewals
+                    ? renderRenewalRow(item, index)
+                    : renderTransactionRow(item, index),
+                )}
+              </div>
+
+              {currentData?.length > 5 && (
+                <button
+                  type="button"
+                  onClick={() => setShowAll(!showAll)}
+                  className={styles.loadMoreBtn}
+                >
+                  {showAll ? (
+                    <>
+                      <FiChevronsUp className={styles.loadMoreIcon} /> Load Less
+                    </>
+                  ) : (
+                    <>
+                      <FiChevronsDown className={styles.loadMoreIcon} /> Load
+                      More
+                    </>
+                  )}
+                </button>
+              )}
+            </>
+          ) : (
+            <p className={styles.emptyState}>No Data Found</p>
+          )}
+        </div>
       </div>
     </div>
   );

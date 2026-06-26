@@ -1,15 +1,3 @@
-.sectionCard {
-    margin: auto;
-    margin-bottom: 20px;
-    background: #fff;
-    border-radius: 10px;
-    width: 100%;
-    max-width: 1100px;
-    min-height: 100px;
-    box-shadow: 0 2px 1px #0000001a;
-}
-
-
 .breadcrumb {
     display: flex;
     flex-wrap: wrap;
@@ -56,9 +44,10 @@
     height: 100%;
     background: var(--subtleBg);
     border-radius: 10px;
-    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.06);
+    box-shadow: 5px 5px 10px #5091C526;
     padding: 10px;
     position: relative;
+    border: 1px solid #E7E9EB;
 }
 
 .statBox:before {
@@ -128,7 +117,7 @@
     height: auto;
     aspect-ratio: 1;
     display: block;
-    margin-top: -25px;
+    /* margin-top: -25px; */
 }
 
 .infoColor {
@@ -211,7 +200,7 @@
     justify-content: center;
     position: absolute;
     right: 20px;
-    bottom: -12px;
+    top: 18px;
     border-radius: 50%;
     background: #005bbb;
     color: var(--whiteColor);
@@ -241,6 +230,7 @@
     color: var(--whiteColor);
     text-align: center;
     background: var(--primaryColor) !important;
+    overflow: hidden;
 }
 
 .boxLink:before {
@@ -257,17 +247,18 @@
 }
 
 .boxLink .iconBx {
-    width: 2rem;
-    height: auto;
+    width: 40px;
+    height: 40px;
     aspect-ratio: 1;
-    color: var(--whiteColor);
+    color: var(--primaryColor);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    border: 1px dashed #fff;
-    border-radius: 50%;
+    border-radius: 8px;
     transition: all 0.5s ease;
+    background: var(--whiteColor);
+
 }
 
 .boxLink .icon {
@@ -355,14 +346,45 @@
     max-width: 28rem;
 }
 
+.boxLinkLabel {
+    font-size: var(--fs14);
+    font-weight: 600;
+    color: var(--whiteColor);
+    line-height: 1.45;
+    margin-top: 5px;
+}
+
+.boxLinkDesc {
+    font-size: var(--fs12);
+    font-weight: 400;
+    color: #ffffffb6;
+    line-height: 1.45;
+}
+
+.createBtnBg {
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    top: 0;
+    left: -10px;
+}
+
+.createBtnBg2 {
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    top: 0;
+    right: -10px;
+}
+
 @media (min-width: 768px) {
     .statBox {
         padding: 15px;
     }
 
-    .statIcon {
+    /* .statIcon {
         margin-top: -30px;
-    }
+    } */
 
     .statValue {
         font-size: var(--fs24);

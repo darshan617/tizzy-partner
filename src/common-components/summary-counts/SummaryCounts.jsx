@@ -5,6 +5,7 @@ import styles from "@/common-components/summary-counts/SummaryCounts.module.css"
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
 
 const TotalRevenue = () => (
   <svg
@@ -325,7 +326,7 @@ export default function SummaryCounts({
       redirectUrl: "/customers/create-customer",
     },
 
-    "active subscriptions": {
+    "total subscriptions": {
       boxClass:
         router?.pathname === "/subscriptions" ? "successGrad" : "warningGrad",
       iconClass:
@@ -400,7 +401,7 @@ export default function SummaryCounts({
   return (
     <div>
       <div className="col my-3">
-        <div className={`${styles.sectionCard} py-4 px-sm-4 px-3`}>
+        <div className={`sectionCard py-4 px-sm-4 px-3`}>
           <div className="mb-2">
             <h2 className={`${styles.sectionCardHead}`}>Summary</h2>
             {asOnDate ? (
@@ -410,7 +411,7 @@ export default function SummaryCounts({
 
           <div className="row row-cols-md-4 row-cols-sm-4 row-cols-2 g-sm-4 g-3">
             {infoBtn && (
-              <div className="col pt-4">
+              <div className="col pt-4 m-0">
                 <div
                   className={`boxLink primaryBg ${styles.creditBalanceCard} border-0 outline-0`}
                 >
@@ -418,7 +419,7 @@ export default function SummaryCounts({
                   <p className={`${styles.creditBalanceAmount} fs-3`}>
                     {infoBtn?.amount}
                   </p>
-                  {/* <div className={styles.creditBalanceInfo}>
+                  <div className={styles.creditBalanceInfo}>
                     <span
                       className={styles.creditBalanceInfoIcon}
                       aria-hidden="true"
@@ -428,7 +429,7 @@ export default function SummaryCounts({
                     <p className={styles.creditBalanceInfoText}>
                       {infoBtn?.info}
                     </p>
-                  </div> */}
+                  </div>
                 </div>
               </div>
             )}
@@ -442,7 +443,7 @@ export default function SummaryCounts({
               if (!config) return null;
 
               return (
-                <div key={index} className="col pt-4">
+                <div key={index} className="col pt-4 m-0">
                   <div
                     className={`${styles.statBox} ${styles[config.boxClass]}`}
                   >
@@ -478,13 +479,28 @@ export default function SummaryCounts({
             })}
             {additionalBtns?.length > 0 &&
               additionalBtns?.map((btn, index) => (
-                <div className="col pt-4">
+                <div className="col pt-4 m-0">
                   <button
-                    className="boxLink primaryBg d-flex flex-column align-items-center justify-content-center border-0 outline-0"
+                    className={`${styles.boxLink} primaryBg d-flex flex-column align-items-center justify-content-center border-0 outline-0`}
                     onClick={() => router.push(`${btn?.href}`)}
                   >
+                    <Image
+                      src={createBtnBg}
+                      alt={btn?.label}
+                      width={500}
+                      height={500}
+                      className={styles.createBtnBg}
+                    />
                     <div className={`${styles.iconBx} mb-2`}>{btn?.icon}</div>
-                    <div>{btn?.label}</div>
+                    <div className={styles.boxLinkLabel}>{btn?.label}</div>
+                    <div className={styles.boxLinkDesc}>{btn?.desc}</div>
+                    <Image
+                      src={createBtnBg}
+                      alt={btn?.label}
+                      width={500}
+                      height={500}
+                      className={styles.createBtnBg2}
+                    />
                   </button>
                 </div>
               ))}
