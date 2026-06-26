@@ -69,7 +69,7 @@ export default function SalesChart({ data }) {
 
   return (
     <div style={{ width: "100%" }}>
-      <Chart options={options} series={series} type="line" height={400} />
+      <Chart options={options} series={series} type="line" height={200} />
     </div>
   );
 }

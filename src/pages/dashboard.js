@@ -1,4 +1,3 @@
-
 import SalesReport from "@/components/dashboard/sales-report/SalesReport";
 import Support from "@/components/dashboard/support/Support";
 import TransactionSection from "@/components/dashboard/transaction/Transaction";
@@ -33,7 +32,6 @@ export const getServerSideProps = async (context) => {
   };
 };
 
-
 const DynamicSummaryCounts = dynamic(
   () => import("@/common-components/summary-counts/SummaryCounts"),
   {
@@ -45,26 +43,32 @@ const DynamicSummaryCounts = dynamic(
 const dashboard = ({ partner_id, partner_name }) => {
   console.log("Partner ID:", partner_id);
 
-  const { data: dashboardData, error, isLoading: isDashboardLoading } = useGetDashboardDataQuery({ partner_id });
+  const {
+    data: dashboardData,
+    error,
+    isLoading: isDashboardLoading,
+  } = useGetDashboardDataQuery({ partner_id });
 
   return (
     <Layout>
-      <div className="row"> 
+      <div className="row">
+        <div className="mainContainer">
           <p className=" m-0">Welcome,</p>
           <p className="fw-bold fs-3 m-0 text-capitalize">{partner_name}</p>
+        </div>
       </div>
       <DynamicSummaryCounts
         title="Account Summary"
         countData={dashboardData?.data?.kpis}
         isFetchingCountData={isDashboardLoading}
       />
-      <TransactionSection 
-      data={dashboardData?.data}
-      isDataLoading={isDashboardLoading}
+      <TransactionSection
+        data={dashboardData?.data}
+        isDataLoading={isDashboardLoading}
       />
-      <SalesReport 
-      data={dashboardData?.data}
-      isDataLoading={isDashboardLoading}
+      <SalesReport
+        data={dashboardData?.data}
+        isDataLoading={isDashboardLoading}
       />
       <Support />
     </Layout>

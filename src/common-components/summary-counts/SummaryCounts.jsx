@@ -325,7 +325,7 @@ export default function SummaryCounts({
       redirectUrl: "/customers/create-customer",
     },
 
-    "active subscriptions": {
+    "total subscriptions": {
       boxClass:
         router?.pathname === "/subscriptions" ? "successGrad" : "warningGrad",
       iconClass:
@@ -400,7 +400,7 @@ export default function SummaryCounts({
   return (
     <div>
       <div className="col my-3">
-        <div className={`${styles.sectionCard} py-4 px-sm-4 px-3`}>
+        <div className={`sectionCard py-4 px-sm-4 px-3`}>
           <div className="mb-2">
             <h2 className={`${styles.sectionCardHead}`}>Summary</h2>
             {asOnDate ? (
@@ -410,7 +410,7 @@ export default function SummaryCounts({
 
           <div className="row row-cols-md-4 row-cols-sm-4 row-cols-2 g-sm-4 g-3">
             {infoBtn && (
-              <div className="col pt-4">
+              <div className="col pt-4 m-0">
                 <div
                   className={`boxLink primaryBg ${styles.creditBalanceCard} border-0 outline-0`}
                 >
@@ -442,7 +442,7 @@ export default function SummaryCounts({
               if (!config) return null;
 
               return (
-                <div key={index} className="col pt-4">
+                <div key={index} className="col pt-4 m-0">
                   <div
                     className={`${styles.statBox} ${styles[config.boxClass]}`}
                   >
@@ -478,7 +478,7 @@ export default function SummaryCounts({
             })}
             {additionalBtns?.length > 0 &&
               additionalBtns?.map((btn, index) => (
-                <div className="col pt-4">
+                <div className="col pt-4 m-0">
                   <button
                     className="boxLink primaryBg d-flex flex-column align-items-center justify-content-center border-0 outline-0"
                     onClick={() => router.push(`${btn?.href}`)}

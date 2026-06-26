@@ -15,7 +15,7 @@ const signupApi = apiSlice.injectEndpoints({
     searchGstin: builder?.mutation({
       query: ({ body }) => {
         return {
-          url: "https://goyalinfotech.in/tizzy/api/v1/search-gstin",
+          url: "https://superadmin.tizzygroup.com/api/v1/search-gstin",
           method: "POST",
           body: body,
         };
@@ -30,7 +30,7 @@ const signupApi = apiSlice.injectEndpoints({
           body: body,
         };
       },
-        invalidatesTags: ["signup"],
+      invalidatesTags: ["signup"],
     }),
   }),
 });
