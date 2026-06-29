@@ -12,12 +12,26 @@ import React, { useEffect } from "react";
 
 const statusLabelMap = {
   expiring: "Expiring",
-  active: "Active",
-  inactive: "Inactive",
+  // active: "Active",
+  // inactive: "Inactive",
   expired: "Expired",
 };
 
-const statusOrder = ["expiring", "active", "inactive", "expired"];
+const avatarColorClasses = [
+  "avatarRed",
+  "avatarGold",
+  "avatarBlue",
+  "avatarPurple",
+  "avatarTeal",
+  "avatarNavy",
+];
+
+const statusOrder = [
+  "expiring",
+  // "active",
+  // "inactive",
+  "expired",
+];
 
 const formatDueDate = (dateStr) => {
   if (!dateStr) return "-";
@@ -197,7 +211,7 @@ const AllRenewals = () => {
             >
               {!isAllRenewalsListLoading ? (
                 filteredRenewals.length > 0 ? (
-                  filteredRenewals.map((renewal) => {
+                  filteredRenewals?.map((renewal, idx) => {
                     const statusKey = renewal.status?.toLowerCase();
 
                     return (
@@ -213,21 +227,25 @@ const AllRenewals = () => {
                                   className={`${styles.crDomain} d-flex align-items-center`}
                                 >
                                   <div
-                                    className={`avatarSmall flex-shrink-0 ${styles.avatarBg}`}
+                                    className={` flex-shrink-0 ${styles.avatarBg} ${
+                                      avatarColorClasses[
+                                        idx % avatarColorClasses.length
+                                      ]
+                                    }`}
                                   >
                                     {renewal?.domain?.charAt(0)?.toUpperCase()}
                                   </div>
-                                  <div
-                                    className={`${styles.crDomainName} ps-2`}
-                                  >
-                                    {renewal?.domain}
+                                  <div className={` ps-2`}>
+                                    <span className={`${styles.crDomainName}`}>
+                                      {renewal?.domain}
+                                    </span>
+                                    <p className="m-0  text-secondary small">
+                                      Order Id: {renewal?.order_no}
+                                    </p>
+                                    <div className={`${styles.crName} `}>
+                                      {renewal?.plan}
+                                    </div>
                                   </div>
-                                </div>
-                                <p className="m-0 ms-4 ps-2 text-secondary small">
-                                  Order Id: {renewal?.order_no}
-                                </p>
-                                <div className={`${styles.crName} ms-4 ps-2`}>
-                                  {renewal?.plan}
                                 </div>
                               </div>
 
@@ -270,7 +288,7 @@ const AllRenewals = () => {
                                       </div>
                                     ) : null}
                                   </div>
-                                  {(statusKey === "expiring" ||
+                                  {/* {(statusKey === "expiring" ||
                                     statusKey === "expired") && (
                                     <button
                                       type="button"
@@ -287,7 +305,7 @@ const AllRenewals = () => {
                                     >
                                       Renew
                                     </button>
-                                  )}
+                                  )} */}
                                 </div>
                               </div>
                             </div>

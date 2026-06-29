@@ -428,6 +428,7 @@ export default function ServiceSlugPage({
               key={plan?.plan_id ?? plan?.id}
               plan_id={plan?.plan_id || plan?.id}
               title={plan?.name}
+              headerBg="#BCDAF9"
               priceLabel={`₹${plan?.price ?? "0"}`}
               originalPriceLabel={plan?.actual_price ?? ""}
               discountPercent={plan?.discountPercent}
