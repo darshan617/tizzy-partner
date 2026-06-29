@@ -46,7 +46,7 @@ const Invoice = () => {
         infoBtn={{
           title: "Credit Balance",
           amount: ` ${invoiceDetailsData?.credit_balance}`,
-          info: "Pay your unpaid invoices to restore your credit balance.",
+          info: "Available credit balance can be used to pay your invoices",
         }}
         countData={invoiceDetailsData?.summary}
         isFetchingCountData={isInvoiceDataLoading}

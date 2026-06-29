@@ -326,7 +326,7 @@ export default function SummaryCounts({
       redirectUrl: "/customers/create-customer",
     },
 
-    "total subscriptions": {
+    "active subscriptions": {
       boxClass:
         router?.pathname === "/subscriptions" ? "successGrad" : "warningGrad",
       iconClass:
