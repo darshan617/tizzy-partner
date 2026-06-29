@@ -40,7 +40,8 @@ const Subscriptions = () => {
         additionalBtns={[
           {
             href: "/services/google-workspace",
-            label: "Buy New Subscription",
+            label: "Add New Order",
+            desc: "Create and manage new customer orders with ease and accuracy.",
             icon: <BsPlusCircleDotted size={18} />,
           },
         ]}

@@ -174,22 +174,24 @@
   background: var(--whiteColor);
 }
 
-.btn-check:checked+.filterItem {
+.btn-check:checked + .filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
 }
 
 .contentRow {
-  background: var(--grayColor);
+  background: var(--whiteColor);
   border-radius: 8px;
   transition: all 0.1s ease-in-out;
   transform: scale(1);
   overflow: hidden;
+  padding: 0 10px;
+  border: 1px solid #e6e8ef;
 }
 
 .contentRow:not(.noHover):hover {
-  box-shadow: 0 5px 15px #ddd;
+  box-shadow: 0 4px 12px #11182714;
   background: #fff;
 }
 
@@ -225,16 +227,19 @@
 }
 
 .avatarBg {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: #fff;
   font-size: var(--fs14);
   font-weight: 500;
   border-radius: 50%;
   background-color: #f3b300;
-  line-height: 1;
   text-align: center;
-  padding: 4px 0 0;
 }
 
 .crDomainName {
@@ -247,6 +252,7 @@
   line-clamp: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 
 .crName {
@@ -304,7 +310,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 0.5rem 0.75rem;
   width: 100%;
 }
@@ -330,7 +336,8 @@
   background: var(--successSubtleColor);
 }
 
-.expiringBadge {
+.expiringBadge,
+.pendingBadge {
   color: var(--warningColor);
   background: var(--warningSubtleColor);
 }
@@ -405,7 +412,7 @@
     font-size: var(--fs11);
   }
 
-  .contentRow>.row>.mobAction {
+  .contentRow > .row > .mobAction {
     background: #f5f6f9;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;

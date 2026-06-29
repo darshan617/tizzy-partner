@@ -1,4 +1,3 @@
-
 .pageSearchBox {
     width: 100%;
     height: 40px;
@@ -128,6 +127,8 @@
     min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
+    padding: 0.75rem;
+    background: #fbfbfd;
 }
 
 .filterWrapper {
@@ -180,26 +181,173 @@
     color: var(--darkColor);
 }
 
+.CustomerList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
 .contentRow {
-    background: var(--grayColor);
-    border-radius: 8px;
-    transition: all 0.1s ease-in-out;
-    transform: scale(1);
+    background: var(--whiteColor);
+    border: 1px solid #e6e8ef;
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(17, 24, 39, 0.04);
+    transition: background 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     overflow: hidden;
-    padding: 0 10px;
+}
+
+.contentRow:last-child {
+    border-bottom: 1px solid #e6e8ef;
 }
 
 .contentRow:not(.noHover):hover {
-    box-shadow: 0 5px 15px #ddd;
-    background: #fff;
+    background: #f9fafb;
+    box-shadow: 0 4px 12px rgba(17, 24, 39, 0.08);
 }
 
-.contentRow>.row>div {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+.customerRow {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem 0;
 }
-.contentRow .fw-medium {
-   font-weight: 500;
+
+.companyCol {
+    flex: 1 1 22%;
+    min-width: 0;
+}
+
+.companyInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.customerAvatar {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.avatarRed {
+    background-color: #d64545;
+}
+
+.avatarGold {
+    background-color: #b5a642;
+}
+
+.avatarBlue {
+    background-color: #3b6fd4;
+}
+
+.avatarPurple {
+    background-color: #7b5ea7;
+}
+
+.avatarTeal {
+    background-color: #3d8b7a;
+}
+
+.avatarNavy {
+    background-color: #2c3e6b;
+}
+
+.companyText {
+    min-width: 0;
+}
+
+.companyName {
+    font-size: var(--fs14);
+    font-weight: 600;
+    color: var(--darkColor);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    line-height: 1.4;
+}
+
+.contactName {
+    font-size: var(--fs13, 13px);
+    color: var(--textBodySecondary);
+    text-transform: capitalize;
+    line-height: 1.4;
+}
+
+.customerId {
+    margin: 0;
+    font-size: var(--fs12);
+    color: var(--textBodySecondary);
+}
+
+.contactCol {
+    flex: 1 1 18%;
+    min-width: 0;
+}
+
+.contactEmail,
+.contactPhone {
+    font-size: var(--fs13, 13px);
+    color: var(--textBodySecondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.5;
+}
+
+.servicesCol {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.statusCol {
+    flex: 0 0 auto;
+}
+
+.statusBadge {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    font-size: var(--fs11);
+    font-weight: 500;
+    border-radius: 3px;
+    color: var(--whiteColor);
+    text-transform: capitalize;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.activeBadge {
+    background: var(--successColor);
+}
+
+.inactiveBadge {
+    background: var(--dangerColor);
+}
+
+.dateCol {
+    flex: 0 0 auto;
+    font-size: var(--fs12);
+    color: var(--textBodySecondary);
+    white-space: nowrap;
+}
+
+.actionCol {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
 }
 
 .ckbCol {
@@ -291,18 +439,6 @@
 }
 
 
-.statusBadge {
-    display: inline-block;
-    padding: 0.28rem 0.35rem;
-    font-size: var(--fs11);
-    line-height: 1;
-    font-weight: 500;
-    border-radius: 4px;
-    background: #666;
-    color: var(--whiteColor);
-    white-space: nowrap;
-}
-
 .servBadge {
     width: 35px;
     height: auto;
@@ -384,30 +520,64 @@
 .searchCount {
     font-size: var(--fs14);
 }
-.avatarBg{
+
+.avatarBg {
     background-color: var(--primaryColor);
 }
-.crName{
+
+.crName {
     text-transform: capitalize;
 }
-.statusBadgeStyle{
+
+.statusBadgeStyle {
     text-transform: capitalize;
-    padding:  2px 5px;
+    padding: 2px 5px;
     font-size: var(--fs10);
     border-radius: 4px;
     color: var(--whiteColor);
     font-weight: 500;
 }
+
+@media (max-width: 991.98px) {
+    .customerRow {
+        flex-wrap: wrap;
+        gap: 0.75rem 1rem;
+    }
+
+    .companyCol {
+        flex: 1 1 100%;
+    }
+
+    .contactCol {
+        flex: 1 1 calc(50% - 0.5rem);
+    }
+
+    .servicesCol {
+        flex: 0 0 auto;
+    }
+
+    .statusCol,
+    .dateCol {
+        flex: 0 0 auto;
+    }
+
+    .actionCol {
+        margin-left: auto;
+    }
+}
+
 @media (max-width: 575.98px) {
     .searchCount {
         font-size: var(--fs11);
     }
 
-    .contentRow>.row>.mobAction {
+    .contentRow>.row>.mobAction,
+    .actionCol.mobAction {
         background: #f5f6f9;
-        padding-top: 0.25rem;
-        padding-bottom: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
     }
+
     .adjustWidth {
         margin-left: -0.75rem;
         margin-right: -0.75rem;
@@ -439,7 +609,8 @@
         opacity: 1;
         right: 0;
     }
-/* 
+
+    /* 
     .filtersMain {
         top: 74px;
     } */
