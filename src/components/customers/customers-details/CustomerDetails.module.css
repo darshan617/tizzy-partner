@@ -97,7 +97,7 @@
   overflow: hidden;
 }
 
-.btn > * {
+.btn>* {
   position: relative;
   z-index: 1;
 }
@@ -176,6 +176,7 @@
   max-width: 130px;
   line-height: 1;
 }
+
 .profName p {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -217,10 +218,12 @@
   background: var(--successSubtleColor);
   color: var(--successColor);
 }
+
 .statusBadge.expiring_soon {
   background: var(--warningSubtleColor);
   color: var(--warningColor);
 }
+
 .statusBadge.expired {
   background: var(--dangerSubtleColor);
   color: var(--dangerColor);
@@ -245,22 +248,23 @@
   font-weight: 500;
 }
 
-.contentRow > .row > div {
+.contentRow>.row>div {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
 
 .avatarSmall {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   color: #fff;
   font-size: var(--fs14);
   font-weight: 500;
   border-radius: 50%;
   background-color: #ccc;
   line-height: 1;
-  text-align: center;
-  padding: 4px 0 0 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .crDomainName {
@@ -302,20 +306,16 @@
 }
 
 .supportSwiper {
-  -webkit-mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    black 2%,
-    black 98%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    black 2%,
-    black 98%,
-    transparent 100%
-  );
+  -webkit-mask-image: linear-gradient(90deg,
+      transparent 0%,
+      black 2%,
+      black 98%,
+      transparent 100%);
+  mask-image: linear-gradient(90deg,
+      transparent 0%,
+      black 2%,
+      black 98%,
+      transparent 100%);
 }
 
 .supportSwiper .swiper-slide {
@@ -470,6 +470,7 @@
   width: var(--fs16);
   color: var(--textLight);
 }
+
 .updwngradeBtn,
 .downgradeBtn {
   background: none;
@@ -517,4 +518,403 @@
 .btnDisplay:hover .crBtn {
   opacity: 1;
   right: 0;
+}
+
+
+.pageWrap {
+  max-width: 1100px;
+  margin: auto;
+  width: 100%;
+}
+
+.card {
+  width: 100%;
+  background: #fff;
+  box-shadow: 5px 5px 8px #5090c545;
+  border-radius: 12px;
+}
+
+.cardHead {
+  font-size: var(--fs16);
+  font-weight: 600;
+  color: var(--darkColor);
+  margin-bottom: 0;
+}
+
+.cardHead span {
+  color: var(--textBodySecondary);
+  font-weight: 500;
+}
+
+.viewAll {
+  font-size: var(--fs12);
+  font-weight: 600;
+  color: var(--primaryColor);
+}
+
+/* Profile card */
+.profCard {
+  height: 100%;
+  background: #fff;
+  box-shadow: 5px 5px 8px #5090c545;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.profHeader {
+  background: linear-gradient(135deg, #0355AC 0%, #023F80 100%);
+  color: var(--whiteColor);
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+}
+
+.profEditBtn {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--whiteColor);
+  font-size: var(--fs12);
+  transition: all 0.2s ease;
+}
+
+.profEditBtn:hover {
+  background: var(--whiteColor);
+  color: var(--primaryColor);
+}
+
+.profAvatarLg {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--whiteColor);
+  color: var(--primaryColor);
+  font-size: var(--fs22);
+  font-weight: 700;
+  line-height: 54px;
+  text-align: center;
+  margin: 0 auto 0.75rem;
+}
+
+.profCompanyName {
+  font-size: var(--fs20);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--whiteColor);
+}
+
+.profIdBadge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  font-size: var(--fs11);
+  border-radius: 50rem;
+  background: rgba(255, 255, 255, 0.18);
+  margin-bottom: 0.6rem;
+}
+
+.profCreated {
+  font-size: var(--fs11);
+  opacity: 0.9;
+}
+
+.profBody {
+  padding: 1.25rem;
+}
+
+.profBodyTitle {
+  font-size: var(--fs16);
+  font-weight: 600;
+  color: var(--darkColor);
+  margin-bottom: 1rem;
+}
+
+.infoItem {
+  margin-bottom: 1rem;
+}
+
+.infoLabel {
+  display: block;
+  font-size: var(--fs11);
+  color: var(--textBodySecondary);
+  margin-bottom: 0.15rem;
+}
+
+.infoValue {
+  font-size: var(--fs14);
+  font-weight: 500;
+  color: var(--darkColor);
+  line-height: 1.5;
+}
+
+.infoValue a {
+  color: var(--darkColor);
+}
+
+.infoValue a:hover {
+  color: var(--primaryColor);
+}
+
+/* Transaction history */
+.txnRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--borderColor);
+}
+
+.txnRow:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.txnMeta {
+  flex-shrink: 0;
+  min-width: 90px;
+}
+
+.txnDate {
+  font-size: var(--fs11);
+  color: var(--textBodySecondary);
+  margin-bottom: 0.25rem;
+}
+
+.txnId {
+  display: inline-block;
+  font-size: var(--fs12);
+  font-weight: 600;
+  color: var(--darkColor);
+  background: #E7E9EB;
+  border: 1px solid var(--borderColor);
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+}
+
+.txnInfo {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.txnDomain {
+  font-size: var(--fs14);
+  font-weight: 600;
+  color: var(--primaryColor);
+}
+
+.txnDesc {
+  display: block;
+  font-size: var(--fs11);
+  color: var(--textBodySecondary);
+}
+
+.txnAmount {
+  flex-shrink: 0;
+  text-align: right;
+  white-space: nowrap;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.txnAmount strong {
+  display: block;
+  font-size: var(--fs14);
+  color: var(--darkColor);
+}
+
+.txnStatus {
+  display: inline-block;
+  font-size: var(--fs10);
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.txnPending {
+  color: var(--warningColor);
+  background: var(--warningSubtleColor);
+}
+
+.txnOverdue {
+  color: var(--dangerColor);
+  background: var(--dangerSubtleColor);
+}
+
+/* Current subscription rows */
+.subRow {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #BCDAF9;
+  border-radius: 10px;
+  margin-bottom: 0.85rem;
+  transition: all 0.2s ease;
+  background: #F5F8FC;
+}
+
+.subRow:last-child {
+  margin-bottom: 0;
+}
+
+.subRow:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.subTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.subBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.subPlan {
+  display: flex;
+  align-items: center;
+}
+
+.subPlanIcon {
+  width: 38px;
+  height: 38px;
+  aspect-ratio: 1;
+  border: 1px solid var(--borderColor);
+  background: #fff;
+  border-radius: 50%;
+  padding: 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.subPlanName {
+  font-size: var(--fs15);
+  font-weight: 600;
+  color: var(--darkColor);
+}
+
+.subPlanPrice {
+  font-size: var(--fs12);
+  font-weight: 600;
+  color: var(--darkColor);
+}
+
+.subPlanPrice span {
+  font-weight: 400;
+  color: var(--textBodySecondary);
+}
+
+.subMeta {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.subMetaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.subMetaIcon {
+  width: 18px;
+  height: 18px;
+  color: var(--primaryColor);
+  flex-shrink: 0;
+}
+
+.subMetaValue {
+  font-size: var(--fs13);
+  font-weight: 500;
+  color: var(--darkColor);
+}
+
+.subActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.subRenewBtn,
+.subUpgradeBtn {
+  height: 32px;
+  padding: 0 1rem;
+  border-radius: 50rem;
+  font-size: var(--fs13);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.subRenewBtn {
+  background: var(--primaryColor);
+  color: var(--whiteColor);
+  border: 1px solid var(--primaryColor);
+}
+
+.subRenewBtn:hover {
+  filter: brightness(0.92);
+}
+
+.subUpgradeBtn {
+  background: var(--whiteColor);
+  color: var(--darkColor);
+  border: 1px solid var(--borderColor);
+}
+
+.subUpgradeBtn:hover {
+  border-color: var(--primaryColor);
+  color: var(--primaryColor);
+}
+
+.createBtnBg {
+  position: absolute;
+  top: -20px;
+  left: -10px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  width: 100px;
+  height: 100px;
+}
+
+.createBtnBg2 {
+  position: absolute;
+  top: -20px;
+  right: -10px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  width: 100px;
+  height: 100px;
+}
+
+@media (max-width: 991px) {
+  .subActions {
+    margin-left: 0;
+    text-align: left;
+  }
 }

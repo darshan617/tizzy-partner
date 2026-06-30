@@ -1,539 +1,546 @@
 .transactionCard {
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto 25px;
-    background: var(--whiteColor);
-    border-radius: 10px;
-    box-shadow: 5px 5px 8px #5090c545;
-    overflow: hidden;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto 25px;
+  background: var(--whiteColor);
+  border-radius: 10px;
+  box-shadow: 5px 5px 8px #5090c545;
+  overflow: hidden;
 }
 
 .headerBar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-    background: #ffffff;
-    padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: #ffffff;
+  padding: 16px 24px;
 }
 
 .tabTrack {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: var(--primarySubtleColor);
-    border-radius: 8px;
-    padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--primarySubtleColor);
+  border-radius: 8px;
+  padding: 4px;
 }
 
 .tab {
-    border: 1px solid transparent;
-    background: transparent;
-    color: var(--textBodySecondary);
-    font-size: var(--fs12);
-    font-weight: 600;
-    text-transform: uppercase;
-    line-height: 1.4;
-    letter-spacing: 0.02em;
-    padding: 5px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease,
-        box-shadow 0.15s ease;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--textBodySecondary);
+  font-size: var(--fs12);
+  font-weight: 600;
+  text-transform: uppercase;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  padding: 5px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .tab:hover:not(.tabActive) {
-    color: var(--primaryColor);
+  color: var(--primaryColor);
 }
 
 .tabActive {
-    background: var(--whiteColor);
-    color: var(--primaryColor);
-    border-bottom: 2px solid var(--primaryColor);
-    box-shadow: 0 1px 4px rgba(3, 85, 172, 0.12);
+  background: var(--whiteColor);
+  color: var(--primaryColor);
+  border-bottom: 2px solid var(--primaryColor);
+  box-shadow: 0 1px 4px rgba(3, 85, 172, 0.12);
 }
 
 .viewAllLink {
-    font-size: var(--fs14);
-    font-weight: 600;
-    color: var(--primaryColor);
-    text-decoration: underline;
-    white-space: nowrap;
+  font-size: var(--fs14);
+  font-weight: 600;
+  color: var(--primaryColor);
+  text-decoration: underline;
+  white-space: nowrap;
 }
 
 .viewAllLink:hover {
-    color: #024a96;
+  color: #024a96;
 }
 
 .contentBody {
-    padding: 16px 24px 20px;
-    background: var(--whiteColor);
+  padding: 16px 24px 20px;
+  background: var(--whiteColor);
 }
 
 .contentList {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .contentRow {
-    background: var(--whiteColor);
-    border: 1px solid var(--borderColor);
-    padding: 12px 18px;
-    border-radius: 8px;
+  background: var(--whiteColor);
+  border: 1px solid var(--borderColor);
+  padding: 12px 18px;
+  border-radius: 8px;
 }
 
 .transactionRowInner {
-    display: grid;
-    grid-template-columns:
-        minmax(110px, 14%) minmax(180px, 36%) minmax(100px, 25%) minmax(100px, 25%);
-    align-items: center;
-    gap: 12px 16px;
-    width: 100%;
+  display: grid;
+  grid-template-columns: minmax(110px, 14%) minmax(180px, 36%) minmax(
+      100px,
+      25%
+    ) minmax(100px, 25%);
+  align-items: center;
+  gap: 12px 16px;
+  width: 100%;
 }
 
 .colDateMeta {
-    min-width: 0;
+  min-width: 0;
 }
 
 .txDate {
-    margin: 0 0 4px;
-    font-size: var(--fs12);
-    color: var(--textBodySecondary);
-    line-height: 1.4;
-    white-space: nowrap;
+  margin: 0 0 4px;
+  font-size: var(--fs12);
+  color: var(--textBodySecondary);
+  line-height: 1.4;
+  white-space: nowrap;
 }
 
 .txIdBadge {
-    display: inline-block;
-    padding: 3px 10px;
-    background: #E7E9EB;
-    border-radius: 4px;
-    font-size: var(--fs12);
-    font-weight: 600;
-    color: var(--darkColor);
-    line-height: 1.4;
-    white-space: nowrap;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  display: inline-block;
+  padding: 3px 10px;
+  background: #e7e9eb;
+  border-radius: 4px;
+  font-size: var(--fs12);
+  font-weight: 600;
+  color: var(--darkColor);
+  line-height: 1.4;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .colDomainBlock {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-    overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .domainInfo {
-    min-width: 0;
-    overflow: hidden;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .renewalRowInner {
-    display: grid;
-    grid-template-columns:
-        minmax(0, 1fr) minmax(0, 1fr) 72px 100px 96px 36px;
-    align-items: center;
-    gap: 12px 16px;
-    width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 72px 100px 96px;
+  align-items: center;
+  gap: 12px 16px;
+  width: 100%;
 }
 
 .avatar {
-    width: 30px;
-    height: 30px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--whiteColor);
-    font-size: var(--fs14);
-    font-weight: 600;
-    line-height: 1;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--whiteColor);
+  font-size: var(--fs14);
+  font-weight: 600;
+  line-height: 1;
 }
 
 .avatar0 {
-    background: #c0392b;
+  background: #c0392b;
 }
 
 .avatar1 {
-    background: #c9a227;
+  background: #c9a227;
 }
 
 .avatar2 {
-    background: #4a90c4;
+  background: #4a90c4;
 }
 
 .avatar3 {
-    background: #7b70ef;
+  background: #7b70ef;
 }
 
 .avatar4 {
-    background: #d63384;
+  background: #d63384;
 }
 
 .colPlan {
-    min-width: 0;
-    overflow: hidden;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .colLicense {
-    text-align: center;
-    justify-self: center;
-    width: 72px;
+  text-align: center;
+  justify-self: center;
+  width: 72px;
 }
 
 .colAmount {
-    text-align: right;
-    justify-self: end;
+  text-align: right;
+  justify-self: end;
 }
 
 .colStatus {
-    display: flex;
-    justify-content: center;
-    justify-self: center;
-    width: 100%;
+  display: flex;
+  justify-content: center;
+  justify-self: center;
+  width: 100%;
 }
 
 .colRenew {
-    justify-self: center;
-    width: 96px;
+  justify-self: center;
+  width: 96px;
 }
 
 .colArrow {
-    justify-self: center;
-    width: 36px;
+  justify-self: center;
+  width: 36px;
 }
 
 .domainName {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--primaryColor);
-    line-height: 1.4;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primaryColor);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .subText {
-    margin: 2px 0 0;
-    font-size: 13px;
-    color: var(--textBodySecondary);
-    line-height: 1.4;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--textBodySecondary);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .planText {
-    margin: 0;
-    font-size: var(--fs14);
-    font-weight: 500;
-    color: var(--textBody);
-    line-height: 1.4;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  margin: 0;
+  font-size: var(--fs14);
+  font-weight: 500;
+  color: var(--textBody);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .metaHead {
-    font-size: var(--fs12);
-    color: var(--textBodySecondary);
-    line-height: 1.3;
-    margin-bottom: 2px;
+  font-size: var(--fs12);
+  color: var(--textBodySecondary);
+  line-height: 1.3;
+  margin-bottom: 2px;
 }
 
 .metaValue {
-    font-size: var(--fs14);
-    font-weight: 600;
-    color: var(--textBody);
-    line-height: 1.3;
+  font-size: var(--fs14);
+  font-weight: 600;
+  color: var(--textBody);
+  line-height: 1.3;
 }
 
 .amountValue {
-    font-size: var(--fs14);
-    font-weight: 600;
-    color: var(--textBody);
-    white-space: nowrap;
+  font-size: var(--fs14);
+  font-weight: 600;
+  color: var(--textBody);
+  white-space: nowrap;
 }
 
 .statusBadge {
-    display: inline-block;
-    padding: 4px 12px;
-    font-size: var(--fs11);
-    font-weight: 500;
-    line-height: 1.3;
-    border-radius: 50rem;
-    white-space: nowrap;
-    text-transform: capitalize;
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: var(--fs11);
+  font-weight: 500;
+  line-height: 1.3;
+  border-radius: 50rem;
+  white-space: nowrap;
+  text-transform: capitalize;
 }
 
 .expiring,
 .pending {
-    background: var(--warningSubtleColor);
-    color: var(--warningColor);
+  background: var(--warningSubtleColor);
+  color: var(--warningColor);
 }
 
 .expired,
 .overdue,
 .cancelled,
 .rejected {
-    background: var(--dangerSubtleColor);
-    color: var(--dangerColor);
+  background: var(--dangerSubtleColor);
+  color: var(--dangerColor);
 }
 
 .active,
 .completed,
 .success,
 .unpaid {
-    background: var(--successSubtleColor);
-    color: var(--successColor);
+  background: var(--successSubtleColor);
+  color: var(--successColor);
 }
 
 .draft {
-    background: var(--borderColor);
-    color: var(--textBodySecondary);
+  background: var(--borderColor);
+  color: var(--textBodySecondary);
 }
 
 .renewBtn {
-    min-width: 96px;
-    height: 34px;
-    border-radius: 50rem;
-    border: none;
-    background: var(--primaryColor);
-    color: var(--whiteColor);
-    font-size: var(--fs14);
-    font-weight: 500;
-    padding: 0 20px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.15s ease;
+  min-width: 96px;
+  height: 34px;
+  border-radius: 50rem;
+  border: none;
+  background: var(--primaryColor);
+  color: var(--whiteColor);
+  font-size: var(--fs14);
+  font-weight: 500;
+  padding: 0 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
 }
 
 .renewBtn:hover {
-    background: #024a96;
+  background: #024a96;
 }
 
 .arrowBtn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid var(--borderColor);
-    background: var(--whiteColor);
-    color: var(--textBodySecondary);
-    text-decoration: none;
-    flex-shrink: 0;
-    transition: border-color 0.15s ease, color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--borderColor);
+  background: var(--whiteColor);
+  color: var(--textBodySecondary);
+  text-decoration: none;
+  flex-shrink: 0;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .arrowBtn:hover {
-    border-color: var(--primaryColor);
-    color: var(--primaryColor);
+  border-color: var(--primaryColor);
+  color: var(--primaryColor);
 }
 
 .emptyState {
-    text-align: center;
-    padding: 2rem 1rem;
-    font-size: var(--fs14);
-    color: var(--textBodySecondary);
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: var(--fs14);
+  color: var(--textBodySecondary);
 }
 
 .loadMoreBtn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    margin: 14px auto 0;
-    padding: 6px 16px;
-    border: 1px solid var(--borderColor);
-    border-radius: 50rem;
-    background: var(--whiteColor);
-    color: var(--textBody);
-    font-size: var(--fs12);
-    font-weight: 500;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 14px auto 0;
+  padding: 6px 16px;
+  border: 1px solid var(--borderColor);
+  border-radius: 50rem;
+  background: var(--whiteColor);
+  color: var(--textBody);
+  font-size: var(--fs12);
+  font-weight: 500;
+  cursor: pointer;
 }
 
 .loadMoreBtn:hover {
-    border-color: var(--primaryColor);
-    color: var(--primaryColor);
+  border-color: var(--primaryColor);
+  color: var(--primaryColor);
 }
 
 .loadMoreIcon {
-    width: 14px;
-    height: 14px;
+  width: 14px;
+  height: 14px;
 }
 
 @media (max-width: 991px) and (min-width: 768px) {
-    .transactionRowInner {
-        grid-template-columns:
-            minmax(100px, 14%) minmax(160px, 34%) minmax(90px, 26%) minmax(90px, 26%);
-        gap: 12px 14px;
-    }
+  .transactionRowInner {
+    grid-template-columns: minmax(100px, 14%) minmax(160px, 34%) minmax(
+        90px,
+        26%
+      ) minmax(90px, 26%);
+    gap: 12px 14px;
+  }
 
-    .renewalRowInner {
-        grid-template-columns:
-            minmax(0, 1fr) minmax(0, 1fr) 100px 88px 32px;
-        gap: 10px 12px;
-    }
+  .renewalRowInner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 100px 88px 32px;
+    gap: 10px 12px;
+  }
 
-    .renewalRowInner .colLicense {
-        display: none;
-    }
+  .renewalRowInner .colLicense {
+    display: none;
+  }
 
-    .renewalRowInner .colStatus {
-        width: 100px;
-    }
+  .renewalRowInner .colStatus {
+    width: 100px;
+  }
 
-    .renewalRowInner .colRenew {
-        width: 88px;
-    }
+  .renewalRowInner .colRenew {
+    width: 88px;
+  }
 
-    .renewalRowInner .colArrow {
-        width: 32px;
-    }
+  .renewalRowInner .colArrow {
+    width: 32px;
+  }
 }
 
 @media (max-width: 767.98px) {
-    .headerBar {
-        padding: 14px 16px;
-    }
+  .headerBar {
+    padding: 14px 16px;
+  }
 
-    .contentBody {
-        padding: 12px 16px 16px;
-    }
+  .contentBody {
+    padding: 12px 16px 16px;
+  }
 
-    .tab {
-        font-size: var(--fs11);
-        padding: 7px 12px;
-    }
+  .tab {
+    font-size: var(--fs11);
+    padding: 7px 12px;
+  }
 
-    .contentList {
-        gap: 10px;
-    }
+  .contentList {
+    gap: 10px;
+  }
 
-    .contentRow {
-        padding: 14px;
-    }
+  .contentRow {
+    padding: 14px;
+  }
 
-    .transactionRowInner {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        grid-template-areas:
-            "date date"
-            "domain domain"
-            "status amount";
-        gap: 10px;
-        align-items: start;
-    }
+  .transactionRowInner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "date date"
+      "domain domain"
+      "status amount";
+    gap: 10px;
+    align-items: start;
+  }
 
-    .colDateMeta {
-        grid-area: date;
-    }
+  .colDateMeta {
+    grid-area: date;
+  }
 
-    .transactionRowInner .colDomainBlock {
-        grid-area: domain;
-    }
+  .transactionRowInner .colDomainBlock {
+    grid-area: domain;
+  }
 
-    .transactionRowInner .colStatus {
-        grid-area: status;
-        justify-content: flex-start;
-        justify-self: start;
-    }
+  .transactionRowInner .colStatus {
+    grid-area: status;
+    justify-content: flex-start;
+    justify-self: start;
+  }
 
-    .transactionRowInner .colAmount {
-        grid-area: amount;
-        justify-self: end;
-        text-align: right;
-    }
+  .transactionRowInner .colAmount {
+    grid-area: amount;
+    justify-self: end;
+    text-align: right;
+  }
 
-    .renewalRowInner {
-        display: grid;
-        grid-template-columns: 30px 1fr;
-        grid-template-areas:
-            "avatar identity"
-            "plan plan"
-            "meta meta"
-            "status status"
-            "actions actions";
-        gap: 10px 12px;
-        align-items: start;
-    }
+  .renewalRowInner {
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    grid-template-areas:
+      "avatar identity"
+      "plan plan"
+      "meta meta"
+      "status status"
+      "actions actions";
+    gap: 10px 12px;
+    align-items: start;
+  }
 
-    .renewalRowInner .avatar {
-        grid-area: avatar;
-        align-self: center;
-    }
+  .renewalRowInner .avatar {
+    grid-area: avatar;
+    align-self: center;
+  }
 
-    .renewalRowInner .colDomainBlock {
-        grid-area: identity;
-    }
+  .renewalRowInner .colDomainBlock {
+    grid-area: identity;
+  }
 
-    .renewalRowInner .colPlan {
-        grid-area: plan;
-    }
+  .renewalRowInner .colPlan {
+    grid-area: plan;
+  }
 
-    .renewalRowInner .colLicense {
-        grid-area: meta;
-        text-align: left;
-        justify-self: start;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
+  .renewalRowInner .colLicense {
+    grid-area: meta;
+    text-align: left;
+    justify-self: start;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-    .renewalRowInner .colLicense .metaHead {
-        margin-bottom: 0;
-    }
+  .renewalRowInner .colLicense .metaHead {
+    margin-bottom: 0;
+  }
 
-    .renewalRowInner .colStatus {
-        grid-area: status;
-        justify-content: flex-start;
-        justify-self: start;
-    }
+  .renewalRowInner .colStatus {
+    grid-area: status;
+    justify-content: flex-start;
+    justify-self: start;
+  }
 
-    .renewalRowInner .colRenew {
-        grid-area: actions;
-        justify-self: start;
-    }
+  .renewalRowInner .colRenew {
+    grid-area: actions;
+    justify-self: start;
+  }
 
-    .renewalRowInner .colArrow {
-        grid-area: actions;
-        justify-self: end;
-    }
+  .renewalRowInner .colArrow {
+    grid-area: actions;
+    justify-self: end;
+  }
 
-    .renewalRowInner .colRenew,
-    .renewalRowInner .colArrow {
-        display: flex;
-        align-items: center;
-    }
+  .renewalRowInner .colRenew,
+  .renewalRowInner .colArrow {
+    display: flex;
+    align-items: center;
+  }
 }
 
 @media (max-width: 575.98px) {
-    .headerBar {
-        flex-direction: column;
-        align-items: stretch;
-    }
+  .headerBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-    .tabTrack {
-        width: 100%;
-    }
+  .tabTrack {
+    width: 100%;
+  }
 
-    .tab {
-        flex: 1;
-        text-align: center;
-        padding: 8px 10px;
-    }
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 10px;
+  }
 
-    .viewAllLink {
-        align-self: flex-end;
-    }
+  .viewAllLink {
+    align-self: flex-end;
+  }
 }

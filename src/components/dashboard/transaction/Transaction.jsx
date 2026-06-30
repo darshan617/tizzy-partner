@@ -146,7 +146,7 @@ export default function TransactionSection({ data, isDataLoading }) {
           </span>
         </div>
 
-        <div className={styles.colRenew}>
+        {/* <div className={styles.colRenew}>
           <button
             type="button"
             className={styles.renewBtn}
@@ -154,7 +154,7 @@ export default function TransactionSection({ data, isDataLoading }) {
           >
             Renew
           </button>
-        </div>
+        </div> */}
 
         <div className={styles.colArrow}>
           <Link
