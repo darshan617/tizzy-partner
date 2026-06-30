@@ -9,7 +9,8 @@ import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { BsPlusCircleDotted } from "react-icons/bs";
 import { FaPen } from "react-icons/fa";
-
+import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
+import Image from "next/image";
 export default function CustomerDetail() {
   const router = useRouter();
   const userData = Cookies.get("userData")
@@ -228,6 +229,20 @@ export default function CustomerDetail() {
               <div className="col-lg-4 col-12">
                 <div className={`${styles.profCard}`}>
                   <div className={`${styles.profHeader} position-relative`}>
+                    <Image
+                      src={createBtnBg}
+                      alt="Edit"
+                      width={500}
+                      height={500}
+                      className={styles.createBtnBg}
+                    />
+                    <Image
+                      src={createBtnBg}
+                      alt="Edit"
+                      width={500}
+                      height={500}
+                      className={styles.createBtnBg2}
+                    />
                     <Link
                       href={`/customers/edit-customer?customerId=${router?.query?.customerId}`}
                       className={`${styles.profEditBtn}`}
