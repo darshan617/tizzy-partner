@@ -7,6 +7,8 @@ import { FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { useRouter } from "next/router";
 import { CUSTOMER_STATUS } from "@/constants/customer-constants";
+import Image from "next/image";
+import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarConstant";
 
 const avatarColorClasses = [
   styles.avatarRed,
@@ -267,9 +269,41 @@ export default function CustomerList({
                       </div>
 
                       <div className={styles.servicesCol}>
-                        {customer?.services?.map((service) => (
-                          <img key={service} />
-                        ))}
+                        {customer?.provider_ids?.map((providerId) => {
+                          const service = SIDEBAR_SERVICES_CONSTANTS.find(
+                            (item) => item.id === providerId,
+                          );
+
+                          return (
+                            <div
+                              key={providerId}
+                              style={{
+                                width: 30,
+                                height: 30,
+                                borderRadius: "50%",
+                                background: "#ffffff",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                overflow: "hidden",
+                                marginRight: -8,
+                                border: "1px solid #E7E9EB",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  width: 18,
+                                  height: 18,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                {service?.image}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
 
                       <div className={styles.statusCol}>

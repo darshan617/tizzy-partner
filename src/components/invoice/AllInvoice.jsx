@@ -13,9 +13,17 @@ const statusLabelMap = {
   pending: "Pending",
   overdue: "Overdue",
   completed: "Completed",
+  failed: "Failed",
 };
 
-const statusOrder = ["paid", "pending", "overdue", "active", "completed"];
+const statusOrder = [
+  "paid",
+  "pending",
+  "overdue",
+  "active",
+  "completed",
+  "failed",
+];
 
 const avatarBgClasses = [
   "warningBg",
@@ -34,6 +42,7 @@ const getStatusBadgeClass = (status) => {
     return styles.paidBadge;
   if (key === "pending") return styles.pendingBadge;
   if (key === "overdue") return styles.overdueBadge;
+  if (key === "failed") return styles.failedBadge;
   return styles.defaultBadge;
 };
 
@@ -313,22 +322,30 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                               <div
                                 className={`col-lg-2 col-md-12 col-12 ${styles.actionsCol} mt-2 mt-lg-0`}
                               >
-                                {showPayNow(invoice?.status) ? (
-                                  <button
-                                    type="button"
-                                    className={styles.payNowBtn}
-                                    onClick={() =>
-                                      router.push({
-                                        pathname: "/order-summary",
-                                        query: {
-                                          order_id: invoice?.order_id,
-                                        },
-                                      })
-                                    }
-                                  >
-                                    Pay Now
-                                  </button>
-                                ) : null}
+                                <button
+                                  type="button"
+                                  className={styles.payNowBtn}
+                                  disabled={!showPayNow(invoice?.status)}
+                                  style={{
+                                    cursor: showPayNow(invoice?.status)
+                                      ? "pointer"
+                                      : "not-allowed",
+                                    backgroundColor: showPayNow(invoice?.status)
+                                      ? "var(--primaryColor)"
+                                      : "#02499662",
+                                  }}
+                                  onClick={() =>
+                                    router.push({
+                                      pathname: "/order-summary",
+                                      query: {
+                                        order_id: invoice?.order_id,
+                                      },
+                                    })
+                                  }
+                                >
+                                  Pay Now
+                                </button>
+
                                 <Link
                                   href={`${invoice?.invoice_pdf_url}`}
                                   target="_blank"

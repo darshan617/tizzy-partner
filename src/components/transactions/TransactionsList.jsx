@@ -12,9 +12,11 @@ const statusLabelMap = {
   success: "Success",
   pending: "Pending",
   cancelled: "Cancelled",
+  completed: "Completed",
+  failed: "Failed",
 };
 
-const statusOrder = ["success", "pending", "cancelled"];
+const statusOrder = ["success", "pending", "cancelled", "completed", "failed"];
 
 const avatarBgClasses = [
   "warningBg",
@@ -51,6 +53,7 @@ const TransactionsList = () => {
       const res = await getTransactionsList({
         body: { partner_id: userData?.id },
       });
+      console.log("Transactions List Response:", res);
       if (res?.data?.success) {
         const list = res?.data?.data?.data || res?.data?.data || [];
         const items = Array.isArray(list) ? list : [];
@@ -252,7 +255,7 @@ const TransactionsList = () => {
                                 </div>
                                 <div className={styles.txDesc}>
                                   Received payment for invoice no. INV
-                                  {tx?.invoice_no}
+                                  {tx?.invoice_no?.invoice_no}
                                 </div>
                               </div>
                             </div>

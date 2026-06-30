@@ -1155,8 +1155,8 @@ strong {
 }
 
 .avatarSmall {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   color: #fff;
   font-size: var(--fs14);
   font-weight: 500;
@@ -1164,7 +1164,9 @@ strong {
   background-color: #ccc;
   line-height: 1;
   text-align: center;
-  padding: 4px 0 0 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .crDomainName {

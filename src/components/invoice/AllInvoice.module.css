@@ -174,7 +174,7 @@
   background: var(--whiteColor);
 }
 
-.btn-check:checked+.filterItem {
+.btn-check:checked + .filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -216,15 +216,16 @@
 }
 
 .contentRow {
-  background: var(--grayColor);
+  background: var(--whiteColor);
   border-radius: 8px;
   transition: all 0.1s ease-in-out;
   transform: scale(1);
   overflow: hidden;
+  border: 1px solid #e6e8ef;
 }
 
 .contentRow:not(.noHover):hover {
-  box-shadow: 0 5px 15px #ddd;
+  box-shadow: 0 4px 12px #11182714;
   background: #fff;
 }
 
@@ -296,7 +297,8 @@
   background: var(--warningSubtleColor);
 }
 
-.overdueBadge {
+.overdueBadge,
+.failedBadge {
   color: var(--dangerColor);
   background: var(--dangerSubtleColor);
 }
@@ -323,16 +325,16 @@
   height: 34px;
   border-radius: 50rem;
   border: 1px solid var(--borderColor);
-  background: #fff;
-  color: var(--textBody);
+  background: var(--primaryColor);
+  color: var(--whiteColor);
   font-size: var(--fs14);
   font-weight: 500;
   padding: 0 1rem;
 }
 
 .payNowBtn:hover {
-  background: var(--primaryColor);
-  border-color: var(--primaryColor);
+  background: #024a96;
+
   color: #fff;
 }
 

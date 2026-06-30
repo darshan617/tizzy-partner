@@ -335,6 +335,15 @@ export default function SummaryCounts({
       icon: <SubscriptionIcon />,
       redirectUrl: "/services/google-workspace",
     },
+    "total subscriptions": {
+      boxClass:
+        router?.pathname === "/subscriptions" ? "successGrad" : "warningGrad",
+      iconClass:
+        router?.pathname === "/subscriptions" ? "successColor" : "warningColor",
+      badgeClass: "up",
+      icon: <SubscriptionIcon />,
+      redirectUrl: "/services/google-workspace",
+    },
 
     "renewals this month": {
       boxClass: "secondaryGrad",
