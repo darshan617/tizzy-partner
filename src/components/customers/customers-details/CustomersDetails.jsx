@@ -1,26 +1,17 @@
 import { useEffect } from "react";
-import { FaPencil } from "react-icons/fa6";
-import { CiGlobe } from "react-icons/ci";
-import { BiTransfer } from "react-icons/bi";
 import { IoMdArrowBack } from "react-icons/io";
-import { ChevronRight, Plus } from "lucide-react";
+import { ChevronRight, Plus, Calendar, Globe, Users } from "lucide-react";
 import Link from "next/link";
 import styles from "@/components/customers/customers-details/CustomerDetails.module.css";
 import Layout from "@/components/layout/Layout";
 import { useGetSpecificCustomerDetailsQuery } from "@/redux/apis/customerApi";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
-import Image from "next/image";
-import VerifyOtp from "@/components/auth/verify-otp/VerifyOtp";
 import { BsPlusCircleDotted } from "react-icons/bs";
-import { setCustomerData } from "@/redux/slices/customerSlice";
-import { useDispatch } from "react-redux";
 import { FaPen } from "react-icons/fa";
-import { MdAutorenew } from "react-icons/md";
 
 export default function CustomerDetail() {
   const router = useRouter();
-  const dispatch = useDispatch();
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
@@ -167,172 +158,647 @@ export default function CustomerDetail() {
     </svg>,
   ];
 
+  const transactions = [
+    {
+      date: "20 Mar, 2026",
+      txnId: "TNX00123",
+      domain: "ganeshenterprises.com",
+      avatarColor: "secondaryBg",
+      desc: "Updated Plan to Tizzy® Mail Enterprise - 100 GB",
+      status: "Pending",
+      amount: "1254.00",
+    },
+    {
+      date: "20 Mar, 2026",
+      txnId: "TNX00123",
+      domain: "ganeshenterprises.com",
+      avatarColor: "dangerBg",
+      desc: "Updated Plan to Tizzy® Mail Enterprise - 100 GB",
+      status: "OverDue",
+      amount: "2546.00",
+    },
+    {
+      date: "20 Mar, 2026",
+      txnId: "TNX00123",
+      domain: "pinchthewallet.com",
+      avatarColor: "primaryBg",
+      desc: "Updated Plan to Tizzy® Mail Enterprise - 100 GB",
+      status: "OverDue",
+      amount: "2546.00",
+    },
+  ];
+
+  const allInnerPlans =
+    allPlans?.flatMap((plan) =>
+      (plan?.plans || []).map((innerPlan) => ({
+        ...innerPlan,
+        domain_name: plan?.domain_name,
+      })),
+    ) || [];
+
   return (
     <Layout>
       <div className="row flex-column gy-4 py-4">
         <div className="col">
-          <div className="row align-items-end ">
-            <div className="col">
-              <nav className={`${styles.breadcrumb} mb-0`}>
-                <Link href={"/dashboard"}>Dashboard</Link> /{" "}
-                <Link href={"/customers"}>Customer</Link>
-                <span className="breadcrumb-item"></span>
-                <h1 className="breadcrumb-item active" aria-current="page">
-                  Customer - {customerDetails?.name}
-                </h1>
-              </nav>
-            </div>
-            <div className="col-auto">
-              <Link href="/customers" className="btn small btnWhite">
-                <IoMdArrowBack />
-                <span>Back</span>
-              </Link>
+          <div className={`${styles.pageWrap}`}>
+            <div className="row align-items-end">
+              <div className="col">
+                <nav className={`mb-0`}>
+                  <Link href={"/dashboard"}>Dashboard</Link> /{" "}
+                  <Link href={"/customers"}>Customer</Link>
+                  <h1 className="breadcrumb-item active" aria-current="page">
+                    Customer - {customerDetails?.name}
+                  </h1>
+                </nav>
+              </div>
+              <div className="col-auto">
+                <Link href="/customers" className="btn small btnWhite">
+                  <IoMdArrowBack />
+                  <span>Back</span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="col">
-          <div className={`${styles.sectionCard} py-4 py-sm-3 px-sm-4 px-3`}>
-            <div className="border-bottom pb-3 mb-4">
-              <small className="row justify-content-between">
-                <div className="col-auto">
-                  <span className="d-sm-inline-block d-block">Status : </span>
-                  <span className="statusBadge successBg">Active</span>
-                </div>
-                <div className="col text-center">
-                  <span className="d-sm-inline-block d-block">
-                    Created On :{" "}
-                  </span>
-                  <strong className="d-inline-block">
-                    {customerDetails?.created_at || ""}
-                  </strong>
-                </div>
-                <div className="col-auto text-end">
-                  <span className="d-sm-inline-block d-block">
-                    Last Updated :{" "}
-                  </span>
-                  <strong className="d-inline-block">
-                    {customerDetails?.updated_at || "-"}
-                  </strong>
-                </div>
-              </small>
-            </div>
-
-            <div className="row">
-              <div
-                className={`${styles.custProfBox} col-md-4 col-12 mb-3 mb-lg-0 position-relative `}
-              >
-                <Link
-                  href={`/customers/edit-customer?customerId=${router?.query?.customerId}`}
-                  className="btn small me-4 btnWhite pfEditBtn"
-                >
-                  <FaPen />
-                  {/* <span className="d-md-none d-lg-inline-block">Edit</span> */}
-                </Link>
-
-                <div className="d-flex align-items-center mb-3">
-                  <div
-                    className={`${styles.profAvatar} ${styles.avatarColor_2} flex-shrink-0 text-capitalize`}
-                    style={{ zoom: 1.4 }}
-                  >
-                    {customerDetails?.company_name?.charAt(0)}
-                  </div>
-                  <div className={`${styles.profUser} mx-2`}>
-                    <div
-                      className={`${styles.profName} text-nowrap text-capitalize`}
+          <div className={`${styles.pageWrap}`}>
+            <div className="row gy-4">
+              {/* LEFT: Profile card */}
+              <div className="col-lg-4 col-12">
+                <div className={`${styles.profCard}`}>
+                  <div className={`${styles.profHeader} position-relative`}>
+                    <Link
+                      href={`/customers/edit-customer?customerId=${router?.query?.customerId}`}
+                      className={`${styles.profEditBtn}`}
+                      title="Edit"
                     >
-                      <p>{customerDetails?.company_name}</p>
-                      {/* {customerDetails?.name} */}
+                      <FaPen />
+                    </Link>
+                    <div className={`${styles.profAvatarLg} text-capitalize`}>
+                      {customerDetails?.company_name?.charAt(0)}
                     </div>
-                    <div className={`${styles.idBadge} mt-1`}>
+                    <h2 className={`${styles.profCompanyName} text-capitalize`}>
+                      {customerDetails?.company_name}
+                    </h2>
+                    <div className={`${styles.profIdBadge}`}>
                       Customer Id : <strong>{customerDetails?.id}</strong>
                     </div>
+                    <div className={`${styles.profCreated}`}>
+                      Created On : {customerDetails?.created_at || "-"}
+                    </div>
                   </div>
-                </div>
 
-                <div className={`${styles.custProfBox2} ms-md-5`}>
-                  <div className="row">
-                    <div className="mb-3 mb-sm-0">
-                      <small className="d-block textLight">Address</small>
+                  <div className={`${styles.profBody}`}>
+                    <h3 className={`${styles.profBodyTitle}`}>
+                      Basic Information
+                    </h3>
+
+                    <div className={`${styles.infoItem}`}>
+                      <small className={`${styles.infoLabel}`}>Full Name</small>
+                      <div className={`${styles.infoValue} text-capitalize`}>
+                        {customerDetails?.name || "-"}
+                      </div>
+                    </div>
+
+                    <div className={`${styles.infoItem}`}>
+                      <small className={`${styles.infoLabel}`}>Email</small>
+                      <div className={`${styles.infoValue}`}>
+                        <Link href={`mailto:${customerDetails?.email || "#"}`}>
+                          {customerDetails?.email || "-"}
+                        </Link>
+                      </div>
+                    </div>
+
+                    <div className={`${styles.infoItem}`}>
+                      <small className={`${styles.infoLabel}`}>
+                        Contact No.
+                      </small>
+                      <div className={`${styles.infoValue}`}>
+                        <Link href={`tel:${customerDetails?.mobile || "#"}`}>
+                          {customerDetails?.mobile || "-"}
+                        </Link>
+                      </div>
+                    </div>
+
+                    <div className={`${styles.infoItem}`}>
+                      <small className={`${styles.infoLabel}`}>GSTIN</small>
+                      <div className={`${styles.infoValue}`}>
+                        {customerDetails?.gstin || "-"}
+                      </div>
+                    </div>
+
+                    <div className={`${styles.infoItem}`}>
+                      <small className={`${styles.infoLabel}`}>PAN No.</small>
+                      <div className={`${styles.infoValue} text-uppercase`}>
+                        {customerDetails?.pan_no || "-"}
+                      </div>
+                    </div>
+
+                    <div className={`${styles.infoItem} mb-0`}>
+                      <small className={`${styles.infoLabel}`}>Address</small>
                       <address
-                        className={`${styles.addressWidth} mb-0 text-capitalize`}
-                        style={{ lineHeight: "1.8rem" }}
+                        className={`${styles.infoValue} text-capitalize mb-0`}
                       >
-                        {customerDetails?.company_address}
+                        {customerDetails?.company_address || "-"}
                       </address>
                     </div>
-                    {/* <div className="col-md-12 col-6 mb-3">
-                      <small className="d-block textLight">Email Id</small>
-                      <Link href={`mailto:${customerDetails?.email || "#"}`}>
-                        {customerDetails?.email || ""}
-                      </Link>
-                    </div> */}
-                    {/* <div className="col-md-12 col-6">
-                      <small className="d-block textLight">Mobile No.</small>
-                      <Link href="tel:+9198123456780">
-                        {customerDetails?.mobile || ""}
-                      </Link>
-                    </div> */}
                   </div>
                 </div>
               </div>
 
-              <div className="col-md-8 col-12 ps-md-4">
-                <div className="row">
-                  <div className="col-sm d-flex flex-wrap">
-                    <div className="col-12 mb-3">
-                      <small className="d-block textLight">Contact No.</small>
-                      <Link href="tel:+9198123456780" className="text-muted">
-                        {customerDetails?.mobile || "-"}
-                      </Link>
-                    </div>
-                    <div className="col-6 col-sm-12 mb-sm-3">
-                      <small className="d-block textLight">PAN No.</small>
-                      {customerDetails?.pan_no || "-"}
-                    </div>
-                    <div className="col-6 col-sm-12">
-                      <small className="d-block textLight">GSTIN</small>
-                      {customerDetails?.gstin || "-"}
+              <div className="col-lg-8 col-12">
+                <div className="row flex-column gy-4">
+                  {/* Transaction History */}
+                  <div className="col">
+                    <div className={`${styles.card} p-sm-4 p-3`}>
+                      <div className="d-flex align-items-center justify-content-between mb-3">
+                        <h2 className={`${styles.cardHead}`}>
+                          Transaction History
+                        </h2>
+                        <Link
+                          href="#"
+                          className={`${styles.viewAll} text-decoration-underline`}
+                        >
+                          View All
+                        </Link>
+                      </div>
+
+                      {transactions.map((txn, i) => (
+                        <div className={`${styles.txnRow}`} key={i}>
+                          <div className={`${styles.txnMeta}`}>
+                            <div className={`${styles.txnDate}`}>
+                              {txn.date}
+                            </div>
+                            <div className={`${styles.txnId}`}>{txn.txnId}</div>
+                          </div>
+                          <div className={`${styles.txnInfo}`}>
+                            <div
+                              className={`${styles.avatarSmall} ${txn.avatarColor} flex-shrink-0`}
+                            >
+                              {txn.domain?.charAt(0)?.toUpperCase()}
+                            </div>
+                            <div className="ms-2">
+                              <Link
+                                href="#"
+                                className={`${styles.txnDomain} d-block`}
+                              >
+                                {txn.domain}
+                              </Link>
+                              <small className={`${styles.txnDesc}`}>
+                                {txn.desc}
+                              </small>
+                            </div>
+                          </div>
+                          <div className={`${styles.txnAmount}`}>
+                            <span
+                              className={`${styles.txnStatus} ${
+                                txn.status === "Pending"
+                                  ? styles.txnPending
+                                  : styles.txnOverdue
+                              }`}
+                            >
+                              {txn.status}
+                            </span>
+                            <strong>₹ {txn.amount}</strong>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  {/* <div className="col-sm">
-                    <div className="mb-3">
-                      <small className="d-block textLight text ">
-                        Company Name
-                      </small>
-                      <span className="text-capitalize">
-                        {" "}
-                        {customerDetails?.company_name}
-                      </span>
-                    </div>
-                    <div className="mb-3 mb-sm-0">
-                      <small className="d-block textLight">Address</small>
-                      <address
-                        className={`${styles.addressWidth} mb-0 text-capitalize`}
-                        style={{ lineHeight: "1.8rem" }}
-                      >
-                        {customerDetails?.company_address}
-                      </address>
-                    </div>
-                  </div> */}
 
-                  <div className="col-sm d-flex flex-wrap">
-                    <div className="col-12 mb-3">
-                      <small className="d-block textLight">
-                        Contact Person
-                      </small>
-                      <div
-                        className={`${styles.profName} fs-6 t text-nowrap text-capitalize `}
-                      >
-                        {customerDetails?.name}
+                  <div className="col">
+                    <div className={`${styles.card} py-4`}>
+                      <div className="d-flex px-sm-4 px-3 mb-3 align-items-center">
+                        <div className="col">
+                          <h2 className={`${styles.cardHead}`}>
+                            Support Tickets <span>(10)</span>
+                          </h2>
+                        </div>
+                        <div className="col-auto">
+                          <Link
+                            href="#"
+                            className={`${styles.btnDefault} ${styles.small} ${styles.btn}`}
+                          >
+                            <Plus className={styles.icon} size={14} />
+                            <span>Open New Ticket</span>
+                          </Link>
+                        </div>
                       </div>
-                      <div className="col-md-12 col-6 mb-3">
-                        <Link
-                          href={`mailto:${customerDetails?.email || "#"}`}
-                          className="text-muted"
-                        >
-                          {customerDetails?.email || ""}
-                        </Link>
+
+                      <div className="swiper supportSwiper px-sm-4 px-3 mb-4">
+                        <div className="swiper-wrapper mb-4">
+                          {/* Slide 1 */}
+                          <div className="swiper-slide">
+                            <div
+                              className={`${styles.supportTkt} btnDisplay d-flex flex-column`}
+                            >
+                              <div
+                                className={`${styles.stktTop} d-flex align-items-center col-auto`}
+                              >
+                                <div className="col">
+                                  <div className={`${styles.stktNo}`}>
+                                    SUP2523
+                                  </div>
+                                  <span
+                                    className={`${styles.statusBadge} ${styles.subtleSuccess}`}
+                                  >
+                                    Active
+                                  </span>
+                                </div>
+                                <div className="col-auto">
+                                  <div className={`${styles.stktDate}`}>
+                                    20 Mar, 2026
+                                  </div>
+                                </div>
+                              </div>
+                              <div className={`${styles.stktContent} col`}>
+                                <span
+                                  className={`${styles.priorityBadge} ${styles.high}`}
+                                >
+                                  High Priority
+                                </span>
+                                <Link href="#">
+                                  <h3 className={`${styles.stktHead} my-2`}>
+                                    Can&apos;t access dashboard after update
+                                  </h3>
+                                </Link>
+                                <div className="">
+                                  Tizzy® Mail Enterprise - 100 GB
+                                </div>
+                              </div>
+                              <div
+                                className={`${styles.stktBtm} d-flex align-items-center col-auto`}
+                              >
+                                <div className="col">
+                                  <div
+                                    className={`${styles.crDomain} d-flex align-items-center`}
+                                  >
+                                    <div
+                                      className={`${styles.avatarSmall} flex-shrink-0 warningBg`}
+                                    >
+                                      G
+                                    </div>
+                                    <div className="crDomainName ps-2">
+                                      ganeshenterprises.com
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="col-auto">
+                                  <Link href="#" className={`${styles.crBtn}`}>
+                                    <ChevronRight
+                                      className={`${styles.icon} me-0`}
+                                    />
+                                  </Link>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Slide 2 */}
+                          <div className="swiper-slide">
+                            <div
+                              className={`${styles.supportTkt} ${styles.supportTkt} d-flex flex-column`}
+                            >
+                              <div
+                                className={`${styles.stktTop} d-flex align-items-center col-auto`}
+                              >
+                                <div className="col">
+                                  <div className={`${styles.stktNo}`}>
+                                    SUP2523
+                                  </div>
+                                  <span
+                                    className={`${styles.statusBadge} ${styles.subtleSuccess}`}
+                                  >
+                                    Active
+                                  </span>
+                                </div>
+                                <div className="col-auto">
+                                  <div className={`${styles.stktDate}`}>
+                                    20 Mar, 2026
+                                  </div>
+                                </div>
+                              </div>
+                              <div className={`${styles.stktContent} col`}>
+                                <span
+                                  className={`${styles.priorityBadge} ${styles.low}`}
+                                >
+                                  Low Priority
+                                </span>
+                                <Link href="#">
+                                  <h3 className={`${styles.stktHead} my-2`}>
+                                    Can&apos;t access dashboard after update
+                                  </h3>
+                                </Link>
+                                <div className="">
+                                  Tizzy® Mail Enterprise - 100 GB
+                                </div>
+                              </div>
+                              <div
+                                className={`${styles.stktBtm} d-flex align-items-center col-auto`}
+                              >
+                                <div className="col">
+                                  <div
+                                    className={`${styles.crDomain} d-flex align-items-center`}
+                                  >
+                                    <div
+                                      className={`${styles.avatarSmall} flex-shrink-0 successBg`}
+                                    >
+                                      A
+                                    </div>
+                                    <div
+                                      className={`${styles.crDomainName} ps-2`}
+                                    >
+                                      goyalinfotech.com
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="col-auto">
+                                  <Link href="#" className={`${styles.crBtn}`}>
+                                    <ChevronRight
+                                      className={`${styles.icon} me-0`}
+                                    />
+                                  </Link>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Slide 3 */}
+                          <div className="swiper-slide">
+                            <div
+                              className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}
+                            >
+                              <div
+                                className={`${styles.stktTop} d-flex align-items-center col-auto`}
+                              >
+                                <div className="col">
+                                  <div className={`${styles.stktNo}`}>
+                                    SUP2523
+                                  </div>
+                                  <span
+                                    className={`${styles.statusBadge} ${styles.statusBadge} ${styles.subtleSuccess}`}
+                                  >
+                                    Active
+                                  </span>
+                                </div>
+                                <div className="col-auto">
+                                  <div className={`${styles.stktDate}`}>
+                                    20 Mar, 2026
+                                  </div>
+                                </div>
+                              </div>
+                              <div className={`${styles.stktContent} col`}>
+                                <span
+                                  className={`${styles.priorityBadge} ${styles.high}`}
+                                >
+                                  High Priority
+                                </span>
+                                <Link href="#">
+                                  <h3 className={`${styles.stktHead} my-2`}>
+                                    Can&apos;t access dashboard after update
+                                  </h3>
+                                </Link>
+                                <div className="">
+                                  Tizzy® Mail Enterprise - 100 GB
+                                </div>
+                              </div>
+                              <div
+                                className={`${styles.stktBtm} d-flex align-items-center col-auto`}
+                              >
+                                <div className="col">
+                                  <div
+                                    className={`${styles.crDomain} d-flex align-items-center`}
+                                  >
+                                    <div
+                                      className={`${styles.avatarSmall} flex-shrink-0 secondaryBg`}
+                                    >
+                                      P
+                                    </div>
+                                    <div
+                                      className={`${styles.crDomainName} ps-2`}
+                                    >
+                                      kingstonmarketing.net
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="col-auto">
+                                  <Link href="#" className={`${styles.crBtn}`}>
+                                    <ChevronRight
+                                      className={`${styles.icon} me-0`}
+                                    />
+                                  </Link>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Slide 4 */}
+                          <div className="swiper-slide">
+                            <div
+                              className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}
+                            >
+                              <div
+                                className={`${styles.stktTop} d-flex align-items-center col-auto`}
+                              >
+                                <div className="col">
+                                  <div className={`${styles.stktNo}`}>
+                                    SUP2523
+                                  </div>
+                                  <span
+                                    className={`${styles.statusBadge} ${styles.subtleSuccess}`}
+                                  >
+                                    Active
+                                  </span>
+                                </div>
+                                <div className="col-auto">
+                                  <div className={`${styles.stktDate}`}>
+                                    20 Mar, 2026
+                                  </div>
+                                </div>
+                              </div>
+                              <div className={`${styles.stktContent} col`}>
+                                <span
+                                  className={`${styles.priorityBadge} ${styles.med}`}
+                                >
+                                  Medium Priority
+                                </span>
+                                <Link href="#">
+                                  <h3 className={`${styles.stktHead} my-2`}>
+                                    Can&apos;t access dashboard after update
+                                  </h3>
+                                </Link>
+                                <div className="">
+                                  Tizzy® Mail Enterprise - 100 GB
+                                </div>
+                              </div>
+                              <div
+                                className={`${styles.stktBtm} d-flex align-items-center col-auto`}
+                              >
+                                <div className="col">
+                                  <div
+                                    className={`${styles.crDomain} d-flex align-items-center`}
+                                  >
+                                    <div
+                                      className={`${styles.avatarSmall} ${styles.infoBg} flex-shrink-0`}
+                                    >
+                                      G
+                                    </div>
+                                    <div className="crDomainName ps-2">
+                                      pinchthewallet.com
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="col-auto">
+                                  <Link href="#" className={`${styles.crBtn}`}>
+                                    <ChevronRight
+                                      className={`${styles.icon} me-0`}
+                                    />
+                                  </Link>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Slide 5 */}
+                          <div className="swiper-slide">
+                            <div
+                              className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}
+                            >
+                              <div
+                                className={`${styles.stktTop} d-flex align-items-center col-auto`}
+                              >
+                                <div className="col">
+                                  <div className={`${styles.stktNo}`}>
+                                    SUP2523
+                                  </div>
+                                  <span
+                                    className={`${styles.statusBadge} ${styles.subtleSuccess}`}
+                                  >
+                                    Active
+                                  </span>
+                                </div>
+                                <div className="col-auto">
+                                  <div className={`${styles.stktDate}`}>
+                                    20 Mar, 2026
+                                  </div>
+                                </div>
+                              </div>
+                              <div className={`${styles.stktContent} col`}>
+                                <span
+                                  className={`${styles.priorityBadge} ${styles.high}`}
+                                >
+                                  High Priority
+                                </span>
+                                <Link href="#">
+                                  <h3 className={`${styles.stktHead} my-2`}>
+                                    Can&apos;t access dashboard after update
+                                  </h3>
+                                </Link>
+                                <div className="">
+                                  Tizzy® Mail Enterprise - 100 GB
+                                </div>
+                              </div>
+                              <div
+                                className={`${styles.stktBtm} d-flex align-items-center col-auto`}
+                              >
+                                <div className="col">
+                                  <div
+                                    className={`${styles.crDomain} d-flex align-items-center`}
+                                  >
+                                    <div
+                                      className={`${styles.avatarSmall} flex-shrink-0 warningBg`}
+                                    >
+                                      G
+                                    </div>
+                                    <div
+                                      className={`${styles.crDomainName} ps-2`}
+                                    >
+                                      ganeshenterprises.com
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="col-auto">
+                                  <Link href="#" className={`${styles.crBtn}`}>
+                                    <ChevronRight
+                                      className={`${styles.icon} me-0`}
+                                    />
+                                  </Link>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Slide 6 */}
+                          <div className="swiper-slide">
+                            <div
+                              className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}
+                            >
+                              <div
+                                className={`${styles.stktTop} d-flex align-items-center col-auto`}
+                              >
+                                <div className="col">
+                                  <div className={`${styles.stktNo}`}>
+                                    SUP2523
+                                  </div>
+                                  <span
+                                    className={`${styles.statusBadge} ${styles.subtleSuccess}`}
+                                  >
+                                    Active
+                                  </span>
+                                </div>
+                                <div className="col-auto">
+                                  <div className={`${styles.stktDate}`}>
+                                    20 Mar, 2026
+                                  </div>
+                                </div>
+                              </div>
+                              <div className={`${styles.stktContent} col`}>
+                                <span
+                                  className={`${styles.priorityBadge} ${styles.high}`}
+                                >
+                                  High Priority
+                                </span>
+                                <Link href="#">
+                                  <h3 className={`${styles.stktHead} my-2`}>
+                                    Can&apos;t access dashboard after update
+                                  </h3>
+                                </Link>
+                                <div className="">
+                                  Tizzy® Mail Enterprise - 100 GB
+                                </div>
+                              </div>
+                              <div
+                                className={`${styles.stktBtm} d-flex align-items-center col-auto`}
+                              >
+                                <div className="col">
+                                  <div
+                                    className={`${styles.crDomain} d-flex align-items-center`}
+                                  >
+                                    <div
+                                      className={`${styles.avatarSmall} flex-shrink-0 dangerBg`}
+                                    >
+                                      G
+                                    </div>
+                                    <div
+                                      className={`${styles.crDomainName} ps-2`}
+                                    >
+                                      ganeshenterprises.com
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="col-auto">
+                                  <Link href="#" className={`${styles.crBtn}`}>
+                                    <ChevronRight
+                                      className={`${styles.icon} me-0`}
+                                    />
+                                  </Link>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="swiper-scrollbar"></div>
                       </div>
                     </div>
                   </div>
@@ -342,622 +808,152 @@ export default function CustomerDetail() {
           </div>
         </div>
 
-        {allPlans?.length === 0 ? (
-          <div className="col">
-            <div
-              className={`${styles.sectionCard} text-center  px-sm-4 px-3 py-1 d-flex flex-column align-items-center justify-content-center gap-2`}
-            >
-              <p className="m-0">No Subscriptions</p>
-              <button
-                className="small btnDefault btn"
-                onClick={() => router.push("/services/google-workspace")}
-              >
-                <BsPlusCircleDotted className="me-2" size={14} />
-                <span>Buy New Subscription</span>
-              </button>
-            </div>
-          </div>
-        ) : (
-          allPlans?.map((plan, idx) => {
-            const otherPlans = plan?.plans;
-            return (
-              <div className="col">
-                <div className={`${styles.sectionCard} px-sm-4 px-3 py-1`}>
-                  <div className="border-bottom py-sm-2 py-3">
-                    <div className="row align-items-center position-relative">
-                      <div className="col-md-3 d-none d-md-block"></div>
-                      <div className="col-md-6 col text-center d-flex align-items-center justify-content-md-center">
-                        <div className="d-inline-flex align-items-center domainSection">
-                          <CiGlobe />
-                          <h3 className="mb-0 ms-2 fw-semibold primaryColor">
-                            {plan?.domain_name || ""}
-                          </h3>
+        {/* CURRENT SUBSCRIPTION */}
+        <div className="col">
+          <div className={`${styles.pageWrap}`}>
+            <div className={`${styles.card} p-sm-4 p-3`}>
+              <div className="d-flex align-items-center justify-content-between mb-3">
+                <h2 className={`${styles.cardHead}`}>
+                  Current Subscription{" "}
+                  <span>({allInnerPlans?.length || 0})</span>
+                </h2>
+                <Link
+                  href="#"
+                  className={`${styles.viewAll} text-decoration-underline`}
+                >
+                  View All
+                </Link>
+              </div>
+
+              {allInnerPlans?.length === 0 ? (
+                <div className="text-center d-flex flex-column align-items-center justify-content-center gap-2 py-3">
+                  <p className="m-0">No Subscriptions</p>
+                  <button
+                    className="small btnDefault btn"
+                    onClick={() => router.push("/services/google-workspace")}
+                  >
+                    <BsPlusCircleDotted className="me-2" size={14} />
+                    <span>Buy New Subscription</span>
+                  </button>
+                </div>
+              ) : (
+                allInnerPlans?.map((innerPlan, idx) => (
+                  <div className={`${styles.subRow}`} key={idx}>
+                    <div className={`${styles.subTop}`}>
+                      <div className={`${styles.subPlan}`}>
+                        <p
+                          className={`${styles.subPlanIcon} m-0 flex-shrink-0`}
+                        >
+                          {plansImg?.[innerPlan?.provider_id - 1] || "-"}
+                        </p>
+                        <div className="ms-2">
+                          <div className={`${styles.subPlanName}`}>
+                            {innerPlan?.plan_name || "-"}
+                          </div>
+                          <small className={`${styles.subPlanPrice}`}>
+                            ₹{innerPlan?.price} <span>Per User / Per Year</span>
+                          </small>
                         </div>
                       </div>
-                      <div className="col-md-3 col-auto d-flex gap-2 justify-content-end">
-                        {/* <button
+
+                      <span
+                        className={`${styles.statusBadge} ${styles?.[innerPlan?.status?.toLowerCase()?.replace(" ", "_")]}`}
+                      >
+                        {innerPlan?.status || "-"}
+                      </span>
+                    </div>
+
+                    <div className={`${styles.subBottom}`}>
+                      <div className={`${styles.subMeta}`}>
+                        <div className={`${styles.subMetaItem}`}>
+                          <Calendar className={`${styles.subMetaIcon}`} />
+                          <div>
+                            <small className={`${styles.infoLabel}`}>
+                              Billing Cycle
+                            </small>
+                            <div className={`${styles.subMetaValue}`}>
+                              {innerPlan?.start_date} - {innerPlan?.end_date}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className={`${styles.subMetaItem}`}>
+                          <Globe className={`${styles.subMetaIcon}`} />
+                          <div>
+                            <small className={`${styles.infoLabel}`}>
+                              Domain
+                            </small>
+                            <div className={`${styles.subMetaValue}`}>
+                              {innerPlan?.domain_name || "-"}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className={`${styles.subMetaItem}`}>
+                          <Users className={`${styles.subMetaIcon}`} />
+                          <div>
+                            <small className={`${styles.infoLabel}`}>
+                              Licenses
+                            </small>
+                            <div className={`${styles.subMetaValue}`}>
+                              {innerPlan?.license_count || "-"} Users
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className={`${styles.subActions}`}>
+                        <button
+                          className={`${styles.subRenewBtn}`}
                           onClick={() =>
                             router?.push({
                               pathname: "/order-summary",
                               query: {
                                 type: "renew-plan",
-                                order_id: otherPlans?.[0]?.order_id,
+                                order_id: innerPlan?.order_id,
                               },
                             })
                           }
-                          className={`${styles.crRenew} btn small btnWhite`}
                         >
-                          <MdAutorenew
-                            className="me-2"
-                            size={14}
-                            style={{ minWidth: "14px" }}
-                          />
-                          <span>Renew</span>
-                        </button> */}
-                        {/* <button
-                          className="btn small btnWhite"
-                          data-bs-toggle="modal"
-                          data-bs-target="#modalTransferCode"
+                          Renew
+                        </button>
+                        <Link
+                          href={{
+                            pathname: `/services/${
+                              innerPlan?.provider_name === "Tizzy Mail"
+                                ? "tizzy"
+                                : innerPlan?.provider_name === "Microsoft 365"
+                                  ? "microsoft-solution-partner"
+                                  : "google-workspace"
+                            }`,
+                            query: {
+                              type: "upgrade",
+                              order_id: innerPlan?.order_id,
+                              customer_id: router?.query?.customerId,
+                              plan_id: innerPlan?.plan_id,
+                              order_sub_id: innerPlan?.order_sub_id,
+                            },
+                          }}
+                          className={`${styles.subUpgradeBtn}`}
+                          onClick={() => {
+                            Cookies.remove("customerData");
+                            Cookies.set(
+                              "customerData",
+                              JSON.stringify({
+                                partner_id: userData?.id,
+                                customer_id: router?.query?.customerId,
+                                domain_name: innerPlan?.domain_name,
+                              }),
+                            );
+                          }}
                         >
-                          <BiTransfer
-                            className="me-2"
-                            size={14}
-                            style={{ minWidth: "14px" }}
-                          />
-                          <span>Transfer Code</span>
-                        </button> */}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="py-3">
-                    <div className="d-flex align-items-center justify-content-between mb-2">
-                      <div>
-                        <h2 className={`${styles.sectionCardHead}`}>
-                          Current Subscription
-                        </h2>
-                      </div>
-                      <div>
-                        <small className="text-decoration-underline">
-                          <Link
-                            href={{
-                              pathname: "/subscriptions/domain-history",
-                              query: {
-                                domains: plan?.domain_name,
-                                customerId: router?.query?.customerId,
-                              },
-                            }}
-                          >
-                            View History
-                          </Link>
-                        </small>
-                      </div>
-                    </div>
-                    {otherPlans?.map((innerPlan, idx) => {
-                      return (
-                        <div className={`${styles.contentRow} noHover`}>
-                          <div className="row align-items-center">
-                            <div
-                              div
-                              className="col-xl-3 col-12 d-flex align-items-center"
-                            >
-                              {/* <div
-                                className={`${styles.servBadge} ${styles.tizzy}  flex-shrink-0`}
-                                title="Tizzy Mail"
-                              ></div> */}
-                              <div>
-                                <p
-                                  className={`${styles.servBadge} m-0 flex-shrink-0`}
-                                >
-                                  {plansImg?.[innerPlan?.provider_id - 1] ||
-                                    "-"}
-                                </p>
-                              </div>
-                              <div className="ms-2">
-                                <div className="fw-medium">
-                                  {innerPlan?.plan_name || "-"}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-xl col-md-9 col-sm-8">
-                              <div className="row text-sm-center align-items-start justify-content-around gy-3">
-                                <div className="col-md-auto col-sm-6 col-8">
-                                  <small className="d-block textLight">
-                                    Price
-                                  </small>
-                                  <span>₹ {innerPlan?.price}</span>
-                                  <small className="d-block">
-                                    per user/year
-                                  </small>
-                                </div>
-                                <div className="col-md-auto col-sm-6 col-4">
-                                  <small className="d-block textLight">
-                                    License
-                                  </small>
-                                  <span>{innerPlan?.license_count || "-"}</span>
-                                  <button
-                                    className={`${styles.iconBtn} btnWhite btn`}
-                                    onClick={() =>
-                                      router?.push({
-                                        pathname: "/order-summary",
-                                        query: {
-                                          type: "renew-plan",
-                                          order_id: innerPlan?.order_id,
-                                        },
-                                      })
-                                    }
-                                  >
-                                    <FaPen size={10} />
-                                  </button>
-                                </div>
-                                <div className="col-md-auto col-sm-6 col-8">
-                                  <small className="d-block textLight">
-                                    Period
-                                  </small>
-                                  <span>
-                                    {innerPlan?.start_date} -{" "}
-                                    {innerPlan?.end_date}
-                                  </span>
-                                </div>
-                                <div className="col-md-auto col-sm-6 col-4 align-self-center">
-                                  <div
-                                    className={`${styles.statusBadge} ${styles?.[innerPlan?.status?.toLowerCase()?.replace(" ", "_")]}`}
-                                  >
-                                    {innerPlan?.status || "-"}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
-                              <div
-                                className={`${styles.updwngrade} text-uppercase`}
-                              >
-                                <Link
-                                  href={{
-                                    pathname: `/services/${
-                                      innerPlan?.provider_name === "Tizzy Mail"
-                                        ? "tizzy"
-                                        : innerPlan?.provider_name ===
-                                            "Microsoft 365"
-                                          ? "microsoft-solution-partner"
-                                          : "google-workspace"
-                                    }`,
-                                    query: {
-                                      type: "upgrade",
-                                      order_id: innerPlan?.order_id,
-                                      customer_id: router?.query?.customerId,
-                                      plan_id: innerPlan?.plan_id,
-                                      order_sub_id: innerPlan?.order_sub_id,
-                                    },
-                                  }}
-                                  className={styles.updwngradeBtn}
-                                  onClick={() => {
-                                    Cookies.remove("customerData");
-                                    Cookies.set(
-                                      "customerData",
-                                      JSON.stringify({
-                                        partner_id: userData?.id,
-                                        customer_id: router?.query?.customerId,
-                                        domain_name: plan?.domain_name,
-                                      }),
-                                    );
-                                    // dispatch(
-                                    //   setCustomerData({
-                                    //     partner_id: userData?.id,
-                                    //     customer_id: router?.query?.customerId,
-                                    //     plan_id: innerPlan?.plan_id,
-                                    //     domain_name: plan?.domain_name,
-                                    //   }),
-                                    // );
-                                  }}
-                                >
-                                  UPGRADE
-                                </Link>{" "}
-                                {/* / */}
-                                {/* <button
-                                  className={styles.downgradeBtn}
-                                  onClick={() =>
-                                    router.push({
-                                      pathname: "/services/tizzy",
-                                      query: {
-                                        type: "downgrade",
-                                        order_id: innerPlan?.order_id,
-                                      },
-                                    })
-                                  }
-                                >
-                                  DOWNGRADE
-                                </button> */}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                    {otherPlans?.length === 0 && (
-                      <div className="text-center">
-                        <p className="text-muted">No plans found</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        )}
-
-        <div className="col">
-          <div className={`${styles.sectionCard} py-4`}>
-            <div className="d-flex px-sm-4 px-3 mb-3 align-items-center">
-              <div className="col">
-                <h2 className={`${styles.sectionCardHead}`}>
-                  Support Tickets{" "}
-                </h2>
-              </div>
-              <div className="col-auto">
-                <Link
-                  href="#"
-                  className={`${styles.btnDefault} ${styles.small} ${styles.btn}`}
-                >
-                  <Plus className={styles.icon} size={14} />
-                  <span>Open New Ticket</span>
-                </Link>
-              </div>
-            </div>
-
-            <div className="swiper supportSwiper px-sm-4 px-3 mb-4">
-              <div className="swiper-wrapper mb-4">
-                {/* Slide 1 */}
-                <div className="swiper-slide">
-                  <div
-                    className={`${styles.supportTkt} btnDisplay d-flex flex-column`}
-                  >
-                    <div
-                      className={`${styles.stktTop} d-flex align-items-center col-auto`}
-                    >
-                      <div className="col">
-                        <div className={`${styles.stktNo}`}>SUP2523</div>
-                        <span
-                          className={`${styles.statusBadge} ${styles.subtleSuccess}`}
-                        >
-                          Active
-                        </span>
-                      </div>
-                      <div className="col-auto">
-                        <div className={`${styles.stktDate}`}>20 Mar, 2026</div>
-                      </div>
-                    </div>
-                    <div className={`${styles.stktContent} col`}>
-                      <span
-                        className={`${styles.priorityBadge} ${styles.high}`}
-                      >
-                        High Priority
-                      </span>
-                      <Link href="#">
-                        <h3 className={`${styles.stktHead} my-2`}>
-                          Can&apos;t access dashboard after update
-                        </h3>
-                      </Link>
-                      <div className="">Tizzy® Mail Enterprise - 100 GB</div>
-                    </div>
-                    <div
-                      className={`${styles.stktBtm} d-flex align-items-center col-auto`}
-                    >
-                      <div className="col">
-                        <div
-                          className={`${styles.crDomain} d-flex align-items-center`}
-                        >
-                          <div
-                            className={`${styles.avatarSmall} flex-shrink-0 warningBg`}
-                          >
-                            G
-                          </div>
-                          <div className="crDomainName ps-2">
-                            ganeshenterprises.com
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-auto">
-                        <Link href="#" className={`${styles.crBtn}`}>
-                          <ChevronRight className={`${styles.icon} me-0`} />
+                          Upgrade
                         </Link>
                       </div>
                     </div>
                   </div>
-                </div>
-
-                {/* Slide 2 */}
-                <div className="swiper-slide">
-                  <div
-                    className={`${styles.supportTkt} ${styles.supportTkt} d-flex flex-column`}
-                  >
-                    <div
-                      className={`${styles.stktTop} d-flex align-items-center col-auto`}
-                    >
-                      <div className="col">
-                        <div className={`${styles.stktNo}`}>SUP2523</div>
-                        <span
-                          className={`${styles.statusBadge} ${styles.subtleSuccess}`}
-                        >
-                          Active
-                        </span>
-                      </div>
-                      <div className="col-auto">
-                        <div className={`${styles.stktDate}`}>20 Mar, 2026</div>
-                      </div>
-                    </div>
-                    <div className={`${styles.stktContent} col`}>
-                      <span className={`${styles.priorityBadge} ${styles.low}`}>
-                        Low Priority
-                      </span>
-                      <Link href="#">
-                        <h3 className={`${styles.stktHead} my-2`}>
-                          Can&apos;t access dashboard after update
-                        </h3>
-                      </Link>
-                      <div className="">Tizzy® Mail Enterprise - 100 GB</div>
-                    </div>
-                    <div
-                      className={`${styles.stktBtm} d-flex align-items-center col-auto`}
-                    >
-                      <div className="col">
-                        <div
-                          className={`${styles.crDomain} d-flex align-items-center`}
-                        >
-                          <div
-                            className={`${styles.avatarSmall} flex-shrink-0 successBg`}
-                          >
-                            A
-                          </div>
-                          <div className={`${styles.crDomainName} ps-2`}>
-                            goyalinfotech.com
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-auto">
-                        <Link href="#" className={`${styles.crBtn}`}>
-                          <ChevronRight className={`${styles.icon} me-0`} />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Slide 3 */}
-                <div className="swiper-slide">
-                  <div
-                    className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}
-                  >
-                    <div
-                      className={`${styles.stktTop} d-flex align-items-center col-auto`}
-                    >
-                      <div className="col">
-                        <div className={`${styles.stktNo}`}>SUP2523</div>
-                        <span
-                          className={`${styles.statusBadge} ${styles.statusBadge} ${styles.subtleSuccess}`}
-                        >
-                          Active
-                        </span>
-                      </div>
-                      <div className="col-auto">
-                        <div className={`${styles.stktDate}`}>20 Mar, 2026</div>
-                      </div>
-                    </div>
-                    <div className={`${styles.stktContent} col`}>
-                      <span
-                        className={`${styles.priorityBadge} ${styles.high}`}
-                      >
-                        High Priority
-                      </span>
-                      <Link href="#">
-                        <h3 className={`${styles.stktHead} my-2`}>
-                          Can&apos;t access dashboard after update
-                        </h3>
-                      </Link>
-                      <div className="">Tizzy® Mail Enterprise - 100 GB</div>
-                    </div>
-                    <div
-                      className={`${styles.stktBtm} d-flex align-items-center col-auto`}
-                    >
-                      <div className="col">
-                        <div
-                          className={`${styles.crDomain} d-flex align-items-center`}
-                        >
-                          <div
-                            className={`${styles.avatarSmall} flex-shrink-0 secondaryBg`}
-                          >
-                            P
-                          </div>
-                          <div className={`${styles.crDomainName} ps-2`}>
-                            kingstonmarketing.net
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-auto">
-                        <Link href="#" className={`${styles.crBtn}`}>
-                          <ChevronRight className={`${styles.icon} me-0`} />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Slide 4 */}
-                <div className="swiper-slide">
-                  <div
-                    className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}
-                  >
-                    <div
-                      className={`${styles.stktTop} d-flex align-items-center col-auto`}
-                    >
-                      <div className="col">
-                        <div className={`${styles.stktNo}`}>SUP2523</div>
-                        <span
-                          className={`${styles.statusBadge} ${styles.subtleSuccess}`}
-                        >
-                          Active
-                        </span>
-                      </div>
-                      <div className="col-auto">
-                        <div className={`${styles.stktDate}`}>20 Mar, 2026</div>
-                      </div>
-                    </div>
-                    <div className={`${styles.stktContent} col`}>
-                      <span className={`${styles.priorityBadge} ${styles.med}`}>
-                        Medium Priority
-                      </span>
-                      <Link href="#">
-                        <h3 className={`${styles.stktHead} my-2`}>
-                          Can&apos;t access dashboard after update
-                        </h3>
-                      </Link>
-                      <div className="">Tizzy® Mail Enterprise - 100 GB</div>
-                    </div>
-                    <div
-                      className={`${styles.stktBtm} d-flex align-items-center col-auto`}
-                    >
-                      <div className="col">
-                        <div
-                          className={`${styles.crDomain} d-flex align-items-center`}
-                        >
-                          <div
-                            className={`${styles.avatarSmall} ${styles.infoBg} flex-shrink-0`}
-                          >
-                            G
-                          </div>
-                          <div className="crDomainName ps-2">
-                            pinchthewallet.com
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-auto">
-                        <Link href="#" className={`${styles.crBtn}`}>
-                          <ChevronRight className={`${styles.icon} me-0`} />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Slide 5 */}
-                <div className="swiper-slide">
-                  <div
-                    className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}
-                  >
-                    <div
-                      className={`${styles.stktTop} d-flex align-items-center col-auto`}
-                    >
-                      <div className="col">
-                        <div className={`${styles.stktNo}`}>SUP2523</div>
-                        <span
-                          className={`${styles.statusBadge} ${styles.subtleSuccess}`}
-                        >
-                          Active
-                        </span>
-                      </div>
-                      <div className="col-auto">
-                        <div className={`${styles.stktDate}`}>20 Mar, 2026</div>
-                      </div>
-                    </div>
-                    <div className={`${styles.stktContent} col`}>
-                      <span
-                        className={`${styles.priorityBadge} ${styles.high}`}
-                      >
-                        High Priority
-                      </span>
-                      <Link href="#">
-                        <h3 className={`${styles.stktHead} my-2`}>
-                          Can&apos;t access dashboard after update
-                        </h3>
-                      </Link>
-                      <div className="">Tizzy® Mail Enterprise - 100 GB</div>
-                    </div>
-                    <div
-                      className={`${styles.stktBtm} d-flex align-items-center col-auto`}
-                    >
-                      <div className="col">
-                        <div
-                          className={`${styles.crDomain} d-flex align-items-center`}
-                        >
-                          <div
-                            className={`${styles.avatarSmall} flex-shrink-0 warningBg`}
-                          >
-                            G
-                          </div>
-                          <div className={`${styles.crDomainName} ps-2`}>
-                            ganeshenterprises.com
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-auto">
-                        <Link href="#" className={`${styles.crBtn}`}>
-                          <ChevronRight className={`${styles.icon} me-0`} />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Slide 6 */}
-                <div className="swiper-slide">
-                  <div
-                    className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}
-                  >
-                    <div
-                      className={`${styles.stktTop} d-flex align-items-center col-auto`}
-                    >
-                      <div className="col">
-                        <div className={`${styles.stktNo}`}>SUP2523</div>
-                        <span
-                          className={`${styles.statusBadge} ${styles.subtleSuccess}`}
-                        >
-                          Active
-                        </span>
-                      </div>
-                      <div className="col-auto">
-                        <div className={`${styles.stktDate}`}>20 Mar, 2026</div>
-                      </div>
-                    </div>
-                    <div className={`${styles.stktContent} col`}>
-                      <span
-                        className={`${styles.priorityBadge} ${styles.high}`}
-                      >
-                        High Priority
-                      </span>
-                      <Link href="#">
-                        <h3 className={`${styles.stktHead} my-2`}>
-                          Can&apos;t access dashboard after update
-                        </h3>
-                      </Link>
-                      <div className="">Tizzy® Mail Enterprise - 100 GB</div>
-                    </div>
-                    <div
-                      className={`${styles.stktBtm} d-flex align-items-center col-auto`}
-                    >
-                      <div className="col">
-                        <div
-                          className={`${styles.crDomain} d-flex align-items-center`}
-                        >
-                          <div
-                            className={`${styles.avatarSmall} flex-shrink-0 dangerBg`}
-                          >
-                            G
-                          </div>
-                          <div className={`${styles.crDomainName} ps-2`}>
-                            ganeshenterprises.com
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-auto">
-                        <Link href="#" className={`${styles.crBtn}`}>
-                          <ChevronRight className={`${styles.icon} me-0`} />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="swiper-scrollbar"></div>
+                ))
+              )}
             </div>
           </div>
         </div>
