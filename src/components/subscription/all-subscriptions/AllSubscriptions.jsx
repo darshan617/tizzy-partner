@@ -21,9 +21,10 @@ const statusLabelMap = {
   expiring: "Expiring",
   inactive: "Inactive",
   pending: "Pending",
+  draft: "Draft",
 };
 
-const statusOrder = ["active", "expiring", "inactive", "pending"];
+const statusOrder = ["active", "expiring", "inactive", "pending", "draft"];
 
 const AllSubscriptions = ({
   allSubscriptionsData,
@@ -264,7 +265,7 @@ const AllSubscriptions = ({
                                   <div className={styles.statusInner}>
                                     <div className={styles.statusBadgeGroup}>
                                       <span
-                                        className={`${styles.statusBadge} ${subscription?.status?.toLowerCase() === "active" ? styles.activeBadge : ""} ${subscription?.status?.toLowerCase() === "expiring" ? styles.expiringBadge : ""}  ${subscription?.status?.toLowerCase() === "expired" ? styles.expired : ""} ${subscription?.status === "inactive" ? styles.inactiveBadge : ""} ${subscription?.status?.toLowerCase() === "pending" ? styles.pendingBadge : ""}`}
+                                        className={`${styles.statusBadge} ${subscription?.status?.toLowerCase() === "active" ? styles.activeBadge : ""} ${subscription?.status?.toLowerCase() === "expiring" ? styles.expiringBadge : ""}  ${subscription?.status?.toLowerCase() === "expired" ? styles.expired : ""} ${subscription?.status === "inactive" ? styles.inactiveBadge : ""} ${subscription?.status?.toLowerCase() === "pending" ? styles.pendingBadge : ""} ${subscription?.status?.toLowerCase() === "draft" ? styles.draftBadge : ""}`}
                                       >
                                         {subscription?.status}
                                       </span>

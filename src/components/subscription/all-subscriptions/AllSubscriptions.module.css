@@ -174,7 +174,7 @@
   background: var(--whiteColor);
 }
 
-.btn-check:checked + .filterItem {
+.btn-check:checked+.filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -342,6 +342,11 @@
   background: var(--warningSubtleColor);
 }
 
+.draftBadge {
+  color: var(--textBodySecondary);
+  background: var(--borderColor);
+}
+
 .inactiveBadge {
   color: var(--textBody);
   background: var(--borderColor);
@@ -412,7 +417,7 @@
     font-size: var(--fs11);
   }
 
-  .contentRow > .row > .mobAction {
+  .contentRow>.row>.mobAction {
     background: #f5f6f9;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;

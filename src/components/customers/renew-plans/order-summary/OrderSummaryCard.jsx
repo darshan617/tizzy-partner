@@ -54,6 +54,7 @@ const OrderSummaryCard = ({
   handleAadharNumber,
   isAadharNumberLoading,
 }) => {
+  console.log("cartDetails", cartDetails);
   const dispatch = useDispatch();
   const isPopupVisible = useSelector(selectIsPopupVisible);
   const router = useRouter();
@@ -387,82 +388,83 @@ const OrderSummaryCard = ({
               </div>
             </>
           ) : (
-            (router?.query?.type === "renew-plan" ||
-              router?.query?.type === "upgrade" ||
-              tempDomainNames?.length > 0) && (
-              <form
-                className={styles.singleInputForm}
-                style={{ marginBottom: "16px" }}
-              >
-                <label
-                  htmlFor="aadhaarInput"
-                  style={{
-                    display: "block",
-                    marginBottom: "4px",
-                    fontSize: "12px",
-                    color: "#666666",
-                    fontWeight: 400,
-                  }}
-                  className="text-start"
-                >
-                  Enter Aadhar No. <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  id="aadhaarInput"
-                  type="text"
-                  placeholder="XXXX-XXXX-XXXX"
-                  maxLength={14}
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  title="Enter Aadhar number"
-                  className={styles.inputField}
-                  style={{
-                    width: "100%",
-                    padding: "10px 12px",
-                    borderRadius: "6px",
-                    border: "1px solid #d1d5db",
-                    outline: "none",
-                    fontSize: "15px",
-                  }}
-                  // value={aadharNumber}
-                  value={aadharNumber.replace(/(\d{4})(?=\d)/g, "$1 ")}
-                  // onChange={(e) => {
-                  //   const value = e.target.value.replace(/\D/g, "");
-                  //   setAadharNumber(value);
-                  // }}
-                  onChange={(e) => {
-                    const digits = e.target.value
-                      .replace(/\D/g, "")
-                      .slice(0, 12);
-                    setAadharNumber(digits);
-                  }}
-                />
+            // (router?.query?.type === "renew-plan" ||
+            //   router?.query?.type === "upgrade" ||
+            //   tempDomainNames?.length > 0) && (
+            //   <form
+            //     className={styles.singleInputForm}
+            //     style={{ marginBottom: "16px" }}
+            //   >
+            //     <label
+            //       htmlFor="aadhaarInput"
+            //       style={{
+            //         display: "block",
+            //         marginBottom: "4px",
+            //         fontSize: "12px",
+            //         color: "#666666",
+            //         fontWeight: 400,
+            //       }}
+            //       className="text-start"
+            //     >
+            //       Enter Aadhar No. <span style={{ color: "red" }}>*</span>
+            //     </label>
+            //     <input
+            //       id="aadhaarInput"
+            //       type="text"
+            //       placeholder="XXXX-XXXX-XXXX"
+            //       maxLength={14}
+            //       inputMode="numeric"
+            //       pattern="[0-9]*"
+            //       title="Enter Aadhar number"
+            //       className={styles.inputField}
+            //       style={{
+            //         width: "100%",
+            //         padding: "10px 12px",
+            //         borderRadius: "6px",
+            //         border: "1px solid #d1d5db",
+            //         outline: "none",
+            //         fontSize: "15px",
+            //       }}
+            //       // value={aadharNumber}
+            //       value={aadharNumber.replace(/(\d{4})(?=\d)/g, "$1 ")}
+            //       // onChange={(e) => {
+            //       //   const value = e.target.value.replace(/\D/g, "");
+            //       //   setAadharNumber(value);
+            //       // }}
+            //       onChange={(e) => {
+            //         const digits = e.target.value
+            //           .replace(/\D/g, "")
+            //           .slice(0, 12);
+            //         setAadharNumber(digits);
+            //       }}
+            //     />
 
-                <div className="form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    checked={isConcernedAboutAadhar}
-                    onChange={(e) =>
-                      setIsConcernedAboutAadhar(e.target.checked)
-                    }
-                  />
-                  <label className="form-check-label m-0 mt-1 small text-secondary text-start">
-                    I have read and agree to the{" "}
-                    <span
-                      className="text-primary"
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        dispatch(setIsPopupVisible("terms-and-conditions"))
-                      }
-                    >
-                      {" "}
-                      Aadhaar Verification Consent.
-                    </span>{" "}
-                  </label>
-                </div>
-              </form>
-            )
+            //     <div className="form-check">
+            //       <input
+            //         type="checkbox"
+            //         className="form-check-input"
+            //         checked={isConcernedAboutAadhar}
+            //         onChange={(e) =>
+            //           setIsConcernedAboutAadhar(e.target.checked)
+            //         }
+            //       />
+            //       <label className="form-check-label m-0 mt-1 small text-secondary text-start">
+            //         I have read and agree to the{" "}
+            //         <span
+            //           className="text-primary"
+            //           style={{ cursor: "pointer" }}
+            //           onClick={() =>
+            //             dispatch(setIsPopupVisible("terms-and-conditions"))
+            //           }
+            //         >
+            //           {" "}
+            //           Aadhaar Verification Consent.
+            //         </span>{" "}
+            //       </label>
+            //     </div>
+            //   </form>
+            // )
+            ""
           )}
         </div>
 
@@ -475,67 +477,62 @@ const OrderSummaryCard = ({
           //     selectedCompany?.length < 1)
           // }
           disabled={
-            (router?.query?.type !== "renew-plan" &&
-              router?.query?.type !== "upgrade" &&
-              selectedCompany?.length < 1) ||
-            (isAadharRequired && !isConcernedAboutAadhar) ||
-            isAadharNumberLoading
+            router?.query?.type !== "renew-plan" &&
+            router?.query?.type !== "upgrade" &&
+            selectedCompany?.length < 1
+            // (isAadharRequired && !isConcernedAboutAadhar) ||
+            // isAadharNumberLoading
           }
-          // style={{
-          //   opacity:
-          //     isInsufficient ||
-          //     (router?.query?.type !== "renew-plan" &&
-          //       router?.query?.type !== "upgrade" &&
-          //       selectedCompany?.length < 1)
-          //       ? 0.5
-          //       : 1,
-
-          //   cursor:
-          //     isInsufficient ||
-          //     (router?.query?.type !== "renew-plan" &&
-          //       router?.query?.type !== "upgrade" &&
-          //       selectedCompany?.length < 1)
-          //       ? "not-allowed"
-          //       : "pointer",
-          // }}
           style={{
             opacity:
-              (router?.query?.type !== "renew-plan" &&
-                router?.query?.type !== "upgrade" &&
-                selectedCompany?.length < 1) ||
-              (isAadharRequired && !isConcernedAboutAadhar) ||
-              isAadharNumberLoading
-                ? 0.5
+              router?.query?.type !== "renew-plan" &&
+              router?.query?.type !== "upgrade" &&
+              selectedCompany?.length < 1
+                ? // (isAadharRequired && !isConcernedAboutAadhar) ||
+                  // isAadharNumberLoading
+                  0.5
                 : 1,
 
             cursor:
-              (router?.query?.type !== "renew-plan" &&
-                router?.query?.type !== "upgrade" &&
-                selectedCompany?.length < 1) ||
-              (isAadharRequired && !isConcernedAboutAadhar) ||
-              isAadharNumberLoading
-                ? "not-allowed"
+              router?.query?.type !== "renew-plan" &&
+              router?.query?.type !== "upgrade" &&
+              selectedCompany?.length < 1
+                ? // (isAadharRequired && !isConcernedAboutAadhar) ||
+                  // isAadharNumberLoading
+                  "not-allowed"
                 : "pointer",
           }}
           onClick={() => {
+            // if (tempDomainNames?.length >= 1) {
+            //   handleAadharNumber();
+            // } else if (isInsufficient) {
+            //   router?.push("/invoice");
+            // } else {
+            //   if (
+            //     router?.query?.type === "renew-plan" ||
+            //     router?.query?.type === "upgrade"
+            //   ) {
+            //     handleAadharNumber();
+            //   } else {
+            //     if (tizzyProviderId) {
+            //       ensureDomainInputRow();
+            //       setIsPopupOpen("new-service");
+            //     } else {
+            //       setIsPopupOpen("proceed");
+            //     }
+            //   }
+            // }
             if (tempDomainNames?.length >= 1) {
-              handleAadharNumber();
+              router?.push({
+                pathname: "/draft-po",
+                query: {
+                  main_cart_id: cartDetails?.[0]?.main_cart_id,
+                },
+              });
             } else if (isInsufficient) {
               router?.push("/invoice");
             } else {
-              if (
-                router?.query?.type === "renew-plan" ||
-                router?.query?.type === "upgrade"
-              ) {
-                handleAadharNumber();
-              } else {
-                if (tizzyProviderId) {
-                  ensureDomainInputRow();
-                  setIsPopupOpen("new-service");
-                } else {
-                  setIsPopupOpen("proceed");
-                }
-              }
+              setIsPopupOpen("proceed");
             }
           }}
         >
