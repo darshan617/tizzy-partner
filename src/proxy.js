@@ -61,16 +61,19 @@ export function proxy(request) {
       : NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
-  if (isAuthRoute) {
-    const target =
-      partnerApprovalStatus === "approved" ? "/dashboard" : approvalRoute;
-    return NextResponse.redirect(new URL(target, request.url));
-  }
+  // if (isAuthRoute) {
+  //   const target =
+  //     partnerApprovalStatus === "approved" ? "/dashboard" : approvalRoute;
+  //   return NextResponse.redirect(new URL(target, request.url));
+  // }
 
-  if (partnerApprovalStatus !== "approved") {
-    return isApprovalRoute
-      ? NextResponse.next()
-      : NextResponse.redirect(new URL(approvalRoute, request.url));
+  // if (partnerApprovalStatus !== "approved") {
+  //   return isApprovalRoute
+  //     ? NextResponse.next()
+  //     : NextResponse.redirect(new URL(approvalRoute, request.url));
+  // }
+  if (authRoutes.includes(pathname)) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   if (pathname === "/") {
