@@ -136,7 +136,7 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
   };
 
   const handleGstinBlur = async (e) => {
-    e.preventDefault();
+    e?.preventDefault();
     const gstin = formData?.gstin?.toUpperCase().trim();
 
     if (!gstin) {
