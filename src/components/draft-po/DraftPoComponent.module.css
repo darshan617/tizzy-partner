@@ -12,8 +12,8 @@
 
 .draftPoIframeContainer {
     width: 100%;
-    max-width: 400px;
-    height: 500px;
+    max-width: 390px;
+    height: 543px;
     overflow: hidden;
 }
 
@@ -22,4 +22,18 @@
     height: 100%;
     border: none;
     object-fit: contain;
+}
+
+.commonButton {
+    width: auto;
+    background-color: var(--primaryColor);
+    color: var(--whiteColor);
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    padding: 10px 50px;
+    margin-top: 20px;
 }

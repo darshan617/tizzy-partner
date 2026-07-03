@@ -19,6 +19,7 @@ import {
   setIsPopupVisible,
 } from "@/redux/slices/popupSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useGenerateNewOrderMutation } from "@/redux/apis/draftPoApi";
 
 const toDomainArray = (value) => {
   if (Array.isArray(value)) return value.filter(Boolean);
@@ -93,6 +94,9 @@ const OrderSummaryCard = ({
 
   const [creditRequest, { isLoading: isLoadingCreditRequest }] =
     useCreditRequestMutation();
+
+  const [generateNewOrder, { isLoading: isGeneratingNewOrder }] =
+    useGenerateNewOrderMutation();
 
   const {
     currentData: domainCheckData,
@@ -258,6 +262,34 @@ const OrderSummaryCard = ({
     router?.query?.type === "renew-plan" ||
     router?.query?.type === "upgrade" ||
     tempDomainNames?.length > 0;
+
+  const handelProceed = async () => {
+    try {
+      const res = await generateNewOrder({
+        body: {
+          partner_id: userData?.id,
+          main_cart_id: router?.query?.main_cart_id,
+        },
+      });
+      if (res?.data?.success) {
+        console.log("res?.data?.data", res?.data?.data);
+
+        router?.push({
+          pathname: "/draft-po",
+          query: {
+            pl: res?.data?.data?.po_link,
+            sr: res?.data?.data?.sign_required === "yes" ? true : false,
+          },
+        });
+      } else {
+        console.log(res?.error?.data?.message);
+        showToast(res?.error?.data?.message, "error");
+      }
+    } catch (error) {
+      console.log(error);
+      showToast(error?.data?.message, "error");
+    }
+  };
 
   useEffect(() => {
     if (isPopupOpen !== "new-service" && isPopupOpen !== "transfer-service") {
@@ -523,12 +555,7 @@ const OrderSummaryCard = ({
             //   }
             // }
             if (tempDomainNames?.length >= 1) {
-              router?.push({
-                pathname: "/draft-po",
-                query: {
-                  main_cart_id: cartDetails?.[0]?.main_cart_id,
-                },
-              });
+              handelProceed();
             } else if (isInsufficient) {
               router?.push("/invoice");
             } else {

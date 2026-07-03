@@ -6,48 +6,45 @@ import { useRouter } from "next/router";
 
 const DraftPoComponent = () => {
   const router = useRouter();
-  const [generateNewOrder, { isLoading: isGeneratingNewOrder }] =
-    useGenerateNewOrderMutation();
-  const userData = Cookies.get("userData")
-    ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
-    : {};
+  // const handleGenerateNewOrder = async () => {
+  //   const res = await generateNewOrder({
+  //     body: {
+  //       partner_id: userData?.id,
+  //       main_cart_id: router?.query?.main_cart_id,
+  //     },
+  //   });
+  //   if (res?.data?.success) {
+  //     setDraftPoData(res?.data?.data);
+  //   } else {
+  //     console.log(res?.error?.data?.message);
+  //   }
+  // };
 
-  const [draftPoData, setDraftPoData] = useState(null);
-  console.log("draftPoData", draftPoData);
+  // const hasFetched = useRef(false);
 
-  const handleGenerateNewOrder = async () => {
-    const res = await generateNewOrder({
-      body: {
-        partner_id: userData?.id,
-        main_cart_id: router?.query?.main_cart_id,
-      },
-    });
-    if (res?.data?.success) {
-      setDraftPoData(res?.data?.data);
-    } else {
-      console.log(res?.error?.data?.message);
-    }
-  };
+  // useEffect(() => {
+  //   if (
+  //     !router?.isReady ||
+  //     !router?.query?.main_cart_id ||
+  //     hasFetched.current
+  //   ) {
+  //     return;
+  //   }
 
-  const hasFetched = useRef(false);
+  //   hasFetched.current = true;
+  //   handleGenerateNewOrder();
+  // }, [router?.isReady, router?.query?.main_cart_id]);
 
-  useEffect(() => {
-    if (
-      !router?.isReady ||
-      !router?.query?.main_cart_id ||
-      hasFetched.current
-    ) {
-      return;
-    }
-
-    hasFetched.current = true;
-    handleGenerateNewOrder();
-  }, [router?.isReady, router?.query?.main_cart_id]);
   return (
     <div className={styles.draftPoContainer}>
       <div className={styles.draftPoIframeContainer}>
-        <iframe src={`${draftPoData?.po_link}#toolbar=0`} allowFullScreen />
+        <iframe src={`${router?.query?.pl}#toolbar=0`} allowFullScreen />
       </div>
+      {router?.query?.sr === "true" ? (
+        <button className={styles.commonButton}>Continue To E-Sign</button>
+      ) : (
+        <button className={styles.commonButton}>Done</button>
+      )}
     </div>
   );
 };
