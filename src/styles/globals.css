@@ -313,7 +313,7 @@ strong {
   overflow: hidden;
 }
 
-.btn > * {
+.btn>* {
   position: relative;
   z-index: 1;
 }
@@ -622,7 +622,7 @@ strong {
   font-weight: 500;
 }
 
-.sideMenuItem > a {
+.sideMenuItem>a {
   width: 100%;
   height: 100%;
   display: flex;
@@ -662,11 +662,9 @@ strong {
   color: var(--darkColor);
   border-top: 1px solid #fff;
   border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.6) 0%,
-    rgba(255, 255, 255, 0.05) 60%
-  );
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 255, 255, 0.05) 60%);
 }
 
 .creditBox a {
@@ -702,11 +700,9 @@ strong {
   position: absolute;
   top: 0;
   left: 0;
-  background: linear-gradient(
-    90deg,
-    var(--primaryColor) 0%,
-    var(--successColor) 100%
-  );
+  background: linear-gradient(90deg,
+      var(--primaryColor) 0%,
+      var(--successColor) 100%);
   box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
 }
 
@@ -836,15 +832,13 @@ strong {
     position: absolute;
     right: 0;
     top: 30px;
-    background: linear-gradient(
-      0deg,
-      #ffffff00 0%,
-      #dedede 15%,
-      #fff 40%,
-      #fff 60%,
-      #dedede 85%,
-      #ffffff00 100%
-    );
+    background: linear-gradient(0deg,
+        #ffffff00 0%,
+        #dedede 15%,
+        #fff 40%,
+        #fff 60%,
+        #dedede 85%,
+        #ffffff00 100%);
   }
 
   .sideMenu {
@@ -975,83 +969,63 @@ strong {
 }
 
 .statBox.infoGrad:before {
-  background: linear-gradient(
-    135deg,
-    var(--infoSubtleColor) 0%,
-    var(--subtleBg) 20%
-  );
+  background: linear-gradient(135deg,
+      var(--infoSubtleColor) 0%,
+      var(--subtleBg) 20%);
 }
 
 .statBox.dangerGrad:before {
-  background: linear-gradient(
-    135deg,
-    var(--dangerSubtleColor) 0%,
-    var(--subtleBg) 20%
-  );
+  background: linear-gradient(135deg,
+      var(--dangerSubtleColor) 0%,
+      var(--subtleBg) 20%);
 }
 
 .statBox.successGrad:before {
-  background: linear-gradient(
-    135deg,
-    var(--successSubtleColor) 0%,
-    var(--subtleBg) 20%
-  );
+  background: linear-gradient(135deg,
+      var(--successSubtleColor) 0%,
+      var(--subtleBg) 20%);
 }
 
 .statBox.secondaryGrad:before {
-  background: linear-gradient(
-    135deg,
-    var(--secondarySubtleColor) 0%,
-    var(--subtleBg) 20%
-  );
+  background: linear-gradient(135deg,
+      var(--secondarySubtleColor) 0%,
+      var(--subtleBg) 20%);
 }
 
 .statBox.warningGrad:before {
-  background: linear-gradient(
-    135deg,
-    var(--warningSubtleColor) 0%,
-    var(--subtleBg) 20%
-  );
+  background: linear-gradient(135deg,
+      var(--warningSubtleColor) 0%,
+      var(--subtleBg) 20%);
 }
 
 .statBox.infoGrad:hover:before {
-  background: linear-gradient(
-    160deg,
-    var(--infoSubtleColor) 0%,
-    var(--whiteColor) 50%
-  );
+  background: linear-gradient(160deg,
+      var(--infoSubtleColor) 0%,
+      var(--whiteColor) 50%);
 }
 
 .statBox.dangerGrad:hover:before {
-  background: linear-gradient(
-    160deg,
-    var(--dangerSubtleColor) 0%,
-    var(--whiteColor) 50%
-  );
+  background: linear-gradient(160deg,
+      var(--dangerSubtleColor) 0%,
+      var(--whiteColor) 50%);
 }
 
 .statBox.successGrad:hover:before {
-  background: linear-gradient(
-    160deg,
-    var(--successSubtleColor) 0%,
-    var(--whiteColor) 50%
-  );
+  background: linear-gradient(160deg,
+      var(--successSubtleColor) 0%,
+      var(--whiteColor) 50%);
 }
 
 .statBox.secondaryGrad:hover:before {
-  background: linear-gradient(
-    160deg,
-    var(--secondarySubtleColor) 0%,
-    var(--whiteColor) 50%
-  );
+  background: linear-gradient(160deg,
+      var(--secondarySubtleColor) 0%,
+      var(--whiteColor) 50%);
 }
 
 .statBox.warningGrad:hover:before {
-  background: linear-gradient(
-    160deg,
-    var(--warningSubtleColor) 0%,
-    var(--whiteColor) 50%
-  );
+  background: linear-gradient(160deg,
+      var(--warningSubtleColor) 0%,
+      var(--whiteColor) 50%);
 }
 
 .statBox * {
@@ -1137,7 +1111,7 @@ strong {
   font-weight: 500;
 }
 
-.contentRow > .row > div {
+.contentRow>.row>div {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
@@ -1242,7 +1216,7 @@ strong {
 }
 
 .tbgItem.active,
-.btn-check:checked + .tbgItem {
+.btn-check:checked+.tbgItem {
   background: var(--whiteColor);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--borderColor);
@@ -1264,20 +1238,16 @@ strong {
 }
 
 .supportSwiper {
-  -webkit-mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    black 2%,
-    black 98%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    black 2%,
-    black 98%,
-    transparent 100%
-  );
+  -webkit-mask-image: linear-gradient(90deg,
+      transparent 0%,
+      black 2%,
+      black 98%,
+      transparent 100%);
+  mask-image: linear-gradient(90deg,
+      transparent 0%,
+      black 2%,
+      black 98%,
+      transparent 100%);
 }
 
 .supportSwiper .swiper-slide {
@@ -1421,7 +1391,7 @@ strong {
     border-radius: 0;
   }
 
-  .contentRow > .row > .mobAction {
+  .contentRow>.row>.mobAction {
     background: #f5f6f9;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
@@ -1452,21 +1422,17 @@ strong {
   position: absolute;
   top: 0;
   left: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0) 50%,
-    rgba(0, 0, 0, 0.3) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 0, 0, 0) 50%,
+      rgba(0, 0, 0, 0.3) 100%);
   border-radius: 10px;
   pointer-events: none;
 }
 
 .boxLink:hover:before {
-  background: linear-gradient(
-    270deg,
-    rgba(0, 0, 0, 0) 50%,
-    rgba(0, 0, 0, 0.3) 100%
-  );
+  background: linear-gradient(270deg,
+      rgba(0, 0, 0, 0) 50%,
+      rgba(0, 0, 0, 0.3) 100%);
 }
 
 .boxLink .iconBx {
@@ -1547,7 +1513,7 @@ strong {
 }
 
 .filterItem.active,
-.btn-check:checked + .filterItem {
+.btn-check:checked+.filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -1566,7 +1532,7 @@ strong {
   position: relative;
 }
 
-.servBadge + .servBadge {
+.servBadge+.servBadge {
   margin-left: -18px;
 }
 
@@ -1613,7 +1579,7 @@ strong {
   font-size: var(--fs12);
 }
 
-.pagination .active > .page-link {
+.pagination .active>.page-link {
   background: var(--primaryColor);
   color: var(--whiteColor);
   border-color: var(--primaryColor);
@@ -1783,6 +1749,7 @@ strong {
   max-width: 1100px;
   margin: auto;
 }
+
 .avatarRed {
   background-color: #d64545 !important;
 }
@@ -1792,7 +1759,7 @@ strong {
 }
 
 .avatarBlue {
-  background-color: #3b6fd4 !important  ;
+  background-color: #3b6fd4 !important;
 }
 
 .avatarPurple {
@@ -1800,7 +1767,7 @@ strong {
 }
 
 .avatarTeal {
-  background-color: #3d8b7a !important    ;
+  background-color: #3d8b7a !important;
 }
 
 .avatarNavy {

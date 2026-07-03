@@ -111,7 +111,17 @@ const addToCartApi = apiSlice.injectEndpoints({
     aadharNumber: builder.mutation({
       query: ({ body }) => {
         return {
-          url: `/orders-aadhaar-init`,
+          url: `/order-aadhaar-init`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
+    orderAadharVerify: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/order-aadhaar-verify`,
           method: "POST",
           body: body,
         };
@@ -168,4 +178,5 @@ export const {
   useVerifyAadharNumberOtpMutation,
   useCreditRequestMutation,
   useResendOrderOtpMutation,
+  useOrderAadharVerifyMutation,
 } = addToCartApi;

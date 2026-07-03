@@ -9,6 +9,7 @@ import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi
 import Cookies from "js-cookie";
 import Loader from "@/common-components/loader/Loader";
 import { MdOutlineFileDownload } from "react-icons/md";
+import { IoIosCheckmarkCircle } from "react-icons/io";
 
 const OrderComplete = () => {
   const router = useRouter();
@@ -58,19 +59,24 @@ const OrderComplete = () => {
       </div> */}
       <div className={`${styles.orderCard}`}>
         <div className="d-flex flex-column align-items-center justify-content-center">
-          <div className="mb-3">
-            <Image
+          <div className="mb-3" data-aos="zoom-in" data-aos-duration="1000">
+            {/* <Image
               src={bag}
               alt="bag"
               width={50}
               height={50}
               className="img-fluid"
-            />
+            /> */}
+            <IoIosCheckmarkCircle size={60} color="var(--primaryColor)" />
           </div>
-          <div className={`${styles.orderMainHead} mb-2`}>
-            YOUR ORDER PURCHASE IS SUCCESSFUL.
+          <div
+            className={`${styles.orderMainHead} mb-2`}
+            data-aos="fade-up"
+            data-aos-duration="1000"
+          >
+            YOUR ORDER PURCHASE IS SUCCESSFULL.
           </div>
-          <div className={`${styles.orderHead}  mb-3 text-center`}>
+          {/* <div className={`${styles.orderHead}  mb-3 text-center`}>
             <div>
               <span className={`${styles.value}`}>
                 ₹ {router?.query?.crdUsage}{" "}
@@ -85,7 +91,7 @@ const OrderComplete = () => {
                 ₹{balanceAndCartData?.data?.wallet_balance}
               </span>
             </div>
-          </div>
+          </div> */}
           {/* <div className={`${styles.InvoiceImg} my-4`}>
             {router?.query?.po ? (
               <Link

@@ -74,7 +74,6 @@ const OrderSummaryCard = ({
   const [domainFromApi, setDomainFromApi] = useState(null);
   const [transferDomainInput, setTransferDomainInput] = useState("");
   const [discountedPercent, setDiscountedPercent] = useState(0);
-  const [isConcernedAboutAadhar, setIsConcernedAboutAadhar] = useState(false);
   const [isTermsAndConditionsChecked, setIsTermsAndConditionsChecked] =
     useState(false);
 
@@ -268,7 +267,7 @@ const OrderSummaryCard = ({
       const res = await generateNewOrder({
         body: {
           partner_id: userData?.id,
-          main_cart_id: router?.query?.main_cart_id,
+          main_cart_id: cartDetails?.[0]?.main_cart_id,
         },
       });
       if (res?.data?.success) {
@@ -279,6 +278,7 @@ const OrderSummaryCard = ({
           query: {
             pl: res?.data?.data?.po_link,
             sr: res?.data?.data?.sign_required === "yes" ? true : false,
+            ordId: res?.data?.data?.order_id,
           },
         });
       } else {
@@ -904,7 +904,7 @@ const OrderSummaryCard = ({
           </div>
         </CustomPopup>
       )}
-      {isPopupVisible === "terms-and-conditions" && (
+      {/* {isPopupVisible === "terms-and-conditions" && (
         <CustomPopup
           onClose={() => dispatch(setIsPopupVisible(""))}
           maxWidth="400px"
@@ -922,7 +922,7 @@ const OrderSummaryCard = ({
             </p>
           </div>
         </CustomPopup>
-      )}
+      )} */}
       {isPopupVisible === "terms-and-conditions-transfer-service" && (
         <CustomPopup
           onClose={() => dispatch(setIsPopupVisible(""))}

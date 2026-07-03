@@ -50,7 +50,17 @@ const DraftPoComponent = () => {
         </Link>
       </div>
       {router?.query?.sr === "true" ? (
-        <button className={styles.commonButton}>Continue To E-Sign</button>
+        <button
+          className={styles.commonButton}
+          onClick={() =>
+            router.push({
+              pathname: "/verify-aadhar",
+              query: { ordId: router?.query?.ordId },
+            })
+          }
+        >
+          Continue To E-Sign
+        </button>
       ) : (
         <button className={styles.commonButton}>Done</button>
       )}
