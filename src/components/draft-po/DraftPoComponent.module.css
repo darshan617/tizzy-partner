@@ -12,9 +12,10 @@
 
 .draftPoIframeContainer {
     width: 100%;
-    max-width: 390px;
-    height: 543px;
+    max-width: 375px;
+    height: 529px;
     position: relative;
+    /* overflow-y: auto; */
 }
 
 .draftPoIframeContainer iframe {

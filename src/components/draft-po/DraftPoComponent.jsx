@@ -40,7 +40,11 @@ const DraftPoComponent = () => {
   return (
     <div className={styles.draftPoContainer}>
       <div className={styles.draftPoIframeContainer}>
-        <iframe src={`${router?.query?.pl}#toolbar=0`} allowFullScreen />
+        <iframe
+          src={`${router?.query?.pl}#toolbar=0`}
+          allowFullScreen
+          style={{ pointerEvents: "none" }}
+        />
         <Link
           href={`${router?.query?.pl}`}
           target="_blank"

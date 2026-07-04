@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import {
   useCheckIsDomainAvailableQuery,
   useCreditRequestMutation,
+  useGenerateUpgradeOrderMutation,
   usePromoCodeMutation,
   useTransferCodeMutation,
 } from "@/redux/apis/addToCartApi";
@@ -96,6 +97,9 @@ const OrderSummaryCard = ({
 
   const [generateNewOrder, { isLoading: isGeneratingNewOrder }] =
     useGenerateNewOrderMutation();
+
+  const [generateUpgradeOrder, { isLoading: isGeneratingUpgradeOrder }] =
+    useGenerateUpgradeOrderMutation();
 
   const {
     currentData: domainCheckData,
@@ -273,6 +277,33 @@ const OrderSummaryCard = ({
       if (res?.data?.success) {
         console.log("res?.data?.data", res?.data?.data);
 
+        router?.push({
+          pathname: "/draft-po",
+          query: {
+            pl: res?.data?.data?.po_link,
+            sr: res?.data?.data?.sign_required === "yes" ? true : false,
+            ordId: res?.data?.data?.order_id,
+          },
+        });
+      } else {
+        console.log(res?.error?.data?.message);
+        showToast(res?.error?.data?.message, "error");
+      }
+    } catch (error) {
+      console.log(error);
+      showToast(error?.data?.message, "error");
+    }
+  };
+
+  const handelUpgradeProceed = async () => {
+    try {
+      const res = await generateUpgradeOrder({
+        body: {
+          partner_id: userData?.id,
+          main_cart_id: cartDetails?.[0]?.main_cart_id,
+        },
+      });
+      if (res?.data?.success) {
         router?.push({
           pathname: "/draft-po",
           query: {
@@ -509,26 +540,32 @@ const OrderSummaryCard = ({
           //     selectedCompany?.length < 1)
           // }
           disabled={
-            router?.query?.type !== "renew-plan" &&
-            router?.query?.type !== "upgrade" &&
-            selectedCompany?.length < 1
+            (router?.query?.type !== "renew-plan" &&
+              router?.query?.type !== "upgrade" &&
+              selectedCompany?.length < 1) ||
             // (isAadharRequired && !isConcernedAboutAadhar) ||
             // isAadharNumberLoading
+            isGeneratingUpgradeOrder ||
+            isGeneratingNewOrder
           }
           style={{
             opacity:
-              router?.query?.type !== "renew-plan" &&
-              router?.query?.type !== "upgrade" &&
-              selectedCompany?.length < 1
+              (router?.query?.type !== "renew-plan" &&
+                router?.query?.type !== "upgrade" &&
+                selectedCompany?.length < 1) ||
+              isGeneratingUpgradeOrder ||
+              isGeneratingNewOrder
                 ? // (isAadharRequired && !isConcernedAboutAadhar) ||
                   // isAadharNumberLoading
                   0.5
                 : 1,
 
             cursor:
-              router?.query?.type !== "renew-plan" &&
-              router?.query?.type !== "upgrade" &&
-              selectedCompany?.length < 1
+              (router?.query?.type !== "renew-plan" &&
+                router?.query?.type !== "upgrade" &&
+                selectedCompany?.length < 1) ||
+              isGeneratingUpgradeOrder ||
+              isGeneratingNewOrder
                 ? // (isAadharRequired && !isConcernedAboutAadhar) ||
                   // isAadharNumberLoading
                   "not-allowed"
@@ -556,6 +593,11 @@ const OrderSummaryCard = ({
             // }
             if (tempDomainNames?.length >= 1) {
               handelProceed();
+            } else if (
+              router?.query?.type === "renew-plan" ||
+              router?.query?.type === "upgrade"
+            ) {
+              handelUpgradeProceed();
             } else if (isInsufficient) {
               router?.push("/invoice");
             } else {
@@ -569,11 +611,11 @@ const OrderSummaryCard = ({
                 router?.query?.type === "upgrade"
               ? isInsufficient
                 ? "Clear Pending Invoices"
-                : isAadharNumberLoading
-                  ? "Verifying..."
+                : isGeneratingUpgradeOrder || isGeneratingNewOrder
+                  ? "Processing..."
                   : "Proceed"
-              : isAadharNumberLoading
-                ? "Verifying..."
+              : isGeneratingUpgradeOrder || isGeneratingNewOrder
+                ? "Processing..."
                 : "Proceed"}
         </button>
 

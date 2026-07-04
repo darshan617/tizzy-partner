@@ -219,7 +219,9 @@
   color: var(--successColor);
 }
 
-.statusBadge.expiring_soon {
+.statusBadge.expiring_soon,
+.statusBadge.expiring,
+.statusBadge.pending {
   background: var(--warningSubtleColor);
   color: var(--warningColor);
 }
@@ -227,6 +229,11 @@
 .statusBadge.expired {
   background: var(--dangerSubtleColor);
   color: var(--dangerColor);
+}
+
+.statusBadge.draft {
+  background: var(--borderColor);
+  color: var(--darkColor);
 }
 
 .contentRow {
@@ -910,6 +917,16 @@
   object-position: center;
   width: 100px;
   height: 100px;
+}
+
+.eSignBtn {
+  background: var(--primaryColor);
+  color: var(--whiteColor);
+  border: 1px solid var(--primaryColor);
+  border-radius: 50rem;
+  padding: 8px 50px;
+  font-size: var(--fs14);
+  font-weight: 600;
 }
 
 @media (max-width: 991px) {

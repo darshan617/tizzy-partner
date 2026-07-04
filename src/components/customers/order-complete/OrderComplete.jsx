@@ -108,7 +108,6 @@ const OrderComplete = () => {
             href={router?.query?.po || "#"}
             target="_blank"
             rel="noopener noreferrer"
-            style={{ display: "block" }}
             className={styles.downloadInvoiceLink}
           >
             <button className={styles.downloadInvoiceBtn}>
@@ -137,6 +136,9 @@ const OrderComplete = () => {
                 <p>Loading Purchase Order PDF...</p>
               </div>
             )}
+          </Link>
+          <Link href="/subscriptions" className={styles.doneBtn}>
+            Done
           </Link>
         </div>
       </div>

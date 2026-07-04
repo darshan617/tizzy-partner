@@ -72,10 +72,15 @@ const getPlanStatusClass = (status) => {
   const normalized = status?.toLowerCase();
   if (normalized === "completed" || normalized === "active")
     return styles.active;
-  if (normalized === "expiring_soon" || normalized === "expiring") {
+  if (
+    normalized === "expiring_soon" ||
+    normalized === "expiring" ||
+    normalized === "pending"
+  ) {
     return styles.expiring_soon;
   }
   if (normalized === "expired") return styles.expired;
+  if (normalized === "draft") return styles.draft;
   return "";
 };
 
@@ -170,7 +175,7 @@ const SubscriptionsDetailsComponent = () => {
         </div>
 
         <div className="col">
-          <div className={`${styles.sectionCard} py-4 py-sm-3 px-sm-4 px-3`}>
+          <div className={`sectionCard py-4 py-sm-3 px-sm-4 px-3`}>
             <div className="row">
               <div
                 className={`${styles.custProfBox} col-md-4 col-12 mb-3 mb-lg-0 position-relative`}
@@ -243,7 +248,7 @@ const SubscriptionsDetailsComponent = () => {
         </div>
 
         <div className="col">
-          <div className={`${styles.sectionCard} px-sm-4 px-3 py-1`}>
+          <div className={`sectionCard px-sm-4 px-3 py-1`}>
             <div className="border-bottom py-sm-2 py-3">
               <div className="row align-items-center position-relative">
                 <div className="col-md-3 d-none d-md-block" />
@@ -325,7 +330,7 @@ const SubscriptionsDetailsComponent = () => {
               </div>
 
               {plans?.length > 0 ? (
-                plans.map((plan) => (
+                plans?.map((plan) => (
                   <div
                     key={plan?.order_sub_id}
                     className={`${styles.contentRow} noHover`}
@@ -390,65 +395,85 @@ const SubscriptionsDetailsComponent = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
-                        <div className={`${styles.updwngrade} text-uppercase`}>
-                          <Link
-                            href={{
-                              pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                              query: {
-                                type: "upgrade",
-                                order_id: subscriptionDetails?.order_id,
-                                customer_id:
-                                  router?.query?.customerId ||
-                                  plan?.customer_id,
-                                plan_id: plan?.plan_id,
-                                order_sub_id: plan?.order_sub_id,
-                              },
-                            }}
-                            className={styles.updwngradeBtn}
-                            onClick={() => {
-                              Cookies.remove("customerData");
-                              Cookies.set(
-                                "customerData",
-                                JSON.stringify({
-                                  partner_id: userData?.id,
-                                  customer_id: router?.query?.customerId,
-                                  domain_name: domainName,
-                                }),
-                              );
-                            }}
+
+                      {plan?.status?.toLowerCase() !== "draft" &&
+                      plan?.status?.toLowerCase() !== "pending" ? (
+                        <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
+                          <div
+                            className={`${styles.updwngrade} text-uppercase`}
                           >
-                            UPGRADE
-                          </Link>
-                          {/* /
-                          <Link
-                            className={styles.downgradeBtn}
-                            href={{
-                              pathname: "/services/tizzy",
-                              query: {
-                                type: "downgrade",
-                                order_id: subscriptionDetails?.order_id,
-                                customer_id: router?.query?.customerId,
-                                plan_id: plan?.plan_id,
-                                order_sub_id: plan?.order_sub_id,
-                              },
-                            }}
-                            onClick={() => {
-                              Cookies.remove("customerData");
-                              Cookies.set(
-                                "customerData",
-                                JSON.stringify({
-                                  partner_id: userData?.id,
-                                  customer_id: router?.query?.customerId,
-                                  domain_name: domainName,
-                                }),
-                              );
-                            }}
-                          >
-                            DOWNGRADE
-                          </Link> */}
+                            <Link
+                              href={{
+                                pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                                query: {
+                                  type: "upgrade",
+                                  order_id: subscriptionDetails?.order_id,
+                                  customer_id:
+                                    router?.query?.customerId ||
+                                    plan?.customer_id,
+                                  plan_id: plan?.plan_id,
+                                  order_sub_id: plan?.order_sub_id,
+                                },
+                              }}
+                              className={styles.updwngradeBtn}
+                              onClick={() => {
+                                Cookies.remove("customerData");
+                                Cookies.set(
+                                  "customerData",
+                                  JSON.stringify({
+                                    partner_id: userData?.id,
+                                    customer_id: router?.query?.customerId,
+                                    domain_name: domainName,
+                                  }),
+                                );
+                              }}
+                            >
+                              UPGRADE
+                            </Link>
+                            {/* /
+      <Link
+        className={styles.downgradeBtn}
+        href={{
+          pathname: "/services/tizzy",
+          query: {
+            type: "downgrade",
+            order_id: subscriptionDetails?.order_id,
+            customer_id: router?.query?.customerId,
+            plan_id: plan?.plan_id,
+            order_sub_id: plan?.order_sub_id,
+          },
+        }}
+        onClick={() => {
+          Cookies.remove("customerData");
+          Cookies.set(
+            "customerData",
+            JSON.stringify({
+              partner_id: userData?.id,
+              customer_id: router?.query?.customerId,
+              domain_name: domainName,
+            }),
+          );
+        }}
+      >
+        DOWNGRADE
+      </Link> */}
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
+                          <button
+                            style={{
+                              width: "fit-content",
+                              fontSize: "12px",
+                              cursor: "not-allowed",
+                              textUnderlineOffset: "3px",
+                            }}
+                            className="bg-transparent border-0 p-0 text-decoration-underline text-muted"
+                          >
+                            Upgrade
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))
@@ -461,6 +486,21 @@ const SubscriptionsDetailsComponent = () => {
           </div>
         </div>
       </div>
+      {subscriptionDetails?.status?.toLowerCase() === "draft" && (
+        <div className="text-center">
+          <button
+            className={styles.eSignBtn}
+            onClick={() =>
+              router?.push({
+                pathname: "/verify-aadhar",
+                query: { ordId: router?.query?.orderId },
+              })
+            }
+          >
+            E-Sign
+          </button>
+        </div>
+      )}
     </Layout>
   );
 };

@@ -79,6 +79,16 @@ const addToCartApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["addToCart"],
     }),
+    generateUpgradeOrder: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/generate-upgrade-order`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
     checkIsDomainAvailable: builder.query({
       query: ({ domain_name }) => {
         return {
@@ -179,4 +189,5 @@ export const {
   useCreditRequestMutation,
   useResendOrderOtpMutation,
   useOrderAadharVerifyMutation,
+  useGenerateUpgradeOrderMutation,
 } = addToCartApi;
