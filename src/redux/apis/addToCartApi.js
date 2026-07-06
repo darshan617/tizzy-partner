@@ -32,10 +32,20 @@ const addToCartApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["addToCart"],
     }),
-    renewCustomerDetails: builder.mutation({
+    renewCustomerDetails: builder.mutation({ ///old api
       query: ({ body }) => {
         return {
           url: "/renewalsCustomerdetails",
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
+      renewCartDetails: builder.mutation({ ///new api
+      query: ({ body }) => {
+        return {
+          url: "/renew-cart",
           method: "POST",
           body: body,
         };
@@ -190,4 +200,5 @@ export const {
   useResendOrderOtpMutation,
   useOrderAadharVerifyMutation,
   useGenerateUpgradeOrderMutation,
+  useRenewCartDetailsMutation,
 } = addToCartApi;

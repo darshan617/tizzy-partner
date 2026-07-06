@@ -277,7 +277,7 @@ const SubscriptionsDetailsComponent = () => {
                   </Link>
                 </div>
 
-                {(plans?.[0]?.status?.toLowerCase() === "expiring" ||
+                {/* {(plans?.[0]?.status?.toLowerCase() === "expiring" ||
                   plans?.[0]?.status?.toLowerCase() === "expired") && (
                   <div className="col-md-3 col-auto d-flex gap-2 justify-content-end">
                     <button
@@ -301,7 +301,7 @@ const SubscriptionsDetailsComponent = () => {
                       <span>Renew</span>
                     </button>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
 
@@ -397,11 +397,39 @@ const SubscriptionsDetailsComponent = () => {
                       </div>
 
                       {plan?.status?.toLowerCase() !== "draft" &&
-                      plan?.status?.toLowerCase() !== "pending" ? (
+                        plan?.status?.toLowerCase() !== "pending" ? (
                         <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
                           <div
                             className={`${styles.updwngrade} text-uppercase`}
                           >
+                            {
+                              plan?.status?.toLowerCase() !== "expired" || (plan?.status?.toLowerCase() !== "expiring") && (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      router?.push({
+                                        pathname: "/order-summary",
+                                        query: {
+                                          type: "renew-plan",
+                                          order_id: subscriptionDetails?.order_id,
+                                        },
+                                      })
+                                    }
+                                    className={`${styles.crRenew} btn small btnWhite`}
+                                  >
+                                    <MdAutorenew
+                                      className="me-2"
+                                      size={14}
+                                      style={{ minWidth: "14px" }}
+                                    />
+                                    <span>Renew</span>
+                                  </button>
+                                </>
+                              )
+                            }
+
+                            <br />
                             <Link
                               href={{
                                 pathname: `/services/${getServicePath(plan?.provider_id)}`,
@@ -461,6 +489,7 @@ const SubscriptionsDetailsComponent = () => {
                         </div>
                       ) : (
                         <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
+
                           <button
                             style={{
                               width: "fit-content",

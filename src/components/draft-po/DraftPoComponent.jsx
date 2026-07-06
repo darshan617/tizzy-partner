@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "@/components/draft-po/DraftPoComponent.module.css";
 import Cookies from "js-cookie";
-import { useGenerateNewOrderMutation } from "@/redux/apis/draftPoApi";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { ArrowDownToLine } from "lucide-react";

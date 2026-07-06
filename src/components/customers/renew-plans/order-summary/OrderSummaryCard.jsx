@@ -271,7 +271,7 @@ const OrderSummaryCard = ({
       const res = await generateNewOrder({
         body: {
           partner_id: userData?.id,
-          main_cart_id: cartDetails?.[0]?.main_cart_id,
+          main_cart_id: cartDetails?.[0]?.main_cart_id || cartDetails?.[0]?.renew_plan?.main_cart_id,
         },
       });
       if (res?.data?.success) {

@@ -7,6 +7,7 @@ import {
   useGetCartDetailsMutation,
   useGetUpdateCartDetailsQuery,
   useGetUpgradeAddToCartDetailsMutation,
+  useRenewCartDetailsMutation,
   useRenewCustomerDetailsMutation,
   useUpdateCartMutation,
 } from "@/redux/apis/addToCartApi";
@@ -178,7 +179,8 @@ const CommonOrderSummary = () => {
   const [updateCart, { isLoading: isUpdatingCart }] = useUpdateCartMutation();
   const [renewCustomerDetails, { isLoading: isRenewingCustomerDetails }] =
     useRenewCustomerDetailsMutation();
-
+  const [renewCartDetails, { isLoading: isRenewingCartDetails }] =
+    useRenewCartDetailsMutation();
   //cart api
   const [getCartDetailsApi, { isLoading: isGettingCartDetailsApi }] =
     useGetCartDetailsMutation();
@@ -416,9 +418,10 @@ const CommonOrderSummary = () => {
 
   const handleRenewCustomerDetails = async () => {
     try {
-      const res = await renewCustomerDetails({
+      const res = await renewCartDetails({
         body: {
           order_id: router?.query?.order_id,
+          partner_id: userData?.id,
         },
       });
       if (res?.data?.success) {
@@ -428,6 +431,7 @@ const CommonOrderSummary = () => {
           plans = [],
           renewal_summary,
           wallet_info,
+          renew_plan,
         } = apiData;
 
         const allData = plans.map((item) => ({
@@ -442,6 +446,7 @@ const CommonOrderSummary = () => {
           customer_id: company_info?.customer_id,
           renewal_summary,
           wallet_info,
+          renew_plan
         }));
 
         setCartDetails(allData);
