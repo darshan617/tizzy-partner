@@ -1,0 +1,393 @@
+.userManagementPage {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  
+  .pageHeader {
+    margin-bottom: 20px;
+  }
+  
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5.6px;
+    margin-bottom: 5.6px;
+  }
+  
+  .breadcrumbLink,
+  .breadcrumbCurrent {
+    font-size: var(--fs12);
+    color: var(--textBodySecondary);
+    line-height: 1.4;
+  }
+  
+  .breadcrumbLink:hover {
+    color: var(--primaryColor);
+  }
+  
+  .breadcrumbSeparator {
+    font-size: var(--fs12);
+    color: var(--textBodySecondary);
+  }
+  
+  .pageTitle {
+    margin: 0;
+    font-size: var(--fs20);
+    font-weight: 600;
+    color: var(--textBody);
+    line-height: 1.3;
+  }
+  
+  .userListCard {
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  .cardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--borderColor);
+  }
+  
+  .cardTitle {
+    margin: 0;
+    font-size: var(--fs16);
+    font-weight: 600;
+    color: var(--darkColor);
+    line-height: 1.3;
+  }
+  
+  .addUserBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5.6px;
+    padding: 7.2px 17.6px;
+    border: none;
+    border-radius: 50px;
+    background: var(--primaryColor);
+    color: var(--whiteColor);
+    font-size: var(--fs14);
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .addUserBtn:hover {
+    background: #024a96;
+  }
+  
+  .tableWrapper {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .userTable {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .userTable thead tr {
+    border-bottom: 1px solid var(--borderColor);
+  }
+  
+  .userTable th {
+    padding: 13.6px 28px;
+    font-size: var(--fs11);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--textBodySecondary);
+    text-align: left;
+    white-space: nowrap;
+  }
+  
+  .userTable tbody tr {
+    border-bottom: 1px solid var(--borderColor);
+  }
+  
+  .userTable tbody tr:last-child {
+    border-bottom: none;
+  }
+  
+  .userTable td {
+    padding: 16px 28px;
+    vertical-align: middle;
+  }
+  
+  .colSrNo {
+    width: 140px;
+  }
+  
+  .colStatus {
+    width: 130px;
+  }
+  
+  .colAction {
+    width: 150px;
+  }
+  
+  .srNoBadge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #e7e9eb;
+    border-radius: 4px;
+    font-size: var(--fs12);
+    font-weight: 600;
+    color: var(--darkColor);
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+  
+  .userInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  
+  .avatar {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--whiteColor);
+    font-size: var(--fs14);
+    font-weight: 600;
+    line-height: 1;
+  }
+  
+  .avatarPurple {
+    background: #7b70ef;
+  }
+  
+  .avatarNavy {
+    background: #1e4da1;
+  }
+  
+  .avatarTeal {
+    background: #02bc9c;
+  }
+  
+  .avatarViolet {
+    background: #8b5cf6;
+  }
+  
+  .avatarGold {
+    background: #c9a227;
+  }
+  
+  .avatarBlue {
+    background: #4a90c4;
+  }
+  
+  .userMeta {
+    min-width: 0;
+  }
+  
+  .userName {
+    margin: 0;
+    font-size: var(--fs14);
+    font-weight: 600;
+    color: var(--darkColor);
+    line-height: 1.4;
+  }
+  
+  .userRole {
+    margin: 2px 0 0;
+    font-size: var(--fs12);
+    color: var(--textBodySecondary);
+    line-height: 1.4;
+  }
+  
+  .actionGroup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .actionBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--borderColor);
+    background: var(--whiteColor);
+    color: var(--textBodySecondary);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition:
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+  
+  .actionBtn:hover {
+    border-color: var(--primaryColor);
+    color: var(--primaryColor);
+  }
+  
+  @media (max-width: 767.98px) {
+    .cardHeader {
+      align-items: flex-start;
+      padding: 20px;
+    }
+
+  
+    .userTable th,
+    .userTable td {
+      padding: 13.6px 16px;
+    }
+  
+    .colSrNo,
+    .colStatus,
+    .colAction {
+      width: auto;
+    }
+  }
+  
+  .modalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.45);
+  }
+
+  .modalCard {
+    width: 100%;
+    max-width: 720px;
+    padding: 1.5rem 1.75rem 1.75rem;
+    border-radius: 10px;
+    background: var(--whiteColor);
+    box-shadow: 0 8px 32px rgba(2, 86, 179, 0.12);
+  }
+
+  .addUserForm {
+    width: 100%;
+  }
+
+  .formGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .halfWidth {
+    grid-column: 1 / 2;
+  }
+
+  .label {
+    font-size: var(--fs12);
+    font-weight: 600;
+    color: var(--darkColor);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+
+  .required {
+    color: #ff3b30;
+    margin-left: 2px;
+  }
+
+  .submitWrap {
+    display: flex;
+    justify-content: center;
+  }
+
+  .saveBtn {
+    width: 100%;
+    max-width: 220px;
+    border: none;
+    border-radius: 999px;
+    background: var(--primaryColor);
+    color: var(--whiteColor);
+    font-size: var(--fs14);
+    font-weight: 600;
+    padding: 0.65rem 2rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .saveBtn:hover {
+    background: #024a96;
+  }
+
+  @media (min-width: 768px) {
+    .formGrid {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.35rem 2rem;
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    .userTable thead {
+      display: none;
+    }
+  
+    .userTable tbody tr {
+      display: block;
+      padding: 16px;
+      border-bottom: 1px solid var(--borderColor);
+    }
+  
+    .userTable td {
+      display: block;
+      padding: 5.6px 0;
+      border: none;
+    }
+  
+    .userTable td::before {
+      content: attr(data-label);
+      display: block;
+      font-size: var(--fs11);
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--textBodySecondary);
+      margin-bottom: 4px;
+    }
+  
+    .colSrNo::before {
+      content: "SR. NO.";
+    }
+  
+    .colUserName::before {
+      content: "User Name";
+    }
+  
+    .colStatus::before {
+      content: "Status";
+    }
+  
+    .colAction::before {
+      content: "Action";
+    }
+  
+    .colAction {
+      padding-top: 12px;
+    }
+
+    .modalCard {
+      padding: 1.25rem;
+    }
+  }
