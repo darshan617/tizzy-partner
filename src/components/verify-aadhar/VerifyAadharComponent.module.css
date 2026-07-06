@@ -1,0 +1,154 @@
+.page {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    padding: 40px 20px;
+}
+
+.card {
+    width: 100%;
+    max-width: 520px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 5px 5px 8px #5090c545;
+    padding: 32px 36px 36px;
+}
+
+.title {
+    margin: 0 0 24px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #1a1a1a;
+    text-transform: uppercase;
+}
+
+.logosBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    background: #fafafa;
+    overflow: hidden;
+    width: 100%;
+}
+
+.logo {
+    width: 100%;
+    object-fit: contain;
+    height: 100%;
+}
+
+.logoCenter {
+    max-width: 140px;
+}
+
+.formGroup {
+    margin-bottom: 28px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333333;
+    text-align: left;
+}
+
+.input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 15px;
+    color: #333;
+    outline: none;
+    background: #fff;
+    letter-spacing: 1px;
+    transition: border-color 0.2s;
+}
+
+.input::placeholder {
+    color: #b0b0b0;
+    letter-spacing: 2px;
+}
+
+.input:focus {
+    border-color: var(--primaryColor);
+}
+
+.getOtpBtn {
+    display: block;
+    margin: 0 auto;
+    padding: 12px 60px;
+    background-color: var(--primaryColor);
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.getOtpBtn:hover:not(:disabled) {
+    background-color: #1261bb;
+}
+
+.getOtpBtn:disabled {
+    background-color: #9ba6b7;
+    cursor: not-allowed;
+}
+
+.copyright {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 12px;
+    color: #999999;
+}
+
+.consentRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 16px;
+    text-align: left;
+}
+
+.consentRow input {
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.consentLabel {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.consentLink {
+    color: var(--primaryColor);
+    cursor: pointer;
+}
+
+@media (max-width: 576px) {
+    .card {
+        padding: 24px 20px 28px;
+    }
+
+
+    .getOtpBtn {
+        width: 100%;
+        padding: 12px 24px;
+    }
+}

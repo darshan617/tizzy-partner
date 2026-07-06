@@ -96,7 +96,6 @@ export default function PricingPlanCard({
               dispatch(setIsPopupVisible("enquiry"));
               return;
             }
-
             if (
               isProviderInCart === false ||
               router?.query?.type === "upgrade"
@@ -104,7 +103,6 @@ export default function PricingPlanCard({
               onCtaClick();
               return;
             }
-
             setIsPopupOpen(true);
           }}
         >
@@ -128,7 +126,7 @@ export default function PricingPlanCard({
           Enquiry Form will be here
         </CustomPopup>
       )}
-      {console.log(isProviderInCart, provider_id, "isProviderInCart")}
+
       {isPopupOpen && isProviderInCart === true && (
         <CustomPopup onClose={() => setIsPopupOpen(false)} maxWidth="450px">
           <h3 className="fs-5 fw-600 mb-3 border-bottom pb-3">

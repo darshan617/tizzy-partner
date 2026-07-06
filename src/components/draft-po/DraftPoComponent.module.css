@@ -12,9 +12,10 @@
 
 .draftPoIframeContainer {
     width: 100%;
-    max-width: 400px;
-    height: 500px;
-    overflow: hidden;
+    max-width: 375px;
+    height: 529px;
+    position: relative;
+    /* overflow-y: auto; */
 }
 
 .draftPoIframeContainer iframe {
@@ -22,4 +23,39 @@
     height: 100%;
     border: none;
     object-fit: contain;
+}
+
+.commonButton {
+    width: auto;
+    background-color: var(--primaryColor);
+    color: var(--whiteColor);
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    padding: 10px 50px;
+    margin-top: 20px;
+}
+
+.downloadButton {
+    width: auto;
+    background-color: var(--primaryColor);
+    color: var(--whiteColor);
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    z-index: 10;
 }

@@ -13,6 +13,7 @@ import AuthLayout from "../authLayout/AuthLayout";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import Layout from "@/components/layout/Layout";
 import {
+  useOrderAadharVerifyMutation,
   useResendOrderOtpMutation,
   useVerifyAadharNumberOtpMutation,
 } from "@/redux/apis/addToCartApi";
@@ -57,6 +58,9 @@ const VerifyOtp = () => {
 
   const [resendOrderOtp, { isLoading: isResendOrderOtpLoading }] =
     useResendOrderOtpMutation();
+
+  const [orderAadharVerify, { isLoading: isOrderAadharVerifyLoading }] =
+    useOrderAadharVerifyMutation();
 
   const validateOtp = () => {
     const newErrors = {};
@@ -117,17 +121,17 @@ const VerifyOtp = () => {
   // aadhar number otp submit
   const handleSubmitAadharNumberOtp = async () => {
     try {
-      const res = await verifyAadharNumberOtp({
+      // const res = await verifyAadharNumberOtp({
+      const res = await orderAadharVerify({
         body: {
           otp: otpDetails?.otp,
-          main_cart_id: router?.query?.main_cart_id,
-          partner_id: userDataFromCookie?.id,
-          order_id: router?.query?.order_id,
-          renew: router?.query?.renew,
+          // main_cart_id: router?.query?.main_cart_id,
+          // partner_id: userDataFromCookie?.id,
+          order_id: router?.query?.ordId,
+          // renew: router?.query?.renew,
           aadhaar_number: router?.query?.aadhar_number,
         },
       });
-      console.log(res);
       if (res?.data?.success) {
         showToast(res?.data?.message, "success");
         router?.push({
@@ -276,7 +280,11 @@ const VerifyOtp = () => {
 
   const otpContent = (
     <div
-      className={styles.otpWrapper}
+      className={
+        router?.query?.type === "order"
+          ? styles.otpWrapperOrder
+          : styles.otpWrapper
+      }
       data-aos="fade-up"
       data-aos-duration="900"
     >
@@ -341,7 +349,9 @@ const VerifyOtp = () => {
         isVerifyOtpLoading ||
         isVerifyAadharNumberOtpLoading
           ? "Verifying..."
-          : "Confirm"}
+          : router?.query?.type === "order"
+            ? "Verify"
+            : "Confirm"}
       </button>
 
       <p className={styles.resend}>

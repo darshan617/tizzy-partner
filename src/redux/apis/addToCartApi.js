@@ -79,6 +79,16 @@ const addToCartApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["addToCart"],
     }),
+    generateUpgradeOrder: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/generate-upgrade-order`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
     checkIsDomainAvailable: builder.query({
       query: ({ domain_name }) => {
         return {
@@ -111,7 +121,17 @@ const addToCartApi = apiSlice.injectEndpoints({
     aadharNumber: builder.mutation({
       query: ({ body }) => {
         return {
-          url: `/orders-aadhaar-init`,
+          url: `/order-aadhaar-init`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
+    orderAadharVerify: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/order-aadhaar-verify`,
           method: "POST",
           body: body,
         };
@@ -168,4 +188,6 @@ export const {
   useVerifyAadharNumberOtpMutation,
   useCreditRequestMutation,
   useResendOrderOtpMutation,
+  useOrderAadharVerifyMutation,
+  useGenerateUpgradeOrderMutation,
 } = addToCartApi;

@@ -9,7 +9,6 @@ import {
   useGetUpgradeAddToCartDetailsMutation,
   useRenewCustomerDetailsMutation,
   useUpdateCartMutation,
-  useVerifyAadharNumberOtpMutation,
 } from "@/redux/apis/addToCartApi";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import { selectCartData, setCartData } from "@/redux/slices/cartSlice";
@@ -730,8 +729,7 @@ const CommonOrderSummary = () => {
   //get upgrade cart details api
   useEffect(() => {
     if (!router?.isReady) return;
-    const customerId =
-      router?.query?.customer_id || customerData?.customer_id;
+    const customerId = router?.query?.customer_id || customerData?.customer_id;
     if (router?.query?.type === "upgrade" && customerId) {
       handleGetUpgradeCartDetails();
     }
