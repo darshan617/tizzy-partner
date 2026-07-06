@@ -137,8 +137,8 @@ const CommonOrderSummary = () => {
     const firstItem = Array.isArray(cartDetails)
       ? cartDetails[0]
       : cartDetails &&
-          typeof cartDetails === "object" &&
-          Object.keys(cartDetails).length > 0
+        typeof cartDetails === "object" &&
+        Object.keys(cartDetails).length > 0
         ? cartDetails
         : null;
     const fromCart = normalizeCompanyName(firstItem?.company_name);
@@ -168,10 +168,10 @@ const CommonOrderSummary = () => {
   const isListCart = Array.isArray(cartDetails);
   const total = isListCart
     ? cartDetails.reduce((sum, item) => {
-        const u = getCartLineUnitPrice(item);
-        const l = Math.max(1, Number(item?.licenses) || 1);
-        return sum + u * l;
-      }, 0)
+      const u = getCartLineUnitPrice(item);
+      const l = Math.max(1, Number(item?.licenses) || 1);
+      return sum + u * l;
+    }, 0)
     : (Number(pricePerUser) || 0) * (Number(lisceneCounter) || 0);
 
   const [addToCart, { isLoading: isGettingCartDetails }] =
@@ -336,10 +336,10 @@ const CommonOrderSummary = () => {
       const newDomains = overrideDomains.length
         ? overrideDomains
         : buildDomainsFromInput(
-            domainNames,
-            currentItem?.plan?.provider_id,
-            DOMAIN_SUFFIX,
-          );
+          domainNames,
+          currentItem?.plan?.provider_id,
+          DOMAIN_SUFFIX,
+        );
 
       if (!overrideDomains.length && !hasDomainPrefixInput(domainNames)) return;
 
@@ -441,12 +441,13 @@ const CommonOrderSummary = () => {
           subscription_start_date: item?.subscription_start_date,
           subscription_end_date: item?.subscription_end_date,
           customerLimit: item?.customer_limit,
-          unit_price: Number(item?.price_per_license_per_year) || 0,
+          unit_price: Number(item?.price_per_license_per_year) || item?.unit_price || 0,
           company_name: company_info?.company_name,
           customer_id: company_info?.customer_id,
           renewal_summary,
           wallet_info,
-          renew_plan
+          renew_plan,
+          main_cart_id: renew_plan?.main_cart_id,
         }));
 
         setCartDetails(allData);
@@ -646,8 +647,8 @@ const CommonOrderSummary = () => {
 
   const cartLicenseKey = Array.isArray(cartDetails)
     ? cartDetails
-        .map((item) => `${item?.cart_id ?? ""}:${item?.licenses ?? ""}`)
-        .join("|")
+      .map((item) => `${item?.cart_id ?? ""}:${item?.licenses ?? ""}`)
+      .join("|")
     : "";
 
   useEffect(() => {
@@ -657,7 +658,11 @@ const CommonOrderSummary = () => {
 
     const timer = setTimeout(() => {
       cartDetails.forEach((item, idx) => {
-        if (!item?.main_cart_id) return;
+        console.log("item:😉", item);
+        const main_cart_id =
+          item?.main_cart_id ?? item?.renew_plan?.main_cart_id;
+
+        if (!main_cart_id) return;
 
         const body = buildAutoUpdateCartBody({
           item,
@@ -763,10 +768,10 @@ const CommonOrderSummary = () => {
       {isDataLoading ? (
         <Loader />
       ) : (
-          Array.isArray(cartDetails)
-            ? cartDetails.length
-            : Object.keys(cartDetails || {}).length
-        ) ? (
+        Array.isArray(cartDetails)
+          ? cartDetails.length
+          : Object.keys(cartDetails || {}).length
+      ) ? (
         <div className={layoutStyles.split}>
           <div className={layoutStyles.leftScroll}>
             <RenewCart
@@ -809,8 +814,8 @@ const CommonOrderSummary = () => {
                     cartDetails[0]?.pricing?.wallet_balance ??
                     cartDetails[0]?.wallet_balance)
                   : cartDetails?.wallet_info?.wallet_balance ||
-                    cartDetails?.pricing?.wallet_balance ||
-                    cartDetails?.wallet_balance) ?? 0,
+                  cartDetails?.pricing?.wallet_balance ||
+                  cartDetails?.wallet_balance) ?? 0,
               )}
               cartDetails={cartDetails}
               handleUpdateCart={handleUpdateCart}

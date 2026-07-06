@@ -402,8 +402,8 @@ const SubscriptionsDetailsComponent = () => {
                           <div
                             className={`${styles.updwngrade} text-uppercase`}
                           >
-                            {
-                              plan?.status?.toLowerCase() !== "expired" || (plan?.status?.toLowerCase() !== "expiring") && (
+                            {/* {
+                              plan?.status?.toLowerCase() !== "expired" || (plan?.status?.toLowerCase() !== "expiring") && ( */}
                                 <>
                                   <button
                                     type="button"
@@ -425,9 +425,36 @@ const SubscriptionsDetailsComponent = () => {
                                     />
                                     <span>Renew</span>
                                   </button>
+
+                                  <Link
+                                    className={styles.downgradeBtn}
+                                    href={{
+                                      pathname: "/services/tizzy",
+                                      query: {
+                                        type: "downgrade",
+                                        order_id: subscriptionDetails?.order_id,
+                                        customer_id: router?.query?.customerId,
+                                        plan_id: plan?.plan_id,
+                                        order_sub_id: plan?.order_sub_id,
+                                      },
+                                    }}
+                                    onClick={() => {
+                                      Cookies.remove("customerData");
+                                      Cookies.set(
+                                        "customerData",
+                                        JSON.stringify({
+                                          partner_id: userData?.id,
+                                          customer_id: router?.query?.customerId,
+                                          domain_name: domainName,
+                                        }),
+                                      );
+                                    }}
+                                  >
+                                    DOWNGRADE
+                                  </Link>
                                 </>
-                              )
-                            }
+                              {/* )
+                            } */}
 
                             <br />
                             <Link
@@ -458,33 +485,7 @@ const SubscriptionsDetailsComponent = () => {
                             >
                               UPGRADE
                             </Link>
-                            {/* /
-      <Link
-        className={styles.downgradeBtn}
-        href={{
-          pathname: "/services/tizzy",
-          query: {
-            type: "downgrade",
-            order_id: subscriptionDetails?.order_id,
-            customer_id: router?.query?.customerId,
-            plan_id: plan?.plan_id,
-            order_sub_id: plan?.order_sub_id,
-          },
-        }}
-        onClick={() => {
-          Cookies.remove("customerData");
-          Cookies.set(
-            "customerData",
-            JSON.stringify({
-              partner_id: userData?.id,
-              customer_id: router?.query?.customerId,
-              domain_name: domainName,
-            }),
-          );
-        }}
-      >
-        DOWNGRADE
-      </Link> */}
+
                           </div>
                         </div>
                       ) : (

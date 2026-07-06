@@ -178,6 +178,16 @@ const addToCartApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["addToCart"],
     }),
+    downgradeCart: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/downgrade-cart`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -201,4 +211,5 @@ export const {
   useOrderAadharVerifyMutation,
   useGenerateUpgradeOrderMutation,
   useRenewCartDetailsMutation,
-} = addToCartApi;
+  useDowngradeCartMutation,
+  } = addToCartApi;
