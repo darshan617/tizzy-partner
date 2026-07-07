@@ -1,0 +1,536 @@
+.billingCreditPage {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.pageHeader {
+    margin-bottom: 1.25rem;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.35rem;
+}
+
+.breadcrumbLink,
+.breadcrumbCurrent {
+    font-size: var(--fs12);
+    color: var(--textBodySecondary);
+    line-height: 1.4;
+}
+
+.breadcrumbLink:hover {
+    color: var(--primaryColor);
+}
+
+.breadcrumbSeparator {
+    font-size: var(--fs12);
+    color: var(--textBodySecondary);
+}
+
+.pageTitle {
+    margin: 0;
+    font-size: var(--fs20);
+    font-weight: 600;
+    color: var(--textBody);
+    line-height: 1.3;
+}
+
+.billingCard {
+    padding: 1.5rem 1.75rem;
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.cardTitle {
+    margin: 0;
+    font-size: var(--fs16);
+    font-weight: 600;
+    color: var(--darkColor);
+    line-height: 1.3;
+}
+
+.cardBody {
+    display: flex;
+    align-items: stretch;
+    gap: 1.5rem;
+}
+
+.creditBalanceBox {
+    position: relative;
+    flex: 1 1 58%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 10px;
+    overflow: hidden;
+    background: linear-gradient(90deg, #1e4da1 0%, #2b80ff 100%);
+    box-shadow: 0 4px 12px rgba(30, 77, 161, 0.25);
+}
+
+.creditPatternLeft,
+.creditPatternRight {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.creditPatternLeft {
+    top: -10px;
+    left: -10px;
+}
+
+.creditPatternRight {
+    top: 0;
+    right: -10px;
+}
+
+.creditBalanceContent {
+    position: relative;
+    z-index: 1;
+}
+
+.creditBalanceLabel {
+    margin: 0 0 0.35rem;
+    font-size: var(--fs14);
+    font-weight: 400;
+    color: var(--whiteColor);
+    line-height: 1.4;
+}
+
+.creditBalanceAmount {
+    margin: 0;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    color: var(--whiteColor);
+    line-height: 1.2;
+}
+
+.payNowBtn {
+    position: relative;
+    top: -15px;
+    z-index: 1;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 20px;
+    border-radius: 50px;
+    border: none;
+    background: var(--whiteColor);
+    color: var(--primaryColor);
+    font-size: var(--fs14);
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.payNowBtn:hover {
+    background: var(--primarySubtleColor);
+    color: var(--primaryColor);
+}
+
+.statsGroup {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.5rem 0;
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 120px;
+}
+
+.statLabel {
+    margin: 0 0 0.35rem;
+    font-size: var(--fs12);
+    color: var(--textBodySecondary);
+    line-height: 1.4;
+}
+
+.statValue {
+    margin: 0;
+    font-size: var(--fs18);
+    font-weight: 600;
+    color: var(--darkColor);
+    line-height: 1.2;
+}
+
+.statDivider {
+    width: 2px;
+    height: 35px;
+    background: var(--borderColor);
+}
+
+@media (max-width: 991px) {
+    .cardBody {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .statsGroup {
+        justify-content: flex-start;
+        padding: 0;
+    }
+}
+
+@media (max-width: 575px) {
+    .billingCard {
+        padding: 1.25rem;
+    }
+
+    .cardHeader {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .creditBalanceBox {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .payNowBtn {
+        width: 100%;
+    }
+
+    .statsGroup {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .statDivider {
+        width: 100%;
+        height: 1px;
+        min-height: 0;
+    }
+}
+
+.transactionCard {
+    width: 100%;
+    margin-top: 1.25rem;
+    background: var(--whiteColor);
+    border-radius: 10px;
+    box-shadow: 5px 5px 8px #5090c545;
+    overflow: hidden;
+}
+
+.headerBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 16px 24px;
+    background: var(--whiteColor);
+}
+
+.sectionTitle {
+    margin: 0;
+    font-size: var(--fs16);
+    font-weight: 600;
+    color: var(--darkColor);
+    line-height: 1.3;
+}
+
+.viewAllLink {
+    font-size: var(--fs14);
+    font-weight: 600;
+    color: var(--primaryColor);
+    text-decoration: underline;
+    white-space: nowrap;
+}
+
+.viewAllLink:hover {
+    color: #024a96;
+}
+
+.contentBody {
+    padding: 0 24px 20px;
+    background: var(--whiteColor);
+}
+
+.contentList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.contentRow {
+    background: var(--whiteColor);
+    border: 1px solid var(--borderColor);
+    padding: 12px 18px;
+    border-radius: 8px;
+}
+
+.transactionRowInner {
+    display: grid;
+    grid-template-columns:
+        minmax(110px, 12%)
+        minmax(180px, 1fr)
+        minmax(90px, auto)
+        minmax(100px, auto)
+        36px;
+    align-items: center;
+    gap: 12px 16px;
+    width: 100%;
+}
+
+.colDateMeta {
+    min-width: 0;
+}
+
+.txDate {
+    margin: 0 0 4px;
+    font-size: var(--fs12);
+    color: var(--textBodySecondary);
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.txIdBadge {
+    display: inline-block;
+    padding: 3px 10px;
+    background: #e7e9eb;
+    border-radius: 4px;
+    font-size: var(--fs12);
+    font-weight: 600;
+    color: var(--darkColor);
+    line-height: 1.4;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.colDomainBlock {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.domainInfo {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.avatar {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--whiteColor);
+    font-size: var(--fs14);
+    font-weight: 600;
+    line-height: 1;
+}
+
+.avatar0 {
+    background: #c0392b;
+}
+
+.avatar1 {
+    background: #c9a227;
+}
+
+.avatar2 {
+    background: #4a90c4;
+}
+
+.avatar3 {
+    background: #7b70ef;
+}
+
+.avatar4 {
+    background: #d63384;
+}
+
+.colStatus {
+    display: flex;
+    justify-content: center;
+    justify-self: center;
+}
+
+.colAmount {
+    text-align: right;
+    justify-self: end;
+}
+
+.colArrow {
+    justify-self: center;
+}
+
+.domainName {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primaryColor);
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.subText {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: var(--textBodySecondary);
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.amountValue {
+    font-size: var(--fs14);
+    font-weight: 600;
+    color: var(--textBody);
+    white-space: nowrap;
+}
+
+.statusBadge {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: var(--fs11);
+    font-weight: 500;
+    line-height: 1.3;
+    border-radius: 50rem;
+    white-space: nowrap;
+    text-transform: capitalize;
+}
+
+.expiring,
+.pending {
+    background: var(--warningSubtleColor);
+    color: var(--warningColor);
+}
+
+.expired,
+.overdue,
+.cancelled,
+.rejected {
+    background: var(--dangerSubtleColor);
+    color: var(--dangerColor);
+}
+
+.active,
+.completed,
+.success,
+.unpaid {
+    background: var(--successSubtleColor);
+    color: var(--successColor);
+}
+
+.draft {
+    background: var(--borderColor);
+    color: var(--textBodySecondary);
+}
+
+.arrowBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--borderColor);
+    background: var(--whiteColor);
+    color: var(--textBodySecondary);
+    text-decoration: none;
+    flex-shrink: 0;
+    transition:
+        border-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.arrowBtn:hover {
+    border-color: var(--primaryColor);
+    color: var(--primaryColor);
+}
+
+.emptyState {
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: var(--fs14);
+    color: var(--textBodySecondary);
+}
+
+@media (max-width: 767.98px) {
+    .headerBar {
+        padding: 14px 16px;
+    }
+
+    .contentBody {
+        padding: 0 16px 16px;
+    }
+
+    .contentList {
+        gap: 10px;
+    }
+
+    .contentRow {
+        padding: 14px;
+    }
+
+    .transactionRowInner {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "date date"
+            "domain domain"
+            "status amount"
+            "arrow arrow";
+        gap: 10px;
+        align-items: start;
+    }
+
+    .colDateMeta {
+        grid-area: date;
+    }
+
+    .colDomainBlock {
+        grid-area: domain;
+    }
+
+    .colStatus {
+        grid-area: status;
+        justify-content: flex-start;
+        justify-self: start;
+    }
+
+    .colAmount {
+        grid-area: amount;
+        justify-self: end;
+        text-align: right;
+    }
+
+    .colArrow {
+        grid-area: arrow;
+        justify-self: end;
+    }
+}
