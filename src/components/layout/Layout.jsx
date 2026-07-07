@@ -5,8 +5,9 @@ import Sidebar from "./sidebar/Sidebar";
 import styles from "./Layout.module.css";
 import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi";
 import Cookies from "js-cookie";
-
+import { useRouter } from "next/router";
 const Layout = ({ children }) => {
+  const router = useRouter();
   const userData = Cookies?.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies?.get("userData")))
     : {};
@@ -42,7 +43,12 @@ const Layout = ({ children }) => {
           setIsSidebarOpen={setIsSidebarOpen}
           balanceAndCartData={balanceAndCartData?.data}
         />
-        <div className={styles.contentWrapper}>{children}</div>
+        <div className={styles.contentArea}>
+          {router.pathname === "/help-center" && (
+            <div className={styles.helpCenterBackground} aria-hidden="true" />
+          )}
+          <div className={styles.contentWrapper}>{children}</div>
+        </div>
       </div>
     </>
   );
