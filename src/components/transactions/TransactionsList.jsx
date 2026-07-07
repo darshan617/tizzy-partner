@@ -29,12 +29,37 @@ const avatarBgClasses = [
 
 const getStatusKey = (status) => (status || "").toString().trim().toLowerCase();
 
+const getBillingStatusClass = (status) => {
+  const key = status?.toLowerCase()?.replace(/\s+/g, "");
+
+  if (["pending", "expiring"].includes(key)) return styles.billingPending;
+  if (["overdue", "expired", "cancelled", "failed", "rejected"].includes(key)) {
+    return styles.billingOverdue;
+  }
+  if (["completed", "success", "active", "paid"].includes(key)) {
+    return styles.billingSuccess;
+  }
+
+  return styles.billingDefaultBadge;
+};
+
 const formatAmount = (amount) => {
   const num = Number(amount || 0);
   return `₹ ${num.toFixed(2)}`;
 };
 
-const TransactionsList = () => {
+const getBillingDescription = (transaction) => {
+  const invoiceNo =
+    transaction?.invoice_no?.invoice_no || transaction?.invoice_no;
+
+  if (transaction?.description) return transaction.description;
+  if (transaction?.plan) return transaction.plan;
+  if (invoiceNo) return `Updated Plan to Tizzy Mail Enterprise - ${invoiceNo}`;
+
+  return "Updated Plan to Tizzy Mail Enterprise - 100 GB";
+};
+
+const TransactionsList = ({ variant = "default", limit }) => {
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
@@ -102,6 +127,105 @@ const TransactionsList = () => {
   const resultTotal = totalCount || transactionsList?.length || 0;
   const showingEnd = filteredTransactions?.length || 0;
   const showingStart = showingEnd > 0 ? 1 : 0;
+
+  if (variant === "billing") {
+    const billingTransactions =
+      typeof limit === "number"
+        ? filteredTransactions?.slice(0, limit)
+        : filteredTransactions;
+
+    return (
+      <section className={styles.billingCard}>
+        <div className={styles.billingHeader}>
+          <h2 className={styles.billingTitle}>Transaction History</h2>
+          <a href="/transactions" className={styles.billingViewAllLink}>
+            View All
+          </a>
+        </div>
+
+        <div className={styles.billingContentBody}>
+          {!isLoading ? (
+            billingTransactions?.length > 0 ? (
+              <div className={styles.billingContentList}>
+                {billingTransactions.map((tx, idx) => (
+                  <article
+                    key={tx?.order_id || tx?.order_no || idx}
+                    className={styles.billingContentRow}
+                  >
+                    <div className={styles.billingTransactionRowInner}>
+                      <div className={styles.billingDateMeta}>
+                        <p className={styles.billingTxDate}>{tx?.date || "-"}</p>
+                        <span className={styles.billingTxIdBadge}>
+                          {tx?.order_no || "-"}
+                        </span>
+                      </div>
+
+                      <div className={styles.billingDomainBlock}>
+                        <div
+                          className={`${styles.billingAvatar} ${styles[`billingAvatar${idx % 5}`]}`}
+                        >
+                          {tx?.domain?.charAt(0)?.toUpperCase() || "T"}
+                        </div>
+
+                        <div className={styles.billingDomainInfo}>
+                          <p className={styles.billingDomainName}>
+                            {tx?.domain || "-"}
+                          </p>
+                          <p className={styles.billingSubText}>
+                            {getBillingDescription(tx)}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className={styles.billingColStatus}>
+                        <span
+                          className={`${styles.billingStatusBadge} ${getBillingStatusClass(tx?.status)}`}
+                        >
+                          {tx?.status || "Pending"}
+                        </span>
+                      </div>
+
+                      <div className={styles.billingColAmount}>
+                        <span className={styles.billingAmountValue}>
+                          {formatAmount(tx?.amount)}
+                        </span>
+                      </div>
+
+                      <div className={styles.billingColArrow}>
+                        <button
+                          type="button"
+                          className={styles.billingArrowBtn}
+                          aria-label="View transaction details"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="m9 18 6-6-6-6" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className={styles.billingEmptyState}>No Transaction Data</p>
+            )
+          ) : (
+            <Loader />
+          )}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <div className="col py-4">

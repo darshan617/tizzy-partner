@@ -1,16 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaPen } from "react-icons/fa";
 import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
+import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import styles from "@/components/account-info/AccountInfo.module.css";
 
+const INITIAL_PROFILE = {
+  fullName: "Saif Shaikh",
+  companyName: "Goyal Infotech Pvt. Ltd.",
+  companyAddress:
+    "Office No. 410, 9 Business Bay, Mindspace, Malad West, Mumbai - 400064. Maharashtra, India.",
+  mobile: "+91 98123 46780",
+  email: "saif@goyalinfotech.com",
+  gstin: "AA00001234W548",
+};
+
 const AccountInfo = () => {
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [profile, setProfile] = useState(INITIAL_PROFILE);
+  const [formData, setFormData] = useState(INITIAL_PROFILE);
+
+  const handleOpenEdit = () => {
+    setFormData(profile);
+    setIsEditOpen(true);
+  };
+
+  const handleCloseEdit = () => {
+    setIsEditOpen(false);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+
   return (
     <div className="container">
       <div className={styles.breadcrumbs} aria-label="Breadcrumb">
         <span
-          style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.35rem",
+          }}
         >
           <Link href="/dashboard" className={styles.breadcrumbLink}>
             Dashboard
@@ -29,6 +63,14 @@ const AccountInfo = () => {
           <div className="col-lg-4 col-12">
             <div className={styles.profCard}>
               <div className={`${styles.profHeader} position-relative`}>
+                <button
+                  type="button"
+                  className={styles.cardEditBtn}
+                  aria-label="Edit profile"
+                  onClick={handleOpenEdit}
+                >
+                  <FaPen />
+                </button>
                 <Image
                   src={createBtnBg}
                   alt=""
@@ -43,14 +85,20 @@ const AccountInfo = () => {
                   height={500}
                   className={styles.createBtnBg2}
                 />
-                <div className={`${styles.profAvatarLg} text-capitalize`}>S</div>
-                <h2 className={`${styles.profName} text-capitalize`}>Saif Shaikh</h2>
+                <div className={`${styles.profAvatarLg} text-capitalize`}>
+                  {profile.fullName.charAt(0)}
+                </div>
+                <h2 className={`${styles.profName} text-capitalize`}>
+                  {profile.fullName}
+                </h2>
                 <p className={`${styles.profCompany} text-capitalize`}>
-                  Goyal Infotech Pvt. Ltd.
+                  {profile.companyName}
                 </p>
                 <div className={styles.profFooter}>
                   <span className={styles.profId}>Partner ID : P123456</span>
-                  <span className={`statusBadge primaryBg ${styles.adminBadge}`}>
+                  <span
+                    className={`statusBadge primaryBg ${styles.adminBadge}`}
+                  >
                     Admin
                   </span>
                 </div>
@@ -58,27 +106,25 @@ const AccountInfo = () => {
             </div>
           </div>
 
-          {/* Company detail card */}
           <div className="col-lg-8 col-12">
             <div className={`${styles.detailCard} p-sm-4 p-3`}>
               <div className={styles.cardHeader}>
                 <h2 className={styles.cardHead}>Company Detail</h2>
-                <button
-                  type="button"
-                  className={styles.cardEditBtn}
-                  aria-label="Edit company detail"
-                >
-                  <FaPen />
-                </button>
               </div>
 
               <div className="row gy-3">
                 <div className="col-md-6">
                   <div className={styles.infoItem}>
                     <small className={styles.infoLabel}>Company Name</small>
-                    <div className={`${styles.infoValue} d-flex align-items-center flex-wrap gap-2`}>
-                      <span className="text-capitalize">Goyal Infotech Pvt. Ltd.</span>
-                      <span className={`statusBadge subtleSuccess ${styles.verifiedBadge}`}>
+                    <div
+                      className={`${styles.infoValue} d-flex align-items-center flex-wrap gap-2`}
+                    >
+                      <span className="text-capitalize">
+                        {profile.companyName}
+                      </span>
+                      <span
+                        className={`statusBadge subtleSuccess ${styles.verifiedBadge}`}
+                      >
                         Verified
                       </span>
                     </div>
@@ -88,8 +134,7 @@ const AccountInfo = () => {
                   <div className={styles.infoItem}>
                     <small className={styles.infoLabel}>Company Address</small>
                     <div className={styles.infoValue}>
-                      Office No. 410, 9 Business Bay, <br /> Mindspace, Malad West,
-                      Mumbai - <br /> 400064. Maharashtra, India.
+                      {profile.companyAddress}
                     </div>
                   </div>
                 </div>
@@ -97,18 +142,10 @@ const AccountInfo = () => {
             </div>
           </div>
 
-          {/* Personal information card */}
           <div className="col-12">
             <div className={`${styles.detailCard} p-sm-4 p-3`}>
               <div className={styles.cardHeader}>
                 <h2 className={styles.cardHead}>Personal information</h2>
-                <button
-                  type="button"
-                  className={styles.cardEditBtn}
-                  aria-label="Edit personal information"
-                >
-                  <FaPen />
-                </button>
               </div>
 
               <div className="row gy-3">
@@ -116,23 +153,23 @@ const AccountInfo = () => {
                   <div className={styles.infoItem}>
                     <small className={styles.infoLabel}>Full Name</small>
                     <div className={`${styles.infoValue} text-capitalize`}>
-                      Saif Shaikh
+                      {profile.fullName}
                     </div>
                   </div>
                   <div className={`${styles.infoItem} mb-0`}>
                     <small className={styles.infoLabel}>Mobile No.</small>
-                    <div className={styles.infoValue}>+91 98123 46780</div>
+                    <div className={styles.infoValue}>{profile.mobile}</div>
                   </div>
                 </div>
                 <div className="col-md-6">
                   <div className={styles.infoItem}>
                     <small className={styles.infoLabel}>Email</small>
-                    <div className={styles.infoValue}>saif@goyalinfotech.com</div>
+                    <div className={styles.infoValue}>{profile.email}</div>
                   </div>
                   <div className={`${styles.infoItem} mb-0`}>
                     <small className={styles.infoLabel}>GSTIN</small>
                     <div className={`${styles.infoValue} text-uppercase`}>
-                      AA00001234W548
+                      {profile.gstin}
                     </div>
                   </div>
                 </div>
@@ -141,6 +178,126 @@ const AccountInfo = () => {
           </div>
         </div>
       </div>
+
+      {isEditOpen && (
+        <CustomPopup
+          onClose={handleCloseEdit}
+          maxWidth="560px"
+          title="Edit Profile"
+        >
+          <form className={styles.editForm}>
+            <div className={styles.formGrid}>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel} htmlFor="fullName">
+                  Full Name
+                  <span className={styles.required}>*</span>
+                </label>
+                <input
+                  id="fullName"
+                  type="text"
+                  name="fullName"
+                  className="form-control"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel} htmlFor="companyName">
+                  Company Name
+                  <span className={styles.required}>*</span>
+                </label>
+                <input
+                  id="companyName"
+                  type="text"
+                  name="companyName"
+                  className="form-control"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                <label className={styles.formLabel} htmlFor="companyAddress">
+                  Company Address
+                  <span className={styles.required}>*</span>
+                </label>
+                <textarea
+                  id="companyAddress"
+                  name="companyAddress"
+                  className={`form-control ${styles.textarea}`}
+                  value={formData.companyAddress}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel} htmlFor="mobile">
+                  Mobile No.
+                  <span className={styles.required}>*</span>
+                </label>
+                <input
+                  id="mobile"
+                  type="tel"
+                  name="mobile"
+                  className="form-control"
+                  value={formData.mobile}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel} htmlFor="email">
+                  Email
+                  <span className={styles.required}>*</span>
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  className="form-control"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                <label className={styles.formLabel} htmlFor="gstin">
+                  GSTIN
+                  <span className={styles.required}>*</span>
+                </label>
+                <input
+                  id="gstin"
+                  type="text"
+                  name="gstin"
+                  className="form-control text-uppercase"
+                  value={formData.gstin}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className={styles.formActions}>
+              <button
+                type="button"
+                className={styles.cancelBtn}
+                onClick={handleCloseEdit}
+              >
+                Cancel
+              </button>
+              <button type="button" className={styles.saveBtn}>
+                Update
+              </button>
+            </div>
+          </form>
+        </CustomPopup>
+      )}
     </div>
   );
 };
