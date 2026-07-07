@@ -193,6 +193,8 @@ const OrderSummaryCard = ({
     ? cartDetails[0]?.cart_id
     : cartDetails?.cart_id;
 
+  console.log("resolvedCartId", resolvedCartId);
+
   const mainCartId = Array.isArray(cartDetails)
     ? cartDetails[0]?.main_cart_id
     : cartDetails?.main_cart_id;
@@ -426,6 +428,14 @@ const OrderSummaryCard = ({
           <span className={styles.label}>GST 18%</span>
           <span className={styles.value}>₹ {gst.toFixed(2)}</span>
         </div>
+        {router?.query?.type === "upgrade" && (
+          <div className={styles.summaryRow}>
+            <span className={styles.label}>Remaining Value</span>
+            <span className={styles.value}>
+              ₹ {cartDetails?.[0]?.pro_rata_adjustment?.toFixed(2) || 0}
+            </span>
+          </div>
+        )}
 
         <hr className={styles.divider} />
 
