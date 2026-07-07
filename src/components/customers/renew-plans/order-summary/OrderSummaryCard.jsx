@@ -81,7 +81,13 @@ const OrderSummaryCard = ({
   const providerId = Number(cartDetails?.[0]?.plan?.provider_id);
   const skipDomainVerification = providerId === 2;
   const tizzyProviderId = providerId === 1;
-  const totals = +(total + gst - (discountedPercent / 100) * total).toFixed(2);
+  const remainingValue = cartDetails?.[0]?.pro_rata_adjustment || 0;
+  const totals = +(
+    total +
+    gst -
+    remainingValue -
+    (discountedPercent / 100) * total
+  ).toFixed(2);
   const isInsufficient = _creditBalance_ < totals;
 
   const discountedAmount = (discountedPercent / 100) * total;
@@ -273,7 +279,9 @@ const OrderSummaryCard = ({
       const res = await generateNewOrder({
         body: {
           partner_id: userData?.id,
-          main_cart_id: cartDetails?.[0]?.main_cart_id || cartDetails?.[0]?.renew_plan?.main_cart_id,
+          main_cart_id:
+            cartDetails?.[0]?.main_cart_id ||
+            cartDetails?.[0]?.renew_plan?.main_cart_id,
         },
       });
       if (res?.data?.success) {
@@ -303,6 +311,8 @@ const OrderSummaryCard = ({
         body: {
           partner_id: userData?.id,
           main_cart_id: cartDetails?.[0]?.main_cart_id,
+          order_category:
+            router?.query?.type === "upgrade" ? "upgrade" : "downgrade",
         },
       });
       if (res?.data?.success) {
@@ -315,7 +325,6 @@ const OrderSummaryCard = ({
           },
         });
       } else {
-        console.log(res?.error?.data?.message);
         showToast(res?.error?.data?.message, "error");
       }
     } catch (error) {
@@ -384,14 +393,18 @@ const OrderSummaryCard = ({
             className={styles.value}
             style={{
               color:
-                cartDetails?.[0]?.cart_discount_amount || discountedAmount > 0
+                cartDetails?.[0]?.cart_discount_amount ||
+                cartDetails?.[0]?.renewal_summary?.discount_amount ||
+                discountedAmount > 0
                   ? "#2dc718"
                   : "#444444",
             }}
           >
             ₹ -
-            {cartDetails?.[0]?.cart_discount_amount
-              ? cartDetails?.[0]?.cart_discount_amount
+            {cartDetails?.[0]?.cart_discount_amount ||
+            cartDetails?.[0]?.renewal_summary?.discount_amount
+              ? cartDetails?.[0]?.cart_discount_amount ||
+                cartDetails?.[0]?.renewal_summary?.discount_amount
               : discountedAmount?.toFixed(2) || 0}
           </span>
         </div>
@@ -428,12 +441,11 @@ const OrderSummaryCard = ({
           <span className={styles.label}>GST 18%</span>
           <span className={styles.value}>₹ {gst.toFixed(2)}</span>
         </div>
-        {router?.query?.type === "upgrade" && (
+        {(router?.query?.type === "upgrade" ||
+          router?.query?.type === "downgrade") && (
           <div className={styles.summaryRow}>
             <span className={styles.label}>Remaining Value</span>
-            <span className={styles.value}>
-              ₹ {cartDetails?.[0]?.pro_rata_adjustment?.toFixed(2) || 0}
-            </span>
+            <span className={styles.value}>₹ {remainingValue}</span>
           </div>
         )}
 
@@ -605,7 +617,8 @@ const OrderSummaryCard = ({
               handelProceed();
             } else if (
               router?.query?.type === "renew-plan" ||
-              router?.query?.type === "upgrade"
+              router?.query?.type === "upgrade" ||
+              router?.query?.type === "downgrade"
             ) {
               handelUpgradeProceed();
             } else if (isInsufficient) {

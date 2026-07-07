@@ -190,7 +190,7 @@
 }
 
 .totalCol {
-    text-align: right;
+    text-align: center;
     min-width: 90px;
 }
 
@@ -264,7 +264,8 @@
     border-color: #d1d5db;
     color: #111827;
 }
-.qtyInput{
+
+.qtyInput {
     width: 30px;
     text-align: center;
     border: none;
@@ -314,7 +315,8 @@
 .newCustomerBtn:hover {
     background: #004591;
 }
-.newCustomerBtn:disabled{
+
+.newCustomerBtn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
@@ -365,11 +367,13 @@
 .fieldInput:focus {
     border-color: var(--primaryColor);
 }
+
 .qtyBtn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
-.iconCircle{
+
+.iconCircle {
     width: 35px;
     height: 35px;
     border-radius: 50%;
@@ -382,6 +386,7 @@
     border: 1px solid var(--borderColor);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
+
 .deleteBtn {
     background: #EF4444;
     color: #ffffff;
@@ -393,6 +398,7 @@
     cursor: pointer;
     transition: background .3s ease;
 }
+
 .cancelBtn {
     background: #6B7280;
     color: #ffffff;
@@ -400,34 +406,40 @@
     border-radius: 50px;
     padding: 8px 16px;
     font-size: var(--fs14);
-    font-weight: 500;   
+    font-weight: 500;
     cursor: pointer;
     transition: background 0.3s ease;
 }
+
 .deleteBtn:hover {
     background: #da2437;
 }
+
 .cancelBtn:hover {
     background: #5b6779;
 }
-.domainNameContainer{
+
+.domainNameContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
 }
-.domainNameContainer button{
+
+.domainNameContainer button {
     background: none;
     border: none;
     cursor: pointer;
     font-size: 14px;
     color: #9ca3af;
 }
-.domainNamesLabel{
+
+.domainNamesLabel {
     font-weight: 500;
     margin: 0;
 }
-.addDomainBtn{
+
+.addDomainBtn {
     color: var(--primaryColor);
     cursor: pointer;
     background: none;
@@ -436,6 +448,7 @@
     text-decoration: underline;
     transition: text-decoration 0.15s;
 }
+
 .addDomainIconBtn:hover:not(:disabled) {
     text-decoration: underline;
     color: var(--primaryColor);
@@ -594,7 +607,7 @@
 }
 
 .planDetailItem {
-    background: #f4f7f9;
+    background: #F5F8FC;
     border-radius: 10px;
     padding: 16px 44px 16px 16px;
     position: relative;
@@ -602,7 +615,7 @@
 
 .planDetailQtyCtrl {
     background: #ffffff;
-    border: 1px solid #d7dbe2;
+    border: 1px solid #BCDAF9;
     border-radius: 6px;
     padding: 4px;
     width: auto;
@@ -637,7 +650,7 @@
 .planTotalBox {
     display: inline-block;
     background: #ffffff;
-    border: 1px solid #d7dbe2;
+    border: 1px solid #BCDAF9;
     border-radius: 6px;
     padding: 6px 12px;
     font-size: 14px;
@@ -673,6 +686,7 @@
 
 
 @media (max-width: 1024px) {
+
     .card,
     .upgradePlanCard {
         max-width: 100% !important;
@@ -689,6 +703,7 @@
 }
 
 @media (max-width: 768px) {
+
     .card,
     .upgradePlanCard {
         padding: 16px;

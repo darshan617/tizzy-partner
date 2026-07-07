@@ -396,66 +396,34 @@ const SubscriptionsDetailsComponent = () => {
                         </div>
                       </div>
 
-                      {plan?.status?.toLowerCase() !== "draft" &&
-                        plan?.status?.toLowerCase() !== "pending" ? (
+                      {plan?.status?.toLowerCase() === "expiring" ||
+                      plan?.status?.toLowerCase() === "expired" ? (
                         <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
                           <div
                             className={`${styles.updwngrade} text-uppercase`}
                           >
-                            {/* {
-                              plan?.status?.toLowerCase() !== "expired" || (plan?.status?.toLowerCase() !== "expiring") && ( */}
-                                <>
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      router?.push({
-                                        pathname: "/order-summary",
-                                        query: {
-                                          type: "renew-plan",
-                                          order_id: subscriptionDetails?.order_id,
-                                        },
-                                      })
-                                    }
-                                    className={`${styles.crRenew} btn small btnWhite`}
-                                  >
-                                    <MdAutorenew
-                                      className="me-2"
-                                      size={14}
-                                      style={{ minWidth: "14px" }}
-                                    />
-                                    <span>Renew</span>
-                                  </button>
-
-                                  <Link
-                                    className={styles.downgradeBtn}
-                                    href={{
-                                      pathname: "/services/tizzy",
-                                      query: {
-                                        type: "downgrade",
-                                        order_id: subscriptionDetails?.order_id,
-                                        customer_id: router?.query?.customerId,
-                                        plan_id: plan?.plan_id,
-                                        order_sub_id: plan?.order_sub_id,
-                                      },
-                                    }}
-                                    onClick={() => {
-                                      Cookies.remove("customerData");
-                                      Cookies.set(
-                                        "customerData",
-                                        JSON.stringify({
-                                          partner_id: userData?.id,
-                                          customer_id: router?.query?.customerId,
-                                          domain_name: domainName,
-                                        }),
-                                      );
-                                    }}
-                                  >
-                                    DOWNGRADE
-                                  </Link>
-                                </>
-                              {/* )
-                            } */}
-
+                            <>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  router?.push({
+                                    pathname: "/order-summary",
+                                    query: {
+                                      type: "renew-plan",
+                                      order_id: subscriptionDetails?.order_id,
+                                    },
+                                  })
+                                }
+                                className={`${styles.crRenew} btn small btnWhite mb-1`}
+                              >
+                                <MdAutorenew
+                                  className="me-2"
+                                  size={14}
+                                  style={{ minWidth: "14px" }}
+                                />
+                                <span>Renew</span>
+                              </button>
+                            </>
                             <br />
                             <Link
                               href={{
@@ -485,12 +453,42 @@ const SubscriptionsDetailsComponent = () => {
                             >
                               UPGRADE
                             </Link>
-
+                            {(plan?.status?.toLowerCase() === "expiring" ||
+                              plan?.status?.toLowerCase() === "expired") && (
+                              <>
+                                &nbsp;|&nbsp;
+                                <Link
+                                  className={styles.downgradeBtn}
+                                  href={{
+                                    pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                                    query: {
+                                      type: "downgrade",
+                                      order_id: subscriptionDetails?.order_id,
+                                      customer_id: router?.query?.customerId,
+                                      plan_id: plan?.plan_id,
+                                      order_sub_id: plan?.order_sub_id,
+                                    },
+                                  }}
+                                  onClick={() => {
+                                    Cookies.remove("customerData");
+                                    Cookies.set(
+                                      "customerData",
+                                      JSON.stringify({
+                                        partner_id: userData?.id,
+                                        customer_id: router?.query?.customerId,
+                                        domain_name: domainName,
+                                      }),
+                                    );
+                                  }}
+                                >
+                                  DOWNGRADE
+                                </Link>
+                              </>
+                            )}
                           </div>
                         </div>
                       ) : (
                         <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
-
                           <button
                             style={{
                               width: "fit-content",

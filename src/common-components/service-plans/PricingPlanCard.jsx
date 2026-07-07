@@ -44,8 +44,10 @@ export default function PricingPlanCard({
     typeof discountPercent === "number" && discountPercent > 0;
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  console.log(isProviderInCart, "isProviderInCart");
-  console.log(isPopupOpen, "isPopupOpen");
+  const isPlanChangeFlow =
+    router?.query?.type === "upgrade" || router?.query?.type === "downgrade";
+  const hasGooglePlanConflict =
+    Number(provider_id) === 3 && Boolean(hasgoogleplans) && !plan_is_in_cart;
 
   return (
     <article className={styles.card} key={plan_id}>
@@ -96,9 +98,13 @@ export default function PricingPlanCard({
               dispatch(setIsPopupVisible("enquiry"));
               return;
             }
+            if (hasGooglePlanConflict && !isPlanChangeFlow) {
+              setIsPopupOpen(true);
+              return;
+            }
             if (
               isProviderInCart === false ||
-              router?.query?.type === "upgrade"
+              isPlanChangeFlow
             ) {
               onCtaClick();
               return;
@@ -127,7 +133,8 @@ export default function PricingPlanCard({
         </CustomPopup>
       )}
 
-      {isPopupOpen && isProviderInCart === true && (
+      {isPopupOpen &&
+        (isProviderInCart === true || hasGooglePlanConflict) && (
         <CustomPopup onClose={() => setIsPopupOpen(false)} maxWidth="450px">
           <h3 className="fs-5 fw-600 mb-3 border-bottom pb-3">
             {provider_id === 3 && hasgoogleplans

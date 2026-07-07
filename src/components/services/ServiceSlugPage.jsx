@@ -33,6 +33,7 @@ import { selectCustomerData } from "@/redux/slices/customerSlice";
 import Cookies from "js-cookie";
 import {
   useAddToCartMutation,
+  useDowngradeCartMutation,
   useGetCartDetailsMutation,
   useUpgradeAddToCartMutation,
 } from "@/redux/apis/addToCartApi";
@@ -56,7 +57,6 @@ export default function ServiceSlugPage({
   const dispatch = useDispatch();
   const { showToast } = useToast();
   const router = useRouter();
-  console.log(router?.pathname, "router?.pathname");
 
   const config = slug ? getServiceCatalogConfig(slug) : null;
   const valid = slug && isValidServiceSlug(slug);
@@ -91,6 +91,9 @@ export default function ServiceSlugPage({
 
   const [upgradeAddToCart, { isLoading: isUpgradingToCart }] =
     useUpgradeAddToCartMutation();
+
+  const [downgradeCart, { isLoading: isDowngradingToCart }] =
+    useDowngradeCartMutation();
 
   const applyCategoryFromVariant = useCallback(
     (cat) => {
@@ -200,6 +203,7 @@ export default function ServiceSlugPage({
           res = await triggerUpgradeDowngradePlan({
             type: router?.query?.type,
             plan_id: router?.query?.plan_id,
+            order_sub_id: router?.query?.order_sub_id,
           });
           if (res?.data?.success) {
             setPlanDetails(res?.data?.data?.current_plan || null);
@@ -289,11 +293,14 @@ export default function ServiceSlugPage({
           },
         });
         if (res?.data?.success) {
-          if (router?.query?.type === "upgrade") {
+          if (
+            router?.query?.type === "upgrade" ||
+            router?.query?.type === "downgrade"
+          ) {
             router.push({
               pathname: "/order-summary",
               query: {
-                type: "upgrade",
+                type: router?.query?.type,
                 plan_id: planId,
               },
             });
@@ -344,6 +351,41 @@ export default function ServiceSlugPage({
       }
     } catch (error) {
       console.log(error, "error upgrading to cart");
+    }
+  };
+  const handleDowngradeAddToCart = async (planId) => {
+    try {
+      const res = await downgradeCart({
+        body: {
+          partner_id: userData?.id,
+          plan_id: planId,
+          customer_id: router?.query?.customer_id,
+          order_id: router?.query?.order_id,
+          order_sub_id: router?.query?.order_sub_id,
+        },
+      });
+      if (res?.data?.success) {
+        const payload = res?.data?.data;
+        dispatch(
+          setCartData({
+            ...payload,
+            wallet_balance: res?.data?.wallet_balance,
+          }),
+        );
+        router.push({
+          pathname: "/order-summary",
+          query: {
+            type: "downgrade",
+            customer_id: router?.query?.customer_id,
+            order_id: router?.query?.order_id,
+            order_sub_id: router?.query?.order_sub_id,
+          },
+        });
+      } else {
+        showToast("Error adding plan to cart", "error");
+      }
+    } catch (error) {
+      console.log(error, "error downgrading to cart");
     }
   };
 
@@ -443,6 +485,8 @@ export default function ServiceSlugPage({
               onCtaClick={() => {
                 if (router?.query?.type === "upgrade") {
                   handleUpgradeAddToCart(plan?.plan_id || plan?.id);
+                } else if (router?.query?.type === "downgrade") {
+                  handleDowngradeAddToCart(plan?.plan_id || plan?.id);
                 } else {
                   handleAddToCart(plan?.plan_id || plan?.id);
                   // router.push({
@@ -463,16 +507,18 @@ export default function ServiceSlugPage({
               ctaLabel={
                 router?.query?.type === "upgrade"
                   ? "Upgrade Plan"
-                  : router?.query?.slug === "tizzy" ||
-                      router?.query?.slug === "microsoft-solution-partner"
-                    ? plan?.plan_is_in_cart
-                      ? "View Cart"
-                      : "Add to Cart"
-                    : plan?.plan_is_in_cart
-                      ? "View Cart"
-                      : plan?.enquiry
-                        ? "Enquire Now"
-                        : "Buy Plan"
+                  : router?.query?.type === "downgrade"
+                    ? "Downgrade Plan"
+                    : router?.query?.slug === "tizzy" ||
+                        router?.query?.slug === "microsoft-solution-partner"
+                      ? plan?.plan_is_in_cart
+                        ? "View Cart"
+                        : "Add to Cart"
+                      : plan?.plan_is_in_cart
+                        ? "View Cart"
+                        : plan?.enquiry
+                          ? "Enquire Now"
+                          : "Buy Plan"
               }
             />
           ))}
