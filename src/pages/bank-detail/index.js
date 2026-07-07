@@ -1,11 +1,11 @@
 import React from 'react'
 import Layout from '@/components/layout/Layout'     
-import AccountDetailForm from '@/components/account-detail-form/AccountDetailForm';
+import BankDetailForm from '@/components/account-detail-form/BankDetailForm';
 
 const BankDetail = () => {
   return (
     <Layout>
-        <AccountDetailForm />
+        <BankDetailForm />
     </Layout>
   )
 }

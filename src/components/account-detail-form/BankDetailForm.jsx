@@ -1,9 +1,9 @@
 import React from "react";
 import Link from "next/link";
 import { GoShieldCheck } from "react-icons/go";
-import styles from "./AccountDetailForm.module.css";
+import styles from '@/components/account-detail-form/BankDetailForm.module.css';
 
-const AccountDetailForm = () => {
+const BankDetailForm = () => {
   return (
     <div className={styles.page}>
       <header className={styles.pageHeader}>
@@ -117,4 +117,4 @@ const AccountDetailForm = () => {
   );
 };
 
-export default AccountDetailForm;
+export default BankDetailForm;
