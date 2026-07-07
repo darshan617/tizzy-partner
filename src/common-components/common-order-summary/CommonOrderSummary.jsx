@@ -7,9 +7,9 @@ import {
   useGetCartDetailsMutation,
   useGetUpdateCartDetailsQuery,
   useGetUpgradeAddToCartDetailsMutation,
+  useRenewCartDetailsMutation,
   useRenewCustomerDetailsMutation,
   useUpdateCartMutation,
-  useVerifyAadharNumberOtpMutation,
 } from "@/redux/apis/addToCartApi";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import { selectCartData, setCartData } from "@/redux/slices/cartSlice";
@@ -67,6 +67,7 @@ const buildAutoUpdateCartBody = ({
   tempDomains,
   customerId,
   coupen,
+  order_id,
 }) => {
   const domain_name = resolveCartDomains(
     item,
@@ -81,6 +82,7 @@ const buildAutoUpdateCartBody = ({
     customer_id: customerId ?? item?.customer_id,
     transfer_domain: item?.transfer_domain ?? "no",
     coupen: coupen,
+    order_id: order_id || "",
   };
 
   if (domain_name.length > 0) {
@@ -179,7 +181,8 @@ const CommonOrderSummary = () => {
   const [updateCart, { isLoading: isUpdatingCart }] = useUpdateCartMutation();
   const [renewCustomerDetails, { isLoading: isRenewingCustomerDetails }] =
     useRenewCustomerDetailsMutation();
-
+  const [renewCartDetails, { isLoading: isRenewingCartDetails }] =
+    useRenewCartDetailsMutation();
   //cart api
   const [getCartDetailsApi, { isLoading: isGettingCartDetailsApi }] =
     useGetCartDetailsMutation();
@@ -417,9 +420,10 @@ const CommonOrderSummary = () => {
 
   const handleRenewCustomerDetails = async () => {
     try {
-      const res = await renewCustomerDetails({
+      const res = await renewCartDetails({
         body: {
           order_id: router?.query?.order_id,
+          partner_id: userData?.id,
         },
       });
       if (res?.data?.success) {
@@ -429,6 +433,7 @@ const CommonOrderSummary = () => {
           plans = [],
           renewal_summary,
           wallet_info,
+          renew_plan,
         } = apiData;
 
         const allData = plans.map((item) => ({
@@ -438,11 +443,14 @@ const CommonOrderSummary = () => {
           subscription_start_date: item?.subscription_start_date,
           subscription_end_date: item?.subscription_end_date,
           customerLimit: item?.customer_limit,
-          unit_price: Number(item?.price_per_license_per_year) || 0,
+          unit_price:
+            Number(item?.price_per_license_per_year) || item?.unit_price || 0,
           company_name: company_info?.company_name,
           customer_id: company_info?.customer_id,
           renewal_summary,
           wallet_info,
+          renew_plan,
+          main_cart_id: renew_plan?.main_cart_id,
         }));
 
         setCartDetails(allData);
@@ -467,7 +475,7 @@ const CommonOrderSummary = () => {
           0;
         setPricePerUser(Number(firstPrice) || 0);
         setLisceneCounter(allData?.[0]?.licenses || 1);
-
+        setPromoCode(allData?.[0]?.coupen || "");
         dispatch(setCartData(apiData));
       }
     } catch (error) {
@@ -554,6 +562,7 @@ const CommonOrderSummary = () => {
           customer_id: customerId,
           order_id: router?.query?.order_id,
           order_sub_id: router?.query?.order_sub_id,
+          is_upgrade: router?.query?.type === "upgrade" ? true : false,
         },
       });
       const walletBalance = res?.data?.wallet_balance;
@@ -647,13 +656,17 @@ const CommonOrderSummary = () => {
     : "";
 
   useEffect(() => {
-    if (router?.query?.type === "upgrade") return undefined;
+    // if (router?.query?.type === "upgrade") return undefined;
     if (!Array.isArray(cartDetails) || cartDetails.length === 0)
       return undefined;
 
     const timer = setTimeout(() => {
       cartDetails.forEach((item, idx) => {
-        if (!item?.main_cart_id) return;
+        console.log("item:😉", item);
+        const main_cart_id =
+          item?.main_cart_id ?? item?.renew_plan?.main_cart_id;
+
+        if (!main_cart_id) return;
 
         const body = buildAutoUpdateCartBody({
           item,
@@ -662,6 +675,7 @@ const CommonOrderSummary = () => {
           tempDomains: tempDomainNamesRef.current,
           customerId: customerData?.customer_id,
           coupen: promoCode,
+          order_id: router?.query?.order_id || "",
         });
 
         updateCart({ body });
@@ -708,6 +722,7 @@ const CommonOrderSummary = () => {
     if (!userData?.id || !router?.isReady) return;
     if (router?.query?.type === "renew-plan") return;
     if (router?.query?.type === "upgrade") return;
+    if (router?.query?.type === "downgrade") return;
     handleGetCartDetails();
   }, [userData?.id, router?.isReady, router?.query?.type]);
 
@@ -730,14 +745,16 @@ const CommonOrderSummary = () => {
   //get upgrade cart details api
   useEffect(() => {
     if (!router?.isReady) return;
-    const customerId =
-      router?.query?.customer_id || customerData?.customer_id;
-    if (router?.query?.type === "upgrade" && customerId) {
+    const customerId = router?.query?.customer_id || customerData?.customer_id;
+    if (
+      router?.query?.type === "upgrade" ||
+      (router?.query?.type === "downgrade" && customerId)
+    ) {
       handleGetUpgradeCartDetails();
     }
   }, [
     router?.isReady,
-    router?.query?.type,
+    router?.query?.type === "upgrade" || router?.query?.type === "downgrade",
     router?.query?.customer_id,
     router?.query?.order_id,
     router?.query?.order_sub_id,

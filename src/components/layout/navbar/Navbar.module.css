@@ -100,6 +100,7 @@
   color: var(--whiteColor);
   line-height: 24px;
   text-align: center;
+  text-transform: capitalize;
 }
 
 .profUser {
@@ -107,6 +108,7 @@
 }
 
 .profName {
+  text-transform: capitalize;
   font-size: var(--fs16);
   font-weight: 500;
   width: 100%;

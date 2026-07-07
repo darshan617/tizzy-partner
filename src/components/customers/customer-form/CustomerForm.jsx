@@ -135,7 +135,8 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
     }));
   };
 
-  const handleGstinBlur = async () => {
+  const handleGstinBlur = async (e) => {
+    e?.preventDefault();
     const gstin = formData?.gstin?.toUpperCase().trim();
 
     if (!gstin) {
@@ -470,7 +471,7 @@ const CustomerForm = ({ type = "create", customerDetails = {} }) => {
                 />
                 <button
                   className={styles.searchGstinBtn}
-                  onClick={handleGstinBlur}
+                  onClick={(e) => handleGstinBlur(e)}
                 >
                   Search
                 </button>

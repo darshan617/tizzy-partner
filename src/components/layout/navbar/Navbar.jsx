@@ -180,7 +180,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                       </div>
                       <ul className="my-3">
                         <li>
-                          <Link href="#">
+                          <Link href="/account-information">
                             <FaRegCircleUser
                               className={`${styles.icon} me-2`}
                               size={20}

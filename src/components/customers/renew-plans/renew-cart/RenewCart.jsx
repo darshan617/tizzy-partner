@@ -11,6 +11,8 @@ import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarC
 import { useDeleteFromCartMutation } from "@/redux/apis/addToCartApi";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import { IoClose } from "react-icons/io5";
+import { IoMdArrowDown } from "react-icons/io";
+import { Calendar } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectIsPopupVisible,
@@ -126,7 +128,8 @@ const RenewCart = ({
         </div>
       ) : (
         <div>
-          {router?.query?.type === "upgrade" && (
+          {(router?.query?.type === "upgrade" ||
+            router?.query?.type === "downgrade") && (
             <div>
               <p>Company Name: {selectedCompany}</p>
             </div>
@@ -291,13 +294,20 @@ const RenewCart = ({
               </div>
             </>
           )}
-          {router?.query?.type === "upgrade" && (
-            <>
-              <h4>Current Plan Details:</h4>
-              <div className={styles.card}>
+          {(router?.query?.type === "upgrade" ||
+            router?.query?.type === "downgrade") && (
+            <div className={styles.upgradePlansSection}>
+              <div className={styles.upgradePlanCard}>
+                <div className={styles.planCardHeader}>
+                  <span className={styles.planCardTitle}>CURRENT PLAN</span>
+                  <span className={styles.planCardDate}>
+                    {currentPlanDetails?.subscription_start_date} –{" "}
+                    {currentPlanDetails?.subscription_end_date}
+                  </span>
+                </div>
                 <div className={styles.cartRow}>
                   <div>
-                    <span className={`${styles.iconCircle} `}>
+                    <span className={styles.iconCircle}>
                       {SIDEBAR_SERVICES_CONSTANTS?.find(
                         (menu) =>
                           menu?.id ===
@@ -313,13 +323,17 @@ const RenewCart = ({
                     <div className={styles.productName}>
                       {currentPlanDetails?.item_name || "-"}
                     </div>
-
-                    <div className={styles.productDate}>
-                      {currentPlanDetails?.subscription_start_date} –{" "}
-                      {currentPlanDetails?.subscription_end_date}
-                    </div>
+                    {toDomainArray(currentPlanDetails?.domain_name)?.map(
+                      (domain, index) => (
+                        <p
+                          key={`${domain}-${index}`}
+                          className={`${styles.productLink} m-0`}
+                        >
+                          {domain || "-"}
+                        </p>
+                      ),
+                    )}
                   </div>
-
                   <div className={styles.priceCol}>
                     <div className={styles.colLabel}>Price</div>
                     <div className={styles.priceVal}>
@@ -327,26 +341,12 @@ const RenewCart = ({
                     </div>
                     <div className={styles.priceSub}>per user/year</div>
                   </div>
-
                   <div className={styles.licenseCol}>
                     <div className={styles.colLabel}>License</div>
-                    <div className={styles.qtyCtrl}>
-                      <button disabled={true} className={styles.qtyBtn}>
-                        −
-                      </button>
-                      <input
-                        type="text"
-                        value={currentPlanDetails?.quantity || 1}
-                        className={styles.qtyInput}
-                        min={1}
-                        disabled={true}
-                      />
-                      <button button disabled={true} className={styles.qtyBtn}>
-                        +
-                      </button>
+                    <div className={styles.licenseValue}>
+                      {currentPlanDetails?.quantity || 1}
                     </div>
                   </div>
-
                   <div className={styles.totalCol}>
                     <div className={styles.colLabel}>Total</div>
                     <div className={styles.priceVal}>
@@ -354,206 +354,368 @@ const RenewCart = ({
                     </div>
                   </div>
                 </div>
+                <div className={styles.remainingBanner}>
+                  Remaining :{" "}
+                  <strong>{cartDetails?.[0]?.remaining_days || 0} days</strong>{" "}
+                  |{" "}
+                  <strong>
+                    ₹{" "}
+                    {Number(cartDetails?.[0]?.pro_rata_adjustment || 0).toFixed(
+                      2,
+                    )}
+                  </strong>
+                </div>
+                <p className={styles.remainingNote}>
+                  Note : Above amount is adjusted in your updated plan pricing,
+                  while billing.
+                </p>
               </div>
-            </>
-          )}
 
-          {cartItemList?.map((item, idx) => {
-            const customerLimit =
-              item?.customerLimit ?? item?.customer_limit ?? undefined;
-            const lineKey = item?.cart_id ?? item?.id ?? idx;
-            const unitPrice = listMode
-              ? Number(item?.price_per_unit ?? item?.unit_price ?? 0) || 0
-              : Number(pricePerUser) || 0;
-            const lineLicenses = listMode
-              ? Math.max(1, Number(item?.licenses) || 1)
-              : Number(lisceneCounter) || 0;
-            const lineTotal = unitPrice * lineLicenses;
-            return (
-              <>
-                {router?.query?.type === "upgrade" && (
-                  <h4>Upgraded Plan Details:</h4>
-                )}
+              <div className={styles.upgradeDivider}>
+                <span className={styles.upgradeBadge}>
+                  <IoMdArrowDown />
+                  {router?.query?.type === "upgrade"
+                    ? "Upgrading to"
+                    : "Downgrading to"}
+                </span>
+              </div>
 
-                <div className={styles.card} key={lineKey}>
-                  <div className={styles.cartRow}>
-                    {/* <div
-                    className={`${styles.servBadge} ${styles.tizzy}  flex-shrink-0`}
-                    title="Tizzy Mail"
-                  ></div> */}
-                    <div>
-                      <span className={`${styles.iconCircle} `}>
-                        {SIDEBAR_SERVICES_CONSTANTS?.find(
-                          (menu) =>
-                            menu?.id ===
-                            Number(
-                              item?.plan?.provider_id ||
-                                item?.plan_info?.provider_id ||
-                                item?.provider_id,
-                            ),
-                        )?.image || "-"}
-                      </span>
+              {cartItemList?.map((item, idx) => {
+                const customerLimit =
+                  item?.customerLimit ?? item?.customer_limit ?? undefined;
+                const lineKey = item?.cart_id ?? item?.id ?? idx;
+                const unitPrice =
+                  Number(item?.price_per_unit ?? item?.unit_price ?? 0) || 0;
+                const lineLicenses = Math.max(
+                  1,
+                  Number(item?.licenses) || Number(lisceneCounter) || 1,
+                );
+                const lineTotal = unitPrice * lineLicenses;
+
+                return (
+                  <div
+                    className={`${styles.upgradePlanCard} ${styles.upgradeNewPlanCard}`}
+                    key={lineKey}
+                  >
+                    <div className={styles.planCardHeader}>
+                      <span className={styles.planCardTitle}>NEW PLAN</span>
                     </div>
-                    <div className={styles.productInfo}>
-                      <div className={styles.productName}>
-                        {item?.plan_name || "-"}
+                    <div className={styles.cartRow}>
+                      <div>
+                        <span className={styles.iconCircle}>
+                          {SIDEBAR_SERVICES_CONSTANTS?.find(
+                            (menu) =>
+                              menu?.id ===
+                              Number(
+                                item?.plan?.provider_id ||
+                                  item?.plan_info?.provider_id ||
+                                  item?.provider_id,
+                              ),
+                          )?.image || "-"}
+                        </span>
                       </div>
-                      {/* {item?.domain_name &&
-                      router?.query?.variant !== "new-plan" && (
-                        <p className={`${styles.productLink} m-0`}>
-                          {(domainList.length > 0
-                            ? domainList
-                            : toDomainArray(item?.domain_name)
-                          ).join(", ") || "-"}
-                        </p>
-                      )} */}
-                      {item?.domain_name &&
-                        toDomainArray(item?.domain_name)?.map(
-                          (domain, index) => (
-                            <p
-                              key={`${domain}-${index}`}
-                              className={`${styles.productLink} m-0`}
-                            >
-                              {domain || "-"}
-                            </p>
-                          ),
-                        )}
-                      <div className={styles.productDate}>
-                        {item?.subscription_start_date} –{" "}
-                        {item?.subscription_end_date}
+                      <div className={styles.productInfo}>
+                        <div className={styles.productName}>
+                          {item?.plan_name || "-"}
+                        </div>
+                        <div className={styles.productDate}>
+                          {item?.subscription_start_date} –{" "}
+                          {item?.subscription_end_date}
+                        </div>
                       </div>
-                    </div>
-
-                    <div className={styles.priceCol}>
-                      <div className={styles.colLabel}>Price</div>
-                      <div className={styles.priceVal}>
-                        ₹ {unitPrice.toFixed(2)}
+                      <div className={styles.priceCol}>
+                        <div className={styles.colLabel}>Price</div>
+                        <div className={styles.priceVal}>
+                          ₹ {unitPrice.toFixed(2)}
+                        </div>
+                        <div className={styles.priceSub}>per user/year</div>
                       </div>
-                      <div className={styles.priceSub}>per user/year</div>
-                    </div>
-
-                    <div className={styles.licenseCol}>
-                      <div className={styles.colLabel}>License</div>
-                      <div className={styles.qtyCtrl}>
-                        <button
-                          disabled={
-                            (listMode
-                              ? lineLicenses <= 1
-                              : lisceneCounter === 1) ||
-                            router?.query?.variant === "upgrade" ||
-                            router?.query?.variant === "downgrade"
-                            // router?.query?.type === "renew-plan"
-                          }
-                          onClick={() => {
-                            if (listMode) {
-                              if (lineLicenses > 1) {
-                                onLineLicensesChange?.(
-                                  lineKey,
-                                  lineLicenses - 1,
-                                );
-                              }
-                            } else if (lisceneCounter > 1) {
-                              setLisceneCounter((prev) => prev - 1);
-                            }
-                          }}
-                          className={styles.qtyBtn}
+                      <div className={styles.licenseCol}>
+                        <div className={styles.colLabel}>License</div>
+                        <div
+                          className={`${styles.qtyCtrl} ${styles.planDetailQtyCtrl}`}
                         >
-                          −
-                        </button>
-                        <input
-                          type="text"
-                          value={listMode ? lineLicenses || 1 : lisceneCounter}
-                          onChange={(e) => {
-                            const value = Number(e.target.value);
-                            if (
-                              customerLimit == null ||
-                              value <= customerLimit
-                            ) {
-                              if (listMode) {
-                                onLineLicensesChange?.(
-                                  lineKey,
-                                  Number.isFinite(value) ? value : 1,
-                                );
-                              } else {
-                                setLisceneCounter(value);
+                          <button
+                            disabled={lineLicenses <= 1}
+                            onClick={() => {
+                              const next = lineLicenses - 1;
+                              onLineLicensesChange?.(lineKey, next);
+                              setLisceneCounter(next);
+                            }}
+                            className={styles.qtyBtn}
+                          >
+                            −
+                          </button>
+                          <input
+                            type="text"
+                            value={lineLicenses}
+                            onChange={(e) => {
+                              const value = Number(e.target.value);
+                              if (
+                                customerLimit == null ||
+                                value <= customerLimit
+                              ) {
+                                const next = Number.isFinite(value) ? value : 1;
+                                onLineLicensesChange?.(lineKey, next);
+                                setLisceneCounter(next);
                               }
-                            }
-                          }}
-                          className={styles.qtyInput}
-                          min={1}
-                          max={customerLimit}
-                          disabled={
-                            router?.query?.variant === "upgrade" ||
-                            router?.query?.variant === "downgrade"
-                            // router?.query?.type === "renew-plan"
-                          }
-                        />
-                        <button
-                          onClick={() => {
-                            if (listMode) {
+                            }}
+                            className={styles.qtyInput}
+                            min={1}
+                            max={customerLimit}
+                          />
+                          <button
+                            onClick={() => {
                               if (customerLimit != null) {
                                 if (lineLicenses < customerLimit) {
-                                  onLineLicensesChange?.(
-                                    lineKey,
-                                    lineLicenses + 1,
-                                  );
+                                  const next = lineLicenses + 1;
+                                  onLineLicensesChange?.(lineKey, next);
+                                  setLisceneCounter(next);
                                 }
                               } else {
-                                onLineLicensesChange?.(
-                                  lineKey,
-                                  lineLicenses + 1,
-                                );
+                                const next = lineLicenses + 1;
+                                onLineLicensesChange?.(lineKey, next);
+                                setLisceneCounter(next);
                               }
-                            } else if (customerLimit != null) {
-                              if (lisceneCounter < customerLimit) {
-                                setLisceneCounter((prev) => prev + 1);
-                              }
-                            } else {
-                              setLisceneCounter((prev) => prev + 1);
+                            }}
+                            className={styles.qtyBtn}
+                            disabled={
+                              customerLimit != null &&
+                              lineLicenses === customerLimit
                             }
-                          }}
-                          className={styles.qtyBtn}
-                          disabled={
-                            (listMode
-                              ? lineLicenses === customerLimit
-                              : lisceneCounter === customerLimit) ||
-                            router?.query?.variant === "upgrade" ||
-                            router?.query?.variant === "downgrade"
-                            // router?.query?.type === "renew-plan"
-                          }
-                        >
-                          +
-                        </button>
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                      <div className={styles.totalCol}>
+                        <div className={styles.colLabel}>Total</div>
+                        <div className={styles.priceVal}>
+                          ₹ {lineTotal.toFixed(2)}
+                        </div>
                       </div>
                     </div>
-
-                    <div className={styles.totalCol}>
-                      <div className={styles.colLabel}>Total</div>
-                      <div className={styles.priceVal}>
-                        ₹ {lineTotal.toFixed(2)}
-                      </div>
-                    </div>
-
-                    {router?.query?.type !== "renew-plan" &&
-                      router?.query?.type !== "upgrade" && (
-                        <button
-                          className={styles.removeBtn}
-                          onClick={() => {
-                            setIsPopupOpen("delete-cart");
-                            setCartToDelete({
-                              cart_id: item?.cart_id,
-                              main_cart_id: item?.main_cart_id,
-                            });
-                          }}
-                        >
-                          ×
-                        </button>
-                      )}
                   </div>
+                );
+              })}
+            </div>
+          )}
+
+          {router?.query?.type !== "upgrade" &&
+            router?.query?.type !== "downgrade" &&
+            cartItemList?.length > 0 && (
+              <div className={styles.planDetailSection}>
+                <div className={styles.planDetailHeader}>
+                  <h3 className={styles.planDetailTitle}>Plan Detail</h3>
+                  {(cartItemList[0]?.subscription_start_date ||
+                    cartItemList[0]?.subscription_end_date) && (
+                    <span className={styles.billingCycleBadge}>
+                      <Calendar size={14} />
+                      Billing Cycle: {
+                        cartItemList[0]?.subscription_start_date
+                      }{" "}
+                      - {cartItemList[0]?.subscription_end_date}
+                    </span>
+                  )}
                 </div>
-              </>
-            );
-          })}
+
+                <div className={styles.planDetailList}>
+                  {cartItemList.map((item, idx) => {
+                    const customerLimit =
+                      item?.customerLimit ?? item?.customer_limit ?? undefined;
+                    const lineKey = item?.cart_id ?? item?.id ?? idx;
+                    const unitPrice = listMode
+                      ? Number(item?.price_per_unit ?? item?.unit_price ?? 0) ||
+                        0
+                      : Number(pricePerUser) || 0;
+                    const lineLicenses = listMode
+                      ? Math.max(1, Number(item?.licenses) || 1)
+                      : Number(lisceneCounter) || 0;
+                    const lineTotal = unitPrice * lineLicenses;
+
+                    return (
+                      <div className={styles.planDetailItem} key={lineKey}>
+                        <div className={styles.cartRow}>
+                          <div>
+                            <span className={styles.iconCircle}>
+                              {SIDEBAR_SERVICES_CONSTANTS?.find(
+                                (menu) =>
+                                  menu?.id ===
+                                  Number(
+                                    item?.plan?.provider_id ||
+                                      item?.plan_info?.provider_id ||
+                                      item?.provider_id,
+                                  ),
+                              )?.image || "-"}
+                            </span>
+                          </div>
+                          <div className={styles.productInfo}>
+                            <div className={styles.productName}>
+                              {item?.plan_name || "-"}
+                            </div>
+                            {item?.domain_name &&
+                              toDomainArray(item?.domain_name)?.map(
+                                (domain, index) => (
+                                  <p
+                                    key={`${domain}-${index}`}
+                                    className={`${styles.productLink} m-0`}
+                                  >
+                                    {domain || "-"}
+                                  </p>
+                                ),
+                              )}
+                            <div className={styles.productDate}>
+                              {item?.subscription_start_date} –{" "}
+                              {item?.subscription_end_date}
+                            </div>
+                          </div>
+
+                          <div className={styles.priceCol}>
+                            <div className={styles.colLabel}>Price</div>
+                            <div className={styles.priceVal}>
+                              ₹ {unitPrice.toFixed(2)}
+                            </div>
+                            <div className={styles.priceSub}>per user/year</div>
+                          </div>
+
+                          <div className={styles.licenseCol}>
+                            <div className={styles.colLabel}>License</div>
+                            <div
+                              className={`${styles.qtyCtrl} ${styles.planDetailQtyCtrl}`}
+                            >
+                              <button
+                                disabled={
+                                  (listMode
+                                    ? lineLicenses <= 1
+                                    : lisceneCounter === 1) ||
+                                  router?.query?.variant === "upgrade" ||
+                                  router?.query?.variant === "downgrade"
+                                }
+                                onClick={() => {
+                                  if (listMode) {
+                                    if (lineLicenses > 1) {
+                                      onLineLicensesChange?.(
+                                        lineKey,
+                                        lineLicenses - 1,
+                                      );
+                                    }
+                                  } else if (lisceneCounter > 1) {
+                                    setLisceneCounter((prev) => prev - 1);
+                                  }
+                                }}
+                                className={styles.qtyBtn}
+                              >
+                                −
+                              </button>
+                              <input
+                                type="text"
+                                value={
+                                  listMode ? lineLicenses || 1 : lisceneCounter
+                                }
+                                onChange={(e) => {
+                                  const value = Number(e.target.value);
+                                  if (
+                                    customerLimit == null ||
+                                    value <= customerLimit
+                                  ) {
+                                    if (listMode) {
+                                      onLineLicensesChange?.(
+                                        lineKey,
+                                        Number.isFinite(value) ? value : 1,
+                                      );
+                                    } else {
+                                      setLisceneCounter(value);
+                                    }
+                                  }
+                                }}
+                                className={styles.qtyInput}
+                                min={1}
+                                max={customerLimit}
+                                disabled={
+                                  router?.query?.variant === "upgrade" ||
+                                  router?.query?.variant === "downgrade"
+                                }
+                              />
+                              <button
+                                onClick={() => {
+                                  if (listMode) {
+                                    if (customerLimit != null) {
+                                      if (lineLicenses < customerLimit) {
+                                        onLineLicensesChange?.(
+                                          lineKey,
+                                          lineLicenses + 1,
+                                        );
+                                      }
+                                    } else {
+                                      onLineLicensesChange?.(
+                                        lineKey,
+                                        lineLicenses + 1,
+                                      );
+                                    }
+                                  } else if (customerLimit != null) {
+                                    if (lisceneCounter < customerLimit) {
+                                      setLisceneCounter((prev) => prev + 1);
+                                    }
+                                  } else {
+                                    setLisceneCounter((prev) => prev + 1);
+                                  }
+                                }}
+                                className={styles.qtyBtn}
+                                disabled={
+                                  (listMode
+                                    ? lineLicenses === customerLimit
+                                    : lisceneCounter === customerLimit) ||
+                                  router?.query?.variant === "upgrade" ||
+                                  router?.query?.variant === "downgrade"
+                                }
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className={styles.totalCol}>
+                            <div className={styles.colLabel}>Plan Total</div>
+                            <div className={styles.planTotalBox}>
+                              ₹ {lineTotal.toFixed(2)}
+                            </div>
+                          </div>
+
+                          {router?.query?.type !== "renew-plan" && (
+                            <button
+                              className={styles.removeBtn}
+                              onClick={() => {
+                                setIsPopupOpen("delete-cart");
+                                setCartToDelete({
+                                  cart_id: item?.cart_id,
+                                  main_cart_id: item?.main_cart_id,
+                                });
+                              }}
+                            >
+                              ×
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {!hideInlineSubtotal && (
+                  <>
+                    <hr className={styles.planDetailDivider} />
+                    <div className={styles.planDetailSubtotal}>
+                      <span className={styles.planDetailSubtotalLabel}>
+                        Subtotal ({cartItemList.length})
+                      </span>
+                      <span className={styles.planDetailSubtotalVal}>
+                        ₹ {(Number(total) || 0).toFixed(2)}
+                      </span>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           {!router?.query?.type &&
             cartDetails?.[0]?.plan?.provider_id !== 3 && (
               <>
@@ -578,7 +740,7 @@ const RenewCart = ({
               </>
             )}
 
-          {!hideInlineSubtotal && (
+          {!hideInlineSubtotal && router?.query?.type === "upgrade" && (
             <>
               <hr className={styles.divider} />
 

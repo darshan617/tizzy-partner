@@ -33,9 +33,21 @@ const addToCartApi = apiSlice.injectEndpoints({
       invalidatesTags: ["addToCart"],
     }),
     renewCustomerDetails: builder.mutation({
+      ///old api
       query: ({ body }) => {
         return {
           url: "/renewalsCustomerdetails",
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
+    renewCartDetails: builder.mutation({
+      ///new api
+      query: ({ body }) => {
+        return {
+          url: "/renew-cart",
           method: "POST",
           body: body,
         };
@@ -79,6 +91,16 @@ const addToCartApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["addToCart"],
     }),
+    generateUpgradeOrder: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/generate-upgrade-order`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
     checkIsDomainAvailable: builder.query({
       query: ({ domain_name }) => {
         return {
@@ -111,7 +133,17 @@ const addToCartApi = apiSlice.injectEndpoints({
     aadharNumber: builder.mutation({
       query: ({ body }) => {
         return {
-          url: `/orders-aadhaar-init`,
+          url: `/order-aadhaar-init`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
+    orderAadharVerify: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/order-aadhaar-verify`,
           method: "POST",
           body: body,
         };
@@ -148,6 +180,16 @@ const addToCartApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["addToCart"],
     }),
+    downgradeCart: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/downgrade-cart`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -168,4 +210,8 @@ export const {
   useVerifyAadharNumberOtpMutation,
   useCreditRequestMutation,
   useResendOrderOtpMutation,
+  useOrderAadharVerifyMutation,
+  useGenerateUpgradeOrderMutation,
+  useRenewCartDetailsMutation,
+  useDowngradeCartMutation,
 } = addToCartApi;
