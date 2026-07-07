@@ -67,6 +67,7 @@ const buildAutoUpdateCartBody = ({
   tempDomains,
   customerId,
   coupen,
+  order_id,
 }) => {
   const domain_name = resolveCartDomains(
     item,
@@ -81,6 +82,7 @@ const buildAutoUpdateCartBody = ({
     customer_id: customerId ?? item?.customer_id,
     transfer_domain: item?.transfer_domain ?? "no",
     coupen: coupen,
+    order_id: order_id || "",
   };
 
   if (domain_name.length > 0) {
@@ -137,8 +139,8 @@ const CommonOrderSummary = () => {
     const firstItem = Array.isArray(cartDetails)
       ? cartDetails[0]
       : cartDetails &&
-        typeof cartDetails === "object" &&
-        Object.keys(cartDetails).length > 0
+          typeof cartDetails === "object" &&
+          Object.keys(cartDetails).length > 0
         ? cartDetails
         : null;
     const fromCart = normalizeCompanyName(firstItem?.company_name);
@@ -168,10 +170,10 @@ const CommonOrderSummary = () => {
   const isListCart = Array.isArray(cartDetails);
   const total = isListCart
     ? cartDetails.reduce((sum, item) => {
-      const u = getCartLineUnitPrice(item);
-      const l = Math.max(1, Number(item?.licenses) || 1);
-      return sum + u * l;
-    }, 0)
+        const u = getCartLineUnitPrice(item);
+        const l = Math.max(1, Number(item?.licenses) || 1);
+        return sum + u * l;
+      }, 0)
     : (Number(pricePerUser) || 0) * (Number(lisceneCounter) || 0);
 
   const [addToCart, { isLoading: isGettingCartDetails }] =
@@ -336,10 +338,10 @@ const CommonOrderSummary = () => {
       const newDomains = overrideDomains.length
         ? overrideDomains
         : buildDomainsFromInput(
-          domainNames,
-          currentItem?.plan?.provider_id,
-          DOMAIN_SUFFIX,
-        );
+            domainNames,
+            currentItem?.plan?.provider_id,
+            DOMAIN_SUFFIX,
+          );
 
       if (!overrideDomains.length && !hasDomainPrefixInput(domainNames)) return;
 
@@ -441,7 +443,8 @@ const CommonOrderSummary = () => {
           subscription_start_date: item?.subscription_start_date,
           subscription_end_date: item?.subscription_end_date,
           customerLimit: item?.customer_limit,
-          unit_price: Number(item?.price_per_license_per_year) || item?.unit_price || 0,
+          unit_price:
+            Number(item?.price_per_license_per_year) || item?.unit_price || 0,
           company_name: company_info?.company_name,
           customer_id: company_info?.customer_id,
           renewal_summary,
@@ -472,7 +475,7 @@ const CommonOrderSummary = () => {
           0;
         setPricePerUser(Number(firstPrice) || 0);
         setLisceneCounter(allData?.[0]?.licenses || 1);
-
+        setPromoCode(allData?.[0]?.coupen || "");
         dispatch(setCartData(apiData));
       }
     } catch (error) {
@@ -559,6 +562,7 @@ const CommonOrderSummary = () => {
           customer_id: customerId,
           order_id: router?.query?.order_id,
           order_sub_id: router?.query?.order_sub_id,
+          is_upgrade: router?.query?.type === "upgrade" ? true : false,
         },
       });
       const walletBalance = res?.data?.wallet_balance;
@@ -647,12 +651,12 @@ const CommonOrderSummary = () => {
 
   const cartLicenseKey = Array.isArray(cartDetails)
     ? cartDetails
-      .map((item) => `${item?.cart_id ?? ""}:${item?.licenses ?? ""}`)
-      .join("|")
+        .map((item) => `${item?.cart_id ?? ""}:${item?.licenses ?? ""}`)
+        .join("|")
     : "";
 
   useEffect(() => {
-    if (router?.query?.type === "upgrade") return undefined;
+    // if (router?.query?.type === "upgrade") return undefined;
     if (!Array.isArray(cartDetails) || cartDetails.length === 0)
       return undefined;
 
@@ -671,6 +675,7 @@ const CommonOrderSummary = () => {
           tempDomains: tempDomainNamesRef.current,
           customerId: customerData?.customer_id,
           coupen: promoCode,
+          order_id: router?.query?.order_id || "",
         });
 
         updateCart({ body });
@@ -717,6 +722,7 @@ const CommonOrderSummary = () => {
     if (!userData?.id || !router?.isReady) return;
     if (router?.query?.type === "renew-plan") return;
     if (router?.query?.type === "upgrade") return;
+    if (router?.query?.type === "downgrade") return;
     handleGetCartDetails();
   }, [userData?.id, router?.isReady, router?.query?.type]);
 
@@ -740,12 +746,15 @@ const CommonOrderSummary = () => {
   useEffect(() => {
     if (!router?.isReady) return;
     const customerId = router?.query?.customer_id || customerData?.customer_id;
-    if (router?.query?.type === "upgrade" && customerId) {
+    if (
+      router?.query?.type === "upgrade" ||
+      (router?.query?.type === "downgrade" && customerId)
+    ) {
       handleGetUpgradeCartDetails();
     }
   }, [
     router?.isReady,
-    router?.query?.type,
+    router?.query?.type === "upgrade" || router?.query?.type === "downgrade",
     router?.query?.customer_id,
     router?.query?.order_id,
     router?.query?.order_sub_id,
@@ -768,10 +777,10 @@ const CommonOrderSummary = () => {
       {isDataLoading ? (
         <Loader />
       ) : (
-        Array.isArray(cartDetails)
-          ? cartDetails.length
-          : Object.keys(cartDetails || {}).length
-      ) ? (
+          Array.isArray(cartDetails)
+            ? cartDetails.length
+            : Object.keys(cartDetails || {}).length
+        ) ? (
         <div className={layoutStyles.split}>
           <div className={layoutStyles.leftScroll}>
             <RenewCart
@@ -814,8 +823,8 @@ const CommonOrderSummary = () => {
                     cartDetails[0]?.pricing?.wallet_balance ??
                     cartDetails[0]?.wallet_balance)
                   : cartDetails?.wallet_info?.wallet_balance ||
-                  cartDetails?.pricing?.wallet_balance ||
-                  cartDetails?.wallet_balance) ?? 0,
+                    cartDetails?.pricing?.wallet_balance ||
+                    cartDetails?.wallet_balance) ?? 0,
               )}
               cartDetails={cartDetails}
               handleUpdateCart={handleUpdateCart}
