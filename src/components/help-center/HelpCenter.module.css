@@ -126,12 +126,12 @@
     align-items: end;
     height: 100%;
 }
-.toggleContentRightItem{
+/* .toggleContentRightItem{
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
-}
+} */
 
 .toggleContentRightItem img,
 .toggleContentLeftItem img{

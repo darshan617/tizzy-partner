@@ -181,7 +181,7 @@ const HelpCenter = () => {
 
       <div className={styles.toggleContent}>
         <div className="row">
-          <div className="col-lg-3">
+          <div className="col-lg-3 ">
             <div className={styles.toggleContentLeftItem}>
               <Image
                 src={leftImage}
