@@ -1,28 +1,39 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Cookies from "js-cookie";
 import { FaPen } from "react-icons/fa";
 import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import styles from "@/components/account-info/AccountInfo.module.css";
+import { useGetAccountDetailQuery } from "@/redux/apis/accountDetailApi";
 
 const INITIAL_PROFILE = {
-  fullName: "Saif Shaikh",
-  companyName: "Goyal Infotech Pvt. Ltd.",
-  companyAddress:
-    "Office No. 410, 9 Business Bay, Mindspace, Malad West, Mumbai - 400064. Maharashtra, India.",
-  mobile: "+91 98123 46780",
-  email: "saif@goyalinfotech.com",
-  gstin: "AA00001234W548",
+  fullName: "",
+  companyName: "",
+  companyAddress: "",
+  mobile: "",
+  email: "",
+  gstin: "",
 };
 
 const AccountInfo = () => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [profile, setProfile] = useState(INITIAL_PROFILE);
   const [formData, setFormData] = useState(INITIAL_PROFILE);
+  const userData = Cookies?.get("userData")
+    ? JSON.parse(decodeURIComponent(Cookies?.get("userData")))
+    : {};
 
   const handleOpenEdit = () => {
-    setFormData(profile);
+    setFormData({
+      fullName: accountData?.name || "",
+      companyName: accountData?.company_name || "",
+      companyAddress: accountData?.company_address || "",
+      mobile: accountData?.mobile || "",
+      email: accountData?.email || "",
+      gstin: accountData?.gstin || "",
+    });
     setIsEditOpen(true);
   };
 
@@ -35,6 +46,30 @@ const AccountInfo = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const { data: accountDetail } = useGetAccountDetailQuery(
+    {
+      body: {
+        partner_id: userData?.id,
+      },
+    },
+    {
+      skip: !userData?.id,
+    },
+  );
+
+  console.log(accountDetail);
+  const accountData = accountDetail?.data || {};
+  const displayProfile = {
+    fullName: accountData?.name || "",
+    companyName: accountData?.company_name || "",
+    companyAddress: accountData?.company_address || "",
+    mobile: accountData?.mobile || "",
+    email: accountData?.email || profile.email,
+    gstin: accountData?.gstin || "",
+    partnerCode: accountData?.partner_code || "",
+    role: accountData?.role || "",
+    isVerified: accountData?.is_verified ?? "",
+  };
 
   return (
     <div className="container">
@@ -86,20 +121,22 @@ const AccountInfo = () => {
                   className={styles.createBtnBg2}
                 />
                 <div className={`${styles.profAvatarLg} text-capitalize`}>
-                  {profile.fullName.charAt(0)}
+                  {accountDetail?.data?.name?.charAt(0) || "U"}
                 </div>
                 <h2 className={`${styles.profName} text-capitalize`}>
-                  {profile.fullName}
+                  {accountDetail?.data?.name}
                 </h2>
                 <p className={`${styles.profCompany} text-capitalize`}>
-                  {profile.companyName}
+                  {accountDetail?.data?.company_name}
                 </p>
                 <div className={styles.profFooter}>
-                  <span className={styles.profId}>Partner ID : P123456</span>
+                  <span className={styles.profId}>
+                    Partner ID : {accountDetail?.data?.partner_id}
+                  </span>
                   <span
                     className={`statusBadge primaryBg ${styles.adminBadge}`}
                   >
-                    Admin
+                    {accountDetail?.data?.role}
                   </span>
                 </div>
               </div>
@@ -120,13 +157,15 @@ const AccountInfo = () => {
                       className={`${styles.infoValue} d-flex align-items-center flex-wrap gap-2`}
                     >
                       <span className="text-capitalize">
-                        {profile.companyName}
+                        {displayProfile.companyName}
                       </span>
-                      <span
-                        className={`statusBadge subtleSuccess ${styles.verifiedBadge}`}
-                      >
-                        Verified
-                      </span>
+                      {displayProfile.isVerified && (
+                        <span
+                          className={`statusBadge subtleSuccess ${styles.verifiedBadge}`}
+                        >
+                          Verified
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -134,7 +173,7 @@ const AccountInfo = () => {
                   <div className={styles.infoItem}>
                     <small className={styles.infoLabel}>Company Address</small>
                     <div className={styles.infoValue}>
-                      {profile.companyAddress}
+                      {displayProfile.companyAddress}
                     </div>
                   </div>
                 </div>
@@ -153,23 +192,23 @@ const AccountInfo = () => {
                   <div className={styles.infoItem}>
                     <small className={styles.infoLabel}>Full Name</small>
                     <div className={`${styles.infoValue} text-capitalize`}>
-                      {profile.fullName}
+                      {displayProfile.fullName}
                     </div>
                   </div>
                   <div className={`${styles.infoItem} mb-0`}>
                     <small className={styles.infoLabel}>Mobile No.</small>
-                    <div className={styles.infoValue}>{profile.mobile}</div>
+                    <div className={styles.infoValue}>{displayProfile.mobile}</div>
                   </div>
                 </div>
                 <div className="col-md-6">
                   <div className={styles.infoItem}>
                     <small className={styles.infoLabel}>Email</small>
-                    <div className={styles.infoValue}>{profile.email}</div>
+                    <div className={styles.infoValue}>{displayProfile.email}</div>
                   </div>
                   <div className={`${styles.infoItem} mb-0`}>
                     <small className={styles.infoLabel}>GSTIN</small>
                     <div className={`${styles.infoValue} text-uppercase`}>
-                      {profile.gstin}
+                      {displayProfile.gstin}
                     </div>
                   </div>
                 </div>
@@ -211,12 +250,12 @@ const AccountInfo = () => {
                 <input
                   id="companyName"
                   type="text"
-                  disabled
                   name="companyName"
                   className="form-control"
                   value={formData.companyName}
                   onChange={handleChange}
                   required
+                  disabled
                 />
               </div>
 
@@ -228,11 +267,11 @@ const AccountInfo = () => {
                 <textarea
                   id="companyAddress"
                   name="companyAddress"
-                  disabled
                   className={`form-control ${styles.textarea}`}
                   value={formData.companyAddress}
                   onChange={handleChange}
                   required
+                  disabled
                 />
               </div>
 
@@ -276,12 +315,12 @@ const AccountInfo = () => {
                 <input
                   id="gstin"
                   type="text"
-                  disabled
                   name="gstin"
                   className="form-control text-uppercase"
                   value={formData.gstin}
                   onChange={handleChange}
                   required
+                  disabled
                 />
               </div>
             </div>

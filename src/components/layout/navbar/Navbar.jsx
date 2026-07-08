@@ -8,12 +8,15 @@ import Image from "next/image";
 import Cookies from "js-cookie";
 import { RxHamburgerMenu } from "react-icons/rx";
 import Link from "next/link";
-import { RiBankLine, RiUserAddLine } from "react-icons/ri";
+import { RiBankLine } from "react-icons/ri";
 import styles from "@/components/layout/navbar/Navbar.module.css";
-import { LuCalendarCog, LuPencilRuler, LuUserRoundPen } from "react-icons/lu";
+import { LuCalendarCog } from "react-icons/lu";
+import { RiUserSettingsLine } from "react-icons/ri";
+
 import { useRouter } from "next/router";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import { IoHelpBuoyOutline } from "react-icons/io5";
+import { LuWallet } from "react-icons/lu";
 
 const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const router = useRouter();
@@ -180,7 +183,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                       </div>
                       <ul className="my-3">
                         <li>
-                          <Link href="/account-information">
+                          <Link href="/my-account">
                             <FaRegCircleUser
                               className={`${styles.icon} me-2`}
                               size={20}
@@ -189,6 +192,15 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                           </Link>
                         </li>
                         <li>
+                          <Link href="/billing-credit">
+                            <LuWallet
+                              className={`${styles.icon} me-2`}
+                              size={20}
+                            />
+                            Billing & Credits
+                          </Link>
+                        </li>
+                        {/* <li>
                           <Link href="#">
                             <BiKey
                               className={`${styles.icon} me-2`}
@@ -196,14 +208,23 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                             />
                             Change Password
                           </Link>
-                        </li>
+                        </li> */}
                         <li>
-                          <Link href="#">
+                          <Link href="/bank-detail">
                             <RiBankLine
                               className={`${styles.icon} me-2`}
                               size={20}
                             />
                             Bank Details
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/user-management">
+                            <RiUserSettingsLine
+                              className={`${styles.icon} me-2`}
+                              size={20}
+                            />
+                            User Management
                           </Link>
                         </li>
                         <li>
@@ -216,7 +237,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                           </Link>
                         </li>
                         <li>
-                          <Link href="#">
+                          <Link href="/help-center">
                             <IoHelpBuoyOutline
                               className={`${styles.icon} me-2`}
                               size={20}
