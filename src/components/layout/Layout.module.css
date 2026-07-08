@@ -5,6 +5,10 @@
   margin-left: 280px;
 }
 
+.accountContentArea {
+  margin-left: 320px;
+}
+
 .contentWrapper {
   position: relative;
   z-index: 1;
@@ -25,7 +29,8 @@
 }
 
 @media (max-width: 991px) {
-  .contentArea {
+  .contentArea,
+  .accountContentArea {
     margin-left: 0;
   }
 }

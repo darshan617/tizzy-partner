@@ -3,11 +3,12 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import styles from "@/components/layout/sidebar/Sidebar.module.css";
 import {
+  ACCOUNT_MENU_CONSTANTS,
+  ACCOUNT_PATHS,
   SIDEBAR_MENU_CONSTANTS,
   SIDEBAR_SERVICES_CONSTANTS,
 } from "./SidebarConstant";
 import { useRouter } from "next/router";
-import { MdOutlineContactSupport } from "react-icons/md";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const [mounted, setMounted] = useState(false);
@@ -19,6 +20,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const usedAmount = Math.max(creditLimit - walletBalance, 0);
 
   const usedPercentage = creditLimit > 0 ? (usedAmount / creditLimit) * 100 : 0;
+  const isAccountPage = ACCOUNT_PATHS.includes(router?.pathname);
 
   const formatBalance = (value) =>
     Number(value || 0).toLocaleString("en-IN", {
@@ -30,6 +32,108 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     Number(value || 0).toLocaleString("en-IN", {
       maximumFractionDigits: 0,
     });
+
+  const creditsCard = (
+    <div className={styles.creditBox}>
+      <div
+        className={`${styles.titleBar} d-flex align-items-center justify-content-between`}
+      >
+        <span>CREDITS</span>
+        <Link href="/invoice">PAY NOW</Link>
+      </div>
+
+      <div className={styles.creditBody}>
+        <div className={styles.credBaln}>
+          Balance
+          <span className={styles.credBalnvalue}>
+            ₹ {formatBalance(walletBalance)}
+          </span>
+        </div>
+
+        <div className={styles.credScale}>
+          <div
+            className={styles.credscaleBar}
+            style={{
+              width: `${Math.min(usedPercentage, 100)}%`,
+            }}
+          />
+        </div>
+
+        <div className={styles.credLimits}>
+          Used ₹{formatAmount(usedAmount)} of ₹{formatAmount(creditLimit)}
+        </div>
+      </div>
+    </div>
+  );
+
+  const iconRail = (
+    <div className={styles.iconRail}>
+      <div>
+        <div className={`${styles.sideMenuHead} mb-2`}>MENU</div>
+        <ul className={`${styles.iconRailList} d-flex flex-column gap-1`}>
+          {SIDEBAR_MENU_CONSTANTS?.map((menu, idx) => {
+            const ICON = menu?.icon || "";
+            const isActive = router?.pathname === menu?.href;
+            return (
+              <li key={idx}>
+                <Link
+                  href={menu?.href}
+                  className={`${styles.iconRailItem} ${isActive ? styles.iconRailItemActive : ""}`}
+                  title={menu?.title}
+                >
+                  <ICON size={18} />
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      <div>
+        <div className={`${styles.sideMenuHead} mb-2`}>SERVICES</div>
+        <ul className={`${styles.iconRailList} d-flex flex-column gap-1`}>
+          {SIDEBAR_SERVICES_CONSTANTS?.map((menu, idx) => {
+            const isActive =
+              `/services/${router?.query?.slug}` === menu?.href;
+            return (
+              <li key={idx}>
+                <Link
+                  href={menu?.href}
+                  className={`${styles.iconRailItem} ${isActive ? styles.iconRailItemActive : ""}`}
+                  title={menu?.title}
+                >
+                  <span className={styles.iconRailService}>{menu?.image}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  );
+
+  const accountPanel = (
+    <div className={styles.accountPanel}>
+      <ul className={styles.accountMenuList}>
+        {ACCOUNT_MENU_CONSTANTS.map((item) => {
+          const ICON = item.icon;
+          const isActive = router?.pathname === item.href;
+          return (
+            <li key={item.id}>
+              <Link
+                href={item.href}
+                className={`${styles.accountMenuItem} ${isActive ? styles.accountMenuItemActive : ""}`}
+              >
+                <ICON size={22} className={styles.accountMenuIcon} />
+                <span>{item.title}</span>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+      {creditsCard}
+    </div>
+  );
 
   // Handle click outside to close sidebar
   useEffect(() => {
@@ -71,7 +175,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
 
       <div
         ref={sidebarRef}
-        className={`${styles.sideBar} ${isSidebarOpen ? styles.open : ""}`}
+        className={`${styles.sideBar} ${isAccountPage ? styles.accountMode : ""} ${isSidebarOpen ? styles.open : ""}`}
       >
         <div
           className={`d-lg-none d-flex justify-content-end p-2 ${styles.closeButtonWrapper}`}
@@ -83,130 +187,105 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
             aria-label="Close"
           ></button>
         </div>
-        <div className="d-flex flex-column gap-4 p-3">
-          <div>
-            <div className={`${styles.sideMenuHead} mb-2`}>MENU</div>
 
-            <ul className={`${styles.sideMenuList} d-flex flex-column gap-1`}>
-              {SIDEBAR_MENU_CONSTANTS?.map((menu, idx) => {
-                const ICON = menu?.icon || "";
-                const isActive = router?.pathname === menu?.href;
-                return (
-                  <Link
-                    href={menu?.href}
-                    className={`${styles.sideMenuItem} ${isActive ? styles.active : ""}`}
-                    key={idx}
-                    style={{
-                      background: isActive
-                        ? "var(--primaryColor)"
-                        : "transparent",
-                    }}
-                  >
-                    <button
-                      className={`${styles.menuLink} d-flex align-items-center gap-3`}
-                    >
-                      <span className={`${styles.iconWrapper}`}>
-                        <ICON size={20} />
-                      </span>
-                      <span
-                        className={`${styles.menuLabel}`}
+        {isAccountPage ? (
+          <div className={styles.accountSidebarInner}>
+            {iconRail}
+            {accountPanel}
+          </div>
+        ) : (
+          <>
+            <div className="d-flex flex-column gap-4 p-3">
+              <div>
+                <div className={`${styles.sideMenuHead} mb-2`}>MENU</div>
+
+                <ul className={`${styles.sideMenuList} d-flex flex-column gap-1`}>
+                  {SIDEBAR_MENU_CONSTANTS?.map((menu, idx) => {
+                    const ICON = menu?.icon || "";
+                    const isActive = router?.pathname === menu?.href;
+                    return (
+                      <Link
+                        href={menu?.href}
+                        className={`${styles.sideMenuItem} ${isActive ? styles.active : ""}`}
+                        key={idx}
                         style={{
-                          color: isActive
-                            ? "var(--whiteColor)"
-                            : "var(--textBody)",
+                          background: isActive
+                            ? "var(--primaryColor)"
+                            : "transparent",
                         }}
                       >
-                        {menu?.title}
-                      </span>
-                    </button>
-                  </Link>
-                );
-              })}
-            </ul>
-          </div>
+                        <button
+                          className={`${styles.menuLink} d-flex align-items-center gap-3`}
+                        >
+                          <span className={`${styles.iconWrapper}`}>
+                            <ICON size={20} />
+                          </span>
+                          <span
+                            className={`${styles.menuLabel}`}
+                            style={{
+                              color: isActive
+                                ? "var(--whiteColor)"
+                                : "var(--textBody)",
+                            }}
+                          >
+                            {menu?.title}
+                          </span>
+                        </button>
+                      </Link>
+                    );
+                  })}
+                </ul>
+              </div>
 
-          {/* SERVICES */}
-          <div>
-            <div className={`${styles.sideMenuHead} mb-2`}>SERVICES</div>
+              <div>
+                <div className={`${styles.sideMenuHead} mb-2`}>SERVICES</div>
 
-            <ul className={`${styles.sideMenuList} d-flex flex-column gap-1`}>
-              {SIDEBAR_SERVICES_CONSTANTS?.map((menu, idx) => {
-                const isActive =
-                  `/services/${router?.query?.slug}` === menu?.href;
-                return (
-                  <Link
-                    href={menu?.href}
-                    className={`${styles.sideMenuItem} ${isActive ? styles.active : ""}`}
-                    key={idx}
-                    style={{
-                      background: isActive
-                        ? "var(--primaryColor)"
-                        : "transparent",
-                    }}
-                  >
-                    <button
-                      className={`${styles.menuLink} d-flex align-items-center gap-3`}
-                    >
-                      <span
-                        className={`${styles.iconCircle} ${isActive ? styles.active : ""}`}
-                      >
-                        {menu?.image}
-                      </span>
-                      <span
-                        className={`${styles.menuLabel}`}
+                <ul className={`${styles.sideMenuList} d-flex flex-column gap-1`}>
+                  {SIDEBAR_SERVICES_CONSTANTS?.map((menu, idx) => {
+                    const isActive =
+                      `/services/${router?.query?.slug}` === menu?.href;
+                    return (
+                      <Link
+                        href={menu?.href}
+                        className={`${styles.sideMenuItem} ${isActive ? styles.active : ""}`}
+                        key={idx}
                         style={{
-                          color: isActive
-                            ? "var(--whiteColor)"
-                            : "var(--textBody)",
+                          background: isActive
+                            ? "var(--primaryColor)"
+                            : "transparent",
                         }}
                       >
-                        {menu?.title}
-                      </span>
-                    </button>
-                  </Link>
-                );
-              })}
-            </ul>
-          </div>
-        </div>
-
-        <div className="d-flex flex-column gap-4 p-3 mt-auto">
-          {/* <Link href="#" className="btn btnWhite">
-            <MdOutlineContactSupport size={18} className="me-2" />
-            <span>SUPPORT</span>
-          </Link> */}
-
-          <div className={styles.creditBox}>
-            <div
-              className={`${styles.titleBar} d-flex align-items-center justify-content-between`}
-            >
-              <span>CREDITS</span>
-              <Link href="/invoice">PAY NOW</Link>
-            </div>
-
-            <div className={styles.creditBody}>
-              <div className={styles.credBaln}>
-                Balance
-                <span className={styles.credBalnvalue}>
-                  ₹ {formatBalance(walletBalance)}
-                </span>
-              </div>
-
-              <div className={styles.credScale}>
-                <div
-                  className={styles.credscaleBar}
-                  style={{
-                    width: `${Math.min(usedPercentage, 100)}%`,
-                  }}
-                />
-              </div>
-
-              <div className={styles.credLimits}>
-                Used ₹{formatAmount(usedAmount)} of ₹{formatAmount(creditLimit)}
+                        <button
+                          className={`${styles.menuLink} d-flex align-items-center gap-3`}
+                        >
+                          <span
+                            className={`${styles.iconCircle} ${isActive ? styles.active : ""}`}
+                          >
+                            {menu?.image}
+                          </span>
+                          <span
+                            className={`${styles.menuLabel}`}
+                            style={{
+                              color: isActive
+                                ? "var(--whiteColor)"
+                                : "var(--textBody)",
+                            }}
+                          >
+                            {menu?.title}
+                          </span>
+                        </button>
+                      </Link>
+                    );
+                  })}
+                </ul>
               </div>
             </div>
-          </div>
-        </div>
+
+            <div className="d-flex flex-column gap-4 p-3 mt-auto">
+              {creditsCard}
+            </div>
+          </>
+        )}
       </div>
     </>,
     document.body,
