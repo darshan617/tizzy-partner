@@ -1,12 +1,31 @@
-.contentWrapper {
+.contentArea {
   flex: 1;
-  padding: 20px;
-  overflow-y: auto;
+  position: relative;
+  min-width: 0;
   margin-left: 280px;
 }
 
+.contentWrapper {
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.helpCenterBackground {
+  background: linear-gradient(180deg, #CFE7FF 0%, #F5F8FC 27.15%);
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
 @media (max-width: 991px) {
-  .contentWrapper {
+  .contentArea {
     margin-left: 0;
   }
 }
