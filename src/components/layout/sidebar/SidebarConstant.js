@@ -10,7 +10,7 @@ import { RiBankLine } from "react-icons/ri";
 import { VscFiles } from "react-icons/vsc";
 
 export const ACCOUNT_PATHS = [
-  "/account-information",
+  "/my-account",
   "/billing-credit",
   "/bank-detail",
   "/user-management",
@@ -21,9 +21,9 @@ export const ACCOUNT_PATHS = [
 export const ACCOUNT_MENU_CONSTANTS = [
   {
     id: 1,
-    title: "Account Information",
+    title: "My Account",
     icon: FaRegCircleUser,
-    href: "/account-information",
+    href: "/my-account",
   },
   {
     id: 2,

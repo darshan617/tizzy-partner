@@ -124,7 +124,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                 href={item.href}
                 className={`${styles.accountMenuItem} ${isActive ? styles.accountMenuItemActive : ""}`}
               >
-                <ICON size={22} className={styles.accountMenuIcon} />
+                <ICON size={20} className={styles.accountMenuIcon} />
                 <span>{item.title}</span>
               </Link>
             </li>
@@ -135,7 +135,6 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     </div>
   );
 
-  // Handle click outside to close sidebar
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
