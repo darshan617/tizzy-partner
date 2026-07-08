@@ -485,10 +485,12 @@
 
 .updwngradeBtn,
 .downgradeBtn {
-  background: none;
+  background: #fff;
+  padding: 5px 14px;
+  border-radius: 99;
   outline: none;
   border: none;
-  border-bottom: 1px solid var(--primaryColor);
+  /* border-bottom: 1px solid var(--primaryColor); */
   color: var(--primaryColor);
   font-weight: 500;
 }
@@ -496,7 +498,7 @@
 .updwngradeBtn:hover,
 .downgradeBtn:hover {
   color: #007bff;
-  border-bottom: 1px solid #007bff;
+  /* border-bottom: 1px solid #007bff; */
 }
 
 @media (min-width: 576px) {
@@ -889,6 +891,11 @@
   filter: brightness(0.92);
 }
 
+.subRenewBtn svg {
+  /* Hide the refresh icon; the screenshot shows text-only Renew */
+  display: none;
+}
+
 .subUpgradeBtn {
   background: var(--whiteColor);
   color: var(--darkColor);
@@ -898,6 +905,27 @@
 .subUpgradeBtn:hover {
   border-color: var(--primaryColor);
   color: var(--primaryColor);
+}
+
+.subUpgradeTextLink {
+  background: #fff;
+  border: none;
+  height: auto;
+  padding: 5px 14px;
+  border-radius: 99;
+  font-size: var(--fs13);
+  font-weight: 600;
+  color: var(--primaryColor);
+  /* text-decoration: underline; */
+  text-underline-offset: 3px;
+  display: inline-flex;
+  align-items: center;
+  /* border-bottom: 1px solid var(--primaryColor); */
+
+}
+
+.subUpgradeTextLink:hover {
+  color: #007bff;
 }
 
 .createBtnBg {
