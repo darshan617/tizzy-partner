@@ -4,9 +4,12 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { ArrowDownToLine } from "lucide-react";
+import { BiCheckCircle } from "react-icons/bi";
+import { FaLock } from "react-icons/fa";
 
 const DraftPoComponent = () => {
   const router = useRouter();
+  const esignRequired = router?.query?.sr === "true";
   // const handleGenerateNewOrder = async () => {
   //   const res = await generateNewOrder({
   //     body: {
@@ -38,21 +41,39 @@ const DraftPoComponent = () => {
 
   return (
     <div className={styles.draftPoContainer}>
+      <div
+        className={styles.draftPoSuccessText}
+        data-aos="fade-up"
+        data-aos-delay="100"
+      >
+        <BiCheckCircle /> Draft PO Generated Successfully{" "}
+      </div>
       <div className={styles.draftPoIframeContainer}>
         <iframe
           src={`${router?.query?.pl}#toolbar=0`}
           allowFullScreen
-          style={{ pointerEvents: "none" }}
+          style={{
+            pointerEvents: "none",
+
+            filter: esignRequired && "blur(2px)",
+            opacity: esignRequired && 0.5,
+          }}
         />
-        <Link
-          href={`${router?.query?.pl}`}
-          target="_blank"
-          className={styles.downloadButton}
-        >
-          <ArrowDownToLine />
-        </Link>
+        <p className={styles.draftPoLockText}>
+          <FaLock size={20} /> <br /> This is a draft purchase order. Complete
+          e-sign to view the full document.{" "}
+        </p>
+        {!esignRequired && (
+          <Link
+            href={`${router?.query?.pl}`}
+            target="_blank"
+            className={styles.downloadButton}
+          >
+            <ArrowDownToLine />
+          </Link>
+        )}
       </div>
-      {router?.query?.sr === "true" ? (
+      {esignRequired ? (
         <button
           className={styles.commonButton}
           onClick={() =>
@@ -65,7 +86,12 @@ const DraftPoComponent = () => {
           Continue To E-Sign
         </button>
       ) : (
-        <button className={styles.commonButton}>Done</button>
+        <button
+          className={styles.commonButton}
+          onClick={() => router.push("/subscriptions")}
+        >
+          Done
+        </button>
       )}
     </div>
   );
