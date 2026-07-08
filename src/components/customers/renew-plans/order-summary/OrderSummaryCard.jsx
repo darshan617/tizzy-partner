@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import {
   useCheckIsDomainAvailableQuery,
   useCreditRequestMutation,
+  useGenerateRenewOrderMutation,
   useGenerateUpgradeOrderMutation,
   usePromoCodeMutation,
   useTransferCodeMutation,
@@ -106,6 +107,9 @@ const OrderSummaryCard = ({
 
   const [generateUpgradeOrder, { isLoading: isGeneratingUpgradeOrder }] =
     useGenerateUpgradeOrderMutation();
+
+  const [generateRenewOrder, { isLoading: isGeneratingRenewOrder }] =
+    useGenerateRenewOrderMutation();
 
   const {
     currentData: domainCheckData,
@@ -333,6 +337,33 @@ const OrderSummaryCard = ({
     }
   };
 
+  const handleRenewProceed = async () => {
+    try {
+      const res = await generateRenewOrder({
+        body: {
+          partner_id: userData?.id,
+          main_cart_id: cartDetails?.[0]?.main_cart_id,
+          order_id: router?.query?.order_id,
+        },
+      });
+      if (res?.data?.success) {
+        router?.push({
+          pathname: "/draft-po",
+          query: {
+            pl: res?.data?.data?.po_link,
+            sr: res?.data?.data?.sign_required === "yes" ? true : false,
+            ordId: res?.data?.data?.order_id,
+          },
+        });
+      } else {
+        showToast(res?.error?.data?.message, "error");
+      }
+    } catch (error) {
+      console.log(error);
+      showToast(error?.data?.message, "error");
+    }
+  };
+
   useEffect(() => {
     if (isPopupOpen !== "new-service" && isPopupOpen !== "transfer-service") {
       setDomainInput("");
@@ -358,6 +389,7 @@ const OrderSummaryCard = ({
       setDomainInput(activePrefix);
     }
   }, [isPopupOpen, domainNames]);
+  console.log("type:", router?.query?.type);
 
   return (
     <div>
@@ -613,14 +645,18 @@ const OrderSummaryCard = ({
             //     }
             //   }
             // }
-            if (tempDomainNames?.length >= 1) {
+            if (
+              tempDomainNames?.length >= 1 &&
+              router?.query?.type !== "renew-plan"
+            ) {
               handelProceed();
             } else if (
-              router?.query?.type === "renew-plan" ||
               router?.query?.type === "upgrade" ||
               router?.query?.type === "downgrade"
             ) {
               handelUpgradeProceed();
+            } else if (router?.query?.type === "renew-plan") {
+              handleRenewProceed();
             } else if (isInsufficient) {
               router?.push("/invoice");
             } else {

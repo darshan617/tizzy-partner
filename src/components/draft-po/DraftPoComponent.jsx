@@ -59,10 +59,12 @@ const DraftPoComponent = () => {
             opacity: esignRequired && 0.5,
           }}
         />
-        <p className={styles.draftPoLockText}>
-          <FaLock size={20} /> <br /> This is a draft purchase order. Complete
-          e-sign to view the full document.{" "}
-        </p>
+        {esignRequired && (
+          <p className={styles.draftPoLockText}>
+            <FaLock size={20} /> <br /> This is a draft purchase order. Complete
+            e-sign to view the full document.{" "}
+          </p>
+        )}
         {!esignRequired && (
           <Link
             href={`${router?.query?.pl}`}
