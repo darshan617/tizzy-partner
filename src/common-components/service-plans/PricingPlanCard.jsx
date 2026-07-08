@@ -96,16 +96,14 @@ export default function PricingPlanCard({
             }
             if (enquiry) {
               dispatch(setIsPopupVisible("enquiry"));
+
               return;
             }
             if (hasGooglePlanConflict && !isPlanChangeFlow) {
               setIsPopupOpen(true);
               return;
             }
-            if (
-              isProviderInCart === false ||
-              isPlanChangeFlow
-            ) {
+            if (isProviderInCart === false || isPlanChangeFlow) {
               onCtaClick();
               return;
             }
@@ -133,8 +131,7 @@ export default function PricingPlanCard({
         </CustomPopup>
       )}
 
-      {isPopupOpen &&
-        (isProviderInCart === true || hasGooglePlanConflict) && (
+      {isPopupOpen && (isProviderInCart === true || hasGooglePlanConflict) && (
         <CustomPopup onClose={() => setIsPopupOpen(false)} maxWidth="450px">
           <h3 className="fs-5 fw-600 mb-3 border-bottom pb-3">
             {provider_id === 3 && hasgoogleplans

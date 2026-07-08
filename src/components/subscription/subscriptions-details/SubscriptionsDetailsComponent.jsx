@@ -269,8 +269,7 @@ const SubscriptionsDetailsComponent = () => {
                   </p>
                 </div>
                 <div className="position-absolute top-1 end-0 w-auto">
-                  {plans?.[0]?.status?.toLowerCase() === "draft" ||
-                  plans?.[0]?.status?.toLowerCase() === "cancelled" ? (
+                  {plans?.[0]?.status?.toLowerCase() === "draft" ? (
                     <button
                       className="btn small btnWhite d-flex align-items-center gap-2"
                       style={{ cursor: "not-allowed" }}
