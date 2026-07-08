@@ -1,0 +1,515 @@
+.breadcrumbs {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--fs12);
+  font-weight: 500;
+  color: var(--textBodySecondary);
+  text-transform: capitalize;
+  margin: 0 auto;
+}
+
+.breadcrumbLink {
+  color: var(--textBodySecondary);
+  text-decoration: none;
+}
+
+.breadcrumbLink:hover {
+  color: var(--primaryColor);
+  text-decoration: underline;
+}
+.toggleContentMain{
+  margin : 0 60px;
+}
+
+.title h1 {
+  font-size: var(--fs22);
+  font-weight: 600;
+  color: var(--darkColor);
+  text-transform: capitalize;
+  margin-bottom: 1.25rem;
+}
+
+.toggleTrack {
+  display: inline-flex;
+  width: 100%;
+  max-width: 350px;
+  padding: 5px;
+  background: var(--whiteColor);
+  border-radius: 10px;
+  box-shadow: 0 1px 10px rgba(15, 23, 42, 0.17);
+}
+
+.toggleItem {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.25rem;
+  min-height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font-size: var(--fs14);
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  font-family: inherit;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
+}
+
+.toggleItem:hover:not(.toggleItemActive) {
+  color: #334155;
+}
+
+.toggleItemActive {
+  color: var(--whiteColor);
+  background: var(--primaryColor);
+}
+.middleContent{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.searchWrapper {
+  position: relative;
+  width: 100%;
+
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 2.75rem 0.75rem 1.25rem;
+  font-size: 1rem;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: var(--whiteColor);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: var(--primaryColor);
+}
+
+.searchIcon {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  pointer-events: none;
+  cursor: pointer;
+}
+.toggleContent {
+    margin-top: 30px;
+}
+.toggleContentItem img{
+    width: 200px;
+    height: auto;
+}
+.toggleContentItemText h2{
+    font-size: var(--fs24);
+    font-weight: 500;
+    color: #000;
+    margin-top: 10px;
+}
+.toggleContentLeftItem,
+.toggleContentRightItem{
+    display: flex;
+    align-items: end;
+    height: 100%;
+}
+/* .toggleContentRightItem{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+} */
+
+.toggleContentRightItem img,
+.toggleContentLeftItem img{
+    width: 100%;
+    height: auto;
+}
+
+.faqAccordion {
+  margin-top: 2rem;
+  background: var(--whiteColor);
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 1px 8px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.faqItem {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.faqItem:last-child {
+  border-bottom: none;
+}
+
+.faqTrigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.faqTrigger:hover .faqQuestion {
+  color: var(--primaryColor);
+}
+
+.faqQuestion {
+  font-size: var(--fs14);
+  font-weight: 600;
+  color: var(--darkColor);
+  transition: color 0.18s ease;
+}
+
+.faqChevron {
+  flex-shrink: 0;
+  font-size: 1.25rem;
+  color: var(--darkColor);
+  transition: transform 0.2s ease;
+}
+
+.faqChevronOpen {
+  transform: rotate(180deg);
+}
+
+.faqAnswer {
+  padding: 0 1.25rem 1rem;
+  font-size: var(--fs14);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--textBodySecondary);
+}
+
+.contactSection {
+  padding: 2rem 0;
+}
+
+.contactTitle {
+  font-size: var(--fs22);
+  font-weight: 600;
+  color: var(--darkColor);
+  margin-bottom: 1.5rem;
+}
+
+.contactCard {
+  height: 100%;
+  padding: 1.5rem;
+  background: var(--whiteColor);
+  border-radius: 10px;
+  box-shadow: 0 1px 8px rgba(15, 23, 42, 0.08);
+}
+
+.contactCardHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contactIconWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: var(--primarySubtleColor);
+  color: var(--primaryColor);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.contactCardTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--darkColor);
+  margin: 0;
+}
+
+.contactCardTitleUpper {
+  text-transform: uppercase;
+}
+
+.contactList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.contactListItem {
+  font-size: var(--fs12);
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+}
+
+.contactLabel {
+  font-size: 12px;
+  color: var(--textBodySecondary);
+}
+
+.contactLink {
+  font-size: 16px;
+  color: var(--textBodySecondary);
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.contactLink:hover {
+  color: #024a94;
+}
+
+.contactAddress {
+  font-size: 16px;
+  line-height: 1.7;
+  font-weight: 500;
+  color: var(--textBodySecondary);
+}
+
+.contactAddress p {
+  margin: 0;
+}
+
+.contactCompany {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--textBodySecondary);
+  margin-bottom: 0.35rem !important;
+}
+
+.contactPhone {
+  margin: 0 0 1.25rem;
+  font-size: var(--fs14);
+  font-weight: 500;
+}
+
+.socialLinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+  position: relative;
+  bottom: -85px;
+}
+
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--primaryColor);
+  font-size: 1.15rem;
+  transition: opacity 0.18s ease;
+}
+
+.socialLink:hover {
+  opacity: 0.75;
+}
+
+.socialGoogle {
+  color: #ea4335;
+}
+
+.socialWhatsapp {
+  color: #25d366;
+}
+
+@media (max-width: 1200px) {
+    .toggleContentItem img {
+      width: 160px;
+    }
+  }
+  
+  @media (max-width: 991px) {
+    .contactSection {
+      padding: 1.5rem 1rem;
+    }
+  
+    .toggleTrack {
+      max-width: 100%;
+    }
+  
+    .toggleContentLeftItem,
+    .toggleContentRightItem {
+      display: none; 
+    }
+  
+    .middleContent {
+      margin-bottom: 1rem;
+    }
+  
+    .socialLinks {
+      position: static;   
+      bottom: auto;
+      margin-top: 1rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .title h1 {
+      font-size: var(--fs18);
+    }
+  
+    .toggleTrack {
+      max-width: 100%;
+      padding: 4px;
+    }
+  
+    .toggleItem {
+      padding: 0.55rem 0.75rem;
+      font-size: var(--fs12);
+    }
+  
+    .toggleContentItemText h2 {
+      font-size: var(--fs18);
+      text-align: center;
+    }
+  
+    .searchWrapper {
+      margin-top: 1rem;
+    }
+  
+    .searchInput {
+      font-size: 0.9rem;
+      padding: 0.65rem 2.5rem 0.65rem 1rem;
+    }
+  
+    .faqAccordion {
+      margin-top: 1.5rem;
+    }
+  
+    .faqTrigger {
+      padding: 0.85rem 1rem;
+    }
+  
+    .contactCard {
+      padding: 1.25rem;
+    }
+  
+    .contactCardTitle {
+      font-size: 18px;
+    }
+  
+    .contactAddress,
+    .contactLink,
+    .contactPhone {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .breadcrumbs {
+      font-size: var(--fs10);
+    }
+  
+    .title h1 {
+      font-size: var(--fs16);
+      margin-bottom: 1rem;
+    }
+  
+    .toggleTrack {
+      width: 100%;
+    }
+  
+    .toggleItem {
+      padding: 0.5rem 0.5rem;
+      min-height: 38px;
+    }
+  
+    .toggleContentItem img {
+      width: 130px;
+    }
+  
+    .toggleContentItemText h2 {
+      font-size: var(--fs16);
+    }
+  
+    .searchInput {
+      font-size: 0.85rem;
+      padding: 0.6rem 2.25rem 0.6rem 0.9rem;
+    }
+  
+    .searchIcon {
+      right: 1rem;
+      font-size: 0.85rem;
+    }
+  
+    .faqQuestion {
+      font-size: var(--fs12);
+    }
+  
+    .faqAnswer {
+      font-size: var(--fs12);
+      padding: 0 1rem 0.85rem;
+    }
+  
+    .contactTitle {
+      font-size: var(--fs18);
+      margin-bottom: 1rem;
+    }
+  
+    .contactCard {
+      padding: 1rem;
+    }
+  
+    .contactIconWrap {
+      width: 36px;
+      height: 36px;
+      font-size: 1rem;
+    }
+  
+    .socialLink {
+      width: 28px;
+      height: 28px;
+      font-size: 1rem;
+    }
+  }
+  
+  @media (max-width: 400px) {
+  
+    .toggleItem {
+      width: 100%;
+    }
+  
+    .contactListItem {
+      font-size: var(--fs10);
+    }
+  
+    .contactLabel {
+      font-size: 10px;
+    }
+  
+    .contactLink {
+      font-size: 13px;
+    }
+  
+    .socialLinks {
+      gap: 0.5rem;
+    }
+  }

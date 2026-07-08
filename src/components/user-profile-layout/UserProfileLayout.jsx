@@ -26,7 +26,7 @@ const UserProfileLayout = ({ children }) => {
       </div>
       <div className={` ${styles.userProfileContentRow}`}>
         <div className={` ${styles.userProfileContent}`}>{children}</div>
-        <div className={styles.userProfileMenuWrapper}>
+        {/* <div className={styles.userProfileMenuWrapper}>
           <ul className={`${styles.userProfileMenu} d-flex flex-column gap-3`}>
             <li>
               <Link href="/notifications">
@@ -63,7 +63,7 @@ const UserProfileLayout = ({ children }) => {
               </Link>
             </li>
           </ul>
-        </div>
+        </div> */}
       </div>
     </div>
   );

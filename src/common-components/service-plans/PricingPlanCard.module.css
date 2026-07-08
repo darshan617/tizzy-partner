@@ -9,6 +9,7 @@
   flex-direction: column;
   height: 100%;
 }
+
 .card:hover .header {
   background: linear-gradient(135deg, #187be4 0%, #014288 100%) !important;
 }
@@ -20,7 +21,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  min-height: 3.5rem;
+  /* min-height: 3.5rem; */
 }
 
 .headerTitle {
@@ -30,9 +31,11 @@
   max-width: 100%;
   color: #2c3139;
 }
+
 .card:hover .headerTitle {
   color: #ffffff !important;
 }
+
 .pricingSection {
   background: #ffffff;
   padding: 1.15rem 1.35rem 1.35rem;

@@ -22,9 +22,17 @@ const statusLabelMap = {
   inactive: "Inactive",
   pending: "Pending",
   draft: "Draft",
+  cancelled: "Cancelled",
 };
 
-const statusOrder = ["active", "expiring", "inactive", "pending", "draft"];
+const statusOrder = [
+  "active",
+  "expiring",
+  "inactive",
+  "pending",
+  "draft",
+  "cancelled",
+];
 
 const AllSubscriptions = ({
   allSubscriptionsData,
@@ -219,15 +227,27 @@ const AllSubscriptions = ({
                                       >
                                         {subscription?.domain}
                                       </span>
-
+                                      {/* <p className="m-0  ps-2 text-secondary small ">
+                                        {" "}
+                                        Enrollment Type:{" "}
+                                        <span className="text-dark fw-medium">
+                                          {" "}
+                                          {subscription?.enrollment_type}
+                                        </span>
+                                      </p> */}
                                       <p className="m-0  ps-2 text-secondary small">
                                         {" "}
-                                        Order Id: {subscription?.order_no}
+                                        Order Id:{" "}
+                                        <span className="text-dark fw-medium">
+                                          {subscription?.order_no}
+                                        </span>
                                       </p>
                                       <p className="m-0  ps-2 text-secondary small">
                                         {" "}
                                         Customer Name:{" "}
-                                        {subscription?.customer_name}
+                                        <span className="text-dark fw-medium">
+                                          {subscription?.customer_name}
+                                        </span>
                                       </p>
                                     </div>
                                   </div>
@@ -237,7 +257,7 @@ const AllSubscriptions = ({
                                   </div> */}
                                 </div>
 
-                                <div className="col-md-5 col-6 ">
+                                <div className="col-md-4 col-6 ">
                                   <div className={`${styles.crName} `}>
                                     {subscription?.currentPlan}
                                   </div>
@@ -247,6 +267,18 @@ const AllSubscriptions = ({
                                 </div>
 
                                 <div className="col-md-2 col-6 text-center">
+                                  <div className={styles.metaHead}>
+                                    Enrollment Type
+                                  </div>
+                                  <span
+                                    style={{ color: "var(--primaryColor)" }}
+                                  >
+                                    {" "}
+                                    {subscription?.enrollment_type}
+                                  </span>
+                                </div>
+
+                                <div className="col-md-1 col-6 text-center">
                                   <div className={styles.metaHead}>License</div>
                                   <div className={styles.licenseValue}>
                                     <span>{subscription?.licenses}</span>
@@ -265,7 +297,14 @@ const AllSubscriptions = ({
                                   <div className={styles.statusInner}>
                                     <div className={styles.statusBadgeGroup}>
                                       <span
-                                        className={`${styles.statusBadge} ${subscription?.status?.toLowerCase() === "active" ? styles.activeBadge : ""} ${subscription?.status?.toLowerCase() === "expiring" ? styles.expiringBadge : ""}  ${subscription?.status?.toLowerCase() === "expired" ? styles.expired : ""} ${subscription?.status === "inactive" ? styles.inactiveBadge : ""} ${subscription?.status?.toLowerCase() === "pending" ? styles.pendingBadge : ""} ${subscription?.status?.toLowerCase() === "draft" ? styles.draftBadge : ""}`}
+                                        className={`${styles.statusBadge} ${subscription?.status?.toLowerCase() === "active" ? styles.activeBadge : ""} 
+                                        ${subscription?.status?.toLowerCase() === "expiring" ? styles.expiringBadge : ""}  
+                                        ${subscription?.status?.toLowerCase() === "expired" ? styles.expired : ""} 
+                                        ${subscription?.status === "inactive" ? styles.inactiveBadge : ""} 
+                                        ${subscription?.status?.toLowerCase() === "pending" ? styles.pendingBadge : ""} 
+                                        ${subscription?.status?.toLowerCase() === "draft" ? styles.draftBadge : ""}
+                                        ${subscription?.status?.toLowerCase() === "cancelled" ? styles.cancelledBadge : ""}
+                                        `}
                                       >
                                         {subscription?.status}
                                       </span>

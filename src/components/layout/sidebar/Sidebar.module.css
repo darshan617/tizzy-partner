@@ -14,6 +14,122 @@
   background: var(--whiteColor);
 }
 
+.accountMode {
+  width: 320px !important;
+  background: #f8f9fb;
+}
+
+.accountSidebarInner {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+
+.iconRail {
+  width: 72px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 16px 10px;
+  background: #f3f4f6;
+  border-right: 1px solid #e5e7eb;
+}
+
+.iconRailList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.iconRailItem {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--whiteColor);
+  border: 1px solid #e8eaed;
+  color: var(--textBody);
+  transition: all 0.2s ease;
+}
+
+.iconRailItem:hover {
+  background: #e6f1fd;
+  color: var(--primaryColor);
+}
+
+.iconRailItemActive {
+  background: var(--primaryColor);
+  border-color: var(--primaryColor);
+  color: var(--whiteColor);
+}
+
+.iconRailService {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconRailService svg {
+  width: 100%;
+  height: 100%;
+}
+
+.accountPanel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 14px;
+  background: var(--whiteColor);
+}
+
+.accountMenuList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.accountMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #6b7280;
+  font-size: 14;
+  font-weight: 500;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.accountMenuItem:hover {
+  background: #f3f4f6;
+  color: var(--textBody);
+}
+
+.accountMenuItemActive {
+  background: #f0f1f3;
+  color: var(--textBody);
+}
+
+.accountMenuIcon {
+  flex-shrink: 0;
+}
+
+.accountMode .creditBox {
+  width: 100%;
+  margin: 16px 0 0;
+}
+
 .sidebarOverlay {
   position: fixed;
   top: 0;
@@ -241,6 +357,10 @@
       #ffffff00 100%);
 }
 
+.accountMode:after {
+  display: none;
+}
+
 .active:hover {
   background: #023f80 !important;
   color: var(--whiteColor);
@@ -257,6 +377,11 @@
     z-index: 1050;
     background: var(--whiteColor);
     height: 100vh;
+  }
+
+  .accountMode {
+    right: -320px;
+    width: 320px !important;
   }
 
   .sideBar.open {

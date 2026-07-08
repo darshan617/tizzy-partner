@@ -352,7 +352,8 @@
   background: var(--borderColor);
 }
 
-.expired {
+.expired,
+.cancelledBadge {
   color: var(--dangerColor);
   background: var(--dangerSubtleColor);
 }

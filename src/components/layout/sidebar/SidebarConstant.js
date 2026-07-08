@@ -1,10 +1,61 @@
-import { BiUser } from "react-icons/bi";
-import { BsFileEarmarkBarGraph } from "react-icons/bs";
-import { LuLayoutDashboard, LuUsers } from "react-icons/lu";
-import { VscFiles } from "react-icons/vsc";
-import { PiHandCoinsLight } from "react-icons/pi";
-import { LuReceiptIndianRupee } from "react-icons/lu";
+import { LuWallet } from "react-icons/lu";
+import { FaRegCircleUser } from "react-icons/fa6";
+import { FiBell } from "react-icons/fi";
+import { HiOutlineSupport } from "react-icons/hi";
+import { LuLayoutDashboard, LuReceiptIndianRupee, LuUsers } from "react-icons/lu";
+import { RiUserSettingsLine } from "react-icons/ri";
 import { MdAutorenew } from "react-icons/md";
+import { PiHandCoinsLight } from "react-icons/pi";
+import { RiBankLine } from "react-icons/ri";
+import { VscFiles } from "react-icons/vsc";
+
+export const ACCOUNT_PATHS = [
+  "/my-account",
+  "/billing-credit",
+  "/bank-detail",
+  "/user-management",
+  "/notifications-settings",
+  "/help-center",
+];
+
+export const ACCOUNT_MENU_CONSTANTS = [
+  {
+    id: 1,
+    title: "My Account",
+    icon: FaRegCircleUser,
+    href: "/my-account",
+  },
+  {
+    id: 2,
+    title: "Billing & Credits",
+    icon: LuWallet,
+    href: "/billing-credit",
+  },
+  {
+    id: 3,
+    title: "Bank Details",
+    icon: RiBankLine,
+    href: "/bank-detail",
+  },
+  {
+    id: 4,
+    title: "User Management",
+    icon: RiUserSettingsLine,
+    href: "/user-management",
+  },
+  {
+    id: 5,
+    title: "Notification Settings",
+    icon: FiBell,
+    href: "/notifications-settings",
+  },
+  {
+    id: 6,
+    title: "Support & Help",
+    icon: HiOutlineSupport,
+    href: "/help-center",
+  },
+];
 
 export const SIDEBAR_MENU_CONSTANTS = [
   {

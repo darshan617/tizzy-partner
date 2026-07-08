@@ -214,24 +214,29 @@
   display: inline-block;
 }
 
-.statusBadge.active {
+.statusBadge.active,
+.completed {
   background: var(--successSubtleColor);
   color: var(--successColor);
 }
 
 .statusBadge.expiring_soon,
 .statusBadge.expiring,
-.statusBadge.pending {
+.statusBadge.pending,
+.pending {
   background: var(--warningSubtleColor);
   color: var(--warningColor);
 }
 
-.statusBadge.expired {
+.statusBadge.expired,
+.expired,
+.failed {
   background: var(--dangerSubtleColor);
   color: var(--dangerColor);
 }
 
-.statusBadge.draft {
+.statusBadge.draft,
+.draft {
   background: var(--borderColor);
   color: var(--darkColor);
 }

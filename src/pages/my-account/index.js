@@ -2,7 +2,7 @@ import React from 'react'
 import Layout from '@/components/layout/Layout'
 import AccountInfo from '@/components/account-info/AccountInfo'
 
-const accountInformation = () => {
+const MyAccount = () => {
   return (
     <Layout>
         <AccountInfo />
@@ -10,4 +10,4 @@ const accountInformation = () => {
  )
 }
 
-export default accountInformation
+export default MyAccount
