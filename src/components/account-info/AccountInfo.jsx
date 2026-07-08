@@ -211,6 +211,7 @@ const AccountInfo = () => {
                 <input
                   id="companyName"
                   type="text"
+                  disabled
                   name="companyName"
                   className="form-control"
                   value={formData.companyName}
@@ -227,6 +228,7 @@ const AccountInfo = () => {
                 <textarea
                   id="companyAddress"
                   name="companyAddress"
+                  disabled
                   className={`form-control ${styles.textarea}`}
                   value={formData.companyAddress}
                   onChange={handleChange}
@@ -274,6 +276,7 @@ const AccountInfo = () => {
                 <input
                   id="gstin"
                   type="text"
+                  disabled
                   name="gstin"
                   className="form-control text-uppercase"
                   value={formData.gstin}

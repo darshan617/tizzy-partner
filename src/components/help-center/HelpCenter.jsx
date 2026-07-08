@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import styles from "@/components/help-center/HelpCenter.module.css";
 import Link from "next/link";
 import logo from "@/assets/signup/logo-1.png";
-import leftImage from "@/assets/images/cuate.png"
-import rightImage from "@/assets/images/cuate-1.png"
+import leftImage from "@/assets/images/cuate.png";
+import rightImage from "@/assets/images/cuate-1.png";
 import { FaSearch } from "react-icons/fa";
 import { BiChevronDown } from "react-icons/bi";
 import { FiMail, FiMapPin } from "react-icons/fi";
@@ -77,50 +77,42 @@ const FAQ_ITEMS = [
   {
     id: "renew-plan",
     question: "How to renew my plan?",
-    answer:
-      "-",
+    answer: "-",
   },
   {
     id: "upgrade-plan",
     question: "How to upgrade my plan?",
-    answer:
-      "-",
+    answer: "-",
   },
   {
     id: "payment-failed",
     question: "Why is my payment not successful?",
-    answer:
-      "-",
+    answer: "-",
   },
   {
     id: "credit-system",
     question: "How does the credit system work?",
-    answer:
-      "-",
+    answer: "-",
   },
   {
     id: "downgrade-plan",
     question: "Can I downgrade my plan?",
-    answer:
-      "-",
+    answer: "-",
   },
   {
     id: "credit-balance",
     question: "How do I check my credit balance?",
-    answer:
-      "-",
+    answer: "-",
   },
   {
     id: "renewal-vs-upgrade",
     question: "What is the difference between renewal and upgrade?",
-    answer:
-      "-",
+    answer: "-",
   },
   {
     id: "upgrade-before-expiry",
     question: "Can I upgrade my plan before expiry?",
-    answer:
-      "-",
+    answer: "-",
   },
 ];
 
@@ -180,48 +172,55 @@ const HelpCenter = () => {
       </div>
 
       <div className={styles.toggleContent}>
-        <div className="row">
-          <div className="col-lg-3 ">
-            <div className={styles.toggleContentLeftItem}>
-              <Image
-                src={leftImage}
-                alt="Help Center"
-                width={500}
-                height={500}
-              />
-            </div>
-          </div>
-          <div className="col-lg-6">
-            <div className={styles.middleContent}>
-              <div className={styles.toggleContentItem}>
-                <Image src={logo} alt="Help Center" width={500} height={500} />
-              </div>
-              <div className={styles.toggleContentItemText}>
-                <h2>How can we help you?</h2>
+        <div className={styles.toggleContentMain}>
+          <div className="row">
+            <div className="col-lg-3 ">
+              <div className={styles.toggleContentLeftItem}>
+                <Image
+                  src={leftImage}
+                  alt="Help Center"
+                  width={500}
+                  height={500}
+                />
               </div>
             </div>
-            <div
-              className={styles.searchWrapper}
-              style={{ marginTop: "1.5rem" }}
-            >
-              <input
-                type="text"
-                className={styles.searchInput}
-                placeholder="Describe Your Issue"
-              />
-              <span className={styles.searchIcon} aria-hidden="true">
-                <FaSearch />
-              </span>
+            <div className="col-lg-6">
+              <div className={styles.middleContent}>
+                <div className={styles.toggleContentItem}>
+                  <Image
+                    src={logo}
+                    alt="Help Center"
+                    width={500}
+                    height={500}
+                  />
+                </div>
+                <div className={styles.toggleContentItemText}>
+                  <h2>How can we help you?</h2>
+                </div>
+              </div>
+              <div
+                className={styles.searchWrapper}
+                style={{ marginTop: "1.5rem" }}
+              >
+                <input
+                  type="text"
+                  className={styles.searchInput}
+                  placeholder="Describe Your Issue"
+                />
+                <span className={styles.searchIcon} aria-hidden="true">
+                  <FaSearch />
+                </span>
+              </div>
             </div>
-          </div>
-          <div className="col-lg-3">
-            <div className={styles.toggleContentRightItem}>
-              <Image
-                src={rightImage}
-                alt="Help Center"
-                width={500}
-                height={500}
-              />
+            <div className="col-lg-3">
+              <div className={styles.toggleContentRightItem}>
+                <Image
+                  src={rightImage}
+                  alt="Help Center"
+                  width={500}
+                  height={500}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -319,18 +318,20 @@ const HelpCenter = () => {
                 </a>
               </p>
               <div className={styles.socialLinks}>
-                {SOCIAL_LINKS.map(({ id, label, href, icon: Icon, className }) => (
-                  <Link
-                    key={id}
-                    href={href}
-                    className={`${styles.socialLink} ${className || ""}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={label}
-                  >
-                    <Icon aria-hidden="true" size={25} />
-                  </Link>
-                ))}
+                {SOCIAL_LINKS.map(
+                  ({ id, label, href, icon: Icon, className }) => (
+                    <Link
+                      key={id}
+                      href={href}
+                      className={`${styles.socialLink} ${className || ""}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                    >
+                      <Icon aria-hidden="true" size={25} />
+                    </Link>
+                  ),
+                )}
               </div>
             </div>
           </div>

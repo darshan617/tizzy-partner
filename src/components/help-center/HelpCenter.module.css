@@ -20,6 +20,9 @@
   color: var(--primaryColor);
   text-decoration: underline;
 }
+.toggleContentMain{
+  margin : 0 60px;
+}
 
 .title h1 {
   font-size: var(--fs22);
@@ -202,8 +205,6 @@
 
 .contactSection {
   padding: 2rem 0;
-  background: #f4f7fa;
-  border-radius: 12px;
 }
 
 .contactTitle {
