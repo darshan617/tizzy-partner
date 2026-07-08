@@ -23,6 +23,7 @@
     height: 100%;
     border: none;
     object-fit: contain;
+
 }
 
 .commonButton {
@@ -58,4 +59,24 @@
     top: -20px;
     right: -20px;
     z-index: 10;
+}
+
+.draftPoSuccessText {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--primaryColor);
+    margin-bottom: 10px;
+}
+
+.draftPoLockText {
+    font-size: 14px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--darkColor);
+    font-weight: 600;
+    text-align: center;
+    width: 90%;
 }

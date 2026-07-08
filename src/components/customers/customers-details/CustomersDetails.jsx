@@ -30,6 +30,7 @@ export default function CustomerDetail() {
 
   const customerDetails = customerDetailsData?.data?.customer;
   const allPlans = customerDetailsData?.data?.current_plans;
+  const allTransactions = customerDetailsData?.data?.transaction_history;
 
   useEffect(() => {
     if (router?.isReady) {
@@ -161,31 +162,19 @@ export default function CustomerDetail() {
 
   const transactions = [
     {
-      date: "20 Mar, 2026",
-      txnId: "TNX00123",
-      domain: "ganeshenterprises.com",
-      avatarColor: "secondaryBg",
-      desc: "Updated Plan to Tizzy® Mail Enterprise - 100 GB",
-      status: "Pending",
-      amount: "1254.00",
+      avatarColor: "avatarRed",
     },
     {
-      date: "20 Mar, 2026",
-      txnId: "TNX00123",
-      domain: "ganeshenterprises.com",
-      avatarColor: "dangerBg",
-      desc: "Updated Plan to Tizzy® Mail Enterprise - 100 GB",
-      status: "OverDue",
-      amount: "2546.00",
+      avatarColor: "avatarGold",
     },
     {
-      date: "20 Mar, 2026",
-      txnId: "TNX00123",
-      domain: "pinchthewallet.com",
-      avatarColor: "primaryBg",
-      desc: "Updated Plan to Tizzy® Mail Enterprise - 100 GB",
-      status: "OverDue",
-      amount: "2546.00",
+      avatarColor: "avatarBlue",
+    },
+    {
+      avatarColor: "avatarPurple",
+    },
+    {
+      avatarColor: "avatarTeal",
     },
   ];
 
@@ -196,6 +185,13 @@ export default function CustomerDetail() {
         domain_name: plan?.domain_name,
       })),
     ) || [];
+
+  const getServicePath = (provider_id) => {
+    if (provider_id === 1) return "tizzy";
+    if (provider_id === 2) return "microsoft-solution-partner";
+    if (provider_id === 3) return "google-workspace";
+    return "google-workspace";
+  };
 
   return (
     <Layout>
@@ -332,50 +328,50 @@ export default function CustomerDetail() {
                           Transaction History
                         </h2>
                         <Link
-                          href="#"
+                          href="/transactions"
                           className={`${styles.viewAll} text-decoration-underline`}
                         >
                           View All
                         </Link>
                       </div>
 
-                      {transactions.map((txn, i) => (
+                      {allTransactions?.slice(0, 5)?.map((txn, i) => (
                         <div className={`${styles.txnRow}`} key={i}>
                           <div className={`${styles.txnMeta}`}>
                             <div className={`${styles.txnDate}`}>
-                              {txn.date}
+                              {txn?.created_at || "-"}
                             </div>
-                            <div className={`${styles.txnId}`}>{txn.txnId}</div>
+                            <div className={`${styles.txnId}`}>
+                              {txn?.order_no}
+                            </div>
                           </div>
                           <div className={`${styles.txnInfo}`}>
                             <div
-                              className={`${styles.avatarSmall} ${txn.avatarColor} flex-shrink-0`}
+                              className={`${styles.avatarSmall} ${transactions[i]?.avatarColor} flex-shrink-0`}
                             >
-                              {txn.domain?.charAt(0)?.toUpperCase()}
+                              {txn?.domain_name?.charAt(0)?.toUpperCase()}
                             </div>
                             <div className="ms-2">
                               <Link
                                 href="#"
                                 className={`${styles.txnDomain} d-block`}
                               >
-                                {txn.domain}
+                                {txn?.domain_name}
                               </Link>
                               <small className={`${styles.txnDesc}`}>
-                                {txn.desc}
+                                {txn?.order_name}
                               </small>
                             </div>
                           </div>
                           <div className={`${styles.txnAmount}`}>
                             <span
-                              className={`${styles.txnStatus} ${
-                                txn.status === "Pending"
-                                  ? styles.txnPending
-                                  : styles.txnOverdue
-                              }`}
+                              className={`${styles.txnStatus}
+                              ${styles[txn?.status?.toLowerCase()]}`}
                             >
-                              {txn.status}
+                              {txn?.status?.charAt(0)?.toUpperCase() +
+                                txn?.status?.slice(1)}
                             </span>
-                            <strong>₹ {txn.amount}</strong>
+                            <strong>₹ {txn?.price}</strong>
                           </div>
                         </div>
                       ))}
@@ -833,7 +829,7 @@ export default function CustomerDetail() {
                   <span>({allInnerPlans?.length || 0})</span>
                 </h2>
                 <Link
-                  href="#"
+                  href="/subscriptions"
                   className={`${styles.viewAll} text-decoration-underline`}
                 >
                   View All
@@ -852,7 +848,7 @@ export default function CustomerDetail() {
                   </button>
                 </div>
               ) : (
-                allInnerPlans?.map((innerPlan, idx) => (
+                allInnerPlans?.slice(0, 5)?.map((innerPlan, idx) => (
                   <div className={`${styles.subRow}`} key={idx}>
                     <div className={`${styles.subTop}`}>
                       <div className={`${styles.subPlan}`}>
@@ -918,52 +914,92 @@ export default function CustomerDetail() {
                       </div>
 
                       <div className={`${styles.subActions}`}>
-                        <button
-                          className={`${styles.subRenewBtn}`}
-                          onClick={() =>
-                            router?.push({
-                              pathname: "/order-summary",
-                              query: {
-                                type: "renew-plan",
-                                order_id: innerPlan?.order_id,
-                              },
-                            })
-                          }
-                        >
-                          Renew
-                        </button>
-                        <Link
-                          href={{
-                            pathname: `/services/${
-                              innerPlan?.provider_name === "Tizzy Mail"
-                                ? "tizzy"
-                                : innerPlan?.provider_name === "Microsoft 365"
-                                  ? "microsoft-solution-partner"
-                                  : "google-workspace"
-                            }`,
-                            query: {
-                              type: "upgrade",
-                              order_id: innerPlan?.order_id,
-                              customer_id: router?.query?.customerId,
-                              plan_id: innerPlan?.plan_id,
-                              order_sub_id: innerPlan?.order_sub_id,
-                            },
-                          }}
-                          className={`${styles.subUpgradeBtn}`}
-                          onClick={() => {
-                            Cookies.remove("customerData");
-                            Cookies.set(
-                              "customerData",
-                              JSON.stringify({
-                                partner_id: userData?.id,
-                                customer_id: router?.query?.customerId,
-                                domain_name: innerPlan?.domain_name,
-                              }),
-                            );
-                          }}
-                        >
-                          Upgrade
-                        </Link>
+                        {(innerPlan?.status?.toLowerCase() === "expiring" ||
+                          innerPlan?.status?.toLowerCase() === "expired") && (
+                          <button
+                            className={`${styles.subRenewBtn}`}
+                            onClick={() =>
+                              router?.push({
+                                pathname: "/order-summary",
+                                query: {
+                                  type: "renew-plan",
+                                  order_id: innerPlan?.order_id,
+                                },
+                              })
+                            }
+                          >
+                            Renew
+                          </button>
+                        )}
+                        {innerPlan?.status?.toLowerCase() !== "draft" &&
+                          innerPlan?.status?.toLowerCase() !== "pending" && (
+                            <Link
+                              href={{
+                                pathname: `/services/${
+                                  innerPlan?.provider_name === "Tizzy Mail"
+                                    ? "tizzy"
+                                    : innerPlan?.provider_name ===
+                                        "Microsoft 365"
+                                      ? "microsoft-solution-partner"
+                                      : "google-workspace"
+                                }`,
+                                query: {
+                                  type: "upgrade",
+                                  order_id: innerPlan?.order_id,
+                                  customer_id: router?.query?.customerId,
+                                  plan_id: innerPlan?.plan_id,
+                                  order_sub_id: innerPlan?.order_sub_id,
+                                },
+                              }}
+                              className={`${styles.subUpgradeBtn}`}
+                              onClick={() => {
+                                Cookies.remove("customerData");
+                                Cookies.set(
+                                  "customerData",
+                                  JSON.stringify({
+                                    partner_id: userData?.id,
+                                    customer_id: router?.query?.customerId,
+                                    domain_name: innerPlan?.domain_name,
+                                  }),
+                                );
+                              }}
+                            >
+                              Upgrade
+                            </Link>
+                          )}
+                        {(innerPlan?.status?.toLowerCase() === "expiring" ||
+                          innerPlan?.status?.toLowerCase() === "expired") && (
+                          <>
+                            <Link
+                              className={`${styles.subUpgradeBtn}`}
+                              href={{
+                                pathname: `/services/${getServicePath(
+                                  innerPlan?.provider_id,
+                                )}`,
+                                query: {
+                                  type: "downgrade",
+                                  order_id: innerPlan?.order_id,
+                                  customer_id: router?.query?.customerId,
+                                  plan_id: innerPlan?.plan_id,
+                                  order_sub_id: innerPlan?.order_sub_id,
+                                },
+                              }}
+                              onClick={() => {
+                                Cookies.remove("customerData");
+                                Cookies.set(
+                                  "customerData",
+                                  JSON.stringify({
+                                    partner_id: userData?.id,
+                                    customer_id: router?.query?.customerId,
+                                    domain_name: innerPlan?.domain_name,
+                                  }),
+                                );
+                              }}
+                            >
+                              Downgrade
+                            </Link>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>

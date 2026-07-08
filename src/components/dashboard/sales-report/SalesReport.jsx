@@ -148,14 +148,14 @@ const TrendIcon = ({ trend }) => {
   );
 };
 
-const PERIODS = ["weekly", "monthly", "yearly"];
+const PERIODS = ["Weekly", "Monthly", "Yearly"];
 
 const SalesReport = ({ data, isDataLoading }) => {
   const userData = Cookies?.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : null;
   const invoiceCardsData = data?.invoice_kpis || {};
-  const [activePeriod, setActivePeriod] = useState("yearly");
+  const [activePeriod, setActivePeriod] = useState("Yearly");
   const [salesData, setSalesData] = useState();
 
   const [salesReport, { isLoading: isSalesReportLoading }] =
@@ -191,7 +191,7 @@ const SalesReport = ({ data, isDataLoading }) => {
             <div className={styles.cardHeader}>
               <h2 className={styles.sectionCardHead}>Sales Reports</h2>
               <div className={styles.tabBtnGroup}>
-                {PERIODS.map((period) => (
+                {PERIODS?.map((period) => (
                   <button
                     key={period}
                     type="button"

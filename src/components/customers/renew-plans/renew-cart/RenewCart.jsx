@@ -564,10 +564,10 @@ const RenewCart = ({
                                   </p>
                                 ),
                               )}
-                            <div className={styles.productDate}>
+                            {/* <div className={styles.productDate}>
                               {item?.subscription_start_date} –{" "}
                               {item?.subscription_end_date}
-                            </div>
+                            </div> */}
                           </div>
 
                           <div className={styles.priceCol}>

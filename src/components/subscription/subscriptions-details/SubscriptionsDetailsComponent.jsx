@@ -79,7 +79,8 @@ const getPlanStatusClass = (status) => {
   ) {
     return styles.expiring_soon;
   }
-  if (normalized === "expired") return styles.expired;
+  if (normalized === "expired" || normalized === "cancelled")
+    return styles.expired;
   if (normalized === "draft") return styles.draft;
   return "";
 };
@@ -267,14 +268,24 @@ const SubscriptionsDetailsComponent = () => {
                   </p>
                 </div>
                 <div className="position-absolute top-1 end-0 w-auto">
-                  <Link
-                    href={subscriptionDetails?.po_link || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn small btnWhite d-flex align-items-center gap-2"
-                  >
-                    View PO <BiDownload size={14} />
-                  </Link>
+                  {plans?.[0]?.status?.toLowerCase() === "draft" ||
+                  plans?.[0]?.status?.toLowerCase() === "cancelled" ? (
+                    <button
+                      className="btn small btnWhite d-flex align-items-center gap-2"
+                      style={{ cursor: "not-allowed" }}
+                    >
+                      View PO <BiDownload size={14} />
+                    </button>
+                  ) : (
+                    <Link
+                      href={subscriptionDetails?.po_link || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn small btnWhite d-flex align-items-center gap-2"
+                    >
+                      View PO <BiDownload size={14} />
+                    </Link>
+                  )}
                 </div>
 
                 {/* {(plans?.[0]?.status?.toLowerCase() === "expiring" ||
@@ -386,7 +397,10 @@ const SubscriptionsDetailsComponent = () => {
                               {plan?.subscription_end_date || periodEnd || "-"}
                             </span>
                           </div>
-                          <div className="col-md-auto col-sm-6 col-4 align-self-center">
+                          <div className="col-md-auto col-sm-6 col-4 align-self-center m-0">
+                            <small className="d-block textLight">
+                              Service Status
+                            </small>
                             <div
                               className={`${styles.statusBadge} ${getPlanStatusClass(plan?.status)}`}
                             >
@@ -395,13 +409,12 @@ const SubscriptionsDetailsComponent = () => {
                           </div>
                         </div>
                       </div>
-
-                      {plan?.status?.toLowerCase() === "expiring" ||
-                      plan?.status?.toLowerCase() === "expired" ? (
-                        <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
-                          <div
-                            className={`${styles.updwngrade} text-uppercase`}
-                          >
+                      {/* {plan?.status?.toLowerCase() === "expiring" ||
+                      plan?.status?.toLowerCase() === "expired" ? ( */}
+                      <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
+                        <div className={`${styles.updwngrade} text-uppercase`}>
+                          {(plan?.status?.toLowerCase() === "expiring" ||
+                            plan?.status?.toLowerCase() === "expired") && (
                             <>
                               <button
                                 type="button"
@@ -423,85 +436,91 @@ const SubscriptionsDetailsComponent = () => {
                                 />
                                 <span>Renew</span>
                               </button>
+                              <br />
                             </>
-                            <br />
-                            <Link
-                              href={{
-                                pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                                query: {
-                                  type: "upgrade",
-                                  order_id: subscriptionDetails?.order_id,
-                                  customer_id:
-                                    router?.query?.customerId ||
-                                    plan?.customer_id,
-                                  plan_id: plan?.plan_id,
-                                  order_sub_id: plan?.order_sub_id,
-                                },
-                              }}
-                              className={styles.updwngradeBtn}
-                              onClick={() => {
-                                Cookies.remove("customerData");
-                                Cookies.set(
-                                  "customerData",
-                                  JSON.stringify({
-                                    partner_id: userData?.id,
-                                    customer_id: router?.query?.customerId,
-                                    domain_name: domainName,
-                                  }),
-                                );
-                              }}
-                            >
-                              UPGRADE
-                            </Link>
-                            {(plan?.status?.toLowerCase() === "expiring" ||
-                              plan?.status?.toLowerCase() === "expired") && (
-                              <>
-                                &nbsp;|&nbsp;
-                                <Link
-                                  className={styles.downgradeBtn}
-                                  href={{
-                                    pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                                    query: {
-                                      type: "downgrade",
-                                      order_id: subscriptionDetails?.order_id,
+                          )}
+
+                          {plan?.status?.toLowerCase() !== "draft" &&
+                          plan?.status?.toLowerCase() !== "pending" &&
+                          plan?.status?.toLowerCase() !== "cancelled" ? (
+                            <>
+                              <Link
+                                href={{
+                                  pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                                  query: {
+                                    type: "upgrade",
+                                    order_id: subscriptionDetails?.order_id,
+                                    customer_id:
+                                      router?.query?.customerId ||
+                                      plan?.customer_id,
+                                    plan_id: plan?.plan_id,
+                                    order_sub_id: plan?.order_sub_id,
+                                  },
+                                }}
+                                className={styles.updwngradeBtn}
+                                onClick={() => {
+                                  Cookies.remove("customerData");
+                                  Cookies.set(
+                                    "customerData",
+                                    JSON.stringify({
+                                      partner_id: userData?.id,
                                       customer_id: router?.query?.customerId,
-                                      plan_id: plan?.plan_id,
-                                      order_sub_id: plan?.order_sub_id,
-                                    },
-                                  }}
-                                  onClick={() => {
-                                    Cookies.remove("customerData");
-                                    Cookies.set(
-                                      "customerData",
-                                      JSON.stringify({
-                                        partner_id: userData?.id,
-                                        customer_id: router?.query?.customerId,
-                                        domain_name: domainName,
-                                      }),
-                                    );
-                                  }}
-                                >
-                                  DOWNGRADE
-                                </Link>
-                              </>
-                            )}
-                          </div>
+                                      domain_name: domainName,
+                                    }),
+                                  );
+                                }}
+                              >
+                                UPGRADE
+                              </Link>
+                            </>
+                          ) : (
+                            <button
+                              style={{
+                                width: "fit-content",
+                                fontSize: "12px",
+                                cursor: "not-allowed",
+                                textUnderlineOffset: "3px",
+                              }}
+                              className="bg-transparent border-0 p-0 text-decoration-underline text-muted"
+                            >
+                              Upgrade
+                            </button>
+                          )}
+
+                          {(plan?.status?.toLowerCase() === "expiring" ||
+                            plan?.status?.toLowerCase() === "expired") && (
+                            <>
+                              &nbsp;|&nbsp;
+                              <Link
+                                className={styles.downgradeBtn}
+                                href={{
+                                  pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                                  query: {
+                                    type: "downgrade",
+                                    order_id: subscriptionDetails?.order_id,
+                                    customer_id: router?.query?.customerId,
+                                    plan_id: plan?.plan_id,
+                                    order_sub_id: plan?.order_sub_id,
+                                  },
+                                }}
+                                onClick={() => {
+                                  Cookies.remove("customerData");
+                                  Cookies.set(
+                                    "customerData",
+                                    JSON.stringify({
+                                      partner_id: userData?.id,
+                                      customer_id: router?.query?.customerId,
+                                      domain_name: domainName,
+                                    }),
+                                  );
+                                }}
+                              >
+                                DOWNGRADE
+                              </Link>
+                            </>
+                          )}
                         </div>
-                      ) : (
-                        <div className="col-xl-2 col-md-3 col-sm-4 col-12 text-center">
-                          <button
-                            style={{
-                              width: "fit-content",
-                              fontSize: "12px",
-                              cursor: "not-allowed",
-                              textUnderlineOffset: "3px",
-                            }}
-                            className="bg-transparent border-0 p-0 text-decoration-underline text-muted"
-                          >
-                            Upgrade
-                          </button>
-                        </div>
-                      )}
+                      </div>
                     </div>
                   </div>
                 ))
