@@ -351,7 +351,7 @@ const CommonOrderSummary = () => {
       const main_cart_id = resolveMainCartId(cartDetails, cartData);
       if (!main_cart_id) return;
 
-      await updateCart({
+      const updateRes = await updateCart({
         body: {
           cart_id: resolvedCartId,
           main_cart_id,
@@ -365,6 +365,20 @@ const CommonOrderSummary = () => {
           coupen: promoCode,
         },
       });
+      const updatedItem = updateRes?.data?.data;
+      if (updatedItem) {
+        setCartDetails((prev) => {
+          if (Array.isArray(prev)) {
+            return prev.map((item, idx) => {
+              const key = item?.cart_id ?? item?.id ?? idx;
+              return String(key) === String(resolvedCartId)
+                ? { ...item, ...updatedItem }
+                : item;
+            });
+          }
+          return { ...prev, ...updatedItem };
+        });
+      }
       await handleGetCartDetails(); //this is called to get the updated isTransferdomain 'yes/no'
 
       setTempDomainNames(finalDomains);
@@ -660,8 +674,8 @@ const CommonOrderSummary = () => {
     if (!Array.isArray(cartDetails) || cartDetails.length === 0)
       return undefined;
 
-    const timer = setTimeout(() => {
-      cartDetails.forEach((item, idx) => {
+    const timer = setTimeout(async () => {
+      for (const [idx, item] of cartDetails.entries()) {
         console.log("item:😉", item);
         const main_cart_id =
           item?.main_cart_id ?? item?.renew_plan?.main_cart_id;
@@ -678,8 +692,22 @@ const CommonOrderSummary = () => {
           order_id: router?.query?.order_id || "",
         });
 
-        updateCart({ body });
-      });
+        const updateRes = await updateCart({ body });
+        const updatedItem = updateRes?.data?.data;
+        if (updatedItem) {
+          setCartDetails((prev) => {
+            if (!Array.isArray(prev)) return prev;
+            return prev.map((row, rowIdx) => {
+              const rowKey = row?.cart_id ?? row?.id ?? rowIdx;
+              const updatedKey =
+                updatedItem?.cart_id ?? updatedItem?.id ?? body?.cart_id;
+              return String(rowKey) === String(updatedKey)
+                ? { ...row, ...updatedItem }
+                : row;
+            });
+          });
+        }
+      }
     }, 1500);
 
     return () => clearTimeout(timer);
