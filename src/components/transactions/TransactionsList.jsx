@@ -7,6 +7,7 @@ import { MdOutlineFileDownload } from "react-icons/md";
 import Loader from "@/common-components/loader/Loader";
 import styles from "@/components/transactions/TransactionsList.module.css";
 import { useRouter } from "next/router";
+import DownloadExcel from "@/common-components/download-excel/DownloadExcel";
 
 const statusLabelMap = {
   completed: "Completed",
@@ -66,6 +67,33 @@ const getBillingDescription = (transaction) => {
 
   return "Updated Plan to Tizzy Mail Enterprise - 100 GB";
 };
+
+const transactionColumns = [
+  {
+    label: "Date",
+    key: "date",
+  },
+  {
+    label: "Order No",
+    key: "order_no",
+  },
+  {
+    label: "Domain",
+    key: "domain",
+  },
+  {
+    label: "Status",
+    key: "status",
+  },
+  {
+    label: "Amount",
+    key: "amount",
+  },
+  {
+    label: "Invoice No",
+    getValue: (tx) => tx?.invoice_no?.bill_no_full || "-",
+  },
+];
 
 const TransactionsList = ({ variant = "default", limit }) => {
   const router = useRouter();
@@ -403,14 +431,13 @@ const TransactionsList = ({ variant = "default", limit }) => {
         <div
           className={`${styles.toolbar} py-2 px-sm-4 px-3 d-flex align-items-center justify-content-end`}
         >
-          <button
-            type="button"
+          <DownloadExcel
+            data={finalTransactionsList}
+            columns={transactionColumns}
+            fileName="transaction-history"
             className={styles.downloadListBtn}
-            // onClick={downloadExcel}
-          >
-            <MdOutlineFileDownload className={styles.downloadListIcon} />
-            Download List
-          </button>
+            buttonText="Download List"
+          />
         </div>
 
         <div className={styles.listScrollArea}>
