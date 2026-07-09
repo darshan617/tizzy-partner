@@ -4,7 +4,7 @@ import Link from "next/link";
 import logo from "@/assets/signup/logo-1.png";
 import leftImage from "@/assets/images/cuate.png";
 import rightImage from "@/assets/images/cuate-1.png";
-import { FaSearch } from "react-icons/fa";
+import { FaQuestionCircle, FaQuestionCircleOutlined, FaRegQuestionCircle, FaSearch } from "react-icons/fa";
 import { BiChevronDown } from "react-icons/bi";
 import { FiMail, FiMapPin } from "react-icons/fi";
 import {
@@ -16,6 +16,7 @@ import {
 } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import Image from "next/image";
+import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 
 const EMAIL_CONTACTS = [
   {
@@ -116,17 +117,21 @@ const FAQ_ITEMS = [
   },
 ];
 
-const TABS = [
-  { id: "raise-query", label: "Raise Query" },
-  { id: "help-center", label: "Help Center" },
-];
-
 const HelpCenter = () => {
   const [activeTab, setActiveTab] = useState("help-center");
   const [openFaqId, setOpenFaqId] = useState(null);
+  const [isRaiseQueryOpen, setIsRaiseQueryOpen] = useState(false);
+  const [querySubject, setQuerySubject] = useState("");
+  const [queryMessage, setQueryMessage] = useState("");
 
   const toggleFaq = (id) => {
     setOpenFaqId((current) => (current === id ? null : id));
+  };
+
+  const handleCloseRaiseQuery = () => {
+    setIsRaiseQueryOpen(false);
+    setQuerySubject("");
+    setQueryMessage("");
   };
   return (
     <div className="container">
@@ -146,30 +151,67 @@ const HelpCenter = () => {
         </span>
       </div>
 
-      <div className={styles.title}>
-        <h1>Help Center</h1>
+      <div className={styles.pageHeader}>
+        <div className={styles.title}>
+          <h1>Help Center</h1>
+        </div>
+
+        <div className={styles.toggleTrack}>
+          <button
+            type="button"
+            className={styles.toggleItem}
+            onClick={() => setIsRaiseQueryOpen(true)}
+          >
+            Raise Query
+            <FaRegQuestionCircle  size={20} style={{ marginLeft: "10px" }} />
+          </button>
+        </div>
       </div>
 
-      <div
-        className={styles.toggleTrack}
-        role="tablist"
-        aria-label="Help center sections"
-      >
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === tab.id}
-            className={`${styles.toggleItem} ${
-              activeTab === tab.id ? styles.toggleItemActive : ""
-            }`}
-            onClick={() => setActiveTab(tab.id)}
+      {isRaiseQueryOpen && (
+        <CustomPopup
+          onClose={handleCloseRaiseQuery}
+          maxWidth="480px"
+          title="Raise Query"
+        >
+          <form
+            className={styles.queryForm}
+            onSubmit={(e) => e.preventDefault()}
           >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel} htmlFor="querySubject">
+                Subject
+              </label>
+              <input
+                id="querySubject"
+                type="text"
+                className={styles.formInput}
+                value={querySubject}
+                onChange={(e) => setQuerySubject(e.target.value)}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel} htmlFor="queryMessage">
+                Message
+              </label>
+              <textarea
+                id="queryMessage"
+                className={`${styles.formInput} ${styles.formTextarea}`}
+                placeholder="Enter your issue..."
+                value={queryMessage}
+                onChange={(e) => setQueryMessage(e.target.value)}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <button type="submit" className={styles.submitButton}>
+                Submit
+              </button>
+            </div>
+          </form>
+        </CustomPopup>
+      )}
 
       <div className={styles.toggleContent}>
         <div className={styles.toggleContentMain}>
@@ -328,7 +370,7 @@ const HelpCenter = () => {
                       rel="noopener noreferrer"
                       aria-label={label}
                     >
-                      <Icon aria-hidden="true" size={25} />
+                      <Icon aria-hidden="true" size={22} />
                     </Link>
                   ),
                 )}

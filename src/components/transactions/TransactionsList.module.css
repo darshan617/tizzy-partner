@@ -178,7 +178,7 @@
   background: var(--whiteColor);
 }
 
-.btn-check:checked + .filterItem {
+.btn-check:checked+.filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -265,7 +265,7 @@
   margin-top: 2px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 2;
   line-clamp: 1;
   overflow: hidden;
 }
@@ -294,12 +294,14 @@
 }
 
 .failedBadge,
-.cancelled {
+.cancelled,
+.rejected {
   color: var(--dangerColor);
   background: var(--dangerSubtleColor);
 }
 
-.defaultBadge {
+.defaultBadge,
+.draft {
   color: var(--textBody);
   background: var(--borderColor);
 }
@@ -393,11 +395,7 @@
 .billingTransactionRowInner {
   display: grid;
   grid-template-columns:
-    minmax(110px, 12%)
-    minmax(180px, 1fr)
-    minmax(90px, auto)
-    minmax(100px, auto)
-    36px;
+    minmax(110px, 12%) minmax(180px, 1fr) minmax(90px, auto) minmax(100px, auto) 36px;
   align-items: center;
   gap: 12px 16px;
   width: 100%;

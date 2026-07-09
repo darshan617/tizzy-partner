@@ -24,22 +24,20 @@
   margin : 0 60px;
 }
 
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
 .title h1 {
   font-size: var(--fs22);
   font-weight: 600;
   color: var(--darkColor);
   text-transform: capitalize;
-  margin-bottom: 1.25rem;
-}
-
-.toggleTrack {
-  display: inline-flex;
-  width: 100%;
-  max-width: 350px;
-  padding: 5px;
-  background: var(--whiteColor);
-  border-radius: 10px;
-  box-shadow: 0 1px 10px rgba(15, 23, 42, 0.17);
+  margin-bottom: 0;
 }
 
 .toggleItem {
@@ -51,24 +49,78 @@
   min-height: 44px;
   border: none;
   border-radius: 10px;
-  background: transparent;
+  background: #0355AC;
   font-size: var(--fs14);
   font-weight: 500;
-  color: #475569;
+  color: #fff;
   cursor: pointer;
-  font-family: inherit;
   transition:
     background 0.18s ease,
     color 0.18s ease;
 }
 
 .toggleItem:hover:not(.toggleItemActive) {
-  color: #334155;
+  color: #0355AC;
+  background: #fff;
 }
+
 
 .toggleItemActive {
   color: var(--whiteColor);
   background: var(--primaryColor);
+}
+
+.queryForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formLabel {
+  font-size: var(--fs14);
+  font-weight: 500;
+  color: var(--darkColor);
+  margin-bottom: 0.5rem;
+}
+
+.formInput {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: var(--fs14);
+  color: var(--darkColor);
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: var(--whiteColor);
+  outline: none;
+  transition: border-color 0.18s ease;
+}
+
+.formInput::placeholder {
+  color: #9ca3af;
+}
+
+.formInput:focus {
+  border-color: var(--primaryColor);
+}
+
+.formTextarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: var(--fs14);
+  color: var(--whiteColor);
+  background: var(--primaryColor);
+  border: none;
+  border-radius: 10px;
 }
 .middleContent{
     display: flex;
@@ -242,7 +294,7 @@
 }
 
 .contactCardTitle {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--darkColor);
   margin: 0;
@@ -274,7 +326,7 @@
 }
 
 .contactLink {
-  font-size: 16px;
+  font-size: 14px;
   color: var(--textBodySecondary);
   text-decoration: underline;
   font-weight: 500;
@@ -285,7 +337,7 @@
 }
 
 .contactAddress {
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.7;
   font-weight: 500;
   color: var(--textBodySecondary);
@@ -427,10 +479,15 @@
     .breadcrumbs {
       font-size: var(--fs10);
     }
+
+    .pageHeader {
+      flex-direction: column;
+      align-items: stretch;
+      margin-bottom: 1rem;
+    }
   
     .title h1 {
       font-size: var(--fs16);
-      margin-bottom: 1rem;
     }
   
     .toggleTrack {
