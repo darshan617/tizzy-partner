@@ -304,15 +304,15 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                                 </div>
                               </div>
 
-                              <div className="col-lg-2 col-md-2 col-6 text-md-center">
+                              <div className="col-lg-2 col-md-2 col-6 text-md-left">
                                 <span
                                   className={`${styles.statusBadge} ${getStatusBadgeClass(invoice?.status)}`}
                                 >
                                   {invoice?.status}
                                 </span>
-                              </div>
+                              </div>  
 
-                              <div className="col-lg-2 col-md-2 col-6 text-md-center text-end text-md-center">
+                              <div className="col-lg-2 col-md-2 col-6 text-md-left  ">
                                 <span className={styles.amountValue}>
                                   {invoice?.formatted_amount ||
                                     `₹ ${Number(invoice?.amount || 0).toFixed(2)}`}
