@@ -7,6 +7,10 @@ import {
   selectIsPopupVisible,
   setIsPopupVisible,
 } from "@/redux/slices/popupSlice";
+import { FaRegQuestionCircle  } from "react-icons/fa";
+import { useGetEnqueryNowMutation } from "@/redux/apis/servicesApi";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
+import Cookies from "js-cookie";
 
 function CheckIcon() {
   return (
@@ -48,6 +52,32 @@ export default function PricingPlanCard({
     router?.query?.type === "upgrade" || router?.query?.type === "downgrade";
   const hasGooglePlanConflict =
     Number(provider_id) === 3 && Boolean(hasgoogleplans) && !plan_is_in_cart;
+
+  const { showToast } = useToast();
+  const [getEnqueryNow, { isLoading: isEnqueryNowLoading }] = useGetEnqueryNowMutation();
+  const userData = Cookies.get("userData")
+    ? JSON.parse(Cookies.get("userData"))
+    : null;
+
+  const handleEnquirySubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const message = formData.get("message");
+    const response = await getEnqueryNow({
+      body: {
+        partner_id: userData?.id,
+        message,
+      },
+    });
+    if (response.data) {
+      showToast("Enquiry submitted successfully", "success");
+      dispatch(setIsPopupVisible(""));
+    } else {
+      showToast("Enquiry submission failed", "error");
+      dispatch(setIsPopupVisible(""));
+    }
+  };
+  
 
   return (
     <article className={styles.card} key={plan_id}>
@@ -127,7 +157,32 @@ export default function PricingPlanCard({
 
       {isPopupVisible === "enquiry" && (
         <CustomPopup onClose={() => dispatch(setIsPopupVisible(""))}>
-          Enquiry Form will be here
+          <div className="d-flex">
+            <h3 className="fs-5 fw-600 mb-3 pb-3">We're here to help. Send us your enquiry.</h3>
+            <FaRegQuestionCircle size={22} style={{ marginLeft: "10px" }} />
+          </div>
+          <form onSubmit={handleEnquirySubmit}>
+            <div className="form-group">
+              <textarea
+                className={styles.enquiryTextarea}
+                id="message"
+                name="message"
+                placeholder="Enter your enquiry"
+                required
+                rows="5"
+              />
+              <div className="d-flex justify-content-end gap-2 pt-3">
+                <button
+                  type="submit"
+                  className={styles.submitButton}
+                  disabled={isEnqueryNowLoading}
+                >
+                  {isEnqueryNowLoading ? "Submitting..." : "Submit"}
+                </button>
+                <button type="button" className={styles.cancelButton} onClick={() => dispatch(setIsPopupVisible(""))}>Cancel</button>
+              </div>
+            </div>
+          </form>
         </CustomPopup>
       )}
 
