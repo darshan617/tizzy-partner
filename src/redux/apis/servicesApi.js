@@ -31,8 +31,22 @@ const servicesApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["services"],
     }),
+    getEnqueryNow: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: "/enquire-now",
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["services"],
+    }),
   }),
 });
 
-export const { useGetProvidersQuery, useProviderVariantsMutation, useGetPlansMutation } =
-  servicesApi;
+export const {
+  useGetProvidersQuery,
+  useProviderVariantsMutation,
+  useGetPlansMutation,
+  useGetEnqueryNowMutation,
+} = servicesApi;

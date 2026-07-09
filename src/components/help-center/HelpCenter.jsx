@@ -4,7 +4,7 @@ import Link from "next/link";
 import logo from "@/assets/signup/logo-1.png";
 import leftImage from "@/assets/images/cuate.png";
 import rightImage from "@/assets/images/cuate-1.png";
-import { FaSearch } from "react-icons/fa";
+import { FaQuestionCircle, FaQuestionCircleOutlined, FaRegQuestionCircle, FaSearch } from "react-icons/fa";
 import { BiChevronDown } from "react-icons/bi";
 import { FiMail, FiMapPin } from "react-icons/fi";
 import {
@@ -163,6 +163,7 @@ const HelpCenter = () => {
             onClick={() => setIsRaiseQueryOpen(true)}
           >
             Raise Query
+            <FaRegQuestionCircle  size={20} style={{ marginLeft: "10px" }} />
           </button>
         </div>
       </div>
