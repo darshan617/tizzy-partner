@@ -82,7 +82,15 @@ const OrderSummaryCard = ({
   const providerId = Number(cartDetails?.[0]?.plan?.provider_id);
   const skipDomainVerification = providerId === 2;
   const tizzyProviderId = providerId === 1;
-  const remainingValue = cartDetails?.[0]?.pro_rata_adjustment || 0;
+  const cartSummaryItem = Array.isArray(cartDetails)
+    ? cartDetails?.[0]
+    : cartDetails;
+  const remainingValue =
+    Number(
+      cartSummaryItem?.pro_rata_adjustment ??
+        cartSummaryItem?.pricing?.pro_rata_adjustment ??
+        0,
+    ) || 0;
   const totals = +(
     total +
     gst -
@@ -645,7 +653,9 @@ const OrderSummaryCard = ({
             //     }
             //   }
             // }
-            if (
+            if (isInsufficient) {
+              router?.push("/invoice");
+            } else if (
               tempDomainNames?.length >= 1 &&
               router?.query?.type !== "renew-plan"
             ) {
@@ -657,8 +667,6 @@ const OrderSummaryCard = ({
               handelUpgradeProceed();
             } else if (router?.query?.type === "renew-plan") {
               handleRenewProceed();
-            } else if (isInsufficient) {
-              router?.push("/invoice");
             } else {
               setIsPopupOpen("proceed");
             }

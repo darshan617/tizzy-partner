@@ -27,6 +27,7 @@ const getCompanyName = (item) =>
   item?.company_name ||
   item?.customer ||
   item?.owner ||
+  item?.order_no ||
   "-";
 
 const getTransactionDescription = (item) =>

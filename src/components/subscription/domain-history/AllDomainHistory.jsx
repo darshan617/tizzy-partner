@@ -9,6 +9,7 @@ import { GoShareAndroid } from "react-icons/go";
 import { IoMdArrowBack } from "react-icons/io";
 import { MdOutlineFileDownload } from "react-icons/md";
 import styles from "./AllDomainHistory.module.css";
+import DownloadExcel from "@/common-components/download-excel/DownloadExcel";
 
 const TizzyIcon = () => (
   <svg
@@ -85,6 +86,29 @@ const getPlanIcon = (planName = "", domainName = "") => {
   if (text.includes("google")) return <GoogleIcon />;
   return <TizzyIcon />;
 };
+
+const domainHistoryColumns = [
+  {
+    label: "Plan Name",
+    key: "plan_name",
+  },
+  {
+    label: "Type",
+    key: "status",
+  },
+  {
+    label: "Price",
+    key: "price",
+  },
+  {
+    label: "License",
+    key: "license",
+  },
+  {
+    label: "Period",
+    key: "period",
+  },
+];
 
 const AllDomainHistory = () => {
   const router = useRouter();
@@ -167,7 +191,7 @@ const AllDomainHistory = () => {
 
       <div className="col">
         {domainHistory?.length > 0 ? (
-          domainHistory.map((domainItem) => (
+          domainHistory?.map((domainItem) => (
             <div
               key={domainItem?.domain_name}
               className={`${styles.historyCard} ${styles.sectionCard} ${styles.domainSection}`}
@@ -180,17 +204,21 @@ const AllDomainHistory = () => {
                   </h2>
                 </div>
                 <div className={styles.historyBtn}>
-                  <button type="button" className="shareBtn small">
+                  {/* <button type="button" className="shareBtn small">
                     <GoShareAndroid size={16} /> Share
-                  </button>
-                  <button type="button" className="downloadBtn small">
-                    <MdOutlineFileDownload size={16} /> Download
-                  </button>
+                  </button> */}
+                  <DownloadExcel
+                    data={domainItem?.history}
+                    columns={domainHistoryColumns}
+                    fileName={`${domainItem?.domain_name}-history`}
+                    className="downloadBtn small"
+                    buttonText="Download"
+                  />
                 </div>
               </div>
 
               {domainItem?.history?.length > 0 ? (
-                domainItem.history.map((item) => (
+                domainItem?.history?.map((item) => (
                   <div className={styles.historyRow} key={item?.id}>
                     <div className={styles.rowLeft}>
                       <div className={styles.statusIcon}>
