@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Eye, Pencil, Trash2, Plus } from "lucide-react";
+import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import styles from "./UserManagement.module.css";
 
 const MOCK_USERS = [
@@ -152,99 +153,90 @@ const UserManagement = () => {
       </section>
 
       {isAddUserOpen && (
-        <div
-          className={styles.modalOverlay}
-          onClick={handleCloseAddUser}
-          role="presentation"
+        <CustomPopup
+          onClose={handleCloseAddUser}
+          title="Add User"
         >
-          <div
-            className={styles.modalCard}
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Add User"
-          >
-            <form className={styles.addUserForm} onSubmit={handleSaveUser}>
-              <div className={styles.formGrid}>
-                <div className={styles.formGroup}>
-                  <label className={styles.label} htmlFor="username">
-                    Username
-                    <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    id="username"
-                    type="text"
-                    name="username"
-                    className="form-control"
-                    required
-                  />
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label className={styles.label} htmlFor="password">
-                    Password
-                    <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    id="password"
-                    type="password"
-                    name="password"
-                    className="form-control"
-                    required
-                  />
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label className={styles.label} htmlFor="confirmPassword">
-                    Confirm Password
-                    <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    id="confirmPassword"
-                    type="password"
-                    name="confirmPassword"
-                    className="form-control"
-                    required
-                  />
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label className={styles.label} htmlFor="role">
-                    Role
-                    <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    id="role"
-                    type="text"
-                    name="role"
-                    className="form-control"
-                    required
-                  />
-                </div>
-
-                <div className={`${styles.formGroup} ${styles.halfWidth}`}>
-                  <label className={styles.label} htmlFor="status">
-                    Status
-                    <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    id="status"
-                    type="text"
-                    name="status"
-                    className="form-control"
-                    required
-                  />
-                </div>
+          <form className={styles.addUserForm} onSubmit={handleSaveUser}>
+            <div className={styles.formGrid}>
+              <div className={styles.formGroup}>
+                <label className={styles.label} htmlFor="username">
+                  Username
+                  <span className={styles.required}>*</span>
+                </label>
+                <input
+                  id="username"
+                  type="text"
+                  name="username"
+                  className="form-control"
+                  required
+                />
               </div>
 
-              <div className={styles.submitWrap}>
-                <button type="submit" className={styles.saveBtn}>
-                  Save
-                </button>
+              <div className={styles.formGroup}>
+                <label className={styles.label} htmlFor="password">
+                  Password
+                  <span className={styles.required}>*</span>
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  className="form-control"
+                  required
+                />
               </div>
-            </form>
-          </div>
-        </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label} htmlFor="confirmPassword">
+                  Confirm Password
+                  <span className={styles.required}>*</span>
+                </label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  name="confirmPassword"
+                  className="form-control"
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label} htmlFor="role">
+                  Role
+                  <span className={styles.required}>*</span>
+                </label>
+                <input
+                  id="role"
+                  type="text"
+                  name="role"
+                  className="form-control"
+                  required
+                />
+              </div>
+
+              <div className={`${styles.formGroup} ${styles.halfWidth}`}>
+                <label className={styles.label} htmlFor="status">
+                  Status
+                  <span className={styles.required}>*</span>
+                </label>
+                <input
+                  id="status"
+                  type="text"
+                  name="status"
+                  className="form-control"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className={styles.submitWrap}>
+              <button type="submit" className={styles.saveBtn}>
+                Save
+              </button>
+            </div>
+          </form>
+        </CustomPopup>
       )}
     </div>
   );

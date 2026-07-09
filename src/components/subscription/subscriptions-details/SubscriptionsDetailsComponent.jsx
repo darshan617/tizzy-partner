@@ -335,7 +335,7 @@ const SubscriptionsDetailsComponent = () => {
                     }}
                     className={`${styles.viewAll} text-decoration-underline`}
                   >
-                    View All
+                    View History
                   </Link>
                 </div>
               </div>
