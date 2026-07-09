@@ -68,6 +68,17 @@ const AllSubscriptions = ({
     [searchQuery, selectedStatuses, allSubscriptionsData],
   );
 
+  const finalSubscriptionsList = filteredSubscriptions?.filter(
+    (subscription) => {
+      if (!router?.query?.customerId) return true;
+
+      return (
+        subscription?.customer_id === Number(router?.query?.customerId) &&
+        subscription?.status.toLowerCase() === "active"
+      );
+    },
+  );
+
   return (
     <div className="col">
       <div className={`sectionCard ${styles.adjustWidth}`}>
@@ -182,8 +193,8 @@ const AllSubscriptions = ({
               className={`${styles.subscriptionList} d-flex flex-column gap-3 mb-5`}
             >
               {!isAllSubscriptionDataLoading ? (
-                filteredSubscriptions?.length > 0 ? (
-                  filteredSubscriptions
+                finalSubscriptionsList?.length > 0 ? (
+                  finalSubscriptionsList
                     ?.filter((subscription) =>
                       selectedStatuses === "all"
                         ? true

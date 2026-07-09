@@ -328,7 +328,7 @@ export default function CustomerDetail() {
                           Transaction History
                         </h2>
                         <Link
-                          href="/transactions"
+                          href={`/transactions?customerId=${router?.query?.customerId}`}
                           className={`${styles.viewAll} text-decoration-underline`}
                         >
                           View All
@@ -829,7 +829,7 @@ export default function CustomerDetail() {
                   <span>({allInnerPlans?.length || 0})</span>
                 </h2>
                 <Link
-                  href="/subscriptions"
+                  href={`/subscriptions?customerId=${router?.query?.customerId}`}
                   className={`${styles.viewAll} text-decoration-underline`}
                 >
                   View All

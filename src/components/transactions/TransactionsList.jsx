@@ -6,17 +6,26 @@ import { IoClose } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
 import Loader from "@/common-components/loader/Loader";
 import styles from "@/components/transactions/TransactionsList.module.css";
+import { useRouter } from "next/router";
 
 const statusLabelMap = {
-  completed: "Success",
+  completed: "Completed",
   success: "Success",
   pending: "Pending",
   cancelled: "Cancelled",
-  completed: "Completed",
+  draft: "Draft",
+  rejected: "Rejected",
   failed: "Failed",
 };
 
-const statusOrder = ["success", "pending", "cancelled", "completed", "failed"];
+const statusOrder = [
+  "completed",
+  "pending",
+  "cancelled",
+  "failed",
+  "draft",
+  "rejected",
+];
 
 const avatarBgClasses = [
   "warningBg",
@@ -49,8 +58,7 @@ const formatAmount = (amount) => {
 };
 
 const getBillingDescription = (transaction) => {
-  const invoiceNo =
-    transaction?.invoice_no?.invoice_no || transaction?.invoice_no;
+  const invoiceNo = transaction?.invoice_no?.bill_no_full;
 
   if (transaction?.description) return transaction.description;
   if (transaction?.plan) return transaction.plan;
@@ -60,6 +68,7 @@ const getBillingDescription = (transaction) => {
 };
 
 const TransactionsList = ({ variant = "default", limit }) => {
+  const router = useRouter();
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
@@ -78,7 +87,6 @@ const TransactionsList = ({ variant = "default", limit }) => {
       const res = await getTransactionsList({
         body: { partner_id: userData?.id },
       });
-      console.log("Transactions List Response:", res);
       if (res?.data?.success) {
         const list = res?.data?.data?.data || res?.data?.data || [];
         const items = Array.isArray(list) ? list : [];
@@ -122,7 +130,18 @@ const TransactionsList = ({ variant = "default", limit }) => {
 
       return matchesSearch && matchesStatus;
     });
-  }, [transactionsList, searchQuery, selectedStatuses]);
+  }, [
+    transactionsList,
+    searchQuery,
+    selectedStatuses,
+    router?.query?.customerId,
+  ]);
+
+  const finalTransactionsList = filteredTransactions?.filter((tx) => {
+    if (!router?.query?.customerId) return true;
+
+    return tx?.cust_id === Number(router?.query?.customerId);
+  });
 
   const resultTotal = totalCount || transactionsList?.length || 0;
   const showingEnd = filteredTransactions?.length || 0;
@@ -154,7 +173,9 @@ const TransactionsList = ({ variant = "default", limit }) => {
                   >
                     <div className={styles.billingTransactionRowInner}>
                       <div className={styles.billingDateMeta}>
-                        <p className={styles.billingTxDate}>{tx?.date || "-"}</p>
+                        <p className={styles.billingTxDate}>
+                          {tx?.date || "-"}
+                        </p>
                         <span className={styles.billingTxIdBadge}>
                           {tx?.order_no || "-"}
                         </span>
@@ -226,6 +247,54 @@ const TransactionsList = ({ variant = "default", limit }) => {
       </section>
     );
   }
+
+  // const downloadExcel = () => {
+  //   const data = finalTransactionsList;
+
+  //   if (!data || data.length === 0) {
+  //     return;
+  //   }
+
+  //   const headers = [
+  //     "Date",
+  //     "Order No",
+  //     "Domain",
+  //     "Status",
+  //     "Amount",
+  //     "Invoice No",
+  //   ];
+
+  //   const rows = data.map((tx) => [
+  //     tx?.date || "-",
+  //     tx?.order_no || "-",
+  //     tx?.domain || "-",
+  //     tx?.status || "-",
+  //     tx?.amount || "-",
+  //     tx?.invoice_no?.bill_no_full || "-",
+  //   ]);
+
+  //   const csvContent = [headers, ...rows]
+  //     .map((row) =>
+  //       row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(","),
+  //     )
+  //     .join("\n");
+
+  //   const blob = new Blob([csvContent], {
+  //     type: "text/csv;charset=utf-8;",
+  //   });
+
+  //   const url = URL.createObjectURL(blob);
+
+  //   const link = document.createElement("a");
+  //   link.href = url;
+  //   link.download = "transaction-history.csv";
+
+  //   document.body.appendChild(link);
+  //   link.click();
+
+  //   document.body.removeChild(link);
+  //   URL.revokeObjectURL(url);
+  // };
 
   return (
     <div className="col py-4">
@@ -334,7 +403,11 @@ const TransactionsList = ({ variant = "default", limit }) => {
         <div
           className={`${styles.toolbar} py-2 px-sm-4 px-3 d-flex align-items-center justify-content-end`}
         >
-          <button type="button" className={styles.downloadListBtn}>
+          <button
+            type="button"
+            className={styles.downloadListBtn}
+            // onClick={downloadExcel}
+          >
             <MdOutlineFileDownload className={styles.downloadListIcon} />
             Download List
           </button>
@@ -344,8 +417,8 @@ const TransactionsList = ({ variant = "default", limit }) => {
           <div className="py-4 px-sm-4 px-3">
             <div className="d-flex flex-column gap-3 mb-4">
               {!isLoading ? (
-                filteredTransactions?.length > 0 ? (
-                  filteredTransactions
+                finalTransactionsList?.length > 0 ? (
+                  finalTransactionsList
                     ?.filter((tx) =>
                       selectedStatuses === "all"
                         ? true
@@ -377,10 +450,12 @@ const TransactionsList = ({ variant = "default", limit }) => {
                                 <div className={styles.txDomainName}>
                                   {tx?.domain}
                                 </div>
-                                <div className={styles.txDesc}>
-                                  Received payment for invoice no. INV
-                                  {tx?.invoice_no?.invoice_no}
-                                </div>
+                                {tx?.status?.toLowerCase() === "completed" && (
+                                  <div className={styles.txDesc}>
+                                    Received payment for invoice no. INV
+                                    {tx?.invoice_no?.bill_no_full}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </div>
