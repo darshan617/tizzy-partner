@@ -7,7 +7,6 @@
   max-width: 1100px;
   margin: auto;
 }
-
 .breadcrumb-item.active {
   display: block;
   width: 100%;
@@ -20,6 +19,10 @@
 
 .breadcrumb-item.active:before {
   display: none;
+}
+.pageWrap{
+  max-width: 1100px;
+  margin:auto;
 }
 
 .sectionCard {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { BiChevronDown, BiKey, BiPowerOff, BiSearch } from "react-icons/bi";
 import { BsHandbag } from "react-icons/bs";
-import { FiBell } from "react-icons/fi";
+import { FiBell, FiPackage, FiTrash2 } from "react-icons/fi";
 import { FaRegCircleUser } from "react-icons/fa6";
 import logo from "@/assets/signup/signupLogo.png";
 import Image from "next/image";
@@ -18,16 +18,53 @@ import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import { IoHelpBuoyOutline } from "react-icons/io5";
 import { LuWallet } from "react-icons/lu";
 import { createPortal } from "react-dom";
+import {
+  useDeleteNotificationMutation,
+  useGetNotificationListMutation,
+  useMarkNotificationAsReadMutation,
+} from "@/redux/apis/notificationApi";
+
+const formatNotificationTime = (dateString) => {
+  if (!dateString) return "";
+
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+
+  return date.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
+  });
+};
 
 const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const router = useRouter();
   const { showToast } = useToast();
   const [user, setUser] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
+  const [isNotificationSidebarOpen, setIsNotificationSidebarOpen] =
+    useState(false);
+  const [notificationFilter, setNotificationFilter] = useState("all");
   const [isClient, setIsClient] = useState(false);
   const dropdownRef = useRef(null);
-
+  const [
+    getNotificationList,
+    { data: notificationList, isLoading: isNotificationListLoading },
+  ] = useGetNotificationListMutation();
+  const [
+    markNotificationAsRead,
+    { isLoading: isMarkNotificationAsReadLoading },
+  ] = useMarkNotificationAsReadMutation();
+  const [deleteNotification] = useDeleteNotificationMutation();
   useEffect(() => {
     try {
       const cookie = Cookies.get("userData");
@@ -68,11 +105,11 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   }, [isDropdownOpen]);
 
   useEffect(() => {
-    if (!isCartSidebarOpen) return undefined;
+    if (!isNotificationSidebarOpen) return undefined;
 
     const handleEscKey = (event) => {
       if (event.key === "Escape") {
-        setIsCartSidebarOpen(false);
+        setIsNotificationSidebarOpen(false);
       }
     };
 
@@ -80,8 +117,96 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     return () => {
       document.removeEventListener("keydown", handleEscKey);
     };
-  }, [isCartSidebarOpen]);
+  }, [isNotificationSidebarOpen]);
 
+  useEffect(() => {
+    if (!user?.id) return;
+
+    getNotificationList({
+      body: {
+        partner_id: user?.id,
+      },
+    });
+  }, [user?.id]);
+
+  const handleDeleteNotification = async (notificationId, event) => {
+    event.stopPropagation();
+    if (!user?.id) return;
+
+    try {
+      const response = await deleteNotification({
+        body: {
+          partner_id: user?.id,
+          notification_id: notificationId,
+        },
+      });
+      console.log(response);
+      if (response?.data?.success) {
+        showToast("Notification deleted successfully", "success");
+        getNotificationList({
+          body: {
+            partner_id: user?.id,
+          },
+        });
+        setIsNotificationSidebarOpen(false);
+      }else{
+        showToast(response?.data?.message || "Failed to delete notification", "error");
+      }
+    } catch (error) {
+      console.log(error?.data?.message);
+      showToast(error?.data?.message || "Failed to delete notification", "error");
+    }
+  };
+
+  const handleMarkNotificationAsRead = async (notificationId, event) => {
+    event.stopPropagation();
+    if (!user?.id) return;
+    try {
+      const response = await markNotificationAsRead({
+        body: {
+          partner_id: user?.id,
+          notification_id: notificationId,
+        },
+      });
+      console.log(response);
+      if (response?.data?.success) {
+        showToast("Notification marked as read", "success");
+        router.push("/subscriptions");
+        setIsNotificationSidebarOpen(false);
+      } else {
+        showToast(response?.data?.message ||  "Failed to mark notification as read", "error");
+      }
+    } catch (error) {
+      console.log(error);
+      showToast(
+        error?.data?.message || "Failed to mark notification as read",
+        "error",
+      );
+    }
+  };
+
+  const notifications = notificationList?.data || [];
+  const unreadCount = notificationList?.unread_count ?? 0;
+  const displayedNotifications =
+    notificationFilter === "unread"
+      ? notifications.filter((notification) => !notification.is_read)
+      : notifications;
+
+  const handleGetNotificationList = async () => {
+    try {
+      const response = await getNotificationList({
+        body: {
+          partner_id: user?.id,
+        },
+      }).unwrap();
+
+      if (response?.success) {
+        setIsNotificationSidebarOpen(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <header className={styles.pageHeader}>
@@ -141,12 +266,12 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                     <button
                       className={styles.navBtns}
                       type="button"
-                      onClick={() => setIsCartSidebarOpen(true)}
+                      onClick={handleGetNotificationList}
                     >
                       <FiBell size={20} />
-                      <span className={styles.navLabel}>
-                        {balanceAndCartData?.notifications || 0}
-                      </span>
+                      {unreadCount > 0 && (
+                        <span className={styles.navLabel}>{unreadCount}</span>
+                      )}
                     </button>
                   </div>
                   <div className="">
@@ -157,7 +282,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                       </span>
                     </Link>
                   </div>
-                  <div className="vr  "></div>
+                  <div className="vr"></div>
                   <div className={styles.profHolder} ref={dropdownRef}>
                     <div
                       className={`d-flex align-items-center ${styles.profDropdownToggle}`}
@@ -334,39 +459,142 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
         createPortal(
           <>
             <div
-              className={`${styles.cartSidebarOverlay} ${isCartSidebarOpen ? styles.showCartSidebar : ""}`}
-              onClick={() => setIsCartSidebarOpen(false)}
+              className={`${styles.cartSidebarOverlay} ${isNotificationSidebarOpen ? styles.showCartSidebar : ""}`}
+              onClick={() => setIsNotificationSidebarOpen(false)}
             />
             <aside
-              className={`${styles.cartSidebar} ${isCartSidebarOpen ? styles.showCartSidebar : ""}`}
+              className={`${styles.cartSidebar} ${isNotificationSidebarOpen ? styles.showCartSidebar : ""}`}
             >
               <div className={styles.cartSidebarHeader}>
-                <h6 className="mb-0">Cart Summary</h6>
+                <div className={styles.notificationHeaderTitle}>
+                  <h6 className="mb-0">Notifications</h6>
+                  {unreadCount > 0 && (
+                    <span className={styles.notificationUnreadBadge}>
+                      {unreadCount} new
+                    </span>
+                  )}
+                </div>
                 <button
                   type="button"
                   className={styles.cartSidebarCloseBtn}
-                  onClick={() => setIsCartSidebarOpen(false)}
-                  aria-label="Close cart sidebar"
+                  onClick={() => setIsNotificationSidebarOpen(false)}
+                  aria-label="Close notifications"
                 >
                   x
                 </button>
-              </div>
-              <div className={styles.cartSidebarBody}>
-                <p className="mb-3">
-                  You have <strong>{balanceAndCartData?.cart_item_count || 0}</strong>{" "}
-                  item(s) in your cart.
-                </p>
-                <Link
-                  href="/order-summary"
-                  className="btn btnDark w-100"
-                  onClick={() => setIsCartSidebarOpen(false)}
-                >
-                  Go To Order Summary
-                </Link>
+                <div className={styles.notificationFilterButtonsContainer}>
+                  <button
+                    type="button"
+                    className={`${styles.notificationFilterButton} ${
+                      notificationFilter === "all"
+                        ? styles.notificationFilterButtonActive
+                        : ""
+                    }`}
+                    onClick={() => setNotificationFilter("all")}
+                  >
+                    All
+                    {notifications.length > 0 && (
+                      <span className={styles.notificationFilterBadge}>
+                        ({notifications.length})
+                      </span>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.notificationFilterButton} ${
+                      notificationFilter === "unread"
+                        ? styles.notificationFilterButtonActive
+                        : ""
+                    }`}
+                    onClick={() => setNotificationFilter("unread")}
+                  >
+                    Unread
+                    {unreadCount > 0 && (
+                      <span className={styles.notificationFilterBadge}>
+                        {unreadCount}
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </div>  
+
+              <div className={styles.notificationSidebarBody}>
+                {isNotificationListLoading ? (
+                  <div className={styles.notificationLoading}>
+                    {[1, 2, 3].map((item) => (
+                      <div key={item} className={styles.notificationSkeleton} />
+                    ))}
+                  </div>
+                ) : displayedNotifications.length === 0 ? (
+                  <div className={styles.notificationEmpty}>
+                    <FiBell size={36} />
+                    <p>
+                      {notificationFilter === "unread"
+                        ? "No unread notifications"
+                        : "No notifications yet"}
+                    </p>
+                    <span>
+                      {notificationFilter === "unread"
+                        ? "You're all caught up."
+                        : "We'll notify you when something arrives."}
+                    </span>
+                  </div>
+                ) : (
+                  <ul className={styles.notificationList}>
+                    {displayedNotifications?.map((notification) => (
+                      <li
+                        key={notification?.id}
+                        className={`${styles.notificationItem} ${
+                          !notification?.is_read
+                            ? styles.notificationItemUnread
+                            : ""
+                        }`}
+                        onClick={(e) => {
+                          handleMarkNotificationAsRead(
+                            notification?.notification_id,
+                            e
+                          );
+                        }}
+                        
+                      >
+                        <div className={styles.notificationIcon}>
+                          <FiPackage size={16} />
+                        </div>
+                        <div className={styles.notificationContent}>
+                          <div className={styles.notificationTopRow}>
+                            <h6 className={styles.notificationTitle}>
+                              {notification?.title}
+                            </h6>
+                            {!notification?.is_read && (
+                              <span
+                                className={styles.notificationDot}
+                                aria-label="Unread"
+                              />
+                            )}
+                          </div>
+                          <p className={styles.notificationMessage}>
+                            {notification?.message}
+                          </p>
+                          <span className={styles.notificationTime}>
+                            {formatNotificationTime(notification?.created_at)}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className={styles.notificationDeleteBtn}
+                          aria-label="Delete notification"
+                          onClick={(e) => handleDeleteNotification(notification?.notification_id, e)}
+                        >
+                          <FiTrash2 size={18} />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </aside>
           </>,
-          document.body
+          document.body,
         )}
     </>
   );
