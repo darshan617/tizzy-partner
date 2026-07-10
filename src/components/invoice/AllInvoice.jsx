@@ -128,30 +128,39 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
     });
   }, [invoices, searchQuery, selectedStatuses]);
 
+  const selectedPayment = useMemo(
+    () =>
+      invoices
+        ?.filter((invoice) => selectedIds?.includes(invoice?.invoice_id))
+        ?.reduce((sum, invoice) => sum + Number(invoice?.amount || 0), 0) || 0,
+    [invoices, selectedIds],
+  );
+
   const allVisibleSelected =
     filteredInvoices?.length > 0 &&
     filteredInvoices?.every((invoice) =>
-      selectedIds?.includes(invoice?.invoice_no),
+      selectedIds?.includes(invoice?.invoice_id),
     );
 
   const toggleSelectAll = () => {
     if (allVisibleSelected) {
       const visibleIds = new Set(
-        filteredInvoices?.map((invoice) => invoice?.invoice_no),
+        filteredInvoices?.map((invoice) => invoice?.invoice_id),
       );
       setSelectedIds((prev) => prev?.filter((id) => !visibleIds?.has(id)));
+
       return;
     }
 
-    const visibleIds = filteredInvoices?.map((invoice) => invoice?.invoice_no);
+    const visibleIds = filteredInvoices?.map((invoice) => invoice?.invoice_id);
     setSelectedIds((prev) => [...new Set([...prev, ...visibleIds])]);
   };
 
-  const toggleSelectOne = (invoiceNo) => {
+  const toggleSelectOne = (invoiceId) => {
     setSelectedIds((prev) =>
-      prev?.includes(invoiceNo)
-        ? prev.filter((id) => id !== invoiceNo)
-        : [...prev, invoiceNo],
+      prev?.includes(invoiceId)
+        ? prev.filter((id) => id !== invoiceId)
+        : [...prev, invoiceId],
     );
   };
 
@@ -281,7 +290,7 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                   <div className={`${styles.filterPart} col-auto`}>
                     <span className={styles.filterHead}>Status :</span>
                     <ul className={`${styles.filterGroup} gap-2`} role="group">
-                      {statusOrder.map((status) => (
+                      {statusOrder?.map((status) => (
                         <li key={status}>
                           <button
                             className={`${styles.filterItem} rounded-pill`}
@@ -351,7 +360,7 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
               }}
               className={styles.paySelectedBtn}
             >
-              Pay Selected
+              Pay Selected (₹ {selectedPayment?.toFixed(2)})
               {isPaymentVerifyLoading && <Loader />}
             </button>
             <DownloadExcel
