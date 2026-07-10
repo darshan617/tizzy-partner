@@ -6,6 +6,12 @@ import { MdOutlineFileDownload } from "react-icons/md";
 import Loader from "@/common-components/loader/Loader";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import DownloadExcel from "@/common-components/download-excel/DownloadExcel";
+import {
+  useInvoicesPaymentDetailsMutation,
+  usePaymentVerifyMutation,
+} from "@/redux/apis/invoiceApi";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
 
 const statusLabelMap = {
   active: "Active",
@@ -51,19 +57,57 @@ const showPayNow = (status) => {
   return key === "pending" || key === "overdue";
 };
 
+const invoiceColumns = [
+  {
+    label: "Date",
+    key: "date",
+  },
+  {
+    label: "Invoice No",
+    key: "invoice_no",
+  },
+  {
+    label: "Domain Name",
+    key: "domain_name",
+  },
+  {
+    label: "Plan Name",
+    key: "plan_name",
+  },
+  {
+    label: "Status",
+    key: "status",
+  },
+  {
+    label: "Amount",
+    key: "amount",
+  },
+  {
+    label: "Invoice PDF URL",
+    key: "invoice_pdf_url",
+  },
+];
+
 const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
+  const { showToast } = useToast();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState("all");
   const [selectedIds, setSelectedIds] = useState([]);
-  console.log("seleeeee", selectedStatuses);
 
   const invoices = invoiceData || [];
 
   const toggleStatus = (status) => {
     setSelectedStatuses((prev) => (prev === status ? "all" : status));
   };
+
+  const [
+    invoicesPaymentDetails,
+    { isLoading: isInvoicesPaymentDetailsLoading },
+  ] = useInvoicesPaymentDetailsMutation();
+  const [paymentVerify, { isLoading: isPaymentVerifyLoading }] =
+    usePaymentVerifyMutation();
 
   const filteredInvoices = useMemo(() => {
     const q = searchQuery?.trim()?.toLowerCase();
@@ -84,31 +128,105 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
     });
   }, [invoices, searchQuery, selectedStatuses]);
 
+  const selectedPayment = useMemo(
+    () =>
+      invoices
+        ?.filter((invoice) => selectedIds?.includes(invoice?.invoice_id))
+        ?.reduce((sum, invoice) => sum + Number(invoice?.amount || 0), 0) || 0,
+    [invoices, selectedIds],
+  );
+
   const allVisibleSelected =
     filteredInvoices?.length > 0 &&
     filteredInvoices?.every((invoice) =>
-      selectedIds?.includes(invoice?.invoice_no),
+      selectedIds?.includes(invoice?.invoice_id),
     );
 
   const toggleSelectAll = () => {
     if (allVisibleSelected) {
       const visibleIds = new Set(
-        filteredInvoices?.map((invoice) => invoice?.invoice_no),
+        filteredInvoices?.map((invoice) => invoice?.invoice_id),
       );
       setSelectedIds((prev) => prev?.filter((id) => !visibleIds?.has(id)));
+
       return;
     }
 
-    const visibleIds = filteredInvoices?.map((invoice) => invoice?.invoice_no);
+    const visibleIds = filteredInvoices?.map((invoice) => invoice?.invoice_id);
     setSelectedIds((prev) => [...new Set([...prev, ...visibleIds])]);
   };
 
-  const toggleSelectOne = (invoiceNo) => {
+  const toggleSelectOne = (invoiceId) => {
     setSelectedIds((prev) =>
-      prev?.includes(invoiceNo)
-        ? prev.filter((id) => id !== invoiceNo)
-        : [...prev, invoiceNo],
+      prev?.includes(invoiceId)
+        ? prev.filter((id) => id !== invoiceId)
+        : [...prev, invoiceId],
     );
+  };
+
+  const handlePayNow = async (invoiceId) => {
+    try {
+      const res = await invoicesPaymentDetails({
+        body: { invoice_id: invoiceId?.length > 1 ? invoiceId : [invoiceId] },
+      });
+      if (res?.data?.success || res?.data?.status) {
+        showToast(res?.data?.message, "success");
+        const razorpay = res?.data?.data;
+
+        const options = {
+          key: razorpay.razorpay_key,
+          amount: razorpay.amount,
+          currency: razorpay.currency,
+          name: razorpay.customer_name,
+          // description: razorpay.description,
+          order_id: razorpay.order_id,
+          // prefill: razorpay.prefill,
+          handler: async function (response) {
+            const verifyPaymentRes = await paymentVerify({
+              body: {
+                invoice_id: invoiceId?.length > 1 ? invoiceId : [invoiceId],
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                razorpay_order_id: response.razorpay_order_id,
+              },
+            });
+
+            if (
+              verifyPaymentRes?.data?.success ||
+              verifyPaymentRes?.data?.status
+            ) {
+              showToast(
+                "Payment Successful" || verifyPaymentRes?.data?.message,
+                "success",
+              );
+              router.reload();
+            } else {
+              showToast(
+                "Payment Failed" || verifyPaymentRes?.data?.message,
+                "error",
+              );
+            }
+          },
+
+          theme: {
+            color: "#3399cc",
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+
+        rzp.on("payment.failed", function (response) {
+          showToast(response.error.description, "error");
+        });
+
+        rzp.open();
+      } else {
+        showToast(res?.data?.message, "error");
+      }
+    } catch (error) {
+      console.log(error, "payment error");
+      showToast(error?.data?.message, "error");
+    }
   };
 
   const resultTotal = totalCount ?? invoices?.length;
@@ -172,7 +290,7 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                   <div className={`${styles.filterPart} col-auto`}>
                     <span className={styles.filterHead}>Status :</span>
                     <ul className={`${styles.filterGroup} gap-2`} role="group">
-                      {statusOrder.map((status) => (
+                      {statusOrder?.map((status) => (
                         <li key={status}>
                           <button
                             className={`${styles.filterItem} rounded-pill`}
@@ -231,14 +349,28 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
             />
             <span className={styles.checkAllLabel}>Check All</span>
           </label>
-          <button
-            type="button"
-            className={styles.downloadListBtn}
-            disabled={selectedIds?.length === 0}
-          >
-            <MdOutlineFileDownload className={styles.downloadListIcon} />
-            Download List
-          </button>
+
+          <div className="d-flex align-items-center gap-2">
+            <button
+              onClick={() => handlePayNow(selectedIds)}
+              disabled={selectedIds?.length === 0}
+              style={{
+                opacity: selectedIds?.length === 0 ? 0.5 : 1,
+                cursor: selectedIds?.length === 0 ? "not-allowed" : "pointer",
+              }}
+              className={styles.paySelectedBtn}
+            >
+              Pay Selected (₹ {selectedPayment?.toFixed(2)})
+              {isPaymentVerifyLoading && <Loader />}
+            </button>
+            <DownloadExcel
+              className={styles.downloadListBtn}
+              data={filteredInvoices}
+              columns={invoiceColumns}
+              fileName="invoice-list"
+              buttonText="Download List"
+            />
+          </div>
         </div>
 
         <div className={styles.listScrollArea}>
@@ -263,16 +395,16 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                               type="checkbox"
                               className="form-check-input"
                               checked={selectedIds?.includes(
-                                invoice?.invoice_no,
+                                invoice?.invoice_id,
                               )}
                               onChange={() =>
-                                toggleSelectOne(invoice?.invoice_no)
+                                toggleSelectOne(invoice?.invoice_id)
                               }
                             />
                           </div>
 
                           <div className="col">
-                            <div className="row align-items-center py-3 px-2">
+                            <div className="row align-items-center py-3 px-3">
                               <div className="col-lg-2 col-md-3 col-12 mb-2 mb-md-0">
                                 <div className={styles.invoiceMeta}>
                                   <div className={styles.crDate}>
@@ -304,7 +436,7 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                                 </div>
                               </div>
 
-                              <div className="col-lg-2 col-md-2 col-6 text-md-center">
+                              <div className="col-lg-2 col-md-2 col-6 text-md-left">
                                 <span
                                   className={`${styles.statusBadge} ${getStatusBadgeClass(invoice?.status)}`}
                                 >
@@ -312,7 +444,7 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                                 </span>
                               </div>
 
-                              <div className="col-lg-2 col-md-2 col-6 text-md-center text-end text-md-center">
+                              <div className="col-lg-2 col-md-2 col-6 text-md-left  ">
                                 <span className={styles.amountValue}>
                                   {invoice?.formatted_amount ||
                                     `₹ ${Number(invoice?.amount || 0).toFixed(2)}`}
@@ -335,12 +467,7 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                                       : "#02499662",
                                   }}
                                   onClick={() =>
-                                    router.push({
-                                      pathname: "/order-summary",
-                                      query: {
-                                        order_id: invoice?.order_id,
-                                      },
-                                    })
+                                    handlePayNow(invoice?.invoice_id)
                                   }
                                 >
                                   Pay Now

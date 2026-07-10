@@ -198,15 +198,15 @@ export default function CustomerDetail() {
       <div className="row flex-column gy-4 py-4">
         <div className="col">
           <div className={`${styles.pageWrap}`}>
-            <div className="row align-items-end">
+            <div className={`${styles.headerRow} row align-items-end`}>
               <div className="col">
-                <nav className={`mb-0`}>
+                <nav className={`${styles.breadcrumbs} mb-0`}>
                   <Link href={"/dashboard"}>Dashboard</Link> /{" "}
                   <Link href={"/customers"}>Customer</Link>
-                  <h1 className="breadcrumb-item active" aria-current="page">
+                  <h1 className={`${styles.breadcrumbItem} active`} aria-current="page">
                     Customer - {customerDetails?.name}
                   </h1>
-                </nav>
+                </nav> 
               </div>
               <div className="col-auto">
                 <Link href="/customers" className="btn small btnWhite">

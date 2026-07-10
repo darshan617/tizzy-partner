@@ -11,7 +11,7 @@ const CreateCustomer = () => {
   return (
     <Layout>
       <div className={styles.headerRow}>
-        <nav className="breadcrumb mb-0">
+        <nav className={`${styles.breadcrumbs} mb-0`}>
           <Link href="/dashboard" className="breadcrumb-item">
             Dashboard
           </Link>

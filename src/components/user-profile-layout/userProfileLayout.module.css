@@ -18,7 +18,7 @@
   border-radius: 10px;
   padding: 20px;
   background: var(--whiteColor);
-  box-shadow: 0 2px 1px #0000001a;
+  box-shadow: 5px 5px 8px #5090c545;
 }
 
 .userProfileMenu {

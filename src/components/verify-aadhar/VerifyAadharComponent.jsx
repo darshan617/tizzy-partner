@@ -17,9 +17,12 @@ import {
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import aadharImage from "../../../public/images/verify-aadhar/aadharImage.png";
 
+// const formatAadharDisplay = (digits) => {
+//   const groups = digits.match(/.{1,4}/g) || [];
+//   return groups.map((group) => group.split("").join(" ")).join("  ");
+// };
 const formatAadharDisplay = (digits) => {
-  const groups = digits.match(/.{1,4}/g) || [];
-  return groups.map((group) => group.split("").join(" ")).join("  ");
+  return digits.match(/.{1,4}/g)?.join(" ") || "";
 };
 
 const VerifyAadharComponent = () => {
@@ -95,7 +98,7 @@ const VerifyAadharComponent = () => {
           <input
             id="aadhaarInput"
             type="text"
-            placeholder="1 2 3 4  4 5 6 7  9 1 0 2"
+            placeholder="1234 4567 9102"
             maxLength={26}
             inputMode="numeric"
             className={styles.input}
