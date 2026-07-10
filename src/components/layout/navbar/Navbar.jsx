@@ -129,7 +129,8 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     });
   }, [user?.id]);
 
-  const handleDeleteNotification = async (notificationId) => {
+  const handleDeleteNotification = async (notificationId, event) => {
+    event.stopPropagation();
     if (!user?.id) return;
 
     try {
@@ -138,27 +139,27 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
           partner_id: user?.id,
           notification_id: notificationId,
         },
-      }).unwrap();
-
-      if (response?.success) {
+      });
+      console.log(response);
+      if (response?.data?.success) {
+        showToast("Notification deleted successfully", "success");
         getNotificationList({
           body: {
             partner_id: user?.id,
           },
         });
-      } else {
-        showToast("Failed to delete notification", "error");
+        setIsNotificationSidebarOpen(false);
+      }else{
+        showToast(response?.data?.message || "Failed to delete notification", "error");
       }
     } catch (error) {
-      console.log(error);
-      showToast(
-        error?.data?.message || "Failed to delete notification",
-        "error",
-      );
+      console.log(error?.data?.message);
+      showToast(error?.data?.message || "Failed to delete notification", "error");
     }
   };
 
-  const handleMarkNotificationAsRead = async (notificationId) => {
+  const handleMarkNotificationAsRead = async (notificationId, event) => {
+    event.stopPropagation();
     if (!user?.id) return;
     try {
       const response = await markNotificationAsRead({
@@ -166,12 +167,14 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
           partner_id: user?.id,
           notification_id: notificationId,
         },
-      }).unwrap();
-      if (response?.success) {
-        // showToast("Notification marked as read", "success");
+      });
+      console.log(response);
+      if (response?.data?.success) {
+        showToast("Notification marked as read", "success");
         router.push("/subscriptions");
+        setIsNotificationSidebarOpen(false);
       } else {
-        showToast("Failed to mark notification as read", "error");
+        showToast(response?.data?.message ||  "Failed to mark notification as read", "error");
       }
     } catch (error) {
       console.log(error);
@@ -538,7 +541,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                   </div>
                 ) : (
                   <ul className={styles.notificationList}>
-                    {displayedNotifications.map((notification) => (
+                    {displayedNotifications?.map((notification) => (
                       <li
                         key={notification?.id}
                         className={`${styles.notificationItem} ${
@@ -546,9 +549,10 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                             ? styles.notificationItemUnread
                             : ""
                         }`}
-                        onClick={() => {
+                        onClick={(e) => {
                           handleMarkNotificationAsRead(
                             notification?.notification_id,
+                            e
                           );
                         }}
                         
@@ -579,7 +583,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                           type="button"
                           className={styles.notificationDeleteBtn}
                           aria-label="Delete notification"
-                          onClick={() => handleDeleteNotification(notification?.notification_id)}
+                          onClick={(e) => handleDeleteNotification(notification?.notification_id, e)}
                         >
                           <FiTrash2 size={18} />
                         </button>

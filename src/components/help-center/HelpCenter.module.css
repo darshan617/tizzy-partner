@@ -199,7 +199,7 @@
   background: var(--whiteColor);
   border: 1px solid #e2e8f0;
   border-radius: 10px;
-  box-shadow: 0 1px 8px rgba(15, 23, 42, 0.08);
+  box-shadow: 5px 5px 8px #5090c545;
   overflow: hidden;
 }
 
@@ -271,7 +271,7 @@
   padding: 1.5rem;
   background: var(--whiteColor);
   border-radius: 10px;
-  box-shadow: 0 1px 8px rgba(15, 23, 42, 0.08);
+  box-shadow: 5px 5px 8px #5090c545;
 }
 
 .contactCardHeader {
