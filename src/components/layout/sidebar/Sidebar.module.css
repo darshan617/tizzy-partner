@@ -366,7 +366,7 @@
   color: var(--whiteColor);
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1024px) {
   .sideBar {
     position: fixed;
     top: 0;

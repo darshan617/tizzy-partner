@@ -244,7 +244,18 @@
   user-select: none;
 }
 
+.hamburgerMenu{
+  display: none;
+}
+
 /* Media Queries */
+
+@media (max-width: 1024px){
+  .hamburgerMenu{
+    display: block;
+  }
+}
+
 @media (min-width: 576px) {
   .pageHeader {
     padding: 10px 15px;
@@ -274,9 +285,9 @@
     padding: 10px 30px;
   }
 
-  .pageSearchBox {
-    width: 300px;
-  }
+      /* .pageSearchBox {
+        width: 300px;
+      } */
 }
 
 @media (min-width: 992px) {

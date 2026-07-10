@@ -290,7 +290,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="d-lg-none">
+                  <div className={`${styles.hamburgerMenu}`}>
                     <button
                       className={`${styles.navBtns} p-1`}
                       onClick={() => setIsSidebarOpen(!isSidebarOpen)}

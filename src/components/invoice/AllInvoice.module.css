@@ -314,6 +314,7 @@
 }
 
 .amountValue {
+  padding-left: 0 !important;
   font-size: var(--fs14);
   font-weight: 600;
   color: var(--darkColor);
@@ -371,6 +372,18 @@
 
 .searchCount {
   font-size: var(--fs14);
+}
+
+
+@media (max-width: 1100px){
+  .amountValue {
+   margin-left: -30px !important;
+  }
+}
+@media (max-width: 1024px){
+  .amountValue {
+    margin-left: 0px !important;
+   }
 }
 
 @media (max-width: 575.98px) {
