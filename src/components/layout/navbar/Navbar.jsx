@@ -17,12 +17,15 @@ import { useRouter } from "next/router";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import { IoHelpBuoyOutline } from "react-icons/io5";
 import { LuWallet } from "react-icons/lu";
+import { createPortal } from "react-dom";
 
 const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const router = useRouter();
   const { showToast } = useToast();
   const [user, setUser] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -34,6 +37,10 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     } catch (err) {
       console.log("Invalid cookie");
     }
+  }, []);
+
+  useEffect(() => {
+    setIsClient(true);
   }, []);
 
   const handleSignOut = () => {
@@ -59,6 +66,21 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isDropdownOpen]);
+
+  useEffect(() => {
+    if (!isCartSidebarOpen) return undefined;
+
+    const handleEscKey = (event) => {
+      if (event.key === "Escape") {
+        setIsCartSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleEscKey);
+    return () => {
+      document.removeEventListener("keydown", handleEscKey);
+    };
+  }, [isCartSidebarOpen]);
 
   return (
     <>
@@ -116,7 +138,11 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                     </button>
                   </div>
                   <div className="">
-                    <button className={styles.navBtns}>
+                    <button
+                      className={styles.navBtns}
+                      type="button"
+                      onClick={() => setIsCartSidebarOpen(true)}
+                    >
                       <FiBell size={20} />
                       <span className={styles.navLabel}>
                         {balanceAndCartData?.notifications || 0}
@@ -304,6 +330,44 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
           </div>
         </div>
       </header>
+      {isClient &&
+        createPortal(
+          <>
+            <div
+              className={`${styles.cartSidebarOverlay} ${isCartSidebarOpen ? styles.showCartSidebar : ""}`}
+              onClick={() => setIsCartSidebarOpen(false)}
+            />
+            <aside
+              className={`${styles.cartSidebar} ${isCartSidebarOpen ? styles.showCartSidebar : ""}`}
+            >
+              <div className={styles.cartSidebarHeader}>
+                <h6 className="mb-0">Cart Summary</h6>
+                <button
+                  type="button"
+                  className={styles.cartSidebarCloseBtn}
+                  onClick={() => setIsCartSidebarOpen(false)}
+                  aria-label="Close cart sidebar"
+                >
+                  x
+                </button>
+              </div>
+              <div className={styles.cartSidebarBody}>
+                <p className="mb-3">
+                  You have <strong>{balanceAndCartData?.cart_item_count || 0}</strong>{" "}
+                  item(s) in your cart.
+                </p>
+                <Link
+                  href="/order-summary"
+                  className="btn btnDark w-100"
+                  onClick={() => setIsCartSidebarOpen(false)}
+                >
+                  Go To Order Summary
+                </Link>
+              </div>
+            </aside>
+          </>,
+          document.body
+        )}
     </>
   );
 };

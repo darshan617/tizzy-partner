@@ -50,11 +50,6 @@ const RenewCart = ({
   const { showToast } = useToast();
   const isPopupVisiblle = useSelector(selectIsPopupVisible);
   const dispatch = useDispatch();
-  console.log(isPopupVisiblle);
-  useEffect(() => {
-    console.log("cartDetails", cartDetails);
-    console.log("transfer_domain", cartDetails?.[0]?.transfer_domain);
-  }, [cartDetails]);
 
   const [cartToDelete, setCartToDelete] = useState({
     cart_id: null,
@@ -117,8 +112,6 @@ const RenewCart = ({
       setTempDomainNames(toDomainArray(cartItemList[0]?.domain_name));
     }
   }, [cartItemList?.[0]?.cart_id]);
-
-  console.log(currentPlanDetails, "currentPlanDetails");
 
   return (
     <>
