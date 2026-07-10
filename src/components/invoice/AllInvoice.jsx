@@ -6,6 +6,7 @@ import { MdOutlineFileDownload } from "react-icons/md";
 import Loader from "@/common-components/loader/Loader";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import DownloadExcel from "@/common-components/download-excel/DownloadExcel";
 
 const statusLabelMap = {
   active: "Active",
@@ -51,13 +52,43 @@ const showPayNow = (status) => {
   return key === "pending" || key === "overdue";
 };
 
+const invoiceColumns = [
+  {
+    label: "Date",
+    key: "date",
+  },
+  {
+    label: "Invoice No",
+    key: "invoice_no",
+  },
+  {
+    label: "Domain Name",
+    key: "domain_name",
+  },
+  {
+    label: "Plan Name",
+    key: "plan_name",
+  },
+  {
+    label: "Status",
+    key: "status",
+  },
+  {
+    label: "Amount",
+    key: "amount",
+  },
+  {
+    label: "Invoice PDF URL",
+    key: "invoice_pdf_url",
+  },
+];
+
 const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState("all");
   const [selectedIds, setSelectedIds] = useState([]);
-  console.log("seleeeee", selectedStatuses);
 
   const invoices = invoiceData || [];
 
@@ -223,22 +254,21 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
           className={`${styles.toolbar} py-2 px-sm-4 px-3 d-flex align-items-center justify-content-between`}
         >
           <label className="d-flex align-items-center gap-2 mb-0">
-            <input
+            {/* <input
               type="checkbox"
               className="form-check-input"
               checked={allVisibleSelected}
               onChange={toggleSelectAll}
             />
-            <span className={styles.checkAllLabel}>Check All</span>
+            <span className={styles.checkAllLabel}>Check All</span> */}
           </label>
-          <button
-            type="button"
+          <DownloadExcel
             className={styles.downloadListBtn}
-            disabled={selectedIds?.length === 0}
-          >
-            <MdOutlineFileDownload className={styles.downloadListIcon} />
-            Download List
-          </button>
+            data={filteredInvoices}
+            columns={invoiceColumns}
+            fileName="invoice-list"
+            buttonText="Download List"
+          />
         </div>
 
         <div className={styles.listScrollArea}>
@@ -258,7 +288,7 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                         className={`${styles.contentRow} btnDisplay`}
                       >
                         <div className="row align-items-center g-0">
-                          <div className={`${styles.ckbCol} col-auto`}>
+                          {/* <div className={`${styles.ckbCol} col-auto`}>
                             <input
                               type="checkbox"
                               className="form-check-input"
@@ -269,10 +299,10 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                                 toggleSelectOne(invoice?.invoice_no)
                               }
                             />
-                          </div>
+                          </div> */}
 
                           <div className="col">
-                            <div className="row align-items-center py-3 px-2">
+                            <div className="row align-items-center py-3 px-3">
                               <div className="col-lg-2 col-md-3 col-12 mb-2 mb-md-0">
                                 <div className={styles.invoiceMeta}>
                                   <div className={styles.crDate}>
@@ -310,7 +340,7 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                                 >
                                   {invoice?.status}
                                 </span>
-                              </div>  
+                              </div>
 
                               <div className="col-lg-2 col-md-2 col-6 text-md-left  ">
                                 <span className={styles.amountValue}>
