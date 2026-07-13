@@ -134,17 +134,16 @@ const VerifyAadharComponent = () => {
           type="button"
           className={styles.getOtpBtn}
           onClick={handleGetOtp}
-          disabled={isOrderAadharVerifyLoading || !isConcernedAboutAadhar}
+          disabled={isAadharNumberLoading || !isConcernedAboutAadhar}
           style={{
-            opacity:
-              !isConcernedAboutAadhar || isOrderAadharVerifyLoading ? 0.7 : 1,
+            opacity: !isConcernedAboutAadhar || isAadharNumberLoading ? 0.7 : 1,
             cursor:
-              !isConcernedAboutAadhar || isOrderAadharVerifyLoading
+              !isConcernedAboutAadhar || isAadharNumberLoading
                 ? "not-allowed"
                 : "pointer",
           }}
         >
-          {isOrderAadharVerifyLoading ? "Sending..." : "Get OTP"}
+          {isAadharNumberLoading ? "Sending..." : "Get OTP"}
         </button>
       </div>
 

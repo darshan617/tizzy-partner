@@ -306,6 +306,16 @@
   background: var(--borderColor);
 }
 
+.renewed {
+  color: var(--secondaryColor);
+  background: var(--secondarySubtleColor);
+}
+
+.upgraded {
+  color: var(--infoColor);
+  background: var(--infoSubtleColor);
+}
+
 .amountValue {
   font-size: var(--fs14);
   font-weight: 600;

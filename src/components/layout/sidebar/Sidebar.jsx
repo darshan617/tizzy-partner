@@ -18,8 +18,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const creditLimit = Number(balanceAndCartData?.credit_limit || 0);
   const walletBalance = Number(balanceAndCartData?.wallet_balance || 0);
   const usedAmount = Math.max(creditLimit - walletBalance, 0);
+  const creditUsed = Number(balanceAndCartData?.credit_used || 0);
 
-  const usedPercentage = creditLimit > 0 ? (usedAmount / creditLimit) * 100 : 0;
+  const usedPercentage = creditLimit > 0 ? (creditUsed / creditLimit) * 100 : 0;
   const isAccountPage = ACCOUNT_PATHS.includes(router?.pathname);
 
   const formatBalance = (value) =>
@@ -60,7 +61,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
         </div>
 
         <div className={styles.credLimits}>
-          Used ₹{formatAmount(usedAmount)} of ₹{formatAmount(creditLimit)}
+          Used ₹{formatAmount(creditUsed)} of ₹{formatAmount(creditLimit)}
         </div>
       </div>
     </div>
@@ -93,8 +94,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
         <div className={`${styles.sideMenuHead} mb-2`}>SERVICES</div>
         <ul className={`${styles.iconRailList} d-flex flex-column gap-1`}>
           {SIDEBAR_SERVICES_CONSTANTS?.map((menu, idx) => {
-            const isActive =
-              `/services/${router?.query?.slug}` === menu?.href;
+            const isActive = `/services/${router?.query?.slug}` === menu?.href;
             return (
               <li key={idx}>
                 <Link
@@ -198,7 +198,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
               <div>
                 <div className={`${styles.sideMenuHead} mb-2`}>MENU</div>
 
-                <ul className={`${styles.sideMenuList} d-flex flex-column gap-1`}>
+                <ul
+                  className={`${styles.sideMenuList} d-flex flex-column gap-1`}
+                >
                   {SIDEBAR_MENU_CONSTANTS?.map((menu, idx) => {
                     const ICON = menu?.icon || "";
                     const isActive = router?.pathname === menu?.href;
@@ -239,7 +241,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
               <div>
                 <div className={`${styles.sideMenuHead} mb-2`}>SERVICES</div>
 
-                <ul className={`${styles.sideMenuList} d-flex flex-column gap-1`}>
+                <ul
+                  className={`${styles.sideMenuList} d-flex flex-column gap-1`}
+                >
                   {SIDEBAR_SERVICES_CONSTANTS?.map((menu, idx) => {
                     const isActive =
                       `/services/${router?.query?.slug}` === menu?.href;

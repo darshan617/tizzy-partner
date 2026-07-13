@@ -21,12 +21,18 @@ const statusLabelMap = {
   expiring: "Expiring",
   inactive: "Inactive",
   pending: "Pending",
+  downgraded: "Downgraded",
   draft: "Draft",
   cancelled: "Cancelled",
+  upgraded: "Upgraded",
+  renewed: "Renewed",
 };
 
 const statusOrder = [
   "active",
+  "upgraded",
+  "downgraded",
+  "renewed",
   "expiring",
   "inactive",
   "pending",
@@ -315,6 +321,11 @@ const AllSubscriptions = ({
                                         ${subscription?.status?.toLowerCase() === "pending" ? styles.pendingBadge : ""} 
                                         ${subscription?.status?.toLowerCase() === "draft" ? styles.draftBadge : ""}
                                         ${subscription?.status?.toLowerCase() === "cancelled" ? styles.cancelledBadge : ""}
+                                        ${subscription?.status?.toLowerCase() === "upgraded" ? styles.upgradedBadge : ""}
+                                        ${subscription?.status?.toLowerCase() === "renewed" ? styles.renewedBadge : ""}
+                                        ${subscription?.status?.toLowerCase() === "downgraded" ? styles.downgradedBadge : ""}
+                                        ${subscription?.status?.toLowerCase() === "upgrade pending" ? styles.upgradePending : ""}
+                                        ${subscription?.status?.toLowerCase() === "downgrade pending" ? styles.downgradePending : ""}
                                         `}
                                       >
                                         {subscription?.status}

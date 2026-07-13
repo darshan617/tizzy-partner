@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "./navbar/Navbar";
 import Footer from "./footer/Footer";
 import Sidebar from "./sidebar/Sidebar";
@@ -7,9 +7,12 @@ import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { ACCOUNT_PATHS } from "./sidebar/SidebarConstant";
+import { setBalanceAndCartData } from "@/redux/slices/balanceCartSlice";
+import { useDispatch } from "react-redux";
 
 const Layout = ({ children }) => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const isAccountPage = ACCOUNT_PATHS.includes(router.pathname);
   const userData = Cookies?.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies?.get("userData")))
@@ -21,6 +24,10 @@ const Layout = ({ children }) => {
       skip: !userData?.id,
     },
   );
+
+  useEffect(() => {
+    dispatch(setBalanceAndCartData(balanceAndCartData?.data));
+  }, [balanceAndCartData]);
 
   return (
     <>

@@ -352,6 +352,17 @@
   background: var(--borderColor);
 }
 
+.upgradedBadge,
+.downgradedBadge {
+  color: var(--infoColor);
+  background: var(--infoSubtleColor);
+}
+
+.renewedBadge {
+  color: var(--secondaryColor);
+  background: var(--secondarySubtleColor);
+}
+
 .expired,
 .cancelledBadge {
   color: var(--dangerColor);
@@ -361,6 +372,12 @@
 .statusSubtext {
   font-size: var(--fs12);
   color: var(--textBodySecondary);
+}
+
+.upgradePending,
+.downgradePending {
+  color: var(--purpleColor);
+  background: var(--purpleSubtleColor);
 }
 
 .renewBtn {

@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import { BiChevronDown, BiKey, BiPowerOff, BiSearch } from "react-icons/bi";
+import {
+  BiChevronDown,
+  BiKey,
+  BiPowerOff,
+  BiSearch,
+  BiX,
+} from "react-icons/bi";
 import { BsHandbag } from "react-icons/bs";
 import { FiBell, FiPackage, FiTrash2 } from "react-icons/fi";
 import { FaRegCircleUser } from "react-icons/fa6";
@@ -149,16 +155,27 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
           },
         });
         setIsNotificationSidebarOpen(false);
-      }else{
-        showToast(response?.data?.message || "Failed to delete notification", "error");
+      } else {
+        showToast(
+          response?.data?.message || "Failed to delete notification",
+          "error",
+        );
       }
     } catch (error) {
       console.log(error?.data?.message);
-      showToast(error?.data?.message || "Failed to delete notification", "error");
+      showToast(
+        error?.data?.message || "Failed to delete notification",
+        "error",
+      );
     }
   };
 
-  const handleMarkNotificationAsRead = async (notificationId, event) => {
+  const handleMarkNotificationAsRead = async (
+    notificationId,
+    customerId,
+    orderId,
+    event,
+  ) => {
     event.stopPropagation();
     if (!user?.id) return;
     try {
@@ -171,10 +188,15 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
       console.log(response);
       if (response?.data?.success) {
         showToast("Notification marked as read", "success");
-        router.push("/subscriptions");
+        router.push(
+          `/subscriptions/subscriptions-details?customerId=${customerId}&orderId=${orderId}`,
+        );
         setIsNotificationSidebarOpen(false);
       } else {
-        showToast(response?.data?.message ||  "Failed to mark notification as read", "error");
+        showToast(
+          response?.data?.message || "Failed to mark notification as read",
+          "error",
+        );
       }
     } catch (error) {
       console.log(error);
@@ -480,7 +502,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                   onClick={() => setIsNotificationSidebarOpen(false)}
                   aria-label="Close notifications"
                 >
-                  x
+                  <BiX size={20} />
                 </button>
                 <div className={styles.notificationFilterButtonsContainer}>
                   <button
@@ -516,7 +538,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                     )}
                   </button>
                 </div>
-              </div>  
+              </div>
 
               <div className={styles.notificationSidebarBody}>
                 {isNotificationListLoading ? (
@@ -552,10 +574,11 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                         onClick={(e) => {
                           handleMarkNotificationAsRead(
                             notification?.notification_id,
-                            e
+                            notification?.customer_id,
+                            notification?.order_id,
+                            e,
                           );
                         }}
-                        
                       >
                         <div className={styles.notificationIcon}>
                           <FiPackage size={16} />
@@ -583,7 +606,12 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                           type="button"
                           className={styles.notificationDeleteBtn}
                           aria-label="Delete notification"
-                          onClick={(e) => handleDeleteNotification(notification?.notification_id, e)}
+                          onClick={(e) =>
+                            handleDeleteNotification(
+                              notification?.notification_id,
+                              e,
+                            )
+                          }
                         >
                           <FiTrash2 size={18} />
                         </button>
