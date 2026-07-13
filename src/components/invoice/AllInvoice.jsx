@@ -400,6 +400,15 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                               onChange={() =>
                                 toggleSelectOne(invoice?.invoice_id)
                               }
+                              disabled={
+                                invoice?.status?.toLowerCase() === "paid"
+                              }
+                              style={{
+                                cursor:
+                                  invoice?.status?.toLowerCase() === "paid"
+                                    ? "not-allowed"
+                                    : "pointer",
+                              }}
                             />
                           </div>
 

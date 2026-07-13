@@ -203,10 +203,13 @@ export default function CustomerDetail() {
                 <nav className={`${styles.breadcrumbs} mb-0`}>
                   <Link href={"/dashboard"}>Dashboard</Link> /{" "}
                   <Link href={"/customers"}>Customer</Link>
-                  <h1 className={`${styles.breadcrumbItem} active`} aria-current="page">
+                  <h1
+                    className={`${styles.breadcrumbItem} active fs-4`}
+                    aria-current="page"
+                  >
                     Customer - {customerDetails?.name}
                   </h1>
-                </nav> 
+                </nav>
               </div>
               <div className="col-auto">
                 <Link href="/customers" className="btn small btnWhite">
@@ -335,46 +338,53 @@ export default function CustomerDetail() {
                         </Link>
                       </div>
 
-                      {allTransactions?.slice(0, 5)?.map((txn, i) => (
-                        <div className={`${styles.txnRow}`} key={i}>
-                          <div className={`${styles.txnMeta}`}>
-                            <div className={`${styles.txnDate}`}>
-                              {txn?.created_at || "-"}
+                      {allTransactions?.length > 0 ? (
+                        allTransactions?.slice(0, 5)?.map((txn, i) => (
+                          <div className={`${styles.txnRow}`} key={i}>
+                            <div className={`${styles.txnMeta}`}>
+                              <div className={`${styles.txnDate}`}>
+                                {txn?.created_at || "-"}
+                              </div>
+                              <div className={`${styles.txnId}`}>
+                                {txn?.order_no}
+                              </div>
                             </div>
-                            <div className={`${styles.txnId}`}>
-                              {txn?.order_no}
-                            </div>
-                          </div>
-                          <div className={`${styles.txnInfo}`}>
-                            <div
-                              className={`${styles.avatarSmall} ${transactions[i]?.avatarColor} flex-shrink-0`}
-                            >
-                              {txn?.domain_name?.charAt(0)?.toUpperCase()}
-                            </div>
-                            <div className="ms-2">
-                              <Link
-                                href="#"
-                                className={`${styles.txnDomain} d-block`}
+                            <div className={`${styles.txnInfo}`}>
+                              <div
+                                className={`${styles.avatarSmall} ${transactions[i]?.avatarColor} flex-shrink-0`}
                               >
-                                {txn?.domain_name}
-                              </Link>
-                              <small className={`${styles.txnDesc}`}>
-                                {txn?.order_name}
-                              </small>
+                                {txn?.domain_name?.charAt(0)?.toUpperCase() ||
+                                  "-"}
+                              </div>
+                              <div className="ms-2">
+                                <Link
+                                  href="#"
+                                  className={`${styles.txnDomain} d-block`}
+                                >
+                                  {txn?.domain_name || "-"}
+                                </Link>
+                                <small className={`${styles.txnDesc}`}>
+                                  {txn?.order_name || "-"}
+                                </small>
+                              </div>
+                            </div>
+                            <div className={`${styles.txnAmount}`}>
+                              <span
+                                className={`${styles.txnStatus}
+                              ${styles[txn?.status?.toLowerCase()]}`}
+                              >
+                                {txn?.status?.charAt(0)?.toUpperCase() +
+                                  txn?.status?.slice(1)}
+                              </span>
+                              <strong>₹ {txn?.price}</strong>
                             </div>
                           </div>
-                          <div className={`${styles.txnAmount}`}>
-                            <span
-                              className={`${styles.txnStatus}
-                              ${styles[txn?.status?.toLowerCase()]}`}
-                            >
-                              {txn?.status?.charAt(0)?.toUpperCase() +
-                                txn?.status?.slice(1)}
-                            </span>
-                            <strong>₹ {txn?.price}</strong>
-                          </div>
-                        </div>
-                      ))}
+                        ))
+                      ) : (
+                        <p className="text-center m-0 text-secondary">
+                          No transactions found
+                        </p>
+                      )}
                     </div>
                   </div>
 

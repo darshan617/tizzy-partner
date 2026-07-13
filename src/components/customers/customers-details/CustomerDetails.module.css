@@ -7,6 +7,7 @@
   max-width: 1100px;
   margin: auto;
 }
+
 .breadcrumb-item.active {
   display: block;
   width: 100%;
@@ -20,9 +21,10 @@
 .breadcrumb-item.active:before {
   display: none;
 }
-.pageWrap{
+
+.pageWrap {
   max-width: 1100px;
-  margin:auto;
+  margin: auto;
 }
 
 .sectionCard {
@@ -236,6 +238,22 @@
 .failed {
   background: var(--dangerSubtleColor);
   color: var(--dangerColor);
+}
+
+.upgraded,
+.downgraded {
+  background: var(--infoSubtleColor);
+  color: var(--infoColor);
+}
+
+.renewed {
+  background: var(--secondarySubtleColor);
+  color: var(--secondaryColor);
+}
+
+.upgradePending {
+  background: var(--purpleSubtleColor);
+  color: var(--purpleColor);
 }
 
 .statusBadge.draft,

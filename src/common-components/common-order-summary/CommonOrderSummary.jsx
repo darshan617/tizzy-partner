@@ -506,7 +506,7 @@ const CommonOrderSummary = () => {
     });
     if (res?.data?.success) {
       const data = res?.data?.data;
-      const allData = data.map((item) => ({
+      const allData = data?.map((item) => ({
         ...item,
         plan_name: item?.plan?.name,
         domain_name: item?.domain_name,

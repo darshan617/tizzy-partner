@@ -4,8 +4,17 @@ import Image from "next/image";
 import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
 import styles from "./BillingCredit.module.css";
 import TransactionsList from "../transactions/TransactionsList";
+import { useSelector } from "react-redux";
 
 const BillingCredit = () => {
+  const balanceAndCartData = useSelector(
+    (state) => state.balanceCart.balanceAndCartData,
+  );
+  console.log(balanceAndCartData);
+  const formatAmount = (value) =>
+    Number(value || 0).toLocaleString("en-IN", {
+      maximumFractionDigits: 0,
+    });
   return (
     <div className={styles.billingCreditPage}>
       <div className={styles.pageHeader}>
@@ -22,7 +31,13 @@ const BillingCredit = () => {
       <section className={`sectionCard ${styles.billingCard}`}>
         <div className={styles.cardHeader}>
           <h2 className={styles.cardTitle}>Billing &amp; Credits</h2>
-          <span className="statusBadge subtleSuccess">Sufficient Credit</span>
+          <span
+            className={`statusBadge ${balanceAndCartData?.is_sufficient_balance ? "subtleSuccess" : "subtleDanger"}`}
+          >
+            {balanceAndCartData?.is_sufficient_balance
+              ? "Sufficient Credit"
+              : "Insufficient Credit"}{" "}
+          </span>
         </div>
 
         <div className={styles.cardBody}>
@@ -38,7 +53,9 @@ const BillingCredit = () => {
 
             <div className={styles.creditBalanceContent}>
               <p className={styles.creditBalanceLabel}>Credit Balance</p>
-              <p className={styles.creditBalanceAmount}>₹ 36,458.00</p>
+              <p className={styles.creditBalanceAmount}>
+                ₹ {formatAmount(balanceAndCartData?.wallet_balance)}
+              </p>
             </div>
 
             <button type="button" className={styles.payNowBtn}>
@@ -49,14 +66,22 @@ const BillingCredit = () => {
           <div className={styles.statsGroup}>
             <div className={styles.statItem}>
               <p className={styles.statLabel}>Credit Used</p>
-              <p className={styles.statValue}>₹16,254.00</p>
+              <p className={styles.statValue}>
+                ₹{" "}
+                {formatAmount(
+                  balanceAndCartData?.credit_limit -
+                    balanceAndCartData?.wallet_balance,
+                )}
+              </p>
             </div>
 
             <span className={styles.statDivider} aria-hidden />
 
             <div className={styles.statItem}>
               <p className={styles.statLabel}>Credit Limit</p>
-              <p className={styles.statValue}>₹50,000.00</p>
+              <p className={styles.statValue}>
+                {formatAmount(balanceAndCartData?.credit_limit)}
+              </p>
             </div>
           </div>
         </div>

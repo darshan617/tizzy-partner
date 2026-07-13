@@ -83,6 +83,9 @@ const getPlanStatusClass = (status) => {
   if (normalized === "expired" || normalized === "cancelled")
     return styles.expired;
   if (normalized === "draft") return styles.draft;
+  if (normalized === "upgraded") return styles.upgraded;
+  if (normalized === "downgraded") return styles.downgraded;
+  if (normalized === "renewed") return styles.renewed;
   return "";
 };
 
@@ -320,8 +323,7 @@ const SubscriptionsDetailsComponent = () => {
               <div className="d-flex align-items-center justify-content-between mb-2">
                 <div>
                   <h2 className={styles.sectionCardHead}>
-                    CURRENT SUBSCRIPTION{" "}
-                    <span>({plans?.length || 0})</span>
+                    CURRENT SUBSCRIPTION <span>({plans?.length || 0})</span>
                   </h2>
                 </div>
                 <div>
@@ -342,7 +344,10 @@ const SubscriptionsDetailsComponent = () => {
 
               {plans?.length > 0 ? (
                 plans?.map((plan) => (
-                  <div key={plan?.order_sub_id} className={`${styles.subRow} noHover`}>
+                  <div
+                    key={plan?.order_sub_id}
+                    className={`${styles.subRow} noHover`}
+                  >
                     <div className={`${styles.subTop}`}>
                       <div className={`${styles.subPlan}`}>
                         <p
@@ -355,13 +360,16 @@ const SubscriptionsDetailsComponent = () => {
                             {plan?.plan_name || "-"}
                           </div>
                           <small className={`${styles.subPlanPrice}`}>
-                            ₹ {plan?.subtotal ?? "-"} <span>Per User / Per Year</span>
+                            ₹ {plan?.subtotal ?? "-"}{" "}
+                            <span>Per User / Per Year</span>
                           </small>
                         </div>
                       </div>
 
                       <span
-                        className={`${styles.statusBadge} ${getPlanStatusClass(plan?.status)}`}
+                        className={`${styles.statusBadge} 
+                        ${getPlanStatusClass(plan?.status)} 
+                        ${(plan?.status?.toLowerCase() === "upgrade pending" || plan?.status?.toLowerCase() === "downgrade pending") && styles.upgradePending}`}
                       >
                         {formatPlanStatus(plan?.status)}
                       </span>
@@ -456,7 +464,11 @@ const SubscriptionsDetailsComponent = () => {
 
                         {plan?.status?.toLowerCase() !== "draft" &&
                         plan?.status?.toLowerCase() !== "pending" &&
-                        plan?.status?.toLowerCase() !== "cancelled" ? (
+                        plan?.status?.toLowerCase() !== "cancelled" &&
+                        plan?.status?.toLowerCase() !== "upgrade pending" &&
+                        plan?.status?.toLowerCase() !== "upgraded" &&
+                        plan?.status?.toLowerCase() !== "downgrade pending" &&
+                        plan?.status?.toLowerCase() !== "downgraded" ? (
                           <>
                             <Link
                               href={{
