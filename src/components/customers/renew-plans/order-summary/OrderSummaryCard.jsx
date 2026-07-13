@@ -655,6 +655,9 @@ const OrderSummaryCard = ({
             // }
             if (isInsufficient) {
               router?.push("/invoice");
+            } else if (tizzyProviderId && tempDomainNames?.length < 1) {
+              ensureDomainInputRow();
+              setIsPopupOpen("new-service");
             } else if (
               tempDomainNames?.length >= 1 &&
               router?.query?.type !== "renew-plan"
