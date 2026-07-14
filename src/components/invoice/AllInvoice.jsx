@@ -136,32 +136,53 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
     [invoices, selectedIds],
   );
 
-  const allVisibleSelected =
-    filteredInvoices?.length > 0 &&
-    filteredInvoices?.every((invoice) =>
-      selectedIds?.includes(invoice?.invoice_id),
-    );
+  // const allVisibleSelected =
+  //   filteredInvoices?.length > 0 &&
+  //   filteredInvoices?.every((invoice) =>
+  //     selectedIds?.includes(invoice?.invoice_id),
+  //   );
+  const allVisibleSelected = filteredInvoices
+    ?.filter((invoice) => invoice?.status?.toLowerCase() !== "paid")
+    ?.every((invoice) => selectedIds?.includes(invoice?.invoice_id));
 
   const toggleSelectAll = () => {
-    if (allVisibleSelected) {
-      const visibleIds = new Set(
-        filteredInvoices?.map((invoice) => invoice?.invoice_id),
-      );
-      setSelectedIds((prev) => prev?.filter((id) => !visibleIds?.has(id)));
+    //   if (allVisibleSelected) {
+    //     const visibleIds = new Set(
+    //       filteredInvoices?.map((invoice) => invoice?.invoice_id),
+    //     );
+    //     setSelectedIds((prev) => prev?.filter((id) => !visibleIds?.has(id)));
 
-      return;
-    }
+    //     return;
+    //   }
 
-    const visibleIds = filteredInvoices?.map((invoice) => invoice?.invoice_id);
-    setSelectedIds((prev) => [...new Set([...prev, ...visibleIds])]);
-  };
+    //   const visibleIds = filteredInvoices?.map((invoice) => invoice?.invoice_id);
+    //   setSelectedIds((prev) => [...new Set([...prev, ...visibleIds])]);
+    // };
 
-  const toggleSelectOne = (invoiceId) => {
-    setSelectedIds((prev) =>
-      prev?.includes(invoiceId)
-        ? prev.filter((id) => id !== invoiceId)
-        : [...prev, invoiceId],
+    // const toggleSelectOne = (invoiceId) => {
+    //   setSelectedIds((prev) =>
+    //     prev?.includes(invoiceId)
+    //       ? prev.filter((id) => id !== invoiceId)
+    //       : [...prev, invoiceId],
+    //   );
+
+    const selectableInvoices = filteredInvoices?.filter(
+      (invoice, idx) => invoice?.status?.toLowerCase() !== "paid",
     );
+    const selectableIds = selectableInvoices?.map(
+      (invoice) => invoice?.invoice_id,
+    );
+
+    const allSelected = selectableIds?.every((id) => selectedIds?.includes(id));
+    if (allSelected) {
+      // remove only selectable invoices
+      setSelectedIds((prev) =>
+        prev.filter((id) => !selectableIds.includes(id)),
+      );
+    } else {
+      // select only unpaid invoices
+      setSelectedIds((prev) => [...new Set([...prev, ...selectableIds])]);
+    }
   };
 
   const handlePayNow = async (invoiceId) => {
