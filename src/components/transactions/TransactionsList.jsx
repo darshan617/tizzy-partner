@@ -8,6 +8,7 @@ import Loader from "@/common-components/loader/Loader";
 import styles from "@/components/transactions/TransactionsList.module.css";
 import { useRouter } from "next/router";
 import DownloadExcel from "@/common-components/download-excel/DownloadExcel";
+import { FiGlobe } from "react-icons/fi";
 
 const statusLabelMap = {
   completed: "Completed",
@@ -457,7 +458,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                         className={`${styles.contentRow} btnDisplay`}
                       >
                         <div className="row align-items-center py-3 px-sm-4 px-3 g-2">
-                          <div className="col-lg-2 col-md-3 col-12">
+                          <div className="col-12 col-md-2 col-lg-2">
                             <div className={styles.txMeta}>
                               <div className={styles.txDate}>{tx?.date}</div>
                               <div className={styles.txNumber}>
@@ -466,16 +467,24 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </div>
                           </div>
 
-                          <div className="col-lg-5 col-md-5 col-12">
+                          <div className="col-12 col-md-3 col-lg-4">
                             <div className="d-flex align-items-center">
                               <div
                                 className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
                               >
-                                {tx?.domain?.charAt(0)?.toUpperCase()}
+                                {tx?.domain_name?.charAt(0)?.toUpperCase()}
                               </div>
                               <div className="ps-2 min-w-0">
                                 <div className={styles.txDomainName}>
-                                  {tx?.domain}
+                                  {tx?.company_name}
+                                  <div className={styles.txDomainNameText}>
+                                    <FiGlobe
+                                      className={styles.txDomainNameIcon}
+                                      width={16}
+                                      height={16}
+                                    />
+                                    {tx?.domain_name}
+                                  </div>
                                 </div>
                                 {tx?.status?.toLowerCase() === "completed" && (
                                   <div className={styles.txDesc}>
@@ -487,7 +496,18 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </div>
                           </div>
 
-                          <div className="col-lg-2 col-md-2 col-6 text-md-center">
+                          <div className="col-12 col-md-3 col-lg-3">
+                            <div className={styles.txMeta}>
+                              <div className={styles.txPlanName}>
+                                {tx?.plan}
+                              </div>
+                              <div className={styles.categoryName}>
+                                {tx?.order_category}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="col-6 col-md-2 col-lg-2 text-md-end">
                             <span
                               className={`${styles.statusBadge} ${styles[tx?.status?.toLowerCase()]}`}
                             >
@@ -495,7 +515,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </span>
                           </div>
 
-                          <div className="col-lg-3 col-md-2 col-6 text-end">
+                          <div className="col-6 col-md-2 col-lg-1 text-end">
                             <span className={styles.amountValue}>
                               {formatAmount(tx?.amount)}
                             </span>

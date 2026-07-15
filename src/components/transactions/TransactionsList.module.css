@@ -236,26 +236,60 @@
 }
 
 .txNumber {
-  font-size: var(--fs14);
+  color: rgb(61, 68, 80);
+  width: fit-content;
+  max-width: 100%;
+  font-size: var(--fs12);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: rgb(240, 241, 244);
+  border-radius: 6px;
+  align-items: center;
+  padding: 4px 10px;
   font-weight: 600;
-  color: var(--darkColor);
+  display: inline-flex;
+  overflow: hidden;
+}
+
+.txPlanName{
+  font-size: var(--fs14);
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
   line-clamp: 1;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .txDomainName {
   font-size: var(--fs14);
   font-weight: 600;
-  color: var(--primaryColor);
+  color: #000;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  /* -webkit-line-clamp: 1; */
+  /* line-clamp: 1; */
+  overflow: hidden;
+}
+
+.categoryName{
+  font-size: var(--fs12);
+  text-transform: capitalize;
+  color: var(--textBodySecondary);
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
   line-clamp: 1;
   overflow: hidden;
+}
+
+.txDomainNameText{
+  color: var(--textBodySecondary);
+  display: flex;
+  align-items: center;
+}
+
+.txDomainNameIcon{
+  margin-right: 4px;
 }
 
 .txDesc {
