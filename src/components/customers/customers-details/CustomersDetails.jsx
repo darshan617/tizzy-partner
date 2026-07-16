@@ -885,13 +885,13 @@ export default function CustomerDetail() {
                     </div>
 
                     <div className={`${styles.subBottom}`}>
-                      <div className={`${styles.subMeta}`}>
+                      <div className={`${styles.subMeta} ps-1`}>
                         <div className={`${styles.subMetaItem}`}>
                           <Calendar className={`${styles.subMetaIcon}`} />
                           <div>
-                            <small className={`${styles.infoLabel}`}>
+                            {/* <small className={`${styles.infoLabel}`}>
                               Billing Cycle
-                            </small>
+                            </small> */}
                             <div className={`${styles.subMetaValue}`}>
                               {innerPlan?.start_date} - {innerPlan?.end_date}
                             </div>
@@ -901,9 +901,9 @@ export default function CustomerDetail() {
                         <div className={`${styles.subMetaItem}`}>
                           <Globe className={`${styles.subMetaIcon}`} />
                           <div>
-                            <small className={`${styles.infoLabel}`}>
+                            {/* <small className={`${styles.infoLabel}`}>
                               Domain
-                            </small>
+                            </small> */}
                             <div className={`${styles.subMetaValue}`}>
                               {innerPlan?.domain_name || "-"}
                             </div>
@@ -913,9 +913,9 @@ export default function CustomerDetail() {
                         <div className={`${styles.subMetaItem}`}>
                           <Users className={`${styles.subMetaIcon}`} />
                           <div>
-                            <small className={`${styles.infoLabel}`}>
+                            {/* <small className={`${styles.infoLabel}`}>
                               Licenses
-                            </small>
+                            </small> */}
                             <div className={`${styles.subMetaValue}`}>
                               {innerPlan?.license_count || "-"} Users
                             </div>

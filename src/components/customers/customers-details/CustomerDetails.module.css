@@ -161,14 +161,14 @@
 }
 
 .profAvatar {
-  width: 24px;
-  height: 24px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: #ccc;
   font-size: var(--fs20);
   font-weight: 600;
   color: var(--whiteColor);
-  line-height: 24px;
+  line-height: 40px;
   text-align: center;
 }
 
@@ -466,7 +466,7 @@
   font-size: var(--fs12);
   line-height: 1;
   color: var(--darkColor);
-  background: #eef2f7;
+  background: #EBECED;
   border-radius: 0.5rem;
 }
 
@@ -506,20 +506,22 @@
 
 .updwngradeBtn,
 .downgradeBtn {
-  background: #fff;
-  padding: 5px 14px;
+  background: #E6F1FD;
+  padding: 5px 1rem;
   border-radius: 99;
   outline: none;
   border: none;
-  /* border-bottom: 1px solid var(--primaryColor); */
-  color: var(--primaryColor);
-  font-weight: 500;
+  border: 1px solid #E6F1FD;
+  color: var(--darkColor);
+  font-weight: 600;
+  font-size: var(--fs12);
 }
 
 .updwngradeBtn:hover,
 .downgradeBtn:hover {
-  color: #007bff;
-  /* border-bottom: 1px solid #007bff; */
+  border: 1px solid var(--primaryColor);
+  color: var(--primaryColor);
+  transition: all 0.2s ease;
 }
 
 @media (min-width: 576px) {
@@ -790,11 +792,11 @@
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
-  border: 1px solid #BCDAF9;
+  border: 1px solid #E7E9EB;
   border-radius: 10px;
   margin-bottom: 0.85rem;
   transition: all 0.2s ease;
-  background: #F5F8FC;
+  background: #ffffff;
 }
 
 .subRow:last-child {
@@ -869,16 +871,16 @@
 }
 
 .subMetaIcon {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   color: var(--primaryColor);
   flex-shrink: 0;
 }
 
 .subMetaValue {
-  font-size: var(--fs13);
+  font-size: var(--fs12);
   font-weight: 500;
-  color: var(--darkColor);
+  color: var(--textBodySecondary);
 }
 
 .subActions {
@@ -891,10 +893,10 @@
 
 .subRenewBtn,
 .subUpgradeBtn {
-  height: 32px;
-  padding: 0 1rem;
+
+  padding: 5px 1rem;
   border-radius: 50rem;
-  font-size: var(--fs13);
+  font-size: var(--fs12);
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -909,7 +911,7 @@
 }
 
 .subRenewBtn:hover {
-  filter: brightness(0.92);
+  filter: brightness(0.90);
 }
 
 .subRenewBtn svg {
@@ -918,9 +920,9 @@
 }
 
 .subUpgradeBtn {
-  background: var(--whiteColor);
+  background: #E6F1FD;
   color: var(--darkColor);
-  border: 1px solid var(--borderColor);
+  border: 1px solid #E6F1FD;
 }
 
 .subUpgradeBtn:hover {
@@ -929,24 +931,26 @@
 }
 
 .subUpgradeTextLink {
-  background: #fff;
+  background: #E6F1FD;
   border: none;
   height: auto;
-  padding: 5px 14px;
+  padding: 5px 1rem;
   border-radius: 99;
-  font-size: var(--fs13);
+  font-size: var(--fs12);
   font-weight: 600;
-  color: var(--primaryColor);
+  color: var(--darkColor);
   /* text-decoration: underline; */
   text-underline-offset: 3px;
   display: inline-flex;
   align-items: center;
-  /* border-bottom: 1px solid var(--primaryColor); */
+  border: 1px solid #E6F1FD;
 
 }
 
 .subUpgradeTextLink:hover {
-  color: #007bff;
+  transition: all 0.2s ease;
+  border: 1px solid var(--primaryColor);
+  color: var(--primaryColor);
 }
 
 .createBtnBg {
