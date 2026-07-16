@@ -472,7 +472,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                               <div
                                 className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
                               >
-                                {tx?.domain_name?.charAt(0)?.toUpperCase()}
+                                {tx?.company_name?.charAt(0)?.toUpperCase() || "-"}
                               </div>
                               <div className="ps-2 min-w-0">
                                 <div className={styles.txDomainName}>
@@ -507,7 +507,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </div>
                           </div>
 
-                          <div className="col-6 col-md-2 col-lg-2 text-md-end">
+                          <div className="col-6 col-md-2 col-lg-2 text-md-center">
                             <span
                               className={`${styles.statusBadge} ${styles[tx?.status?.toLowerCase()]}`}
                             >
