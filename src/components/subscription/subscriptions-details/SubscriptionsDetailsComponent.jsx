@@ -380,9 +380,9 @@ const SubscriptionsDetailsComponent = () => {
                         <div className={`${styles.subMetaItem}`}>
                           <Calendar className={`${styles.subMetaIcon}`} />
                           <div>
-                            <small className={`${styles.infoLabel}`}>
+                            {/* <small className={`${styles.infoLabel}`}>
                               Billing Cycle
-                            </small>
+                            </small> */}
                             <div className={`${styles.subMetaValue}`}>
                               {plan?.subscription_start_date ||
                                 periodStart ||
@@ -396,9 +396,9 @@ const SubscriptionsDetailsComponent = () => {
                         <div className={`${styles.subMetaItem}`}>
                           <Globe className={`${styles.subMetaIcon}`} />
                           <div>
-                            <small className={`${styles.infoLabel}`}>
+                            {/* <small className={`${styles.infoLabel}`}>
                               Domain
-                            </small>
+                            </small> */}
                             <div className={`${styles.subMetaValue}`}>
                               {domainName || "-"}
                             </div>
@@ -408,9 +408,9 @@ const SubscriptionsDetailsComponent = () => {
                         <div className={`${styles.subMetaItem}`}>
                           <Users className={`${styles.subMetaIcon}`} />
                           <div>
-                            <small className={`${styles.infoLabel}`}>
+                            {/* <small className={`${styles.infoLabel}`}>
                               Licenses
-                            </small>
+                            </small> */}
                             <div className={`${styles.subMetaValue}`}>
                               {plan?.licenses ?? "-"} Users
                               {/* <button

@@ -6,6 +6,7 @@ import { LuPencil } from "react-icons/lu";
 import Loader from "@/common-components/loader/Loader";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { BiUser } from "react-icons/bi";
 
 const avatarColorClasses = [
   "avatarRed",
@@ -211,10 +212,10 @@ const AllSubscriptions = ({
                     )
                     ?.map((subscription, idx) => {
                       const companyInitial =
-                        subscription?.customer_name?.charAt(0)?.toUpperCase() ||
+                        subscription?.company_name?.charAt(0)?.toUpperCase() ||
                         subscription?.domain?.charAt(0)?.toUpperCase() ||
                         "";
-                        console.log(subscription);
+                      console.log(subscription);
 
                       return (
                         <div
@@ -243,11 +244,15 @@ const AllSubscriptions = ({
                               </div>
                               <div className={styles.companyInfo}>
                                 <div className={styles.companyName}>
-                                  {subscription?.customer_name || "-"}
+                                  {subscription?.company_name || "-"}
                                 </div>
-                                <div className={styles.companyDomain}>
+                                {/* <div className={styles.companyDomain}>
                                   <FiGlobe className={styles.globeIcon} />
                                   <span>{subscription?.domain || "-"}</span>
+                                </div> */}
+                                <div className={styles.companyDomain}>
+                                  <BiUser className={styles.globeIcon} />
+                                  <span>{subscription?.customer_name}</span>
                                 </div>
                               </div>
                             </div>
@@ -264,14 +269,20 @@ const AllSubscriptions = ({
                                     : ""}
                                 </span>
                               </div>
-                              <div className={styles.licenseLine}>
-                                <span className={styles.licenseLabel}>
-                                  License
-                                </span>
-                                <span className={styles.licenseValue}>
-                                  {subscription?.licenses ?? "-"}
-                                </span>
+
+                              <div className={styles.companyDomain}>
+                                <FiGlobe className={styles.globeIcon} />
+                                <span>{subscription?.domain || "-"}</span>
                               </div>
+                            </div>
+
+                            <div className={styles.licenseLine}>
+                              <span className={styles.licenseLabel}>
+                                License
+                              </span>
+                              <span className={styles.licenseValue}>
+                                {subscription?.licenses ?? "-"}
+                              </span>
                             </div>
 
                             <div className={styles.enrollmentCol}>
