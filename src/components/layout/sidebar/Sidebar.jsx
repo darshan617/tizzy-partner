@@ -9,6 +9,7 @@ import {
   SIDEBAR_SERVICES_CONSTANTS,
 } from "./SidebarConstant";
 import { useRouter } from "next/router";
+import { LuMessageCircleQuestion } from "react-icons/lu";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const [mounted, setMounted] = useState(false);
@@ -284,7 +285,18 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
               </div>
             </div>
 
-            <div className="d-flex flex-column gap-4 p-3 mt-auto">
+            <div className={`${styles.sideBottom} d-flex flex-column gap-3 p-3`}>
+              <div className={styles.sideSupport}>
+                <Link
+                  href="/support"
+                  className={`${styles.menuLink} d-flex align-items-center justify-content-center`}
+                >
+                  <span className={`${styles.iconWrapper}`}>
+                    <LuMessageCircleQuestion size={25} />
+                  </span>
+                  <span className={`${styles.menuLabel}`}>SUPPORT</span>
+                </Link>
+              </div>
               {creditsCard}
             </div>
           </>
