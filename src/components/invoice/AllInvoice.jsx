@@ -159,13 +159,6 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
     //   setSelectedIds((prev) => [...new Set([...prev, ...visibleIds])]);
     // };
 
-    // const toggleSelectOne = (invoiceId) => {
-    //   setSelectedIds((prev) =>
-    //     prev?.includes(invoiceId)
-    //       ? prev.filter((id) => id !== invoiceId)
-    //       : [...prev, invoiceId],
-    //   );
-
     const selectableInvoices = filteredInvoices?.filter(
       (invoice, idx) => invoice?.status?.toLowerCase() !== "paid",
     );
@@ -183,6 +176,13 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
       // select only unpaid invoices
       setSelectedIds((prev) => [...new Set([...prev, ...selectableIds])]);
     }
+  };
+  const toggleSelectOne = (invoiceId) => {
+    setSelectedIds((prev) =>
+      prev?.includes(invoiceId)
+        ? prev.filter((id) => id !== invoiceId)
+        : [...prev, invoiceId],
+    );
   };
 
   const handlePayNow = async (invoiceId) => {

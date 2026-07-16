@@ -11,7 +11,7 @@ import { FaPen } from "react-icons/fa";
 import { MdAutorenew } from "react-icons/md";
 import Loader from "@/common-components/loader/Loader";
 import { BiDownload } from "react-icons/bi";
-import { Calendar, Globe, Users } from "lucide-react";
+import { Calendar, Globe, User, Users } from "lucide-react";
 
 const planProviderIcons = [
   <svg
@@ -180,72 +180,60 @@ const SubscriptionsDetailsComponent = () => {
         </div>
 
         <div className="col">
-          <div className={`sectionCard py-4 py-sm-3 px-sm-4 px-3`}>
-            <div className="row">
-              <div
-                className={`${styles.custProfBox} col-md-4 col-12 mb-3 mb-lg-0 position-relative`}
-              >
-                <div className="d-flex align-items-center mb-3">
-                  <div
-                    className={`${styles.profAvatar} ${styles.avatarColor_2} flex-shrink-0 text-capitalize`}
-                    style={{ zoom: 1.4 }}
-                  >
-                    {customer?.company_name?.charAt(0) || "?"}
-                  </div>
-                  <div className={`${styles.profUser} mx-2`}>
-                    <div
-                      className={`${styles.profName} text-nowrap text-capitalize`}
-                    >
-                      <p className="mb-1">{customer?.company_name || "-"}</p>
-                    </div>
+          <div
+            className={`sectionCard py-4 py-sm-4 px-sm-4 px-3`}
+            style={{ minHeight: "0px" }}
+          >
+            <div className="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3 gap-lg-4">
+              <div className="d-flex align-items-center min-w-0">
+                <div
+                  className={`${styles.profAvatar} ${styles.avatarColor_2} flex-shrink-0 text-capitalize`}
+                >
+                  {customer?.company_name?.charAt(0) || "?"}
+                </div>
+                <div className={`${styles.profUser} ms-2 min-w-0`}>
+                  <p className="mb-2 fw-semibold text-capitalize text-truncate">
+                    {customer?.company_name || "-"}
+                  </p>
+                  <div className="d-flex align-items-center flex-wrap gap-2">
                     {router?.query?.type !== "renewals" && (
-                      <div className={`${styles.idBadge} mt-1`}>
-                        Customer Id :{" "}
-                        <strong>
+                      <div className={styles.idBadge}>
+                        <strong className="fs-6">
+                          Customer Id :{" "}
                           {customer?.customer_id ||
                             router?.query?.customerId ||
                             "-"}
                         </strong>
                       </div>
                     )}
+                    <div className="d-flex align-items-center gap-1 text-muted">
+                      <User size={14} strokeWidth={1.75} />
+                      <span className="text-capitalize">
+                        {customer?.customer_name || "-"}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="col-md-8 col-12 ps-md-4">
-                <div className="row">
-                  <div className="col-sm d-flex flex-wrap">
-                    <div className="col-12 mb-3">
-                      <small className="d-block textLight">Contact No.</small>
-                      <Link
-                        href={`tel:${customer?.mobile || ""}`}
-                        className="text-muted"
-                      >
-                        {customer?.mobile || "-"}
-                      </Link>
-                    </div>
-                  </div>
-
-                  <div className="col-sm d-flex flex-wrap">
-                    <div className="col-12 mb-3">
-                      <small className="d-block textLight">
-                        Contact Person
-                      </small>
-                      <div
-                        className={`${styles.profName} fs-6 text-nowrap text-capitalize`}
-                      >
-                        {customer?.customer_name || "-"}
-                      </div>
-                      <div className="col-md-12 col-6 mb-3">
-                        <Link
-                          href={`mailto:${customer?.email || "#"}`}
-                          className="text-muted"
-                        >
-                          {customer?.email || "-"}
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
+              <div className="d-flex flex-column flex-sm-row gap-3 gap-sm-5 ms-lg-auto">
+                <div>
+                  <small className="d-block textLight mb-1">Email</small>
+                  <Link
+                    href={`mailto:${customer?.email || "#"}`}
+                    className="text-body text-decoration-none"
+                  >
+                    {customer?.email || "-"}
+                  </Link>
+                </div>
+                <div>
+                  <small className="d-block textLight mb-1">Contact No.</small>
+                  <Link
+                    href={`tel:${customer?.mobile || ""}`}
+                    className="text-body text-decoration-none"
+                  >
+                    {customer?.mobile || "-"}
+                  </Link>
                 </div>
               </div>
             </div>
@@ -376,7 +364,7 @@ const SubscriptionsDetailsComponent = () => {
                     </div>
 
                     <div className={`${styles.subBottom}`}>
-                      <div className={`${styles.subMeta}`}>
+                      <div className={`${styles.subMeta} ps-1`}>
                         <div className={`${styles.subMetaItem}`}>
                           <Calendar className={`${styles.subMetaIcon}`} />
                           <div>

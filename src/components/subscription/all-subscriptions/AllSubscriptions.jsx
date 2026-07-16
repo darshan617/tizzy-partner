@@ -86,8 +86,6 @@ const AllSubscriptions = ({
     },
   );
 
-  console.log(finalSubscriptionsList, "finalSubscriptionsList");
-
   return (
     <div className="col">
       <div className={`sectionCard ${styles.adjustWidth}`}>
@@ -215,7 +213,6 @@ const AllSubscriptions = ({
                         subscription?.company_name?.charAt(0)?.toUpperCase() ||
                         subscription?.domain?.charAt(0)?.toUpperCase() ||
                         "";
-                      console.log(subscription);
 
                       return (
                         <div

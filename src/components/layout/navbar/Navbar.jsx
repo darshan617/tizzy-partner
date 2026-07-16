@@ -29,6 +29,8 @@ import {
   useGetNotificationListMutation,
   useMarkNotificationAsReadMutation,
 } from "@/redux/apis/notificationApi";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUserData } from "@/redux/slices/userSlice";
 
 const formatNotificationTime = (dateString) => {
   if (!dateString) return "";
@@ -54,6 +56,7 @@ const formatNotificationTime = (dateString) => {
 
 const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const { showToast } = useToast();
   const [user, setUser] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -62,6 +65,8 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const [notificationFilter, setNotificationFilter] = useState("all");
   const [isClient, setIsClient] = useState(false);
   const dropdownRef = useRef(null);
+  const userInfo = useSelector(selectUserData);
+
   const [
     getNotificationList,
     { data: notificationList, isLoading: isNotificationListLoading },
@@ -313,7 +318,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                       <div
                         className={`${styles.profAvatar} ${styles.avatarColor_3} flex-shrink-0`}
                       >
-                        {user?.name ? user?.name[0] : ""}
+                        {userInfo?.name?.[0] || user?.name?.[0]}
                       </div>
                       <div
                         className={`${styles.profUser} mx-2 d-none d-lg-block`}
@@ -321,7 +326,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                         <div
                           className={`${styles.profName} text-nowrap text-truncate`}
                         >
-                          {user?.name ? user?.name : ""}
+                          {userInfo?.name || user?.name}
                         </div>
                       </div>
                       <div className={`${styles.profArw} d-none d-lg-block`}>
@@ -336,18 +341,18 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                         <div
                           className={`${styles.profAvatar} ${styles.avatarColor_3}`}
                         >
-                          {user?.name ? user?.name[0] : ""}
+                          {userInfo?.name?.[0] || user?.name?.[0] || "-"}
                         </div>
                         <div className={styles.profName}>
                           {" "}
-                          {user?.name ? user?.name : ""}
+                          {userInfo?.name || user?.name || "-"}
                         </div>
                         <div className={styles.profComp}>
-                          {user?.company_name ? user?.company_name : ""}
+                          {userInfo?.company_name || user?.company_name || "-"}
                         </div>
                         <div className={styles.profDesg}>
                           <span className={styles.profID}>
-                            {user?.id ? `Partner ID : ${user?.id}` : ""}
+                            {`Partner ID : ${userInfo?.id || user?.id || "-"}`}
                           </span>
                           <div className="statusBadge primaryBg profAdmin ms-1">
                             Admin
