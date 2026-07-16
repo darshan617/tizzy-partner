@@ -181,138 +181,185 @@
 }
 
 .contentRow {
-  background: var(--whiteColor);
-  border-radius: 8px;
-  transition: all 0.1s ease-in-out;
-  transform: scale(1);
+  background: #fff;
+  border-radius: 10px;
+  transition: box-shadow 0.15s ease-in-out;
   overflow: hidden;
-  padding: 0 10px;
-  border: 1px solid #e6e8ef;
+  padding: 16px 20px;
+  border: none;
+  box-shadow: 0 2px 10px rgba(17, 24, 39, 0.06);
 }
 
 .contentRow:not(.noHover):hover {
-  box-shadow: 0 4px 12px #11182714;
+  box-shadow: 0 4px 14px rgba(17, 24, 39, 0.1);
   background: #fff;
 }
 
-/* Keeps spacing from card edge after chevron hover-in animation (desktop) */
-.arrowCol {
-  padding-inline-end: 14px;
-  padding-inline-start: 6px;
-}
-
-.ckbCol {
-  align-self: stretch;
+.rowInner {
   display: flex;
   align-items: center;
-  background: rgba(238, 242, 247, 0.5);
-  height: auto;
-  padding: 0 16px;
+  gap: 20px;
+  width: 100%;
 }
 
-.form-check-input {
-  width: 14px;
-  height: 14px;
+.txnCol {
+  flex: 0 0 110px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.form-check-input:checked {
-  background-color: var(--primaryColor);
-  border-color: var(--primaryColor);
+.txnDate {
+  font-size: var(--fs12);
+  color: #8a8f9c;
+  font-weight: 400;
+  white-space: nowrap;
 }
 
-.form-check-input:focus {
-  outline: none;
-  box-shadow: none;
-  border-color: inherit;
+.txnId {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: #f0f1f4;
+  color: #3d4450;
+  font-size: var(--fs12);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.companyCol {
+  flex: 1 1 220px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .avatarBg {
-  width: 30px;
-  height: 30px;
-  min-width: 30px;
-  min-height: 30px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: var(--fs14);
-  font-weight: 500;
+  font-size: var(--fs16);
+  font-weight: 600;
   border-radius: 50%;
-  background-color: #f3b300;
+  background-color: #7b4f9a;
   text-align: center;
 }
 
-.crDomainName {
+.companyInfo {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.companyName {
   font-size: var(--fs14);
   font-weight: 600;
-  color: var(--primaryColor);
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
+  color: #2f3542;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  overflow-wrap: anywhere;
+}
+
+.companyDomain {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--fs12);
+  color: #8a8f9c;
+  min-width: 0;
+}
+
+.companyDomain span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.globeIcon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  color: #9aa0ab;
+}
+
+.planCol {
+  flex: 1 1 200px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.crNameText {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .crName {
+  display: flex;
+  align-items: baseline;
+  min-width: 0; /* required so the truncated child can actually shrink */
   font-size: var(--fs14);
-  font-weight: 500;
-  color: var(--textBody);
+  font-weight: 600;
+  color: #2f3542;
 }
 
-.metaHead {
-  font-size: var(--fs14);
-  color: var(--textBodySecondary);
-  margin-bottom: 0.2rem;
+.licenseLine {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs12);
+}
+
+.licenseLabel {
+  color: #a0a5b0;
+  font-weight: 400;
 }
 
 .licenseValue {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: var(--fs14);
+  color: #5b6170;
   font-weight: 500;
 }
 
-.editBtn {
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  border: 1px solid var(--borderColor);
-  background: #fff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--textBodySecondary);
+.enrollmentCol {
+  flex: 0 0 120px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.editIcon {
-  width: 12px;
-  height: 12px;
+.metaHead {
+  font-size: var(--fs11);
+  color: #a0a5b0;
+  font-weight: 400;
 }
 
-.dueValue {
+.enrollmentValue {
   font-size: var(--fs14);
   font-weight: 500;
+  color: #3d4450;
 }
 
-/* Align with License / Due on: centered column */
 .statusCol {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-}
-
-.statusInner {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem 0.75rem;
-  width: 100%;
 }
 
 .statusBadgeGroup {
@@ -326,14 +373,14 @@
 .statusBadge {
   display: inline-block;
   border-radius: 4px;
-  padding: 0.2rem 0.5rem;
+  padding: 0.35rem 0.85rem;
   font-size: var(--fs12);
   font-weight: 500;
 }
 
 .activeBadge {
-  color: var(--successColor);
-  background: var(--successSubtleColor);
+  color: #1aa89a;
+  background: #e6f7f4;
 }
 
 .expiringBadge,
@@ -380,41 +427,31 @@
   background: var(--purpleSubtleColor);
 }
 
-.renewBtn {
-  min-width: 120px;
-  height: 34px;
-  border-radius: 50rem;
-  border: 1px solid var(--borderColor);
-  background: #fff;
-  color: var(--textBody);
-  font-size: var(--fs14);
-  font-weight: 500;
-  padding: 0 1rem;
-}
-
-.renewBtn:hover {
-  background: var(--primaryColor);
-  border-color: var(--primaryColor);
-  color: #fff;
+.arrowCol {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
 }
 
 .crBtn {
-  width: 30px;
-  height: 30px;
-  border-radius: 50rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-weight: 500;
-  color: var(--darkColor);
-  background: var(--grayColor);
-  border: 1px solid var(--borderColor);
+  color: #5b6170;
+  background: #fff;
+  border: 1px solid #e2e5eb;
   overflow: hidden;
   transition: all 0.2s ease-in;
 }
 
 .crBtn .icon {
-  width: 12px;
+  width: 14px;
   aspect-ratio: 1;
   display: inline-flex;
   stroke-width: 2;
@@ -424,10 +461,44 @@
 .crBtn:hover {
   background: var(--primaryColor);
   color: var(--whiteColor);
+  border-color: var(--primaryColor);
 }
 
 .searchCount {
   font-size: var(--fs14);
+}
+
+
+.plansCount {
+  font-size: var(--fs12);
+  color: var(--textBodySecondary);
+  margin-left: 2px;
+  font-weight: 400;
+  flex-shrink: 0; /* never gets clipped or squeezed */
+  white-space: nowrap;
+}
+
+@media (max-width: 991.98px) {
+  .rowInner {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .txnCol {
+    flex: 0 0 auto;
+  }
+
+  .companyCol {
+    flex: 1 1 200px;
+  }
+
+  .planCol {
+    flex: 1 1 180px;
+  }
+
+  .enrollmentCol {
+    flex: 0 0 auto;
+  }
 }
 
 @media (max-width: 575.98px) {
@@ -435,11 +506,34 @@
     font-size: var(--fs11);
   }
 
-  .contentRow>.row>.mobAction {
-    background: #f5f6f9;
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    padding-inline-end: 12px;
+  .contentRow {
+    padding: 14px 14px;
+  }
+
+  .rowInner {
+    gap: 12px;
+  }
+
+  .txnCol {
+    flex: 1 1 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .companyCol,
+  .planCol,
+  .enrollmentCol {
+    flex: 1 1 100%;
+  }
+
+  .statusCol {
+    flex: 1 1 auto;
+    justify-content: flex-start;
+  }
+
+  .arrowCol {
+    margin-left: 0;
   }
 
   .adjustWidth {
@@ -461,16 +555,3 @@
     width: 300px;
   }
 }
-
-/* @media (min-width: 992px) {
-  .btnDisplay .crBtn {
-    opacity: 0;
-    position: relative;
-    right: -20px;
-  }
-
-  .btnDisplay:hover .crBtn {
-    opacity: 1;
-    right: 0;
-  }
-} */
