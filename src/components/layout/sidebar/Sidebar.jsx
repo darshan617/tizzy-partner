@@ -23,6 +23,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
 
   const usedPercentage = creditLimit > 0 ? (creditUsed / creditLimit) * 100 : 0;
   const isAccountPage = ACCOUNT_PATHS.includes(router?.pathname);
+  const isSupportActive = router?.pathname?.startsWith("/support");
 
   const formatBalance = (value) =>
     Number(value || 0).toLocaleString("en-IN", {
@@ -286,15 +287,19 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
             </div>
 
             <div className={`${styles.sideBottom} d-flex flex-column gap-3 p-3`}>
-              <div className={styles.sideSupport}>
+              <div className={`${styles.sideSupport} ${isSupportActive ? styles.active : ""}`}>
                 <Link
                   href="/support"
                   className={`${styles.menuLink} d-flex align-items-center justify-content-center`}
+                  
                 >
                   <span className={`${styles.iconWrapper}`}>
                     <LuMessageCircleQuestion size={25} />
                   </span>
-                  <span className={`${styles.menuLabel}`}>SUPPORT</span>
+                  <span className={`${styles.menuLabel} ` }
+                  >
+                    SUPPORT
+                  </span>
                 </Link>
               </div>
               {creditsCard}

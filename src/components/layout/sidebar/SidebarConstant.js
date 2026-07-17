@@ -8,6 +8,7 @@ import { MdAutorenew } from "react-icons/md";
 import { PiHandCoinsLight } from "react-icons/pi";
 import { RiBankLine } from "react-icons/ri";
 import { VscFiles } from "react-icons/vsc";
+import { BsFileEarmarkBarGraph } from "react-icons/bs";
 
 export const ACCOUNT_PATHS = [
   "/my-account",
@@ -94,12 +95,12 @@ export const SIDEBAR_MENU_CONSTANTS = [
     icon: PiHandCoinsLight,
     href: "/transactions",
   },
-  // {
-  //   id: 6,
-  //   title: "Reports",
-  //   icon: BsFileEarmarkBarGraph,
-  //   href: "/reports",
-  // },
+  {
+    id: 6,
+    title: "Reports",
+    icon: BsFileEarmarkBarGraph,
+    href: "/reports",
+  },
 ];
 
 export const SIDEBAR_SERVICES_CONSTANTS = [

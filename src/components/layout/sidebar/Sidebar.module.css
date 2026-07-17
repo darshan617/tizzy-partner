@@ -381,6 +381,18 @@
   margin: 0;
 }
 
+.sideSupport:hover {
+  background: #E6F1FD !important;
+  color: #ffffff !important;
+}
+.sideSupport.active {
+  background: #023f80 !important ;
+}
+.sideSupport.active .menuLabel {
+  margin-left: 5px; 
+  color: #ffffff !important;
+}
+
 @media (max-width: 1024px) {
   .sideBar {
     position: fixed;

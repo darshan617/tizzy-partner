@@ -129,6 +129,25 @@ const tickets = [
     createdAt: "20 Mar, 2026",
     initial: "T",
   },
+  {
+    id: "SUP2523",
+    status: "Resolved",
+    priority: "High Priority",
+    title: "Incorrect invoice total shown",
+    plan: "Tizzy® Mail Enterprise - 100 GB",
+    domain: "kingstonmarketing.net",
+    createdAt: "20 Mar, 2026",
+    initial: "T",
+  },  {
+    id: "SUP2523",
+    status: "Resolved",
+    priority: "High Priority",
+    title: "Incorrect invoice total shown",
+    plan: "Tizzy® Mail Enterprise - 100 GB",
+    domain: "kingstonmarketing.net",
+    createdAt: "20 Mar, 2026",
+    initial: "T",
+  },
 ];
 
 const statusFilters = ["All", "Active", "In Process", "Resolved"];
