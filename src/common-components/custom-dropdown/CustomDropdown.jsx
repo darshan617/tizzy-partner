@@ -3,6 +3,14 @@ import { BiChevronDown } from "react-icons/bi";
 import styles from "@/common-components/custom-dropdown/CustomerDropdown.module.css";
 import { IoClose } from "react-icons/io5";
 
+const toDisplayValue = (value) => {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object" && "label" in value) {
+    return String(value.label ?? "");
+  }
+  return "";
+};
+
 const CustomDropdown = ({
   options,
   value,
@@ -10,21 +18,24 @@ const CustomDropdown = ({
   placeholder,
   isSearchable = true,
   onChange,
+  customHeight = "auto",
 }) => {
-  const [selectedOption, setSelectedOption] = useState(value);
+  const [selectedOption, setSelectedOption] = useState(() =>
+    toDisplayValue(value),
+  );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  console.log(selectedOption, "selectedOption");
-  console.log(value, "value");
 
   useEffect(() => {
-    setSelectedOption(value ?? "");
+    setSelectedOption(toDisplayValue(value));
   }, [value]);
 
   const filteredOptions =
     options?.filter((option) =>
       option?.label?.toLowerCase().includes(searchValue?.toLowerCase()),
     ) || options;
+
+  const hasSelection = Boolean(selectedOption?.trim?.());
 
   return (
     <div>
@@ -38,13 +49,10 @@ const CustomDropdown = ({
         <div
           className={styles.dropdownToggle}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          style={{ height: customHeight || "auto" }}
         >
-          <span
-            className={
-              !selectedOption?.trim() ? styles.placeholderText : undefined
-            }
-          >
-            {selectedOption?.trim() ? selectedOption : placeholder}
+          <span className={!hasSelection ? styles.placeholderText : undefined}>
+            {hasSelection ? selectedOption : placeholder}
           </span>
 
           <div
