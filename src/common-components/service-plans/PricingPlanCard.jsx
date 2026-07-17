@@ -7,7 +7,7 @@ import {
   selectIsPopupVisible,
   setIsPopupVisible,
 } from "@/redux/slices/popupSlice";
-import { FaRegQuestionCircle  } from "react-icons/fa";
+import { FaRegQuestionCircle } from "react-icons/fa";
 import { useGetEnqueryNowMutation } from "@/redux/apis/servicesApi";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import Cookies from "js-cookie";
@@ -54,7 +54,8 @@ export default function PricingPlanCard({
     Number(provider_id) === 3 && Boolean(hasgoogleplans) && !plan_is_in_cart;
 
   const { showToast } = useToast();
-  const [getEnqueryNow, { isLoading: isEnqueryNowLoading }] = useGetEnqueryNowMutation();
+  const [getEnqueryNow, { isLoading: isEnqueryNowLoading }] =
+    useGetEnqueryNowMutation();
   const userData = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
     : null;
@@ -77,7 +78,6 @@ export default function PricingPlanCard({
       dispatch(setIsPopupVisible(""));
     }
   };
-  
 
   return (
     <article className={styles.card} key={plan_id}>
@@ -96,11 +96,17 @@ export default function PricingPlanCard({
             {originalPriceLabel ? (
               <span className={styles.wasPrice}>{originalPriceLabel}</span>
             ) : null}
-            <span className={styles.price}>{priceLabel}</span>
+            <span className={styles.price}>
+              {priceLabel === "₹0.00"
+                ? "Contact Sales For Pricing"
+                : priceLabel}
+            </span>
           </div>
-          {periodNote ? (
+          {periodNote && priceLabel !== "₹0.00" ? (
             <div className={styles.periodNote}>{periodNote}</div>
-          ) : null}
+          ) : (
+            <br />
+          )}
           {gstNote ? <div className={styles.gstNote}>{gstNote}</div> : null}
         </div>
 
@@ -126,7 +132,6 @@ export default function PricingPlanCard({
             }
             if (enquiry) {
               dispatch(setIsPopupVisible("enquiry"));
-
               return;
             }
             if (hasGooglePlanConflict && !isPlanChangeFlow) {
@@ -158,7 +163,9 @@ export default function PricingPlanCard({
       {isPopupVisible === "enquiry" && (
         <CustomPopup onClose={() => dispatch(setIsPopupVisible(""))}>
           <div className="d-flex">
-            <h3 className="fs-5 fw-600 mb-3 pb-3">We're here to help. Send us your enquiry.</h3>
+            <h3 className="fs-5 fw-600 mb-3 pb-3">
+              We're here to help. Send us your enquiry.
+            </h3>
             <FaRegQuestionCircle size={22} style={{ marginLeft: "10px" }} />
           </div>
           <form onSubmit={handleEnquirySubmit}>
@@ -179,7 +186,13 @@ export default function PricingPlanCard({
                 >
                   {isEnqueryNowLoading ? "Submitting..." : "Submit"}
                 </button>
-                <button type="button" className={styles.cancelButton} onClick={() => dispatch(setIsPopupVisible(""))}>Cancel</button>
+                <button
+                  type="button"
+                  className={styles.cancelButton}
+                  onClick={() => dispatch(setIsPopupVisible(""))}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </form>

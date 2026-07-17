@@ -1,6 +1,10 @@
 import React, { useState } from "react";
-import { BiChevronDown } from "react-icons/bi";
+import { BiChevronDown, BiX } from "react-icons/bi";
 import styles from "./CreateNewTicketForm.module.css";
+import { useAddTicketMutation } from "@/redux/apis/supportTicketsApi";
+import { GrAttachment } from "react-icons/gr";
+import { FaTrash } from "react-icons/fa";
+import Image from "next/image";
 
 const MAX_DESCRIPTION_LENGTH = 200;
 
@@ -20,20 +24,32 @@ const initialFormData = {
   subject: "",
   priority: "Low",
   description: "",
+  attachments: [],
 };
 
 const CreateNewTicketForm = () => {
+  const [addTicket, { isLoading: isAddingTicket }] = useAddTicketMutation();
   const [formData, setFormData] = useState(initialFormData);
+  console.log(formData);
 
   const remainingCharacters =
     MAX_DESCRIPTION_LENGTH - formData.description.length;
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value, files } = event.target;
+    console.log(files, "file");
+
+    if (name === "attachments") {
+      setFormData((prev) => ({
+        ...prev,
+        attachments: [...prev.attachments, ...Array.from(files)],
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleDescriptionChange = (event) => {
@@ -162,7 +178,9 @@ const CreateNewTicketForm = () => {
                     key={priority}
                     type="button"
                     className={`${styles.priorityBtn} ${
-                      formData.priority === priority ? styles.priorityActive : ""
+                      formData.priority === priority
+                        ? styles.priorityActive
+                        : ""
                     }`}
                     onClick={() => handlePriorityChange(priority)}
                   >
@@ -190,6 +208,59 @@ const CreateNewTicketForm = () => {
             <p className={styles.charCount}>
               Remaining {remainingCharacters} Characters
             </p>
+          </div>
+
+          <div className={styles.attachmentsGroup}>
+            <p className={styles.label}>Attachments</p>
+
+            <label
+              htmlFor="ticket-attachments"
+              className={styles.attachmentsBtn}
+            >
+              <GrAttachment /> Add Attachments
+            </label>
+            <input
+              id="ticket-attachments"
+              type="file"
+              name="attachments"
+              multiple
+              style={{ display: "none" }}
+              onChange={handleChange}
+            />
+            <br />
+            <div className={styles.allAttachments}>
+              {formData?.attachments?.map((attachment, idx) => {
+                return (
+                  <div key={idx} className={styles.attachmentItem}>
+                    {attachment.type.includes("image") ? (
+                      <Image
+                        src={URL.createObjectURL(attachment)}
+                        alt="attachment"
+                        width={80}
+                        height={80}
+                        style={{ objectFit: "cover", borderRadius: "4px" }}
+                      />
+                    ) : (
+                      <span>{attachment.name}</span>
+                    )}
+                    <button
+                      type="button"
+                      className={styles.removeBtn}
+                      onClick={() => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          attachments: prev.attachments.filter(
+                            (_, i) => i !== idx,
+                          ),
+                        }));
+                      }}
+                    >
+                      <BiX />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           <div className={styles.submitWrap}>
