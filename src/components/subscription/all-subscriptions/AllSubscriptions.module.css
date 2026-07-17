@@ -200,9 +200,6 @@
   display: grid;
   grid-template-columns:
     80px minmax(0, 1.35fr) minmax(0, 1.30fr) 80px 100px 100px 40px;
-  display: grid;
-  grid-template-columns:
-    110px minmax(0, 1.1fr) minmax(0, 1.3fr) 120px 140px 36px;
   align-items: center;
   column-gap: 16px;
   width: 100%;
@@ -243,7 +240,6 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  overflow: hidden;
 }
 
 .avatarBg {
@@ -309,7 +305,6 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  overflow: hidden;
 }
 
 .crNameText {
@@ -326,7 +321,6 @@
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
-  min-width: 0; 
   font-size: var(--fs14);
   font-weight: 600;
   color: #2f3542;
@@ -376,7 +370,6 @@
 }
 
 .statusCol {
-  min-width: 0;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -494,12 +487,14 @@
   font-size: var(--fs14);
 }
 
+
 .plansCount {
   font-size: var(--fs12);
   color: var(--textBodySecondary);
   margin-left: 2px;
   font-weight: 400;
   flex-shrink: 0;
+  /* never gets clipped or squeezed */
   white-space: nowrap;
 }
 
@@ -511,24 +506,7 @@
   }
 }
 
-
-@media (min-width: 1200px) {
-  .sectionCard {
-    max-width: 1200px;
-  }
-
-  .rowInner {
-    grid-template-columns:
-      120px minmax(0, 1.2fr) minmax(0, 1.4fr) 130px 150px 40px;
-    gap: 24px;
-  }
-
-  .crBtn .icon {
-    width: 16px;
-  }
-}
-
-@media (min-width: 992px) and (max-width: 1199.98px) {
+@media (max-width: 991.98px) {
   .rowInner {
     grid-template-columns: 100px minmax(0, 1fr) minmax(0, 1fr) auto;
     grid-template-areas:
@@ -536,43 +514,31 @@
       "plan plan enrollment status";
     row-gap: 12px;
     column-gap: 12px;
-    grid-template-columns:
-      110px minmax(0, 1.1fr) minmax(0, 1.3fr) 120px 140px 36px;
-    gap: 20px;
   }
 
-  .crBtn .icon {
-    width: 16px;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 991.98px) {
-  .pageSearchBox {
-    width: 300px;
+  .txnCol {
+    grid-area: txn;
   }
 
-  .rowInner {
-    grid-template-columns: 73px minmax(0, 1fr) minmax(0, 1fr) 79px 78px 33px;
-    gap: 5px;
-}
-
-  .crBtn .icon {
-    width: 16px;
-  }
-}
-
-@media (min-width: 576px) and (max-width: 767.98px) {
-  .pageSearchBox {
-    width: 100%;
+  .companyCol {
+    grid-area: company;
   }
 
-  .rowInner {
-      grid-template-columns: 65px minmax(0, 1fr) minmax(0, 1fr) 70px 68px 30px;
-      gap: 5px;
+  .planCol {
+    grid-area: plan;
   }
 
-  .crBtn .icon {
-    width: 16px;
+  .enrollmentCol {
+    grid-area: enrollment;
+  }
+
+  .statusCol {
+    grid-area: status;
+    justify-content: flex-end;
+  }
+
+  .arrowCol {
+    grid-area: arrow;
   }
 }
 
@@ -594,25 +560,17 @@
       "enrollment status";
     row-gap: 10px;
     column-gap: 10px;
-    grid-template-columns: 1fr auto;
-    gap: 12px;
   }
 
   .txnCol {
-    grid-column: 1 / -1;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-  }
-
-  .companyCol,
-  .planCol,
-  .enrollmentCol {
-    grid-column: 1 / -1;
+    gap: 10px;
   }
 
   .statusCol {
-    justify-content: flex-start;
+    justify-content: flex-end;
   }
 
   .adjustWidth {
@@ -623,29 +581,14 @@
   }
 }
 
-@media (max-width: 399.98px) {
-  .avatarBg {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-    min-height: 32px;
-    font-size: var(--fs14);
+@media (min-width: 576px) {
+  .crBtn .icon {
+    width: 16px;
   }
+}
 
-  .companyCol {
-    gap: 8px;
-  }
-
-  .rowInner {
-    gap: 8px;
-  }
-
-  .statusBadge {
-    padding: 0.3rem 0.6rem;
-    font-size: var(--fs11);
-  }
-
-  .filterGroup {
-    flex-wrap: wrap;
+@media (min-width: 768px) {
+  .pageSearchBox {
+    width: 300px;
   }
 }
