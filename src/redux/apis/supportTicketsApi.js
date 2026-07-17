@@ -10,8 +10,27 @@ const supportTicketsApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["supportTickets"],
     }),
+    getOrdersByPartner: builder.mutation({
+      query: ({ body }) => ({
+        url: `/get-orders-by-partner`,
+        method: "POST",
+        body: body,
+      }),
+      invalidatesTags: ["supportTickets"],
+    }),
+    planViewByPartner: builder.query({
+      query: () => ({
+        url: `/planViewByPartner`,
+        method: "GET",
+      }),
+      providesTags: ["supportTickets"],
+    }),
   }),
 });
 
-export const { useAddTicketMutation } = supportTicketsApi;
+export const {
+  useAddTicketMutation,
+  useGetOrdersByPartnerMutation,
+  usePlanViewByPartnerQuery,
+} = supportTicketsApi;
 export default supportTicketsApi;

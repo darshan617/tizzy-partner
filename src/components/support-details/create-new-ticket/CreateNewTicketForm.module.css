@@ -203,6 +203,32 @@
   margin-top: 20px;
 }
 
+.orderIdGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.searchBtn {
+  background: var(--primaryColor);
+  color: #fff;
+  border: none;
+  border-radius: .375rem;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.searchBtn:hover {
+  background: #1260b8;
+}
+
+.error {
+  color: #de2117;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
 @media (min-width: 768px) {
   .formCard {
     padding: 20px 26px 24px;
