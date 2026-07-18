@@ -1,9 +1,29 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "@/components/dashboard/support/Support.module.css";
 import { ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
+import { useGetTicketsMutation } from "@/redux/apis/supportTicketsApi";
+import Cookies from "js-cookie";
 
 const Support = () => {
+  const [ticketsData, setTicketsData] = useState([]);
+  const [getTickets, { isLoading }] = useGetTicketsMutation();
+  const userData = Cookies.get("userData")
+    ? JSON.parse(Cookies.get("userData"))
+    : null;
+
+  useEffect(() => {
+    if (userData?.id) {
+      const fetchTickets = async () => {
+        const response = await getTickets({
+          body: { partner_id: userData?.id },
+        });
+        setTicketsData(response?.data?.data?.tickets);
+      };
+      fetchTickets();
+    }
+  }, [userData?.id]);
+
   useEffect(() => {
     const initSwiper = async () => {
       const { default: Swiper } = await import("swiper");
@@ -38,6 +58,15 @@ const Support = () => {
     initSwiper();
   }, []);
 
+  const domainColor = [
+    "avatarRed",
+    "avatarGold",
+    "avatarBlue",
+    "avatarPurple",
+    "avatarTeal",
+    "avatarNavy",
+  ];
+
   return (
     <div className="col">
       <div className="sectionCard py-4">
@@ -45,257 +74,72 @@ const Support = () => {
           <div className="col">
             <h2 className="sectionCardHead">Support </h2>
           </div>
+
           <div className="col-auto">
-            <a href="#" className="btn small btnDefault">
+            <Link
+              href="/support/create-new-ticket"
+              className="btn small btnDefault"
+            >
               <Plus className="icon me-0" />
               <span>Open New Ticket</span>
-            </a>
+            </Link>
           </div>
         </div>
 
         <div className="swiper supportSwiper px-sm-4 px-3 mb-4">
           <div className="swiper-wrapper mb-4">
-            {/* Slide 1 */}
-            <div className="swiper-slide">
-              <div className="supportTkt btnDisplay d-flex flex-column">
-                <div className="stktTop d-flex align-items-center col-auto">
-                  <div className="col">
-                    <div className="stktNo">SUP2523</div>
-                    <span className="statusBadge subtleSuccess">Active</span>
-                  </div>
-                  <div className="col-auto">
-                    <div className="stktDate">20 Mar, 2026</div>
-                  </div>
-                </div>
-                <div className="stktContent col">
-                  <span className="priorityBadge high">High Priority</span>
-                  <a href="#">
-                    <h3 className="stktHead my-2">
-                      Can&apos;t access dashboard after update
-                    </h3>
-                  </a>
-                  <div className="">Tizzy® Mail Enterprise - 100 GB</div>
-                </div>
-                <div className="stktBtm d-flex align-items-center col-auto">
-                  <div className="col">
-                    <div className="crDomain d-flex align-items-center">
-                      <div className="avatarSmall flex-shrink-0 warningBg">
-                        G
-                      </div>
-                      <div className="crDomainName ps-2">
-                        ganeshenterprises.com
-                      </div>
+            {ticketsData?.slice(0, 5)?.map((ticket, idx) => (
+              <div className="swiper-slide">
+                <div className="supportTkt btnDisplay d-flex flex-column">
+                  <div className="stktTop d-flex align-items-center col-auto">
+                    <div className="col">
+                      <div className="stktNo">{ticket?.ticket_no}</div>
+                      <span
+                        className={`statusBadge subtle${ticket?.status?.toLowerCase()}`}
+                      >
+                        {ticket?.status}
+                      </span>
+                    </div>
+                    <div className="col-auto">
+                      <div className="stktDate">{ticket?.date}</div>
                     </div>
                   </div>
-                  <div className="col-auto">
-                    <Link href="#" className="crBtn">
-                      <ChevronRight className="icon me-0" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
+                  <div className="stktContent col">
+                    <span
+                      className={`priorityBadge ${ticket?.priority?.toLowerCase()}`}
+                    >
+                      {ticket?.priority}
+                    </span>
 
-            {/* Slide 2 */}
-            <div className="swiper-slide">
-              <div className="supportTkt btnDisplay d-flex flex-column">
-                <div className="stktTop d-flex align-items-center col-auto">
-                  <div className="col">
-                    <div className="stktNo">SUP2523</div>
-                    <span className="statusBadge subtleSuccess">Active</span>
-                  </div>
-                  <div className="col-auto">
-                    <div className="stktDate">20 Mar, 2026</div>
-                  </div>
-                </div>
-                <div className="stktContent col">
-                  <span className="priorityBadge low">Low Priority</span>
-                  <a href="#">
-                    <h3 className="stktHead my-2">
-                      Can&apos;t access dashboard after update
-                    </h3>
-                  </a>
-                  <div className="">Tizzy® Mail Enterprise - 100 GB</div>
-                </div>
-                <div className="stktBtm d-flex align-items-center col-auto">
-                  <div className="col">
-                    <div className="crDomain d-flex align-items-center">
-                      <div className="avatarSmall flex-shrink-0 successBg">
-                        A
-                      </div>
-                      <div className="crDomainName ps-2">goyalinfotech.com</div>
-                    </div>
-                  </div>
-                  <div className="col-auto">
-                    <Link href="#" className="crBtn">
-                      <ChevronRight className="icon me-0" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
+                    <h3 className="stktHead my-2">{ticket?.subject}</h3>
 
-            {/* Slide 3 */}
-            <div className="swiper-slide">
-              <div className="supportTkt btnDisplay d-flex flex-column">
-                <div className="stktTop d-flex align-items-center col-auto">
-                  <div className="col">
-                    <div className="stktNo">SUP2523</div>
-                    <span className="statusBadge subtleSuccess">Active</span>
+                    <div className="">{ticket?.service}</div>
                   </div>
-                  <div className="col-auto">
-                    <div className="stktDate">20 Mar, 2026</div>
-                  </div>
-                </div>
-                <div className="stktContent col">
-                  <span className="priorityBadge high">High Priority</span>
-                  <a href="#">
-                    <h3 className="stktHead my-2">
-                      Can&apos;t access dashboard after update
-                    </h3>
-                  </a>
-                  <div className="">Tizzy® Mail Enterprise - 100 GB</div>
-                </div>
-                <div className="stktBtm d-flex align-items-center col-auto">
-                  <div className="col">
-                    <div className="crDomain d-flex align-items-center">
-                      <div className="avatarSmall flex-shrink-0 secondaryBg">
-                        P
-                      </div>
-                      <div className="crDomainName ps-2">
-                        kingstonmarketing.net
+                  <div className="stktBtm d-flex align-items-center col-auto">
+                    <div className="col">
+                      <div className="crDomain d-flex align-items-center">
+                        <div
+                          className={`avatarSmall flex-shrink-0 ${domainColor[idx % domainColor.length]}`}
+                        >
+                          {ticket?.domain?.charAt(0)}
+                        </div>
+                        <div className="crDomainName ps-2">
+                          {ticket?.domain}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="col-auto">
-                    <Link href="#" className="crBtn">
-                      <ChevronRight className="icon me-0" />
-                    </Link>
+                    <div className="col-auto">
+                      <Link
+                        href={`/support/ticket-details?ticket_id=${ticket?.ticket_id}`}
+                        className="crBtn"
+                      >
+                        <ChevronRight className="icon me-0" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Slide 4 */}
-            <div className="swiper-slide">
-              <div className="supportTkt btnDisplay d-flex flex-column">
-                <div className="stktTop d-flex align-items-center col-auto">
-                  <div className="col">
-                    <div className="stktNo">SUP2523</div>
-                    <span className="statusBadge subtleSuccess">Active</span>
-                  </div>
-                  <div className="col-auto">
-                    <div className="stktDate">20 Mar, 2026</div>
-                  </div>
-                </div>
-                <div className="stktContent col">
-                  <span className="priorityBadge med">Medium Priority</span>
-                  <a href="#">
-                    <h3 className="stktHead my-2">
-                      Can&apos;t access dashboard after update
-                    </h3>
-                  </a>
-                  <div className="">Tizzy® Mail Enterprise - 100 GB</div>
-                </div>
-                <div className="stktBtm d-flex align-items-center col-auto">
-                  <div className="col">
-                    <div className="crDomain d-flex align-items-center">
-                      <div className="avatarSmall flex-shrink-0 infoBg">G</div>
-                      <div className="crDomainName ps-2">
-                        pinchthewallet.com
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-auto">
-                    <Link href="#" className="crBtn">
-                      <ChevronRight className="icon me-0" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Slide 5 */}
-            <div className="swiper-slide">
-              <div className="supportTkt btnDisplay d-flex flex-column">
-                <div className="stktTop d-flex align-items-center col-auto">
-                  <div className="col">
-                    <div className="stktNo">SUP2523</div>
-                    <span className="statusBadge subtleSuccess">Active</span>
-                  </div>
-                  <div className="col-auto">
-                    <div className="stktDate">20 Mar, 2026</div>
-                  </div>
-                </div>
-                <div className="stktContent col">
-                  <span className="priorityBadge high">High Priority</span>
-                  <a href="#">
-                    <h3 className="stktHead my-2">
-                      Can&apos;t access dashboard after update
-                    </h3>
-                  </a>
-                  <div className="">Tizzy® Mail Enterprise - 100 GB</div>
-                </div>
-                <div className="stktBtm d-flex col-auto">
-                  <div className="col">
-                    <div className="crDomain d-flex align-items-center">
-                      <div className="avatarSmall flex-shrink-0 warningBg">
-                        G
-                      </div>
-                      <div className="crDomainName ps-2">
-                        ganeshenterprises.com
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-auto">
-                    <Link href="#" className="crBtn">
-                      <ChevronRight className="icon me-0" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Slide 6 */}
-            <div className="swiper-slide">
-              <div className="supportTkt btnDisplay d-flex flex-column">
-                <div className="stktTop d-flex align-items-center col-auto">
-                  <div className="col">
-                    <div className="stktNo">SUP2523</div>
-                    <span className="statusBadge subtleSuccess">Active</span>
-                  </div>
-                  <div className="col-auto">
-                    <div className="stktDate">20 Mar, 2026</div>
-                  </div>
-                </div>
-                <div className="stktContent col">
-                  <span className="priorityBadge high">High Priority</span>
-                  <a href="#">
-                    <h3 className="stktHead my-2">
-                      Can&apos;t access dashboard after update
-                    </h3>
-                  </a>
-                  <div className="">Tizzy® Mail Enterprise - 100 GB</div>
-                </div>
-                <div className="stktBtm d-flex align-items-center col-auto">
-                  <div className="col">
-                    <div className="crDomain d-flex align-items-center">
-                      <div className="avatarSmall flex-shrink-0 dangerBg">
-                        G
-                      </div>
-                      <div className="crDomainName ps-2">
-                        ganeshenterprises.com
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-auto">
-                    <Link href="#" className="crBtn">
-                      <ChevronRight className="icon me-0" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
           <div className="swiper-scrollbar"></div>
         </div>
@@ -305,7 +149,7 @@ const Support = () => {
             <small>Quick Links:</small>
           </div>
           <div className="col-auto d-flex align-items-center justify-content-center gap-2 flex-wrap supportLinks">
-            <div className="">
+            {/* <div className="">
               <a href="#" className="btn btnWhite small">
                 <span>Awaiting Reply</span>{" "}
                 <span className="dangerColor ms-1">(4)</span>
@@ -316,11 +160,11 @@ const Support = () => {
                 <span>Assigned To You</span>{" "}
                 <span className="dangerColor ms-1">(1)</span>
               </a>
-            </div>
+            </div> */}
             <div className="">
-              <a href="#" className="btn btnWhite small">
-                <span>All Tickets</span>
-              </a>
+              <Link href="/support/tickets" className="btn small btnDefault">
+                <span>View All Tickets</span>
+              </Link>
             </div>
           </div>
         </div>

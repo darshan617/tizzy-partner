@@ -412,7 +412,7 @@ export default function SummaryCounts({
       icon: <PaidInvoiceIcon />,
       redirectUrl: "/services/google-workspace",
     },
-    "in process tickets": {
+    "pending tickets": {
       boxClass: "warningGrad",
       iconClass: "warningColor",
       badgeClass: "up",
@@ -426,6 +426,13 @@ export default function SummaryCounts({
       icon: <UploadInvoiceIcon />,
       redirectUrl: null,
     },
+    // "escalated tickets": {
+    //   boxClass: "dangerGrad",
+    //   iconClass: "dangerColor",
+    //   badgeClass: "up",
+    //   icon: <UploadInvoiceIcon />,
+    //   redirectUrl: null,
+    // },
   };
 
   return (

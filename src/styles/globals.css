@@ -908,27 +908,25 @@ strong {
   display: inline-block;
 }
 
-.statusBadge.subtleDanger {
-  background: var(--dangerSubtleColor);
-  color: var(--dangerColor);
-}
-
 .statusBadge.subtleSecondary {
   background: var(--secondarySubtleColor);
   color: var(--secondaryColor);
 }
 
-.statusBadge.subtleInfo {
+.statusBadge.subtleInfo,
+.statusBadge.inprogress {
   background: var(--infoSubtleColor);
   color: var(--infoColor);
 }
 
-.statusBadge.subtleSuccess {
+.statusBadge.subtleSuccess,
+.statusBadge.subtleactive {
   background: var(--successSubtleColor);
   color: var(--successColor);
 }
 
-.statusBadge.subtleWarning {
+.statusBadge.subtleWarning,
+.statusBadge.subtlepending {
   background: var(--warningSubtleColor);
   color: var(--warningColor);
 }
@@ -938,7 +936,9 @@ strong {
   background: var(--successSubtleColor);
 }
 
-.statusBadge.down {
+.statusBadge.down,
+.statusBadge.subtleDanger,
+.statusBadge.closed {
   color: var(--dangerColor);
   background: var(--dangerSubtleColor);
 }
@@ -1338,9 +1338,9 @@ strong {
   color: var(--dangerColor);
 }
 
-.priorityBadge.med {
+.priorityBadge.medium {
   border-color: var(--warningSubtleColor);
-  color: var(--warningColor);
+  color: #ffa000;
 }
 
 .priorityBadge.low {

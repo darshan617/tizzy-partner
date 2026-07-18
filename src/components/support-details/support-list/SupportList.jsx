@@ -11,8 +11,8 @@ import { useGetTicketsMutation } from "@/redux/apis/supportTicketsApi";
 import Cookies from "js-cookie";
 import Loader from "@/common-components/loader/Loader";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { TiAttachment } from "react-icons/ti";
-
 
 const tickets = [
   {
@@ -372,15 +372,15 @@ const SupportList = ({ ticketsData, isLoading }) => {
 
                   <div className={styles.cardBody}>
                     <div className={styles.priorityBlock}>
-                    <span
-                      className={`${styles.priorityBadge} ${
-                        ticket?.priority?.toLowerCase() === "high"
-                          ? styles.priorityHigh
-                          : ticket?.priority?.toLowerCase() === "low"
-                            ? styles.priorityLow
-                            : styles.priorityMedium
-                      }`}
-                    >
+                      <span
+                        className={`${styles.priorityBadge} ${
+                          ticket?.priority?.toLowerCase() === "high"
+                            ? styles.priorityHigh
+                            : ticket?.priority?.toLowerCase() === "low"
+                              ? styles.priorityLow
+                              : styles.priorityMedium
+                        }`}
+                      >
                         {ticket?.priority || "-"}
                       </span>
                       <div className={styles.attachments}>
@@ -418,14 +418,13 @@ const SupportList = ({ ticketsData, isLoading }) => {
                         </span>
                       </div>
 
-                      <button
-                        type="button"
+                      <Link
+                        href={`/support/ticket-details?ticket_id=${ticket?.ticket_id}`}
                         className={styles.arrowButton}
                         aria-label="Open ticket"
-                        onClick={() => router.push("/ticket-detail")}
                       >
                         <FiChevronRight size={18} />
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </article>

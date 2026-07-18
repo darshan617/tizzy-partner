@@ -15,6 +15,10 @@ import CustomDropdown from "@/common-components/custom-dropdown/CustomDropdown";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 
 const MAX_DESCRIPTION_LENGTH = 200;
+const MAX_FILE_SIZE_MB = 2;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+const MAX_TOTAL_ATTACHMENTS_MB = 5;
+const MAX_TOTAL_ATTACHMENTS_BYTES = MAX_TOTAL_ATTACHMENTS_MB * 1024 * 1024;
 
 const serviceOptions = [
   "Tizzy® Mail Enterprise 300 GB",
@@ -65,10 +69,38 @@ const CreateNewTicketForm = () => {
     const { name, value, files } = event.target;
 
     if (name === "attachments") {
+      const selectedFiles = Array.from(files || []);
+      const oversized = selectedFiles.find(
+        (file) => file.size > MAX_FILE_SIZE_BYTES,
+      );
+      if (oversized) {
+        showToast(
+          `"${oversized.name}" exceeds ${MAX_FILE_SIZE_MB}MB. Please choose a smaller file.`,
+          "error",
+        );
+        event.target.value = "";
+        return;
+      }
+
+      const nextAttachments = [...formData.attachments, ...selectedFiles];
+      const totalSize = nextAttachments.reduce(
+        (sum, file) => sum + file.size,
+        0,
+      );
+      if (totalSize > MAX_TOTAL_ATTACHMENTS_BYTES) {
+        showToast(
+          `Total attachments must be under ${MAX_TOTAL_ATTACHMENTS_MB}MB.`,
+          "error",
+        );
+        event.target.value = "";
+        return;
+      }
+
       setFormData((prev) => ({
         ...prev,
-        attachments: [...prev.attachments, ...Array.from(files)],
+        attachments: nextAttachments,
       }));
+      event.target.value = "";
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -150,26 +182,33 @@ const CreateNewTicketForm = () => {
     event.preventDefault();
     if (!validateForm()) return;
     try {
-      const res = await addTicket({
-        body: {
-          partner_id: userData?.id,
-          ...formData,
-        },
+      const { attachments, ...fields } = formData;
+      const body = new FormData();
+
+      body.append("partner_id", String(userData?.id ?? ""));
+      Object.entries(fields).forEach(([key, value]) => {
+        body.append(key, value ?? "");
       });
+      attachments.forEach((file) => {
+        body.append("attachments[]", file);
+      });
+
+      const res = await addTicket({ body });
       if (res?.data?.success) {
         showToast(res?.data?.message, "success");
-        setFormData({
-          orderId: "",
-          name: "",
-          email: "",
-          domain: "",
-          service: "",
-          subject: "",
-          priority: "Low",
-          description: "",
-          attachments: [],
-        });
+        setFormData(initialFormData);
+        return;
       }
+
+      if (res?.error?.status === 413) {
+        showToast(
+          "Attachments are too large for the server. Please use smaller files.",
+          "error",
+        );
+        return;
+      }
+
+      showToast(res?.error?.data?.message || "Something went wrong", "error");
     } catch (error) {
       showToast(error?.data?.message || "Something went wrong", "error");
     }
@@ -442,7 +481,12 @@ const CreateNewTicketForm = () => {
               multiple
               style={{ display: "none" }}
               onChange={handleChange}
+              accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip"
             />
+            <p className="text-warning small mt-1 m-0">
+              Note: jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,txt,zip are
+              supported.
+            </p>
             <br />
             <div className={styles.allAttachments}>
               {formData?.attachments?.map((attachment, idx) => {
