@@ -292,7 +292,6 @@ export default function SummaryCounts({
   additionalBtns = [],
   infoBtn = null,
 }) {
-  console.log(countData, "countData");
   const router = useRouter();
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
