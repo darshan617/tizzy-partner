@@ -176,13 +176,14 @@
 }
 
 .ticketCard {
-  min-height: 180px;
-  border: 1px solid #e6ebf2;
-  border-radius: 14px;
+  min-height: 220px;
+  border: 1px solid #e8ecf1;
+  border-radius: 16px;
   background: #ffffff;
-  padding: 16px;
+  padding: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -196,7 +197,9 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 12px;
+  padding: 16px 18px 14px;
+  border-bottom: 1px dashed #d4d9e0;
+  background: rgba(251, 251, 251, 1);
 }
 
 .ticketMeta {
@@ -207,83 +210,96 @@
 }
 
 .ticketId {
-  color: #0f4a8a;
-  font-size: 12px;
-  font-weight: 700;
+  font-family: "Baloo Bhai 2";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
 }
 
 .statusBadge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  padding: 3px 8px;
+  border-radius: 4px;
+  padding: 4px 10px;
   font-size: 11px;
   font-weight: 600;
+  line-height: 1.2;
 }
 
 .statusActive {
-  background: #dcfce7;
-  color: #15803d;
+  background: #e6f7f4;
+  color: #1a9b88;
 }
 
 .statusInProcess {
-  background: #ede9fe;
-  color: #6d28d9;
+  background: rgba(212, 208, 255, 1);
+  color: rgba(123, 112, 239, 1);
 }
 
 .statusResolved {
-  background: #e5e7eb;
-  color: #475569;
+  background: rgba(206, 212, 218, 1);
+  color: rgba(49, 58, 70, 1);
 }
 
 .createdBlock {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 3px;
-  color: #9ca3af;
-  font-size: 10px;
+  gap: 2px;
+  color: #a0a8b4;
+  font-size: 11px;
+  line-height: 1.3;
   text-align: right;
+  flex-shrink: 0;
 }
 
 .createdBlock strong {
-  color: #6b7280;
-  font-size: 11px;
+  color: #4b5563;
+  font-size: 12px;
   font-weight: 600;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 16px 18px 16px;
 }
 
 .priorityBadge {
   display: inline-flex;
   width: fit-content;
-  border-radius: 5px;
-  padding: 3px 8px;
-  margin-bottom: 12px;
+  border-radius: 4px;
+  padding: 4px 10px;
+  margin-bottom: 10px;
   font-size: 11px;
   font-weight: 600;
+  line-height: 1.2;
 }
 
 .priorityHigh {
-  background: #fee2e2;
-  color: #ef4444;
+  border: 2px solid rgba(254, 230, 236, 1);
+  color: rgba(247, 87, 126, 1);
 }
 
 .priorityMedium {
-  background: #fef3c7;
-  color: #d97706;
+  border: 2px solid rgba(255, 248, 232, 1);
+  color: rgba(255, 160, 0, 1);
 }
 
 .priorityLow {
-  background: #dbeafe;
-  color: #3b82f6;
+  border: 2px solid rgba(230, 246, 251, 1);
+  color: rgba(91, 195, 225, 1);
 }
 
 .ticketTitle {
-  margin: 0 0 8px;
-  color: #111827;
+  margin: 0 0 6px;
+  color: #1f2937;
   font-size: 15px;
   font-weight: 700;
-  line-height: 1.45;
+  line-height: 1.4;
 }
 
 .ticketPlan {
@@ -295,7 +311,7 @@
 
 .cardFooter {
   margin-top: auto;
-  padding-top: 16px;
+  padding-top: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -305,13 +321,13 @@
 .domainWrap {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
 }
 
 .avatar {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
@@ -335,7 +351,7 @@
 }
 
 .avatarGold {
-  background: #d97706;
+  background: #f0a020;
 }
 
 .avatarRose {
@@ -343,21 +359,21 @@
 }
 
 .domainName {
-  color: #0f4a8a;
+  color: #1a6bb5;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .arrowButton {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 1px solid #d7dee7;
+  border: 1px solid #dce3eb;
   background: #ffffff;
-  color: #64748b;
+  color: #5b6572;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -446,6 +462,11 @@
 
   .cardHeader {
     flex-direction: column;
+    padding: 14px 16px 12px;
+  }
+
+  .cardBody {
+    padding: 14px 16px 14px;
   }
 
   .createdBlock {

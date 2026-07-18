@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import {
-  FiArrowRight,
   FiChevronLeft,
   FiChevronRight,
   FiFilter,
@@ -14,7 +13,7 @@ const tickets = [
     status: "Active",
     priority: "Medium Priority",
     title: "Can't access dashboard after update",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
+    plan: "Tizzy® Mail Enterprise – 100 GB",
     domain: "ganeshenterprises.com",
     createdAt: "20 Mar, 2026",
     initial: "G",
@@ -24,7 +23,7 @@ const tickets = [
     status: "In Process",
     priority: "High Priority",
     title: "Incorrect invoice total shown",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
+    plan: "Tizzy® Mail Enterprise – 100 GB",
     domain: "goyalinfotech.com",
     createdAt: "20 Mar, 2026",
     initial: "G",
@@ -34,7 +33,7 @@ const tickets = [
     status: "In Process",
     priority: "High Priority",
     title: "Incorrect invoice total shown",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
+    plan: "Tizzy® Mail Enterprise – 100 GB",
     domain: "goyalinfotech.com",
     createdAt: "20 Mar, 2026",
     initial: "G",
@@ -44,8 +43,18 @@ const tickets = [
     status: "Resolved",
     priority: "Low Priority",
     title: "Cannot change account email, updated twice from admin",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
+    plan: "Tizzy® Mail Enterprise – 100 GB",
     domain: "kingstonmarketing.net",
+    createdAt: "20 Mar, 2026",
+    initial: "K",
+  },
+  {
+    id: "SUP2523",
+    status: "Active",
+    priority: "Medium Priority",
+    title: "Can't access dashboard after update",
+    plan: "Tizzy® Mail Enterprise – 100 GB",
+    domain: "pinchthewallet.com",
     createdAt: "20 Mar, 2026",
     initial: "P",
   },
@@ -54,27 +63,17 @@ const tickets = [
     status: "Active",
     priority: "Medium Priority",
     title: "Can't access dashboard after update",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
+    plan: "Tizzy® Mail Enterprise – 100 GB",
     domain: "pinchthewallet.com",
     createdAt: "20 Mar, 2026",
-    initial: "S",
-  },
-  {
-    id: "SUP2523",
-    status: "Active",
-    priority: "Medium Priority",
-    title: "Can't access dashboard after update",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
-    domain: "pinchthewallet.com",
-    createdAt: "20 Mar, 2026",
-    initial: "S",
+    initial: "P",
   },
   {
     id: "SUP2523",
     status: "Active",
     priority: "High Priority",
     title: "Incorrect invoice total shown, Duplicated invoice",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
+    plan: "Tizzy® Mail Enterprise – 100 GB",
     domain: "lorealpharma.in",
     createdAt: "20 Mar, 2026",
     initial: "K",
@@ -84,7 +83,7 @@ const tickets = [
     status: "In Process",
     priority: "Low Priority",
     title: "Cannot change account email, updated twice from admin",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
+    plan: "Tizzy® Mail Enterprise – 100 GB",
     domain: "ganeshenterprises.com",
     createdAt: "20 Mar, 2026",
     initial: "G",
@@ -94,7 +93,7 @@ const tickets = [
     status: "In Process",
     priority: "Low Priority",
     title: "Cannot change account email, updated twice from admin",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
+    plan: "Tizzy® Mail Enterprise – 100 GB",
     domain: "ganeshenterprises.com",
     createdAt: "20 Mar, 2026",
     initial: "G",
@@ -104,30 +103,30 @@ const tickets = [
     status: "Active",
     priority: "Medium Priority",
     title: "Can't access dashboard after update",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
+    plan: "Tizzy® Mail Enterprise – 100 GB",
     domain: "goyalinfotech.com",
     createdAt: "20 Mar, 2026",
-    initial: "V",
+    initial: "G",
   },
   {
     id: "SUP2523",
     status: "Resolved",
     priority: "High Priority",
     title: "Incorrect invoice total shown",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
+    plan: "Tizzy® Mail Enterprise – 100 GB",
     domain: "kingstonmarketing.net",
     createdAt: "20 Mar, 2026",
-    initial: "T",
+    initial: "K",
   },
   {
     id: "SUP2523",
     status: "Resolved",
     priority: "High Priority",
     title: "Incorrect invoice total shown",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
+    plan: "Tizzy® Mail Enterprise – 100 GB",
     domain: "kingstonmarketing.net",
     createdAt: "20 Mar, 2026",
-    initial: "T",
+    initial: "K",
   },
   {
     id: "SUP2523",
@@ -323,59 +322,65 @@ const SupportList = () => {
         <div className={styles.grid}>
           {paginatedTickets.map((ticket, index) => (
             <article key={`${ticket.id}-${index}`} className={styles.ticketCard}>
-            <div className={styles.cardHeader}>
-              <div className={styles.ticketMeta}>
-                <span className={styles.ticketId}># {ticket.id}</span>
+              <div className={styles.cardHeader}>
+                <div className={styles.ticketMeta}>
+                  <span className={styles.ticketId}># {ticket.id}</span>
+                  <span
+                    className={`${styles.statusBadge} ${
+                      ticket.status === "Active"
+                        ? styles.statusActive
+                        : ticket.status === "Resolved"
+                          ? styles.statusResolved
+                          : styles.statusInProcess
+                    }`}
+                  >
+                    {ticket.status}
+                  </span>
+                </div>
+
+                <div className={styles.createdBlock}>
+                  <span>Created on</span>
+                  <strong>{ticket.createdAt}</strong>
+                </div>
+              </div>
+
+              <div className={styles.cardBody}>
                 <span
-                  className={`${styles.statusBadge} ${
-                    ticket.status === "Active"
-                      ? styles.statusActive
-                      : ticket.status === "Resolved"
-                        ? styles.statusResolved
-                        : styles.statusInProcess
+                  className={`${styles.priorityBadge} ${
+                    ticket.priority === "High Priority"
+                      ? styles.priorityHigh
+                      : ticket.priority === "Low Priority"
+                        ? styles.priorityLow
+                        : styles.priorityMedium
                   }`}
                 >
-                  {ticket.status}
+                  {ticket.priority}
                 </span>
+
+                <h3 className={styles.ticketTitle}>{ticket.title}</h3>
+                <p className={styles.ticketPlan}>{ticket.plan}</p>
+
+                <div className={styles.cardFooter}>
+                  <div className={styles.domainWrap}>
+                    <span
+                      className={`${styles.avatar} ${
+                        styles[avatarToneClasses[index % avatarToneClasses.length]]
+                      }`}
+                    >
+                      {ticket.initial}
+                    </span>
+                    <span className={styles.domainName}>{ticket.domain}</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    className={styles.arrowButton}
+                    aria-label="Open ticket"
+                  >
+                    <FiChevronRight size={18} />
+                  </button>
+                </div>
               </div>
-
-              <div className={styles.createdBlock}>
-                <span>Created on</span>
-                <strong>{ticket.createdAt}</strong>
-              </div>
-            </div>
-
-            <span
-              className={`${styles.priorityBadge} ${
-                ticket.priority === "High Priority"
-                  ? styles.priorityHigh
-                  : ticket.priority === "Low Priority"
-                    ? styles.priorityLow
-                    : styles.priorityMedium
-              }`}
-            >
-              {ticket.priority}
-            </span>
-
-            <h3 className={styles.ticketTitle}>{ticket.title}</h3>
-            <p className={styles.ticketPlan}>{ticket.plan}</p>
-
-            <div className={styles.cardFooter}>
-              <div className={styles.domainWrap}>
-                <span
-                  className={`${styles.avatar} ${
-                    styles[avatarToneClasses[index % avatarToneClasses.length]]
-                  }`}
-                >
-                  {ticket.initial}
-                </span>
-                <span className={styles.domainName}>{ticket.domain}</span>
-              </div>
-
-              <button type="button" className={styles.arrowButton} aria-label="Open ticket">
-                <FiArrowRight size={16} />
-              </button>
-            </div>
             </article>
           ))}
         </div>
