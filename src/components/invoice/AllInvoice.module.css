@@ -417,6 +417,12 @@
 }
 
 @media (min-width: 768px) {
+
+  .sectionCard {
+    width: 100%;
+    min-height: 600px;
+  }
+
   .pageSearchBox {
     width: 300px;
   }

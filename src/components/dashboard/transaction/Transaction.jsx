@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "@/components/dashboard/transaction/Transaction.module.css";
-import { useRouter } from "next/router";
-import { FiChevronsDown, FiChevronsUp } from "react-icons/fi";
+import { FiChevronsDown, FiChevronsUp, FiGlobe } from "react-icons/fi";
 
 const getStatusClass = (status) => {
   const key = status?.toLowerCase()?.replace(/\s+/g, "");
@@ -44,7 +43,6 @@ const formatAmount = (amount) => {
 };
 
 export default function TransactionSection({ data, isDataLoading }) {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState("transactions");
   const [currentData, setCurrentData] = useState(data?.transaction_history);
   const [showAll, setShowAll] = useState(false);
@@ -72,32 +70,39 @@ export default function TransactionSection({ data, isDataLoading }) {
     );
   };
 
-  const handleRenew = (orderId) => {
-    router.push({
-      pathname: "/order-summary",
-      query: { type: "renew-plan", order_id: orderId },
-    });
-  };
-
   const renderTransactionRow = (item, index) => (
     <div className={styles.contentRow} key={item?.order_id || index}>
-      <div className={styles.transactionRowInner}>
-        <div className={styles.colDateMeta}>
-          <p className={styles.txDate}>{formatDisplayDate(item)}</p>
-          <span className={styles.txIdBadge}>{item?.order_no || "-"}</span>
-        </div>
-
-        <div className={styles.colDomainBlock}>
-          <div className={`${styles.avatar} ${styles[`avatar${index % 5}`]}`}>
-            {item?.domain?.charAt(0)?.toUpperCase() || "?"}
-          </div>
-          <div className={styles.domainInfo}>
-            <p className={styles.domainName}>{item?.domain}</p>
-            <p className={styles.subText}>{getTransactionDescription(item)}</p>
+      <div className="row align-items-center g-2">
+        <div className="col-12 col-md-2 col-lg-2">
+          <div className={styles.colDateMeta}>
+            <p className={styles.txDate}>{formatDisplayDate(item)}</p>
+            <span className={styles.txIdBadge}>{item?.order_no || "-"}</span>
           </div>
         </div>
 
-        <div className={styles.colStatus}>
+        <div className="col-12 col-md-3 col-lg-4">
+          <div className={styles.colDomainBlock}>
+            <div className={`${styles.avatar} ${styles[`avatar${index % 5}`]}`}>
+              {item?.company_name?.charAt(0)?.toUpperCase() || "?"}
+            </div>
+            <div className={styles.domainInfo}>
+              <p className={styles.subText}>{getCompanyName(item)}</p>
+              <div className={styles.domainNameContainer}>
+                <FiGlobe className={styles.domainIcon} size={16} />
+                <p className={styles.domainName}>{item?.domain}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-12 col-md-3 col-lg-3">
+          <div className={styles.txMeta}>
+            <div className={styles.txPlanName}>{item?.plan}</div>
+            <div className={styles.categoryName}>{item?.category}</div>
+          </div>
+        </div>
+
+        <div className="col-6 col-md-2 col-lg-2 text-md-center">
           <span
             className={`${styles.statusBadge} ${getStatusClass(item?.status)}`}
           >
@@ -105,7 +110,7 @@ export default function TransactionSection({ data, isDataLoading }) {
           </span>
         </div>
 
-        <div className={styles.colAmount}>
+        <div className="col-6 col-md-2 col-lg-1 text-end">
           <span className={styles.amountValue}>
             {formatAmount(item?.amount)}
           </span>
@@ -117,21 +122,40 @@ export default function TransactionSection({ data, isDataLoading }) {
   const renderRenewalRow = (item, index) => (
     <div className={styles.contentRow} key={item?.order_id || index}>
       <div className={styles.renewalRowInner}>
+        <div className={styles.colDateMeta}>
+          <p className={styles.txDate}>{formatDisplayDate(item)}</p>
+          <span className={styles.txIdBadge}>
+            {item?.order_no || item?.order_id || "-"}
+          </span>
+        </div>
+
         <div className={styles.colDomainBlock}>
           <div className={`${styles.avatar} ${styles[`avatar${index % 5}`]}`}>
             {item?.domain?.charAt(0)?.toUpperCase() || "?"}
           </div>
           <div className={styles.domainInfo}>
-            <p className={styles.domainName}>{item?.domain}</p>
-            <p className={styles.subText}>{getCompanyName(item)}</p>
+            <p className={styles.companyName}>{getCompanyName(item)}</p>
+            <div className={styles.domainNameContainer}>
+              <FiGlobe className={styles.domainIcon} size={16} />
+              <p className={styles.domainName}>{item?.domain || "-"}</p>
+            </div>
           </div>
         </div>
 
         <div className={styles.colPlan}>
-          <p className={styles.planText}>
-            {item?.plan || item?.plan_name || item?.description}
+          <div className={styles.planNameRow}>
+            <span className={styles.planText}>
+              {item?.plan || item?.plan_name || item?.description}
+            </span>
+            <span className={styles.plansCount}>
+              {(item?.plans_count ?? item?.plan_count) > 1
+                ? ` (+${(item?.plans_count ?? item?.plan_count) - 1} more)`
+                : ""}
+            </span>
+          </div>
+          <p className={styles.subText}>
+            {item?.subscription_end_date || item?.renewal_date || "-"}
           </p>
-          <p className={styles.subText}>{formatDisplayDate(item)}</p>
         </div>
 
         <div className={styles.colLicense}>
@@ -146,16 +170,6 @@ export default function TransactionSection({ data, isDataLoading }) {
             {item?.status}
           </span>
         </div>
-
-        {/* <div className={styles.colRenew}>
-          <button
-            type="button"
-            className={styles.renewBtn}
-            onClick={() => handleRenew(item?.order_id)}
-          >
-            Renew
-          </button>
-        </div> */}
 
         <div className={styles.colArrow}>
           <Link
