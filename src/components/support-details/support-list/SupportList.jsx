@@ -4,6 +4,7 @@ import { IoClose } from "react-icons/io5";
 import styles from "./SupportList.module.css";
 import { useGetTicketsMutation } from "@/redux/apis/supportTicketsApi";
 import Cookies from "js-cookie";
+import Loader from "@/common-components/loader/Loader";
 import { useRouter } from "next/router";
 
 const tickets = [
@@ -150,12 +151,7 @@ const tickets = [
 ];
 
 const statusFilters = ["All", "Active", "In Process", "Resolved"];
-const priorityFilters = [
-  "All",
-  "High Priority",
-  "Medium Priority",
-  "Low Priority",
-];
+const priorityFilters = ["All", "High", "Medium", "Low"];
 const avatarToneClasses = [
   "avatarGreen",
   "avatarBlue",
@@ -164,10 +160,7 @@ const avatarToneClasses = [
   "avatarRose",
 ];
 
-const SupportList = () => {
-  const userData = Cookies.get("userData")
-    ? JSON.parse(Cookies.get("userData"))
-    : {};
+const SupportList = ({ ticketsData, isLoading }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("All");
@@ -179,38 +172,29 @@ const SupportList = () => {
   const filteredTickets = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
-    return tickets.filter((ticket) => {
+    return ticketsData?.filter((ticket) => {
       const matchesSearch =
         query === "" ||
-        ticket.id.toLowerCase().includes(query) ||
-        ticket.title.toLowerCase().includes(query) ||
-        ticket.plan.toLowerCase().includes(query) ||
-        ticket.domain.toLowerCase().includes(query);
+        ticket?.ticket_no?.toLowerCase().includes(query) ||
+        ticket?.description?.toLowerCase().includes(query) ||
+        ticket?.service?.toLowerCase().includes(query) ||
+        ticket?.domain?.toLowerCase().includes(query);
 
       const matchesStatus =
-        selectedStatus === "All" || ticket.status === selectedStatus;
+        selectedStatus === "All" || ticket?.status === selectedStatus;
       const matchesPriority =
-        selectedPriority === "All" || ticket.priority === selectedPriority;
+        selectedPriority === "All" || ticket?.priority === selectedPriority;
 
       return matchesSearch && matchesStatus && matchesPriority;
     });
-  }, [searchQuery, selectedPriority, selectedStatus]);
+  }, [ticketsData, searchQuery, selectedPriority, selectedStatus]);
 
-  const paginatedTickets = filteredTickets.slice(0, itemsPerPage);
-  const showingStart = paginatedTickets.length ? 1 : 0;
-  const showingEnd = paginatedTickets.length;
-
-  useEffect(async () => {
-    try {
-      const response = await getTickets({ body: { partner_id: userData?.id } });
-      setTicketsData(response?.data?.data?.tickets);
-    } catch (error) {
-      console.log(error);
-    }
-  }, [userData?.id]);
+  const paginatedTickets = filteredTickets?.slice(0, itemsPerPage);
+  const showingStart = paginatedTickets?.length ? 1 : 0;
+  const showingEnd = paginatedTickets?.length;
 
   return (
-    <section className={styles.wrapper}>
+    <section className={`${styles.wrapper} sectionCard`}>
       <div className={styles.filtersMain}>
         <div className="py-3 px-sm-4 px-3 border-bottom">
           <div className="row align-items-center justify-content-between">
@@ -250,7 +234,10 @@ const SupportList = () => {
               <span className="fw-medium darkColor">
                 {showingStart} - {showingEnd}
               </span>{" "}
-              from <span className="fw-medium darkColor">{totalTickets}</span>{" "}
+              from{" "}
+              <span className="fw-medium darkColor">
+                {ticketsData?.length || 0}
+              </span>{" "}
               Tickets
             </div>
           </div>
@@ -293,7 +280,7 @@ const SupportList = () => {
                 <div className={`${styles.filterPart} col-auto`}>
                   <span className={styles.filterHead}>Priority :</span>
                   <ul className={`${styles.filterGroup} gap-2`} role="group">
-                    {priorityFilters.map((priority) => (
+                    {priorityFilters?.map((priority) => (
                       <li key={priority}>
                         <button
                           type="button"
@@ -342,82 +329,90 @@ const SupportList = () => {
       </div>
 
       <div className={styles.listContent}>
-        <div className={styles.grid}>
-          {ticketsData?.map((ticket, index) => (
-            <article
-              key={`${ticket.id}-${index}`}
-              className={styles.ticketCard}
-            >
-              <div className={styles.cardHeader}>
-                <div className={styles.ticketMeta}>
-                  <span className={styles.ticketId}>
-                    # {ticket?.ticket_no || "-"}
-                  </span>
-                  <span
-                    className={`${styles.statusBadge} ${
-                      ticket.status === "Active"
-                        ? styles.statusActive
-                        : ticket.status === "Resolved"
-                          ? styles.statusResolved
-                          : styles.statusInProcess
-                    }`}
-                  >
-                    {ticket?.status || "-"}
-                  </span>
-                </div>
-
-                <div className={styles.createdBlock}>
-                  <span>Created on</span>
-                  <strong>{ticket?.date || "-"}</strong>
-                </div>
-              </div>
-
-              <span
-                className={`${styles.priorityBadge} ${
-                  ticket?.priority?.toLowerCase() === "high"
-                    ? styles.priorityHigh
-                    : ticket?.priority?.toLowerCase() === "low"
-                      ? styles.priorityLow
-                      : styles.priorityMedium
-                }`}
-              >
-                {ticket?.priority || "-"}
-              </span>
-
-              <h3 className={styles.ticketTitle}>
-                {ticket?.description || "-"}
-              </h3>
-              <p className={styles.ticketPlan}>{ticket?.service || "-"}</p>
-
-              <div className={styles.cardFooter}>
-                <div className={styles.domainWrap}>
-                  <span
-                    className={`${styles.avatar} ${
-                      styles[
-                        avatarToneClasses[index % avatarToneClasses.length]
-                      ]
-                    }`}
-                  >
-                    {ticket?.domain?.charAt(0) || "-"}
-                  </span>
-                  <span className={styles.domainName}>
-                    {ticket?.domain || "-"}
-                  </span>
-                </div>
-
-                <button
-                  type="button"
-                  className={styles.arrowButton}
-                  aria-label="Open ticket"
-                  onClick={() => router.push("/ticket-detail")}
+        {isLoading ? (
+          <Loader />
+        ) : paginatedTickets?.length > 0 ? (
+          <>
+            <div className={styles.grid}>
+              {paginatedTickets?.map((ticket, index) => (
+                <article
+                  key={`${ticket.id}-${index}`}
+                  className={styles.ticketCard}
                 >
-                  <FiChevronRight size={18} />
-                </button>
-              </div>
-              {/* </div> */}
-            </article>
-          ))}
-        </div>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.ticketMeta}>
+                      <span className={styles.ticketId}>
+                        # {ticket?.ticket_no || "-"}
+                      </span>
+                      <span
+                        className={`${styles.statusBadge} ${
+                          ticket?.status === "Active"
+                            ? styles.statusActive
+                            : ticket?.status === "Resolved"
+                              ? styles.statusResolved
+                              : styles.statusInProcess
+                        }`}
+                      >
+                        {ticket?.status || "-"}
+                      </span>
+                    </div>
+
+                    <div className={styles.createdBlock}>
+                      <span>Created on</span>
+                      <strong>{ticket?.date || "-"}</strong>
+                    </div>
+                  </div>
+
+                  <span
+                    className={`${styles.priorityBadge} ${
+                      ticket?.priority?.toLowerCase() === "high"
+                        ? styles.priorityHigh
+                        : ticket?.priority?.toLowerCase() === "low"
+                          ? styles.priorityLow
+                          : styles.priorityMedium
+                    }`}
+                  >
+                    {ticket?.priority || "-"}
+                  </span>
+
+                  <h3 className={styles.ticketTitle}>
+                    {ticket?.description || "-"}
+                  </h3>
+                  <p className={styles.ticketPlan}>{ticket?.service || "-"}</p>
+
+                  <div className={styles.cardFooter}>
+                    <div className={styles.domainWrap}>
+                      <span
+                        className={`${styles.avatar} ${
+                          styles[
+                            avatarToneClasses[index % avatarToneClasses.length]
+                          ]
+                        }`}
+                      >
+                        {ticket?.domain?.charAt(0) || "-"}
+                      </span>
+                      <span className={styles.domainName}>
+                        {ticket?.domain || "-"}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      className={styles.arrowButton}
+                      aria-label="Open ticket"
+                      onClick={() => router.push("/ticket-detail")}
+                    >
+                      <FiChevronRight size={18} />
+                    </button>
+                  </div>
+                  {/* </div> */}
+                </article>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="text-center">No tickets found</div>
+        )}
 
         {/* <div className={styles.pagination}>
           <button

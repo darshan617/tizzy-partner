@@ -228,7 +228,15 @@ const CreateNewTicketForm = () => {
                   type="button"
                   className={styles.searchBtn}
                   onClick={handleSearchOrders}
-                  disabled={isGettingOrders}
+                  disabled={isGettingOrders || formData.orderId === ""}
+                  style={{
+                    cursor:
+                      isGettingOrders || formData.orderId === ""
+                        ? "not-allowed"
+                        : "pointer",
+                    opacity:
+                      isGettingOrders || formData.orderId === "" ? 0.5 : 1,
+                  }}
                 >
                   {isGettingOrders ? "Searching..." : "Search"}
                 </button>
@@ -309,7 +317,7 @@ const CreateNewTicketForm = () => {
                   value={formData.service}
                   placeholder="Select Service"
                   isSearchable={true}
-                  customHeight="38px"
+                  customHeight="39px"
                 />
                 {errors.service && (
                   <p className={styles.error}>{errors.service}</p>

@@ -292,6 +292,7 @@ export default function SummaryCounts({
   additionalBtns = [],
   infoBtn = null,
 }) {
+  console.log(countData, "countData");
   const router = useRouter();
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
@@ -403,6 +404,27 @@ export default function SummaryCounts({
       iconClass: "dangerColor",
       badgeClass: "up",
       icon: <DraftInvoiceIcon />,
+      redirectUrl: null,
+    },
+    "active tickets": {
+      boxClass: "successGrad",
+      iconClass: "successColor",
+      badgeClass: "up",
+      icon: <PaidInvoiceIcon />,
+      redirectUrl: "/services/google-workspace",
+    },
+    "in process tickets": {
+      boxClass: "warningGrad",
+      iconClass: "warningColor",
+      badgeClass: "up",
+      icon: <DraftInvoiceIcon />,
+      redirectUrl: null,
+    },
+    "resolved tickets": {
+      boxClass: "dangerGrad",
+      iconClass: "dangerColor",
+      badgeClass: "up",
+      icon: <UploadInvoiceIcon />,
       redirectUrl: null,
     },
   };
