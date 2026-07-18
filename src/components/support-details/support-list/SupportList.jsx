@@ -1,12 +1,10 @@
-import { useMemo, useState } from "react";
-import {
-  FiChevronLeft,
-  FiChevronRight,
-  FiFilter,
-} from "react-icons/fi";
+import { useEffect, useMemo, useState } from "react";
+import { FiChevronLeft, FiChevronRight, FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import styles from "./SupportList.module.css";
-import { useRouter } from 'next/router';
+import { useGetTicketsMutation } from "@/redux/apis/supportTicketsApi";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 const tickets = [
   {
@@ -138,7 +136,8 @@ const tickets = [
     domain: "kingstonmarketing.net",
     createdAt: "20 Mar, 2026",
     initial: "T",
-  },  {
+  },
+  {
     id: "SUP2523",
     status: "Resolved",
     priority: "High Priority",
@@ -151,10 +150,24 @@ const tickets = [
 ];
 
 const statusFilters = ["All", "Active", "In Process", "Resolved"];
-const priorityFilters = ["All", "High Priority", "Medium Priority", "Low Priority"];
-const avatarToneClasses = ["avatarGreen", "avatarBlue", "avatarPurple", "avatarGold", "avatarRose"];
+const priorityFilters = [
+  "All",
+  "High Priority",
+  "Medium Priority",
+  "Low Priority",
+];
+const avatarToneClasses = [
+  "avatarGreen",
+  "avatarBlue",
+  "avatarPurple",
+  "avatarGold",
+  "avatarRose",
+];
 
 const SupportList = () => {
+  const userData = Cookies.get("userData")
+    ? JSON.parse(Cookies.get("userData"))
+    : {};
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("All");
@@ -186,6 +199,15 @@ const SupportList = () => {
   const paginatedTickets = filteredTickets.slice(0, itemsPerPage);
   const showingStart = paginatedTickets.length ? 1 : 0;
   const showingEnd = paginatedTickets.length;
+
+  useEffect(async () => {
+    try {
+      const response = await getTickets({ body: { partner_id: userData?.id } });
+      setTicketsData(response?.data?.data?.tickets);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [userData?.id]);
 
   return (
     <section className={styles.wrapper}>
@@ -228,8 +250,8 @@ const SupportList = () => {
               <span className="fw-medium darkColor">
                 {showingStart} - {showingEnd}
               </span>{" "}
-              from{" "}
-              <span className="fw-medium darkColor">{totalTickets}</span> Tickets
+              from <span className="fw-medium darkColor">{totalTickets}</span>{" "}
+              Tickets
             </div>
           </div>
         </div>
@@ -321,11 +343,16 @@ const SupportList = () => {
 
       <div className={styles.listContent}>
         <div className={styles.grid}>
-          {paginatedTickets.map((ticket, index) => (
-            <article key={`${ticket.id}-${index}`} className={styles.ticketCard}>
+          {ticketsData?.map((ticket, index) => (
+            <article
+              key={`${ticket.id}-${index}`}
+              className={styles.ticketCard}
+            >
               <div className={styles.cardHeader}>
                 <div className={styles.ticketMeta}>
-                  <span className={styles.ticketId}># {ticket.id}</span>
+                  <span className={styles.ticketId}>
+                    # {ticket?.ticket_no || "-"}
+                  </span>
                   <span
                     className={`${styles.statusBadge} ${
                       ticket.status === "Active"
@@ -335,60 +362,69 @@ const SupportList = () => {
                           : styles.statusInProcess
                     }`}
                   >
-                    {ticket.status}
+                    {ticket?.status || "-"}
                   </span>
                 </div>
 
                 <div className={styles.createdBlock}>
                   <span>Created on</span>
-                  <strong>{ticket.createdAt}</strong>
+                  <strong>{ticket?.date || "-"}</strong>
                 </div>
               </div>
 
-              <div className={styles.cardBody}>
-                <span
-                  className={`${styles.priorityBadge} ${
-                    ticket.priority === "High Priority"
-                      ? styles.priorityHigh
-                      : ticket.priority === "Low Priority"
-                        ? styles.priorityLow
-                        : styles.priorityMedium
-                  }`}
-                >
-                  {ticket.priority}
-                </span>
+              <span
+                className={`${styles.priorityBadge} ${
+                  ticket?.priority?.toLowerCase() === "high"
+                    ? styles.priorityHigh
+                    : ticket?.priority?.toLowerCase() === "low"
+                      ? styles.priorityLow
+                      : styles.priorityMedium
+                }`}
+              >
+                {ticket?.priority || "-"}
+              </span>
 
-                <h3 className={styles.ticketTitle}>{ticket.title}</h3>
-                <p className={styles.ticketPlan}>{ticket.plan}</p>
+              <h3 className={styles.ticketTitle}>
+                {ticket?.description || "-"}
+              </h3>
+              <p className={styles.ticketPlan}>{ticket?.service || "-"}</p>
 
-                <div className={styles.cardFooter}>
-                  <div className={styles.domainWrap}>
-                    <span
-                      className={`${styles.avatar} ${
-                        styles[avatarToneClasses[index % avatarToneClasses.length]]
-                      }`}
-                    >
-                      {ticket.initial}
-                    </span>
-                    <span className={styles.domainName}>{ticket.domain}</span>
-                  </div>
-
-                  <button
-                    type="button"
-                    className={styles.arrowButton}
-                    aria-label="Open ticket"
-                    onClick={() => router.push("/ticket-detail")}
+              <div className={styles.cardFooter}>
+                <div className={styles.domainWrap}>
+                  <span
+                    className={`${styles.avatar} ${
+                      styles[
+                        avatarToneClasses[index % avatarToneClasses.length]
+                      ]
+                    }`}
                   >
-                    <FiChevronRight size={18} />
-                  </button>
+                    {ticket?.domain?.charAt(0) || "-"}
+                  </span>
+                  <span className={styles.domainName}>
+                    {ticket?.domain || "-"}
+                  </span>
                 </div>
+
+                <button
+                  type="button"
+                  className={styles.arrowButton}
+                  aria-label="Open ticket"
+                  onClick={() => router.push("/ticket-detail")}
+                >
+                  <FiChevronRight size={18} />
+                </button>
               </div>
+              {/* </div> */}
             </article>
           ))}
         </div>
 
-        <div className={styles.pagination}>
-          <button type="button" className={styles.pageNav} aria-label="Previous page">
+        {/* <div className={styles.pagination}>
+          <button
+            type="button"
+            className={styles.pageNav}
+            aria-label="Previous page"
+          >
             <FiChevronLeft size={16} />
           </button>
 
@@ -404,10 +440,14 @@ const SupportList = () => {
             </button>
           ))}
 
-          <button type="button" className={styles.pageNav} aria-label="Next page">
+          <button
+            type="button"
+            className={styles.pageNav}
+            aria-label="Next page"
+          >
             <FiChevronRight size={16} />
           </button>
-        </div>
+        </div> */}
       </div>
     </section>
   );
