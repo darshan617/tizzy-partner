@@ -669,8 +669,6 @@ const CommonOrderSummary = () => {
         .join("|")
     : "";
 
-  console.log(cartDetails, "caaaaaaaaaa");
-
   useEffect(() => {
     // if (router?.query?.type === "upgrade") return undefined;
     if (!Array.isArray(cartDetails) || cartDetails.length === 0)
