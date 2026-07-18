@@ -11,6 +11,8 @@ import { useGetTicketsMutation } from "@/redux/apis/supportTicketsApi";
 import Cookies from "js-cookie";
 import Loader from "@/common-components/loader/Loader";
 import { useRouter } from "next/router";
+import { TiAttachment } from "react-icons/ti";
+
 
 const tickets = [
   {
@@ -369,6 +371,7 @@ const SupportList = ({ ticketsData, isLoading }) => {
                   </div>
 
                   <div className={styles.cardBody}>
+                    <div className={styles.priorityBlock}>
                     <span
                       className={`${styles.priorityBadge} ${
                         ticket?.priority?.toLowerCase() === "high"
@@ -378,8 +381,17 @@ const SupportList = ({ ticketsData, isLoading }) => {
                             : styles.priorityMedium
                       }`}
                     >
-                      {ticket?.priority || "-"}
-                    </span>
+                        {ticket?.priority || "-"}
+                      </span>
+                      <div className={styles.attachments}>
+                        {ticket?.attachments_count >= 0 && (
+                          <>
+                            <TiAttachment size={22} />
+                            {ticket?.attachments_count}
+                          </>
+                        )}
+                      </div>
+                    </div>
 
                     <h3 className={styles.ticketTitle}>
                       {ticket?.description || "-"}
