@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { FiChevronLeft, FiChevronRight, FiFilter } from "react-icons/fi";
+import {
+  FiArrowRight,
+  FiChevronLeft,
+  FiChevronRight,
+  FiFilter,
+} from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import styles from "./SupportList.module.css";
 import { useGetTicketsMutation } from "@/redux/apis/supportTicketsApi";
@@ -363,38 +368,43 @@ const SupportList = ({ ticketsData, isLoading }) => {
                     </div>
                   </div>
 
-                  <span
-                    className={`${styles.priorityBadge} ${
-                      ticket?.priority?.toLowerCase() === "high"
-                        ? styles.priorityHigh
-                        : ticket?.priority?.toLowerCase() === "low"
-                          ? styles.priorityLow
-                          : styles.priorityMedium
-                    }`}
-                  >
-                    {ticket?.priority || "-"}
-                  </span>
+                  <div className={styles.cardBody}>
+                    <span
+                      className={`${styles.priorityBadge} ${
+                        ticket?.priority?.toLowerCase() === "high"
+                          ? styles.priorityHigh
+                          : ticket?.priority?.toLowerCase() === "low"
+                            ? styles.priorityLow
+                            : styles.priorityMedium
+                      }`}
+                    >
+                      {ticket?.priority || "-"}
+                    </span>
 
-                  <h3 className={styles.ticketTitle}>
-                    {ticket?.description || "-"}
-                  </h3>
-                  <p className={styles.ticketPlan}>{ticket?.service || "-"}</p>
+                    <h3 className={styles.ticketTitle}>
+                      {ticket?.description || "-"}
+                    </h3>
+                    <p className={styles.ticketPlan}>
+                      {ticket?.service || "-"}
+                    </p>
 
-                  <div className={styles.cardFooter}>
-                    <div className={styles.domainWrap}>
-                      <span
-                        className={`${styles.avatar} ${
-                          styles[
-                            avatarToneClasses[index % avatarToneClasses.length]
-                          ]
-                        }`}
-                      >
-                        {ticket?.domain?.charAt(0) || "-"}
-                      </span>
-                      <span className={styles.domainName}>
-                        {ticket?.domain || "-"}
-                      </span>
-                    </div>
+                    <div className={styles.cardFooter}>
+                      <div className={styles.domainWrap}>
+                        <span
+                          className={`${styles.avatar} ${
+                            styles[
+                              avatarToneClasses[
+                                index % avatarToneClasses.length
+                              ]
+                            ]
+                          }`}
+                        >
+                          {ticket?.domain?.charAt(0) || "-"}
+                        </span>
+                        <span className={styles.domainName}>
+                          {ticket?.domain || "-"}
+                        </span>
+                      </div>
 
                     <button
                       type="button"

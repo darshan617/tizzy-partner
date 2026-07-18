@@ -49,7 +49,6 @@ const CreateNewTicketForm = () => {
   const { showToast } = useToast();
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
-  console.log(errors, "errors");
   const [serviceOptionsList, setServiceOptionsList] = useState([]);
   const userData = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
@@ -172,7 +171,7 @@ const CreateNewTicketForm = () => {
         });
       }
     } catch (error) {
-      console.log(error);
+      showToast(error?.data?.message || "Something went wrong", "error");
     }
   };
 
@@ -181,6 +180,7 @@ const CreateNewTicketForm = () => {
       const res = await getOrdersByPartner({
         body: { partner_id: userData.id, order_no: formData.orderId },
       });
+
       if (res?.data?.success) {
         const planOptions = toServiceOptions(res?.data?.data?.plan_list);
         setServiceOptionsList(planOptions);
@@ -191,9 +191,33 @@ const CreateNewTicketForm = () => {
           domain: res?.data?.data?.domain,
           service: planOptions[0]?.label || prev.service || "",
         }));
+      } else {
+        setFormData({
+          orderId: "",
+          name: "",
+          email: "",
+          domain: "",
+          service: "",
+          subject: "",
+          priority: "Low",
+          description: "",
+          attachments: [],
+        });
+        showToast(res?.error?.data?.message || "Something went wrong", "error");
       }
     } catch (error) {
-      console.log(error);
+      showToast(error?.data?.message, "error");
+      setFormData({
+        orderId: "",
+        name: "",
+        email: "",
+        domain: "",
+        service: "",
+        subject: "",
+        priority: "Low",
+        description: "",
+        attachments: [],
+      });
     }
   };
 
@@ -456,8 +480,16 @@ const CreateNewTicketForm = () => {
           </div>
 
           <div className={styles.submitWrap}>
-            <button type="submit" className={styles.submitBtn}>
-              Create Ticket
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={isAddingTicket}
+              style={{
+                cursor: isAddingTicket ? "not-allowed" : "pointer",
+                opacity: isAddingTicket ? 0.5 : 1,
+              }}
+            >
+              {isAddingTicket ? "Creating..." : "Create Ticket"}
             </button>
           </div>
         </form>
