@@ -1,9 +1,9 @@
 .wrapper {
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 20px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+  box-shadow: 5px 5px 8px #5090c545;
 }
 
 .filtersMain {
@@ -456,6 +456,7 @@
   .filterGroup {
     flex-wrap: wrap;
   }
+
   .grid {
     grid-template-columns: 1fr;
   }
