@@ -6,6 +6,7 @@ import {
 } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import styles from "./SupportList.module.css";
+import { useRouter } from 'next/router';
 
 const tickets = [
   {
@@ -161,7 +162,7 @@ const SupportList = () => {
   const currentPage = 1;
   const itemsPerPage = 12;
   const totalTickets = 124000;
-
+  const router = useRouter();
   const filteredTickets = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
@@ -376,6 +377,7 @@ const SupportList = () => {
                     type="button"
                     className={styles.arrowButton}
                     aria-label="Open ticket"
+                    onClick={() => router.push("/ticket-detail")}
                   >
                     <FiChevronRight size={18} />
                   </button>
