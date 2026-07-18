@@ -406,16 +406,16 @@ const SupportList = ({ ticketsData, isLoading }) => {
                         </span>
                       </div>
 
-                    <button
-                      type="button"
-                      className={styles.arrowButton}
-                      aria-label="Open ticket"
-                      onClick={() => router.push("/ticket-detail")}
-                    >
-                      <FiChevronRight size={18} />
-                    </button>
+                      <button
+                        type="button"
+                        className={styles.arrowButton}
+                        aria-label="Open ticket"
+                        onClick={() => router.push("/ticket-detail")}
+                      >
+                        <FiChevronRight size={18} />
+                      </button>
+                    </div>
                   </div>
-                  {/* </div> */}
                 </article>
               ))}
             </div>
