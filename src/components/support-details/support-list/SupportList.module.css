@@ -294,6 +294,24 @@
   color: rgba(91, 195, 225, 1);
 }
 
+.priorityBlock{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.attachments{
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #6b7280;
+  font-size: 15px;
+  line-height: 1.5;
+  background: rgba(230, 241, 253, 1);
+  padding: 4px 15px;
+  border-radius: 99px;
+}
 .ticketTitle {
   margin: 0 0 6px;
   color: #1f2937;
@@ -382,8 +400,9 @@
 }
 
 .arrowButton:hover {
-  border-color: #0b5cab;
-  color: #0b5cab;
+  /* border-color: #0b5cab; */
+  color: #ffffff;
+  background: #0b5cab;
 }
 
 .pagination {

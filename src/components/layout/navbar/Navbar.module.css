@@ -83,6 +83,44 @@
   /* default styles for pgSearchWrap */
 }
 
+.profDropdownMenu {
+  background: linear-gradient(135deg, #0355ac 0%, #023f80 100%);
+  overflow: hidden;
+  border-radius: 8px;
+  z-index: 0;
+}
+
+.createBtnBg {
+  object-fit: contain;
+  object-position: center;
+  opacity: 0.35;
+  pointer-events: none;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  top: 0;
+  left: -10px;
+  z-index: 0;
+}
+
+.createBtnBg2 {
+  object-fit: contain;
+  object-position: center;
+  opacity: 0.35;
+  pointer-events: none;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  top: 0;
+  right: -10px;
+  z-index: 0;
+}
+
+.profDropdownMenu > *:not(.createBtnBg):not(.createBtnBg2) {
+  position: relative;
+  z-index: 1;
+}
+
 /* Profile Dropdown Styles */
 .profHolder {
   max-width: 180px;

@@ -10,6 +10,7 @@ import { BsHandbag } from "react-icons/bs";
 import { FiBell, FiPackage, FiTrash2 } from "react-icons/fi";
 import { FaRegCircleUser } from "react-icons/fa6";
 import logo from "@/assets/signup/signupLogo.png";
+import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import { RxHamburgerMenu } from "react-icons/rx";
@@ -337,7 +338,21 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                     <div
                       className={`${styles.dropdownMenu} shadow-lg ${isDropdownOpen ? styles.show : ""}`}
                     >
-                      <div className="d-flex flex-column justify-content-center align-items-center p-3 mb-3 gap-1 text-white bg-dark">
+                      <div className={`${styles.profDropdownMenu} position-relative d-flex flex-column justify-content-center align-items-center p-3 mb-3 gap-1 text-white`}>
+                        <Image
+                          src={createBtnBg}
+                          alt=""
+                          width={500}
+                          height={500}
+                          className={styles.createBtnBg}
+                        />
+                        <Image
+                          src={createBtnBg}
+                          alt=""
+                          width={500}
+                          height={500}
+                          className={styles.createBtnBg2}
+                        />
                         <div
                           className={`${styles.profAvatar} ${styles.avatarColor_3}`}
                         >
