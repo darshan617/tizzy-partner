@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "@/components/ticket-detail/TicketDetail.module.css";
 import { FiUser, FiGlobe, FiLayers, FiCalendar } from "react-icons/fi";
 import { BsPrinter } from "react-icons/bs";
 import { IoReturnUpForwardOutline } from "react-icons/io5";
-
+import { useRouter } from "next/router";
+import { useGetTicketDetailMutation } from "@/redux/apis/supportTicketsApi";
+import Cookies from "js-cookie";
 
 const activities = [
   {
@@ -42,6 +44,26 @@ const activities = [
 ];
 
 const TicketDetail = () => {
+  const router = useRouter();
+  const userData = Cookies.get("userData")
+    ? JSON.parse(Cookies.get("userData"))
+    : {};
+  const [getTicketDetail, { isLoading: isGettingTicketDetail }] =
+    useGetTicketDetailMutation();
+  useEffect(() => {
+    if (router?.query?.ticket_id && router?.isReady) {
+      const fetchTicketDetail = async () => {
+        const response = await getTicketDetail({
+          body: {
+            partner_id: userData?.id,
+            ticket_id: router?.query?.ticket_id,
+          },
+        });
+        console.log(response, "response");
+      };
+      fetchTicketDetail();
+    }
+  }, [userData?.id, router?.query?.ticket_id, router?.isReady]);
   return (
     <div className={styles.page}>
       <div className={styles.headerBar}>
@@ -97,13 +119,17 @@ const TicketDetail = () => {
             </div>
             <div className={styles.metaItem}>
               <p className={styles.fieldLabel}>Priority</p>
-              <span className={`${styles.pill} ${styles.pillDanger} ${styles.pillSm}`}>
+              <span
+                className={`${styles.pill} ${styles.pillDanger} ${styles.pillSm}`}
+              >
                 High
               </span>
             </div>
             <div className={styles.metaItem}>
               <p className={styles.fieldLabel}>Status</p>
-              <span className={`${styles.pill} ${styles.pillWarning} ${styles.pillSm}`}>
+              <span
+                className={`${styles.pill} ${styles.pillWarning} ${styles.pillSm}`}
+              >
                 Pending
               </span>
             </div>

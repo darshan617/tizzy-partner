@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { BsArrowLeft } from "react-icons/bs";
 
-const TicketDetailPage = () => {
+const TicketDetailsPage = () => {
   const router = useRouter();
 
   return (
@@ -39,4 +39,4 @@ const TicketDetailPage = () => {
   );
 };
 
-export default TicketDetailPage;
+export default TicketDetailsPage;
