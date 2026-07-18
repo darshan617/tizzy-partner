@@ -687,7 +687,8 @@ const CommonOrderSummary = () => {
           itemIndex: idx,
           selectedCompany: selectedCompanyRef.current,
           tempDomains: tempDomainNamesRef.current,
-          customerId: customerData?.customer_id,
+          // customerId: customerData?.customer_id,
+          customerId: cartDetails?.[0]?.customer_id,
           coupen: promoCode,
           order_id: router?.query?.order_id || "",
         });

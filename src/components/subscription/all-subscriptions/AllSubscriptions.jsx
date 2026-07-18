@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
 import styles from "@/components/subscription/all-subscriptions/AllSubscriptions.module.css";
-import { FiFilter } from "react-icons/fi";
+import { FiFilter, FiGlobe } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { LuPencil } from "react-icons/lu";
 import Loader from "@/common-components/loader/Loader";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { BiUser } from "react-icons/bi";
 
 const avatarColorClasses = [
   "avatarRed",
@@ -208,113 +209,92 @@ const AllSubscriptions = ({
                           selectedStatuses,
                     )
                     ?.map((subscription, idx) => {
+                      const companyInitial =
+                        subscription?.company_name?.charAt(0)?.toUpperCase() ||
+                        subscription?.domain?.charAt(0)?.toUpperCase() ||
+                        "";
+
                       return (
                         <div
                           key={idx}
                           className={`${styles.contentRow} ${styles.btnDisplay}`}
                         >
-                          <div className="row align-items-center">
-                            {/* <div className={`${styles.ckbCol} col-auto`}>
-                              <input
-                                type="checkbox"
-                                className="form-check-input"
-                              />
-                            </div> */}
+                          <div className={styles.rowInner}>
+                            <div className={styles.txnCol}>
+                              <div className={styles.txnDate}>
+                                {subscription?.due_date || "-"}
+                              </div>
+                              <div className={styles.txnId}>
+                                {subscription?.order_no || "-"}
+                              </div>
+                            </div>
 
-                            <div className="col">
-                              <div className="row align-items-center py-3">
-                                <div className="col-md-3 col-12">
-                                  <div
-                                    className={`${styles.crDomain} d-flex align-items-center`}
-                                  >
-                                    <div
-                                      className={`flex-shrink-0 ${styles.avatarBg} ${
-                                        avatarColorClasses[
-                                          idx % avatarColorClasses.length
-                                        ]
-                                      }`}
-                                    >
-                                      {subscription?.domain
-                                        ?.charAt(0)
-                                        ?.toUpperCase()}
-                                    </div>
-                                    <div className={` ps-2`}>
-                                      <span
-                                        className={`${styles.crDomainName} ps-2`}
-                                      >
-                                        {subscription?.domain}
-                                      </span>
-                                      {/* <p className="m-0  ps-2 text-secondary small ">
-                                        {" "}
-                                        Enrollment Type:{" "}
-                                        <span className="text-dark fw-medium">
-                                          {" "}
-                                          {subscription?.enrollment_type}
-                                        </span>
-                                      </p> */}
-                                      <p className="m-0  ps-2 text-secondary small">
-                                        {" "}
-                                        Order Id:{" "}
-                                        <span className="text-dark fw-medium">
-                                          {subscription?.order_no}
-                                        </span>
-                                      </p>
-                                      <p className="m-0  ps-2 text-secondary small">
-                                        {" "}
-                                        Customer Name:{" "}
-                                        <span className="text-dark fw-medium">
-                                          {subscription?.customer_name}
-                                        </span>
-                                      </p>
-                                    </div>
-                                  </div>
-
-                                  {/* <div className={`${styles.crName} ms-4 ps-2`}>
-                                    {subscription?.currentPlan}
-                                  </div> */}
+                            <div className={styles.companyCol}>
+                              <div
+                                className={`${styles.avatarBg} ${
+                                  avatarColorClasses[
+                                    idx % avatarColorClasses.length
+                                  ]
+                                }`}
+                              >
+                                {companyInitial}
+                              </div>
+                              <div className={styles.companyInfo}>
+                                <div className={styles.companyName}>
+                                  {subscription?.company_name || "-"}
                                 </div>
-
-                                <div className="col-md-4 col-6 ">
-                                  <div className={`${styles.crName} `}>
-                                    {subscription?.currentPlan}
-                                  </div>
-                                  <div className={styles.dueValue}>
-                                    {subscription?.due_date || "-"}
-                                  </div>
+                                {/* <div className={styles.companyDomain}>
+                                  <FiGlobe className={styles.globeIcon} />
+                                  <span>{subscription?.domain || "-"}</span>
+                                </div> */}
+                                <div className={styles.companyDomain}>
+                                  <BiUser className={styles.globeIcon} />
+                                  <span>{subscription?.customer_name}</span>
                                 </div>
+                              </div>
+                            </div>
 
-                                <div className="col-md-2 col-6 text-center">
-                                  <div className={styles.metaHead}>
-                                    Enrollment Type
-                                  </div>
-                                  <span
-                                    style={{ color: "var(--primaryColor)" }}
-                                  >
-                                    {" "}
-                                    {subscription?.enrollment_type}
-                                  </span>
-                                </div>
+                            <div className={styles.planCol}>
+                              <div className={styles.crName}>
+                                <span className={styles.crNameText}>
+                                  {subscription?.currentPlan}
+                                </span>
+                                <span className={styles.plansCount}>
+                                  {subscription?.plans_count &&
+                                  subscription?.plans_count > 1
+                                    ? ` (+${subscription?.plans_count - 1} more)`
+                                    : ""}
+                                </span>
+                              </div>
 
-                                <div className="col-md-1 col-6 text-center">
-                                  <div className={styles.metaHead}>License</div>
-                                  <div className={styles.licenseValue}>
-                                    <span>{subscription?.licenses}</span>
-                                    {/* <button
-                                    type="button"
-                                    className={styles.editBtn}
-                                  >
-                                    <LuPencil className={styles.editIcon} />
-                                  </button> */}
-                                  </div>
-                                </div>
+                              <div className={styles.companyDomain}>
+                                <FiGlobe className={styles.globeIcon} />
+                                <span>{subscription?.domain || "-"}</span>
+                              </div>
+                            </div>
 
-                                <div
-                                  className={`col-md-2 col-12 ${styles.statusCol}`}
-                                >
-                                  <div className={styles.statusInner}>
-                                    <div className={styles.statusBadgeGroup}>
-                                      <span
-                                        className={`${styles.statusBadge} ${subscription?.status?.toLowerCase() === "active" ? styles.activeBadge : ""} 
+                            <div className={styles.licenseLine}>
+                              <span className={styles.licenseLabel}>
+                                License
+                              </span>
+                              <span className={styles.licenseValue}>
+                                {subscription?.licenses ?? "-"}
+                              </span>
+                            </div>
+
+                            <div className={styles.enrollmentCol}>
+                              <div className={styles.metaHead}>
+                                Enrollment Type
+                              </div>
+                              <div className={styles.enrollmentValue}>
+                                {subscription?.enrollment_type || "-"}
+                              </div>
+                            </div>
+
+                            <div className={styles.statusCol}>
+                              <div className={styles.statusBadgeGroup}>
+                                <span
+                                  className={`${styles.statusBadge} ${subscription?.status?.toLowerCase() === "active" ? styles.activeBadge : ""} 
                                         ${subscription?.status?.toLowerCase() === "expiring" ? styles.expiringBadge : ""}  
                                         ${subscription?.status?.toLowerCase() === "expired" ? styles.expired : ""} 
                                         ${subscription?.status === "inactive" ? styles.inactiveBadge : ""} 
@@ -327,49 +307,21 @@ const AllSubscriptions = ({
                                         ${subscription?.status?.toLowerCase() === "upgrade pending" ? styles.upgradePending : ""}
                                         ${subscription?.status?.toLowerCase() === "downgrade pending" ? styles.downgradePending : ""}
                                         `}
-                                      >
-                                        {subscription?.status}
-                                      </span>
-                                      {subscription?.subtext ? (
-                                        <div className={styles.statusSubtext}>
-                                          {subscription?.subtext}
-                                        </div>
-                                      ) : null}
-                                    </div>
-                                    {/* {(subscription?.status?.toLowerCase() ===
-                                      "expiring" ||
-                                      subscription?.status?.toLowerCase() ===
-                                        "expired") && (
-                                      <button
-                                        type="button"
-                                        className={styles.renewBtn}
-                                        onClick={() =>
-                                          router.push({
-                                            pathname: "/order-summary",
-                                            query: {
-                                              type: "renew-plan",
-                                              order_id: subscription?.order_id,
-                                              renewal_order_id:
-                                                subscription?.renewal_order_id,
-                                            },
-                                          })
-                                        }
-                                      >
-                                        Renew
-                                      </button>
-                                    )} */}
+                                >
+                                  {subscription?.status}
+                                </span>
+                                {subscription?.subtext ? (
+                                  <div className={styles.statusSubtext}>
+                                    {subscription?.subtext}
                                   </div>
-                                </div>
+                                ) : null}
                               </div>
                             </div>
 
-                            <div
-                              className={`col-auto align-self-stretch d-flex align-items-center justify-content-end order-sm-3 mobAction ${styles.arrowCol}`}
-                            >
+                            <div className={styles.arrowCol}>
                               <Link
                                 className={styles.crBtn}
                                 href={{
-                                  // pathname: "/customers/customer-details",
                                   pathname:
                                     "/subscriptions/subscriptions-details",
                                   query: {

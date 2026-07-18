@@ -1,0 +1,431 @@
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 1100px;
+  margin: 0 auto 16px;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #d7dfe8;
+  background: #ffffff;
+  color: #4c4c5c;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.backBtn:hover {
+  background: #f4f7fb;
+}
+
+.page {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.headerBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  background: var(--primaryColor, #0355ac);
+  border-radius: 10px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ticketId,
+.ticketTitle {
+  color: #ffffff;
+  font-family: "Baloo Bhai 2", sans-serif;
+  font-size: 18px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.ticketId {
+  font-weight: 600;
+}
+
+.ticketTitle {
+  font-weight: 500;
+}
+
+.headerBadges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 4px;
+  color: #ffffff;
+  font-family: "Baloo Bhai 2", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.pillSm {
+  padding: 3px 10px;
+  font-size: 11px;
+}
+
+.pillDanger {
+  background: #f7577e;
+}
+
+.pillWarning {
+  background: #f9bf59;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 16px;
+  align-items: start;
+}
+
+.detailCard,
+.activityCard {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.detailCard {
+  padding: 22px 24px 20px;
+}
+
+.activityCard {
+  position: sticky;
+  top: 0;
+
+  padding: 20px 18px;
+}
+
+.customerHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 -24px;
+  padding: 0 24px 18px;
+  border-bottom: 1px solid #eef1f5;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(192, 15, 12, 1);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Baloo Bhai 2", sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.fieldLabel {
+  margin: 0 0 4px;
+  color: rgba(155, 166, 183, 1);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+.customerName {
+  margin: 0;
+  color: #1f2937;
+  font-family: "Baloo Bhai 2", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px 20px;
+  margin: 0 -24px;
+  padding: 18px 24px;
+  border-bottom: 1px solid #eef1f5;
+}
+
+.metaItem {
+  min-width: 0;
+}
+
+.metaValue {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.metaIcon {
+  width: 15px;
+  height: 15px;
+  color: #0355ac;
+  flex-shrink: 0;
+}
+
+.sectionBlock {
+  margin: 0 -24px;
+  padding: 18px 24px;
+  border-bottom: 1px solid #eef1f5;
+}
+
+.bodyText,
+.descriptionBody {
+  margin: 0;
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.descriptionBody p {
+  margin: 0 0 12px;
+}
+
+.descriptionBody p:last-child {
+  margin-bottom: 0;
+}
+
+.attachmentsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.attachmentThumb {
+  display: block;
+  width: 120px;
+  height: 120px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f9fafb;
+}
+
+.attachmentThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.attachmentLink {
+  color: #0355ac;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.attachmentLink:hover {
+  text-decoration: underline;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 18px;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid #d7dfe8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #4c4c5c;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.actionBtn:hover {
+  background: #f4f7fb;
+}
+
+.timeline {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.activityHeader {
+  margin: 0 -18px;
+  padding: 0 18px 12px;
+  border-bottom: 1px solid #eef1f5;
+  width: auto;
+}
+
+.timelineItem {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 12px;
+  position: relative;
+  padding-bottom: 22px;
+}
+
+.timelineItem:last-child {
+  padding-bottom: 0;
+}
+
+.timelineItem:not(:last-child)::before {
+  content: "";
+  background: #e5e7eb;
+  width: 2px;
+  height: 100%;
+  position: absolute;
+  top: 18px;
+  left: 134px;
+  transform: translateX(-50%);
+}
+
+.timelineLeft {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.timelineDate {
+  color: #9ca3af;
+  font-size: 11px;
+  line-height: 1.35;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.timelineDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-top: 3px;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px #ffffff;
+}
+
+.timelineContent {
+  min-width: 0;
+  padding-top: 0;
+}
+
+.timelineTitle {
+  margin: 0 0 4px;
+  color: #1f2937;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.timelineDesc {
+  margin: 0 0 6px;
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.timelineBy {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #0355ac;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.timelineBy:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 991px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .timelineItem {
+    grid-template-columns: 130px minmax(0, 1fr);
+  }
+
+  .timelineItem:not(:last-child)::before {
+    left: 124px;
+  }
+}
+
+@media (max-width: 575px) {
+  .headerBar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .metaGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .detailCard,
+  .activityCard {
+    padding: 16px;
+  }
+
+  .timelineItem {
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .timelineItem:not(:last-child)::before {
+    left: 114px;
+  }
+
+  .timelineDate {
+    font-size: 10px;
+  }
+}

@@ -366,6 +366,33 @@
   color: var(--whiteColor);
 }
 
+.sideBottom {
+  margin-top: auto;
+}
+
+.sideSupport {
+  border: 1px solid var(--borderColor);
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 5px 20px;
+  margin: 0;
+}
+
+.sideSupport:hover {
+  background: #E6F1FD !important;
+  color: #ffffff !important;
+}
+.sideSupport.active {
+  background: #023f80 !important ;
+}
+.sideSupport.active .menuLabel {
+  margin-left: 5px; 
+  color: #ffffff !important;
+}
+
 @media (max-width: 1024px) {
   .sideBar {
     position: fixed;

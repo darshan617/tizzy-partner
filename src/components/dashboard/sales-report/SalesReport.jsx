@@ -186,7 +186,7 @@ const SalesReport = ({ data, isDataLoading }) => {
     <div className={styles.report}>
       <div className="row g-4">
         {/* Chart Section */}
-        <div className="col-xl">
+        <div className="col-xl-7">
           <div className={`sectionCard h-100 py-3 px-sm-4 px-3`}>
             <div className={styles.cardHeader}>
               <h2 className={styles.sectionCardHead}>Sales Reports</h2>

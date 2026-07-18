@@ -6,7 +6,13 @@ import { FaPen } from "react-icons/fa";
 import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import styles from "@/components/account-info/AccountInfo.module.css";
-import { useGetAccountDetailQuery } from "@/redux/apis/accountDetailApi";
+import {
+  useGetAccountDetailQuery,
+  useUpdateProfileMutation,
+} from "@/redux/apis/accountDetailApi";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
+import { setUserData } from "@/redux/slices/userSlice";
+import { useDispatch } from "react-redux";
 
 const INITIAL_PROFILE = {
   fullName: "",
@@ -18,6 +24,8 @@ const INITIAL_PROFILE = {
 };
 
 const AccountInfo = () => {
+  const { showToast } = useToast();
+  const dispatch = useDispatch();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [profile, setProfile] = useState(INITIAL_PROFILE);
   const [formData, setFormData] = useState(INITIAL_PROFILE);
@@ -41,9 +49,26 @@ const AccountInfo = () => {
     setIsEditOpen(false);
   };
 
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "mobile" && !/^\d*$/.test(value)) {
+      return;
+    }
+
+    if (name === "email" && !/^[a-zA-Z0-9@._+-]*$/.test(value)) {
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const { data: accountDetail } = useGetAccountDetailQuery(
@@ -57,7 +82,45 @@ const AccountInfo = () => {
     },
   );
 
-  console.log(accountDetail);
+  const [updateProfile, { isLoading: isUpdatingProfile }] =
+    useUpdateProfileMutation();
+
+  const handleUpdateProfile = async () => {
+    try {
+      const res = await updateProfile({
+        body: {
+          partner_id: userData?.id,
+          name: formData.fullName,
+          mobile: formData.mobile,
+          email: formData.email,
+        },
+      });
+      console.log(res, "res");
+      if (res.data.success) {
+        showToast("Profile updated successfully", "success");
+        setIsEditOpen(false);
+
+        Cookies.set(
+          "userData",
+          JSON.stringify({
+            ...userData,
+            name: res.data.data.name,
+            mobile: res.data.data.mobile,
+            email: res.data.data.email,
+          }),
+        );
+        dispatch(setUserData(res.data.data));
+      } else {
+        console.log("1");
+        showToast(res?.error?.data?.message, "error");
+      }
+    } catch (error) {
+      console.log("2");
+      console.error(error, "error in handleUpdateProfile");
+      showToast(error?.data?.message || "Something went wrong", "error");
+    }
+  };
+
   const accountData = accountDetail?.data || {};
   const displayProfile = {
     fullName: accountData?.name || "",
@@ -197,13 +260,17 @@ const AccountInfo = () => {
                   </div>
                   <div className={`${styles.infoItem} mb-0`}>
                     <small className={styles.infoLabel}>Mobile No.</small>
-                    <div className={styles.infoValue}>{displayProfile.mobile}</div>
+                    <div className={styles.infoValue}>
+                      {displayProfile.mobile}
+                    </div>
                   </div>
                 </div>
                 <div className="col-md-6">
                   <div className={styles.infoItem}>
                     <small className={styles.infoLabel}>Email</small>
-                    <div className={styles.infoValue}>{displayProfile.email}</div>
+                    <div className={styles.infoValue}>
+                      {displayProfile.email}
+                    </div>
                   </div>
                   <div className={`${styles.infoItem} mb-0`}>
                     <small className={styles.infoLabel}>GSTIN</small>
@@ -272,6 +339,8 @@ const AccountInfo = () => {
                   onChange={handleChange}
                   required
                   disabled
+                  rows={3}
+                  style={{ resize: "none" }}
                 />
               </div>
 
@@ -288,6 +357,9 @@ const AccountInfo = () => {
                   value={formData.mobile}
                   onChange={handleChange}
                   required
+                  pattern="^[0-9]{10}$"
+                  maxLength={10}
+                  minLength={10}
                 />
               </div>
 
@@ -333,8 +405,13 @@ const AccountInfo = () => {
               >
                 Cancel
               </button>
-              <button type="button" className={styles.saveBtn}>
-                Update
+              <button
+                type="button"
+                className={styles.saveBtn}
+                onClick={handleUpdateProfile}
+                disabled={isUpdatingProfile}
+              >
+                {isUpdatingProfile ? "Updating..." : "Update"}
               </button>
             </div>
           </form>

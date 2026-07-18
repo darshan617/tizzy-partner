@@ -27,7 +27,7 @@ export default function PlanCategoryPills({
             role="tablist"
             aria-label="Plan categories"
           >
-            {categories.map((cat) => {
+            {categories?.map((cat) => {
               const active = cat.id === activeId;
               return (
                 <button
@@ -43,13 +43,13 @@ export default function PlanCategoryPills({
               );
             })}
           </div>
-          {subCategories.length > 0 && (
+          {subCategories?.length > 0 && (
             <div
               className={styles.pillsRow}
               role="tablist"
               aria-label="Plan subcategories"
             >
-              {subCategories.map((subCat) => {
+              {subCategories?.map((subCat) => {
                 const active = subCat.id === activeSubId;
                 return (
                   <button

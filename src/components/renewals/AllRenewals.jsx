@@ -1,8 +1,7 @@
 import { useMemo, useState } from "react";
 import styles from "@/components/subscription/all-subscriptions/AllSubscriptions.module.css";
-import { FiFilter } from "react-icons/fi";
+import { FiFilter, FiGlobe } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
-import { LuPencil } from "react-icons/lu";
 import Loader from "@/common-components/loader/Loader";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -221,7 +220,7 @@ const AllRenewals = () => {
                       >
                         <div className="row align-items-center">
                           <div className="col">
-                            <div className="row align-items-center py-3 px-3">
+                            <div className="row align-items-center py-0 px-0">
                               <div className="col-md-4 col-12">
                                 <div
                                   className={`${styles.crDomain} d-flex align-items-center`}
@@ -233,18 +232,26 @@ const AllRenewals = () => {
                                       ]
                                     }`}
                                   >
-                                    {renewal?.domain?.charAt(0)?.toUpperCase()}
+                                    {renewal?.plan?.charAt(0)?.toUpperCase() ||
+                                      "-"}
                                   </div>
                                   <div className={` ps-2`}>
-                                    <span className={`${styles.crDomainName}`}>
-                                      {renewal?.domain}
+                                    <div className={`${styles.crName} `}>
+                                      {renewal?.plan || "-"}
+                                    </div>
+                                    <span
+                                      className={`${styles.crDomainName} d-flex align-items-center gap-1`}
+                                    >
+                                      <FiGlobe
+                                        className={styles.globeIcon}
+                                        width={12}
+                                        height={12}
+                                      />
+                                      {renewal?.domain || "-"}
                                     </span>
                                     <p className="m-0  text-secondary small">
-                                      Order Id: {renewal?.order_no}
+                                      Order Id: {renewal?.order_no || "-"}
                                     </p>
-                                    <div className={`${styles.crName} `}>
-                                      {renewal?.plan}
-                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -252,13 +259,7 @@ const AllRenewals = () => {
                               <div className="col-md-2 col-6 text-center">
                                 <div className={styles.metaHead}>License</div>
                                 <div className={styles.licenseValue}>
-                                  <span>{renewal?.license_count}</span>
-                                  <button
-                                    type="button"
-                                    className={styles.editBtn}
-                                  >
-                                    <LuPencil className={styles.editIcon} />
-                                  </button>
+                                  <span>{renewal?.license_count || "-"}</span>
                                 </div>
                               </div>
 

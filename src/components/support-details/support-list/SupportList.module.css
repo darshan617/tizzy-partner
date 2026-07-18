@@ -1,0 +1,496 @@
+.wrapper {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 5px 5px 8px #5090c545;
+}
+
+.filtersMain {
+  flex-shrink: 0;
+  background: var(--whiteColor);
+  border-radius: 20px 20px 0 0;
+  z-index: 2;
+}
+
+.pageSearchBox {
+  width: 100%;
+  height: 40px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 50rem;
+}
+
+.pageSearch {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--borderColor);
+  background-color: #f9f9f9;
+  border-radius: 50rem;
+  padding-right: 40px;
+  padding-left: 15px;
+}
+
+.searchBtn {
+  width: 30px;
+  height: 30px;
+  background: #f9f9f9;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 5px;
+  margin: auto;
+  border: 0;
+  border-radius: 50%;
+  padding: 7px;
+}
+
+.icon {
+  width: 100%;
+  height: 100%;
+  color: inherit;
+  line-height: 0;
+  display: block;
+}
+
+.btn {
+  width: auto;
+  height: 40px;
+  border-radius: 50rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs14);
+  font-weight: 500;
+  border: 1px solid var(--borderColor);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn .icon {
+  width: 16px;
+  aspect-ratio: 1;
+  margin-right: 5px;
+  display: inline-flex;
+  stroke-width: 1.5;
+  color: inherit;
+}
+
+.btnDefault {
+  background: var(--primaryColor);
+  color: var(--whiteColor);
+}
+
+.btn:hover,
+.btn:first-child:active {
+  background: var(--primaryColor);
+  color: var(--whiteColor);
+  border-color: var(--primaryColor);
+}
+
+.btn:hover:before,
+.btn:first-child:active:before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  bottom: 1px;
+  right: 1px;
+  margin: auto;
+}
+
+.small {
+  height: 30px;
+  font-size: var(--fs12);
+}
+
+.small .icon {
+  width: 12px;
+  margin-right: 2px;
+  stroke-width: 2;
+}
+
+.filterWrapper {
+  position: relative;
+  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 0 0 10px 10px;
+}
+
+.filterBtn {
+  width: 100px;
+  position: absolute;
+  bottom: 0;
+  margin: auto;
+  left: 0;
+  right: 0;
+  transform: translateY(50%);
+}
+
+.filterHead {
+  font-size: var(--fs12);
+  font-weight: 600;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.filterItem {
+  border: 1px solid var(--borderColor);
+  background: var(--subtleBg);
+  font-size: var(--fs14);
+  line-height: 1;
+  color: var(--textBodySecondary);
+  cursor: pointer;
+  text-align: center;
+  padding: 0.45rem 0.65rem 0.35rem;
+  display: inline-flex;
+  align-content: center;
+}
+
+.filterItem:hover {
+  background: var(--whiteColor);
+}
+
+.searchCount {
+  font-size: var(--fs14);
+}
+
+.listContent {
+  padding: 28px 22px 22px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.ticketCard {
+  min-height: 220px;
+  border: 1px solid #e8ecf1;
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ticketCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px 14px;
+  border-bottom: 1px dashed #d4d9e0;
+  background: rgba(251, 251, 251, 1);
+}
+
+.ticketMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ticketId {
+  font-family: "Baloo Bhai 2";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.statusActive {
+  background: #e6f7f4;
+  color: #1a9b88;
+}
+
+.statusInProcess {
+  background: rgba(212, 208, 255, 1);
+  color: rgba(123, 112, 239, 1);
+}
+
+.statusResolved {
+  background: rgba(206, 212, 218, 1);
+  color: rgba(49, 58, 70, 1);
+}
+
+.createdBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  color: #a0a8b4;
+  font-size: 11px;
+  line-height: 1.3;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.createdBlock strong {
+  color: #4b5563;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 16px 18px 16px;
+}
+
+.priorityBadge {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 4px;
+  padding: 4px 10px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.priorityHigh {
+  border: 2px solid rgba(254, 230, 236, 1);
+  color: rgba(247, 87, 126, 1);
+}
+
+.priorityMedium {
+  border: 2px solid rgba(255, 248, 232, 1);
+  color: rgba(255, 160, 0, 1);
+}
+
+.priorityLow {
+  border: 2px solid rgba(230, 246, 251, 1);
+  color: rgba(91, 195, 225, 1);
+}
+
+.priorityBlock{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.attachments{
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #6b7280;
+  font-size: 15px;
+  line-height: 1.5;
+  background: rgba(230, 241, 253, 1);
+  padding: 4px 15px;
+  border-radius: 99px;
+}
+.ticketTitle {
+  margin: 0 0 6px;
+  color: #1f2937;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.ticketPlan {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.cardFooter {
+  margin-top: auto;
+  padding-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.domainWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.avatarGreen {
+  background: #22c55e;
+}
+
+.avatarBlue {
+  background: #2563eb;
+}
+
+.avatarPurple {
+  background: #7c3aed;
+}
+
+.avatarGold {
+  background: #f0a020;
+}
+
+.avatarRose {
+  background: #e11d48;
+}
+
+.domainName {
+  color: #1a6bb5;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arrowButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #dce3eb;
+  background: #ffffff;
+  color: #5b6572;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.arrowButton:hover {
+  /* border-color: #0b5cab; */
+  color: #ffffff;
+  background: #0b5cab;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.pageNav,
+.pageButton {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #dbe3ec;
+  background: #ffffff;
+  border-radius: 8px;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.pageButtonActive {
+  background: #0b5cab;
+  border-color: #0b5cab;
+  color: #ffffff;
+}
+
+.pageNav:hover,
+.pageButton:hover {
+  border-color: #0b5cab;
+  color: #0b5cab;
+}
+
+.pageButtonActive:hover {
+  color: #ffffff;
+}
+
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .pageSearchBox {
+    width: 300px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .searchCount {
+    font-size: var(--fs11);
+  }
+
+  .listContent {
+    padding: 20px 16px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    border-radius: 16px;
+  }
+
+  .filterGroup {
+    flex-wrap: wrap;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cardHeader {
+    flex-direction: column;
+    padding: 14px 16px 12px;
+  }
+
+  .cardBody {
+    padding: 14px 16px 14px;
+  }
+
+  .createdBlock {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
