@@ -80,7 +80,7 @@ const transactionColumns = [
   },
   {
     label: "Domain",
-    key: "domain",
+    key: "domain_name",
   },
   {
     label: "Status",
