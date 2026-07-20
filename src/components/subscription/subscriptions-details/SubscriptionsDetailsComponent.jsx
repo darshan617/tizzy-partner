@@ -349,7 +349,7 @@ const SubscriptionsDetailsComponent = () => {
                           </div>
                           <small className={`${styles.subPlanPrice}`}>
                             ₹ {plan?.subtotal ?? "-"}{" "}
-                            <span>Per User / Per Year</span>
+                            {/* <span>Per User / Per Year</span> */}
                           </small>
                         </div>
                       </div>
@@ -357,7 +357,7 @@ const SubscriptionsDetailsComponent = () => {
                       <span
                         className={`${styles.statusBadge} 
                         ${getPlanStatusClass(plan?.status)} 
-                        ${(plan?.status?.toLowerCase() === "upgrade pending" || plan?.status?.toLowerCase() === "downgrade pending") && styles.upgradePending}`}
+                        ${(plan?.status?.toLowerCase() === "upgrade pending" || plan?.status?.toLowerCase() === "downgrade pending" || plan?.status?.toLowerCase() === "renewal pending") && styles.upgradePending}`}
                       >
                         {formatPlanStatus(plan?.status)}
                       </span>
@@ -456,7 +456,8 @@ const SubscriptionsDetailsComponent = () => {
                         plan?.status?.toLowerCase() !== "upgrade pending" &&
                         plan?.status?.toLowerCase() !== "upgraded" &&
                         plan?.status?.toLowerCase() !== "downgrade pending" &&
-                        plan?.status?.toLowerCase() !== "downgraded" ? (
+                        plan?.status?.toLowerCase() !== "downgraded" &&
+                        plan?.status?.toLowerCase() !== "renewal pending" ? (
                           <>
                             <Link
                               href={{

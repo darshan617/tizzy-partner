@@ -10,6 +10,8 @@ const getStatusClass = (status) => {
     return styles.expired;
   if (["completed", "success", "unpaid", "active"].includes(key))
     return styles.active;
+  if (["upgraded", "downgraded", "renewed"].includes(key))
+    return styles.upgradePending;
   return styles.draft;
 };
 

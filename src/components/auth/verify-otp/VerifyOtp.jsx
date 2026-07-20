@@ -342,12 +342,16 @@ const VerifyOtp = () => {
         disabled={
           isGetOtpVerifiedLoading ||
           isVerifyOtpLoading ||
-          isVerifyAadharNumberOtpLoading
+          isVerifyAadharNumberOtpLoading ||
+          isOrderAadharVerifyLoading ||
+          isGetOtpVerifiedLoading
         }
       >
         {isGetOtpVerifiedLoading ||
         isVerifyOtpLoading ||
-        isVerifyAadharNumberOtpLoading
+        isVerifyAadharNumberOtpLoading ||
+        isOrderAadharVerifyLoading ||
+        isGetOtpVerifiedLoading
           ? "Verifying..."
           : router?.query?.type === "order"
             ? "Verify"
