@@ -443,10 +443,12 @@
 }
 
 .upgradePending,
-.downgradePending {
+.downgradePending,
+.renewalPending {
   color: var(--purpleColor);
   background: var(--purpleSubtleColor);
 }
+
 
 .arrowCol {
   display: flex;

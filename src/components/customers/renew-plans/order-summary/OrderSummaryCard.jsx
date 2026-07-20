@@ -399,6 +399,22 @@ const OrderSummaryCard = ({
   }, [isPopupOpen, domainNames]);
   console.log("type:", router?.query?.type);
 
+  useEffect(() => {
+    if (!promoCode) {
+      setDiscountedPercent(0);
+      return;
+    }
+    setDiscountedPercent(
+      Number(cartDetails?.[0]?.coupon_discount_percent) || 0,
+    );
+  }, [cartDetails, promoCode]);
+
+  useEffect(() => {
+    if (promoCode) {
+      setIsPromoCodeAdded(true);
+    }
+  }, [promoCode]);
+
   return (
     <div>
       <div className={styles.card}>
@@ -432,20 +448,10 @@ const OrderSummaryCard = ({
           <span
             className={styles.value}
             style={{
-              color:
-                cartDetails?.[0]?.cart_discount_amount ||
-                cartDetails?.[0]?.renewal_summary?.discount_amount ||
-                discountedAmount > 0
-                  ? "#2dc718"
-                  : "#444444",
+              color: discountedAmount > 0 ? "#2dc718" : "#444444",
             }}
           >
-            ₹ -
-            {cartDetails?.[0]?.cart_discount_amount ||
-            cartDetails?.[0]?.renewal_summary?.discount_amount
-              ? cartDetails?.[0]?.cart_discount_amount ||
-                cartDetails?.[0]?.renewal_summary?.discount_amount
-              : discountedAmount?.toFixed(2) || 0}
+            ₹ -{discountedAmount?.toFixed(2) || "0.00"}
           </span>
         </div>
 

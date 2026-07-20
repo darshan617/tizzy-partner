@@ -386,7 +386,7 @@ const SupportList = ({ ticketsData, isLoading }) => {
                       <div className={styles.attachments}>
                         {ticket?.attachments_count >= 0 && (
                           <>
-                            <TiAttachment size={22} />
+                            <TiAttachment size={20} />
                             {ticket?.attachments_count}
                           </>
                         )}
