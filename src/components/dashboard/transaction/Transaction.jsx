@@ -57,7 +57,7 @@ export default function TransactionSection({ data, isDataLoading }) {
 
   const visibleData = currentData?.slice(0, showAll ? 10 : 5) || [];
   const viewAllHref =
-    activeTab === "transactions" ? "/transactions" : "/subscriptions";
+    activeTab === "transactions" ? "/transactions" : "/renewals";
   const isRenewals = activeTab === "renewals";
 
   const handleTabChange = (tab) => {
