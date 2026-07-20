@@ -32,11 +32,17 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.aadharNumberBox {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 16px 20px;
     margin-bottom: 24px;
-    background: #fafafa;
     overflow: hidden;
     width: 100%;
 }
