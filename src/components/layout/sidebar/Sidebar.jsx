@@ -111,6 +111,21 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
           })}
         </ul>
       </div>
+      <div>
+        <div className={`${styles.sideMenuSupport} mb-2`}>SUPPORT</div>
+        <ul className={`${styles.iconRailList} d-flex flex-column gap-1`}>
+          <li>
+            <Link
+              href="/support"
+              className={`${styles.iconRailItem} ${router?.pathname === "/support" ? styles.iconRailItemActive : ""}`}
+            >
+              <span className={styles.iconRailService}>
+                <LuMessageCircleQuestion size={18} />
+              </span>
+            </Link>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 

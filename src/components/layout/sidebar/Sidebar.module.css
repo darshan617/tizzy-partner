@@ -393,6 +393,12 @@
   color: #ffffff !important;
 }
 
+.sideMenuSupport {
+  font-size: var(--fs12);
+  font-weight: 600;
+  color: var(--textBody);
+}
+
 @media (max-width: 1024px) {
   .sideBar {
     position: fixed;
