@@ -10,6 +10,8 @@ const getStatusClass = (status) => {
     return styles.expired;
   if (["completed", "success", "unpaid", "active"].includes(key))
     return styles.active;
+  if (["upgraded", "downgraded", "renewed"].includes(key))
+    return styles.upgradePending;
   return styles.draft;
 };
 
@@ -57,7 +59,7 @@ export default function TransactionSection({ data, isDataLoading }) {
 
   const visibleData = currentData?.slice(0, showAll ? 10 : 5) || [];
   const viewAllHref =
-    activeTab === "transactions" ? "/transactions" : "/subscriptions";
+    activeTab === "transactions" ? "/transactions" : "/renewals";
   const isRenewals = activeTab === "renewals";
 
   const handleTabChange = (tab) => {

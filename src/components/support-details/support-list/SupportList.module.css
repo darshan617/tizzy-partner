@@ -194,10 +194,10 @@
 
 .cardHeader {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 16px 18px 14px;
+  padding: 12px 18px;
   border-bottom: 1px dashed #d4d9e0;
   background: rgba(251, 251, 251, 1);
 }
@@ -229,8 +229,8 @@
 }
 
 .statusActive {
-  background: #e6f7f4;
-  color: #1a9b88;
+  background: #D9F5F0;
+  color: #02BC9C;
 }
 
 .statusInProcess {
@@ -294,24 +294,25 @@
   color: rgba(91, 195, 225, 1);
 }
 
-.priorityBlock{
+.priorityBlock {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
 
-.attachments{
+.attachments {
   display: flex;
   align-items: center;
   gap: 3px;
   color: #6b7280;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.5;
   background: rgba(230, 241, 253, 1);
-  padding: 4px 15px;
+  padding: 2px 8px;
   border-radius: 99px;
 }
+
 .ticketTitle {
   margin: 0 0 6px;
   color: #1f2937;

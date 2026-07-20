@@ -306,6 +306,7 @@ const AllSubscriptions = ({
                                         ${subscription?.status?.toLowerCase() === "downgraded" ? styles.downgradedBadge : ""}
                                         ${subscription?.status?.toLowerCase() === "upgrade pending" ? styles.upgradePending : ""}
                                         ${subscription?.status?.toLowerCase() === "downgrade pending" ? styles.downgradePending : ""}
+                                        ${subscription?.status?.toLowerCase() === "renewal pending" ? styles.renewalPending : ""}
                                         `}
                                 >
                                   {subscription?.status}

@@ -162,7 +162,7 @@ const Support = () => {
               </a>
             </div> */}
             <div className="">
-              <Link href="/support/tickets" className="btn small btnDefault">
+              <Link href="/support" className="btn small btnDefault">
                 <span>View All Tickets</span>
               </Link>
             </div>

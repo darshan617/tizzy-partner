@@ -80,7 +80,7 @@ const transactionColumns = [
   },
   {
     label: "Domain",
-    key: "domain",
+    key: "domain_name",
   },
   {
     label: "Status",
@@ -472,7 +472,8 @@ const TransactionsList = ({ variant = "default", limit }) => {
                               <div
                                 className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
                               >
-                                {tx?.company_name?.charAt(0)?.toUpperCase() || "-"}
+                                {tx?.company_name?.charAt(0)?.toUpperCase() ||
+                                  "-"}
                               </div>
                               <div className="ps-2 min-w-0">
                                 <div className={styles.txDomainName}>
@@ -486,7 +487,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                                     {tx?.domain_name}
                                   </div>
                                 </div>
-                                {tx?.status?.toLowerCase() === "completed" && (
+                                {tx?.status?.toLowerCase() !== "pending" && (
                                   <div className={styles.txDesc}>
                                     Received payment for invoice no. INV
                                     {tx?.invoice_no?.bill_no_full}

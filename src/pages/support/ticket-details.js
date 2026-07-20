@@ -11,7 +11,7 @@ const TicketDetailsPage = () => {
 
   return (
     <Layout>
-      <div className={styles.headerRow}>
+      {/* <div className={styles.headerRow}>
         <nav className="breadcrumb mb-0">
           <Link href="/dashboard" className="breadcrumb-item">
             Dashboard
@@ -33,7 +33,7 @@ const TicketDetailsPage = () => {
         >
           <BsArrowLeft /> Back
         </button>
-      </div>
+      </div> */}
       <TicketDetail />
     </Layout>
   );

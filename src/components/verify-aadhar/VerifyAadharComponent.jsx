@@ -81,52 +81,54 @@ const VerifyAadharComponent = () => {
       <div className={styles.card}>
         <h1 className={styles.title}>VERIFY YOUR AADHAR</h1>
 
-        <div className={styles.logosBox}>
-          <Image
-            src={aadharImage}
-            alt="State Emblem of India"
-            width={500}
-            height={500}
-            className={styles.logo}
-          />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="aadhaarInput" className={styles.label}>
-            Enter 12 Digit Aadhar Number
-          </label>
-          <input
-            id="aadhaarInput"
-            type="text"
-            placeholder="1234 4567 9102"
-            maxLength={26}
-            inputMode="numeric"
-            className={styles.input}
-            value={formatAadharDisplay(aadharNumber)}
-            onChange={(e) => {
-              const digits = e.target.value.replace(/\D/g, "").slice(0, 12);
-              setAadharNumber(digits);
-            }}
-          />
-
-          <div className={styles.consentRow}>
-            <input
-              type="checkbox"
-              id="aadhaarConsent"
-              checked={isConcernedAboutAadhar}
-              onChange={(e) => setIsConcernedAboutAadhar(e.target.checked)}
+        <div className={styles.aadharNumberBox}>
+          <div className={styles.logosBox}>
+            <Image
+              src={aadharImage}
+              alt="State Emblem of India"
+              width={500}
+              height={500}
+              className={styles.logo}
             />
-            <label htmlFor="aadhaarConsent" className={styles.consentLabel}>
-              I have read and agree to the{" "}
-              <span
-                className={styles.consentLink}
-                onClick={() =>
-                  dispatch(setIsPopupVisible("terms-and-conditions"))
-                }
-              >
-                Aadhaar Verification Consent.
-              </span>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="aadhaarInput" className={styles.label}>
+              Enter 12 Digit Aadhar Number
             </label>
+            <input
+              id="aadhaarInput"
+              type="text"
+              placeholder="1234 4567 9102"
+              maxLength={26}
+              inputMode="numeric"
+              className={styles.input}
+              value={formatAadharDisplay(aadharNumber)}
+              onChange={(e) => {
+                const digits = e.target.value.replace(/\D/g, "").slice(0, 12);
+                setAadharNumber(digits);
+              }}
+            />
+
+            <div className={styles.consentRow}>
+              <input
+                type="checkbox"
+                id="aadhaarConsent"
+                checked={isConcernedAboutAadhar}
+                onChange={(e) => setIsConcernedAboutAadhar(e.target.checked)}
+              />
+              <label htmlFor="aadhaarConsent" className={styles.consentLabel}>
+                I have read and agree to the{" "}
+                <span
+                  className={styles.consentLink}
+                  onClick={() =>
+                    dispatch(setIsPopupVisible("terms-and-conditions"))
+                  }
+                >
+                  Aadhaar Verification Consent.
+                </span>
+              </label>
+            </div>
           </div>
         </div>
 
