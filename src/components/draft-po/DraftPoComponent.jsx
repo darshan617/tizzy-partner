@@ -52,28 +52,29 @@ const DraftPoComponent = () => {
         <iframe
           src={`${router?.query?.pl}#toolbar=0`}
           allowFullScreen
-          style={{
-            pointerEvents: "none",
-
-            filter: esignRequired && "blur(2px)",
-            opacity: esignRequired && 0.5,
-          }}
+          style={
+            {
+              // pointerEvents: "none",
+              // filter: esignRequired && "blur(2px)",
+              // opacity: esignRequired && 0.5,
+            }
+          }
         />
-        {esignRequired && (
+        {/* {esignRequired && (
           <p className={styles.draftPoLockText}>
             <FaLock size={20} /> <br /> This is a draft purchase order. Complete
             e-sign to view the full document.{" "}
           </p>
-        )}
-        {!esignRequired && (
-          <Link
-            href={`${router?.query?.pl}`}
-            target="_blank"
-            className={styles.downloadButton}
-          >
-            <ArrowDownToLine />
-          </Link>
-        )}
+        )} */}
+        {/* {!esignRequired && ( */}
+        <Link
+          href={`${router?.query?.pl}`}
+          target="_blank"
+          className={styles.downloadButton}
+        >
+          <ArrowDownToLine />
+        </Link>
+        {/* )} */}
       </div>
       {esignRequired ? (
         <button
