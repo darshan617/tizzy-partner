@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styles from "@/components/ticket-detail/TicketDetail.module.css";
 import { FiUser, FiGlobe, FiLayers, FiCalendar } from "react-icons/fi";
-import { BsPrinter, BsReply } from "react-icons/bs";
+import { BsArrowLeft, BsPrinter, BsReply } from "react-icons/bs";
 import { IoReturnUpForwardOutline } from "react-icons/io5";
 import { useRouter } from "next/router";
 import { useGetTicketDetailMutation } from "@/redux/apis/supportTicketsApi";
 import Cookies from "js-cookie";
+import Link from "next/link";
 const activitiesColors = [
   {
     id: 1,
@@ -56,9 +57,32 @@ const TicketDetail = () => {
   }, [userData?.id, router?.query?.ticket_id, router?.isReady]);
   return (
     <div className={styles.page}>
+      <div className={styles.headerRow}>
+        <nav className="breadcrumb mb-0">
+          <Link href="/dashboard" className="breadcrumb-item">
+            Dashboard
+          </Link>
+          <Link href="/support" className="breadcrumb-item">
+            Support Tickets
+          </Link>
+          <Link href="/ticket-detail" className="breadcrumb-item">
+            #{ticketDetail?.ticket_no}
+          </Link>
+          <h1 className="breadcrumb-item active mt-2" aria-current="page">
+            Ticket Details
+          </h1>
+        </nav>
+        <button
+          className={styles.backBtn}
+          onClick={() => router.back()}
+          type="button"
+        >
+          <BsArrowLeft /> Back
+        </button>
+      </div>
       <div className={styles.headerBar}>
         <div className={styles.headerLeft}>
-          <span className={styles.ticketId}>{ticketDetail?.ticket_no} :</span>
+          <span className={styles.ticketId}>#{ticketDetail?.ticket_no} :</span>
           <span
             className={styles.ticketTitle}
             style={{ textTransform: "capitalize" }}
