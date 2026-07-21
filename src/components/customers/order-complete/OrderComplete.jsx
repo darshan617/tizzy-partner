@@ -1,7 +1,8 @@
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import bag from "@/assets/images/bag.png";
 import invoice from "@/assets/images/invoice.png";
+import successGif from "@/assets/images/check.svg";
 import styles from "@/components/customers/order-complete/OrderComplete.module.css";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -23,6 +24,14 @@ const OrderComplete = () => {
     },
   );
   console.log(router.query.po);
+
+  const [animationPhase, setAnimationPhase] = useState("playing");
+
+  useEffect(() => {
+    const moveTimer = setTimeout(() => setAnimationPhase("done"), 1800);
+    return () => clearTimeout(moveTimer);
+  }, []);
+
   return (
     <div>
       {/* <div className="col">
@@ -58,88 +67,105 @@ const OrderComplete = () => {
         </div>
       </div> */}
       <div className={`${styles.orderCard}`}>
-        <div className="d-flex flex-column align-items-center justify-content-center">
-          <div className="mb-3" data-aos="zoom-in" data-aos-duration="1000">
-            {/* <Image
-              src={bag}
-              alt="bag"
-              width={50}
-              height={50}
-              className="img-fluid"
-            /> */}
-            <IoIosCheckmarkCircle size={60} color="var(--primaryColor)" />
-          </div>
+        <div
+          className={`d-flex flex-column align-items-center justify-content-center ${styles.stage}`}
+        >
           <div
-            className={`${styles.orderMainHead} mb-2`}
-            data-aos="fade-up"
+            className={`mb-3 ${styles.gifWrapper} ${styles[animationPhase]}`}
+            data-aos="zoom-in"
             data-aos-duration="1000"
           >
-            YOUR ORDER PURCHASE IS SUCCESSFULL.
-          </div>
-          {/* <div className={`${styles.orderHead}  mb-3 text-center`}>
-            <div>
-              <span className={`${styles.value}`}>
-                ₹ {router?.query?.crdUsage}{" "}
-              </span>
-              <span className={`${styles.valueContent}`}>
-                deducted from your credits
-              </span>
-            </div>
-            <div className={`${styles.BalInfo}`}>
-              <span>Credit Balance: </span>
-              <span className={`${styles.CreditValue}`}>
-                ₹{balanceAndCartData?.data?.wallet_balance}
-              </span>
-            </div>
-          </div> */}
-          {/* <div className={`${styles.InvoiceImg} my-4`}>
-            {router?.query?.po ? (
-              <Link
-                href={router.query.po}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.downloadInvoiceBtn}
-              >
-                Download Purchase Order PDF
-              </Link>
-            ) : null}
-          </div> */}
-          <Link
-            href={router?.query?.po || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.downloadInvoiceLink}
-          >
-            <button className={styles.downloadInvoiceBtn}>
-              <MdOutlineFileDownload size={20} />
-            </button>
-            {router?.query?.po ? (
-              <div
-                style={{
-                  width: "100%",
-                  height: "423px",
-                  overflowY: "auto",
-                }}
-              >
-                <iframe
-                  src={`${router?.query?.po}#toolbar=0`}
-                  width="100%"
-                  height="100%"
-                  maxHeight="1000px"
-                  frameBorder="0"
-                  style={{ pointerEvents: "none" }}
-                />
-              </div>
+            {animationPhase === "done" ? (
+              <IoIosCheckmarkCircle size={60} color="var(--primaryColor)" />
             ) : (
-              <div>
-                <Loader />
-                <p>Loading Purchase Order PDF...</p>
-              </div>
+              <Image
+                src={successGif}
+                alt="success"
+                width={250}
+                height={250}
+                unoptimized
+                className={styles.successGif}
+              />
             )}
-          </Link>
-          <Link href="/subscriptions" className={styles.doneBtn}>
-            Done
-          </Link>
+          </div>
+
+          <div
+            className={`${styles.contentWrapper} ${
+              animationPhase === "done" ? styles.show : ""
+            }`}
+          >
+            <div
+              className={`${styles.orderMainHead} mb-2`}
+              data-aos="fade-up"
+              data-aos-duration="1000"
+            >
+              YOUR ORDER PURCHASE IS SUCCESSFULL.
+            </div>
+            {/* <div className={`${styles.orderHead}  mb-3 text-center`}>
+              <div>
+                <span className={`${styles.value}`}>
+                  ₹ {router?.query?.crdUsage}{" "}
+                </span>
+                <span className={`${styles.valueContent}`}>
+                  deducted from your credits
+                </span>
+              </div>
+              <div className={`${styles.BalInfo}`}>
+                <span>Credit Balance: </span>
+                <span className={`${styles.CreditValue}`}>
+                  ₹{balanceAndCartData?.data?.wallet_balance}
+                </span>
+              </div>
+            </div> */}
+            {/* <div className={`${styles.InvoiceImg} my-4`}>
+              {router?.query?.po ? (
+                <Link
+                  href={router.query.po}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.downloadInvoiceBtn}
+                >
+                  Download Purchase Order PDF
+                </Link>
+              ) : null}
+            </div> */}
+            <Link
+              href={router?.query?.po || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.downloadInvoiceLink}
+            >
+              <button className={styles.downloadInvoiceBtn}>
+                <MdOutlineFileDownload size={20} />
+              </button>
+              {router?.query?.po ? (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "423px",
+                    overflowY: "auto",
+                  }}
+                >
+                  <iframe
+                    src={`${router?.query?.po}#toolbar=0`}
+                    width="100%"
+                    height="100%"
+                    maxHeight="1000px"
+                    frameBorder="0"
+                    style={{ pointerEvents: "none" }}
+                  />
+                </div>
+              ) : (
+                <div>
+                  <Loader />
+                  <p>Loading Purchase Order PDF...</p>
+                </div>
+              )}
+            </Link>
+            <Link href="/subscriptions" className={styles.doneBtn}>
+              Proceed
+            </Link>
+          </div>
         </div>
       </div>
     </div>
