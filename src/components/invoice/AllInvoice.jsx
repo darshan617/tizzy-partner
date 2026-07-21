@@ -49,6 +49,7 @@ const getStatusBadgeClass = (status) => {
   if (key === "pending") return styles.pendingBadge;
   if (key === "overdue") return styles.overdueBadge;
   if (key === "failed") return styles.failedBadge;
+  if (key === "cancelled") return styles.cancelledBadge;
   return styles.defaultBadge;
 };
 
@@ -142,7 +143,11 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
   //     selectedIds?.includes(invoice?.invoice_id),
   //   );
   const allVisibleSelected = filteredInvoices
-    ?.filter((invoice) => invoice?.status?.toLowerCase() !== "paid")
+    ?.filter(
+      (invoice) =>
+        invoice?.status?.toLowerCase() !== "paid" &&
+        invoice?.status?.toLowerCase() !== "cancelled",
+    )
     ?.every((invoice) => selectedIds?.includes(invoice?.invoice_id));
 
   const toggleSelectAll = () => {
@@ -160,7 +165,9 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
     // };
 
     const selectableInvoices = filteredInvoices?.filter(
-      (invoice, idx) => invoice?.status?.toLowerCase() !== "paid",
+      (invoice, idx) =>
+        invoice?.status?.toLowerCase() !== "paid" &&
+        invoice?.status?.toLowerCase() !== "cancelled",
     );
     const selectableIds = selectableInvoices?.map(
       (invoice) => invoice?.invoice_id,
@@ -422,11 +429,13 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                                 toggleSelectOne(invoice?.invoice_id)
                               }
                               disabled={
-                                invoice?.status?.toLowerCase() === "paid"
+                                invoice?.status?.toLowerCase() === "paid" ||
+                                invoice?.status?.toLowerCase() === "cancelled"
                               }
                               style={{
                                 cursor:
-                                  invoice?.status?.toLowerCase() === "paid"
+                                  invoice?.status?.toLowerCase() === "paid" ||
+                                  invoice?.status?.toLowerCase() === "cancelled"
                                     ? "not-allowed"
                                     : "pointer",
                               }}
