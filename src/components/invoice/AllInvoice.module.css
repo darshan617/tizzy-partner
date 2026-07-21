@@ -298,7 +298,8 @@
 }
 
 .overdueBadge,
-.failedBadge {
+.failedBadge,
+.cancelledBadge {
   color: var(--dangerColor);
   background: var(--dangerSubtleColor);
 }
