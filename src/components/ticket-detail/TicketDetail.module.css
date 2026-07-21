@@ -95,12 +95,23 @@
   font-size: 11px;
 }
 
-.pillDanger {
-  background: #f7577e;
-}
-
 .pillWarning {
   background: #f9bf59;
+}
+
+.pillDanger {
+  background: #F7577E;
+}
+.pillWarning {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+.pillSuccess {
+  background-color: #5bc3e1;
+}
+.pillDefault {
+  background-color: #ffa000;
+
 }
 
 .contentGrid {
