@@ -151,10 +151,11 @@
 .filterGroup {
   display: flex;
   align-items: center;
-  overflow: hidden;
   list-style: none;
   padding: 0;
   margin: 0;
+  overflow: hidden;
+  flex-wrap: wrap;
 }
 
 .filterItem {
@@ -168,6 +169,7 @@
   padding: 0.45rem 0.65rem 0.35rem;
   display: inline-flex;
   align-content: center;
+  width: max-content;
 }
 
 .filterItem:hover {

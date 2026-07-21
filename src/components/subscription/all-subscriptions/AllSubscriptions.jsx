@@ -20,25 +20,29 @@ const avatarColorClasses = [
 const statusLabelMap = {
   active: "Active",
   expiring: "Expiring",
-  inactive: "Inactive",
   pending: "Pending",
   downgraded: "Downgraded",
   draft: "Draft",
   cancelled: "Cancelled",
   upgraded: "Upgraded",
   renewed: "Renewed",
+  "upgrade pending": "Upgrade Pending",
+  "downgrade pending": "Downgrade Pending",
+  "renewal pending": "Renewal Pending",
 };
 
 const statusOrder = [
   "active",
-  "upgraded",
-  "downgraded",
-  "renewed",
-  "expiring",
-  "inactive",
   "pending",
   "draft",
+  "upgraded",
+  "expiring",
+  "downgraded",
+  "renewed",
   "cancelled",
+  "upgrade pending",
+  "downgrade pending",
+  "renewal pending",
 ];
 
 const AllSubscriptions = ({

@@ -195,7 +195,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
           {!isLoading ? (
             billingTransactions?.length > 0 ? (
               <div className={styles.billingContentList}>
-                {billingTransactions.map((tx, idx) => (
+                {billingTransactions?.map((tx, idx) => (
                   <article
                     key={tx?.order_id || tx?.order_no || idx}
                     className={styles.billingContentRow}
@@ -214,12 +214,12 @@ const TransactionsList = ({ variant = "default", limit }) => {
                         <div
                           className={`${styles.billingAvatar} ${styles[`billingAvatar${idx % 5}`]}`}
                         >
-                          {tx?.domain?.charAt(0)?.toUpperCase() || "T"}
+                          {tx?.company_name?.charAt(0)?.toUpperCase() || "T"}
                         </div>
 
                         <div className={styles.billingDomainInfo}>
                           <p className={styles.billingDomainName}>
-                            {tx?.domain || "-"}
+                            {tx?.company_name || "-"}
                           </p>
                           <p className={styles.billingSubText}>
                             {getBillingDescription(tx)}
@@ -240,7 +240,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                           {formatAmount(tx?.amount)}
                         </span>
                       </div>
-
+                      {/* 
                       <div className={styles.billingColArrow}>
                         <button
                           type="button"
@@ -261,7 +261,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             <path d="m9 18 6-6-6-6" />
                           </svg>
                         </button>
-                      </div>
+                      </div> */}
                     </div>
                   </article>
                 ))}
