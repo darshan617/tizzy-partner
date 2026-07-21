@@ -319,6 +319,10 @@
   font-size: 15px;
   font-weight: 700;
   line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
 }
 
 .ticketPlan {
@@ -326,6 +330,10 @@
   color: #6b7280;
   font-size: 13px;
   line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
 }
 
 .cardFooter {

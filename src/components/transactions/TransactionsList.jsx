@@ -9,6 +9,7 @@ import styles from "@/components/transactions/TransactionsList.module.css";
 import { useRouter } from "next/router";
 import DownloadExcel from "@/common-components/download-excel/DownloadExcel";
 import { FiGlobe } from "react-icons/fi";
+import Pagination from "@/common-components/pagination/Pagination";
 
 const statusLabelMap = {
   completed: "Completed",
@@ -176,6 +177,10 @@ const TransactionsList = ({ variant = "default", limit }) => {
   const showingEnd = filteredTransactions?.length || 0;
   const showingStart = showingEnd > 0 ? 1 : 0;
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemPerPage, setItemPerPage] = useState(10);
+  const startIndex = (currentPage - 1) * itemPerPage;
+
   if (variant === "billing") {
     const billingTransactions =
       typeof limit === "number"
@@ -195,7 +200,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
           {!isLoading ? (
             billingTransactions?.length > 0 ? (
               <div className={styles.billingContentList}>
-                {billingTransactions.map((tx, idx) => (
+                {billingTransactions?.map((tx, idx) => (
                   <article
                     key={tx?.order_id || tx?.order_no || idx}
                     className={styles.billingContentRow}
@@ -214,12 +219,12 @@ const TransactionsList = ({ variant = "default", limit }) => {
                         <div
                           className={`${styles.billingAvatar} ${styles[`billingAvatar${idx % 5}`]}`}
                         >
-                          {tx?.domain?.charAt(0)?.toUpperCase() || "T"}
+                          {tx?.company_name?.charAt(0)?.toUpperCase() || "T"}
                         </div>
 
                         <div className={styles.billingDomainInfo}>
                           <p className={styles.billingDomainName}>
-                            {tx?.domain || "-"}
+                            {tx?.company_name || "-"}
                           </p>
                           <p className={styles.billingSubText}>
                             {getBillingDescription(tx)}
@@ -240,7 +245,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                           {formatAmount(tx?.amount)}
                         </span>
                       </div>
-
+                      {/* 
                       <div className={styles.billingColArrow}>
                         <button
                           type="button"
@@ -261,7 +266,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             <path d="m9 18 6-6-6-6" />
                           </svg>
                         </button>
-                      </div>
+                      </div> */}
                     </div>
                   </article>
                 ))}
@@ -276,54 +281,6 @@ const TransactionsList = ({ variant = "default", limit }) => {
       </section>
     );
   }
-
-  // const downloadExcel = () => {
-  //   const data = finalTransactionsList;
-
-  //   if (!data || data.length === 0) {
-  //     return;
-  //   }
-
-  //   const headers = [
-  //     "Date",
-  //     "Order No",
-  //     "Domain",
-  //     "Status",
-  //     "Amount",
-  //     "Invoice No",
-  //   ];
-
-  //   const rows = data.map((tx) => [
-  //     tx?.date || "-",
-  //     tx?.order_no || "-",
-  //     tx?.domain || "-",
-  //     tx?.status || "-",
-  //     tx?.amount || "-",
-  //     tx?.invoice_no?.bill_no_full || "-",
-  //   ]);
-
-  //   const csvContent = [headers, ...rows]
-  //     .map((row) =>
-  //       row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(","),
-  //     )
-  //     .join("\n");
-
-  //   const blob = new Blob([csvContent], {
-  //     type: "text/csv;charset=utf-8;",
-  //   });
-
-  //   const url = URL.createObjectURL(blob);
-
-  //   const link = document.createElement("a");
-  //   link.href = url;
-  //   link.download = "transaction-history.csv";
-
-  //   document.body.appendChild(link);
-  //   link.click();
-
-  //   document.body.removeChild(link);
-  //   URL.revokeObjectURL(url);
-  // };
 
   return (
     <div className="col py-4">
@@ -364,7 +321,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
               >
                 Showing{" "}
                 <span className="fw-medium darkColor">
-                  {showingStart} - {showingEnd}
+                  {startIndex + 1}-{startIndex + itemPerPage}
                 </span>{" "}
                 from <span className="fw-medium darkColor">{resultTotal}</span>{" "}
                 {resultTotal === 1 ? "result" : "results"}
@@ -452,6 +409,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                         ? true
                         : tx?.status?.toLowerCase() === selectedStatuses,
                     )
+                    ?.slice(startIndex, startIndex + itemPerPage)
                     ?.map((tx, idx) => (
                       <div
                         key={tx?.order_id || idx}
@@ -534,6 +492,13 @@ const TransactionsList = ({ variant = "default", limit }) => {
           </div>
         </div>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        data={finalTransactionsList}
+        itemPerPage={itemPerPage}
+      />
     </div>
   );
 };
