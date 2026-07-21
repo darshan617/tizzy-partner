@@ -34,9 +34,13 @@
 .orderCard {
     background: #fff;
     max-width: 1100px;
-    height: auto;
+    /* height: auto; */
+    min-height: 600px;
     margin: auto;
     padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .orderMainHead {
@@ -114,4 +118,51 @@
     font-weight: 600;
     text-align: center;
     margin-top: 20px;
+}
+
+.stage {
+    position: relative;
+    min-height: 200px;
+    width: 100%;
+}
+
+.gifWrapper {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    /* transform: translate(-50%, -50%); */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: top 0.6s ease, width 0.6s ease, height 0.6s ease, transform 0.6s ease;
+    z-index: 2;
+}
+
+.gifWrapper.done {
+    position: static;
+    top: 0;
+    width: 60px;
+    height: 60px;
+    transform: none;
+    display: contents;
+}
+
+.successGif {
+    width: 250px;
+    height: 250px;
+    object-fit: contain;
+}
+
+.contentWrapper {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.contentWrapper.show {
+    display: flex;
+    opacity: 1;
 }
