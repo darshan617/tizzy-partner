@@ -73,6 +73,12 @@ const TicketDetail = () => {
       fetchTicketDetail();
     }
   }, [userData?.id, router?.query?.ticket_id, router?.isReady]);
+
+  const priorityPillClass = {
+    High: styles.pillDanger,
+    Medium: styles.pillWarning,
+    Low: styles.pillSuccess,
+  };
   return (
     <div className={styles.page}>
       <div className={styles.headerBar}>
@@ -132,7 +138,10 @@ const TicketDetail = () => {
             <div className={styles.metaItem}>
               <p className={styles.fieldLabel}>Priority</p>
               <span
-                className={`${styles.pill} ${styles.pillDanger} ${styles.pillSm}`}
+                className={`${styles.pill} ${
+                  priorityPillClass[ticketDetail?.priority] ??
+                  styles.pillDefault
+                } ${styles.pillSm}`}
               >
                 {ticketDetail?.priority}
               </span>
