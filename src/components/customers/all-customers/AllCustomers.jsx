@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { CUSTOMER_STATUS } from "@/constants/customer-constants";
 import Image from "next/image";
 import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarConstant";
+import Pagination from "@/common-components/pagination/Pagination";
 
 const avatarColorClasses = [
   styles.avatarRed,
@@ -29,7 +30,10 @@ export default function CustomerList({
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState("all");
   const [selectedServices, setSelectedServices] = useState("all");
-  console.log(selectedStatuses, "selectedServices");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemPerPage, setItemPerPage] = useState(5);
+  const startIndex = (currentPage - 1) * itemPerPage;
+  console.log(startIndex, "ssss");
 
   const toggleService = (service) => {
     setSelectedServices((prev) =>
@@ -228,127 +232,129 @@ export default function CustomerList({
 
         <div className={styles.listScrollArea}>
           <div className="">
-            <div className={`${styles.CustomerList} mb-5`}>
+            <div className={`${styles.CustomerList} `}>
               {isFetchingAllCustomers ? (
                 <Loader />
               ) : filteredCustomers?.length > 0 ? (
-                filteredCustomers?.map((customer, idx) => (
-                  <div
-                    key={idx}
-                    className={`${styles.contentRow} ${styles.btnDisplay} px-3 px-sm-4`}
-                  >
-                    <div className={styles.customerRow}>
-                      <div className={styles.companyCol}>
-                        <div className={styles.companyInfo}>
-                          <div
-                            className={`${styles.customerAvatar} ${avatarColorClasses[idx % avatarColorClasses.length]}`}
-                          >
-                            {customer?.company?.charAt(0)?.toUpperCase()}
-                          </div>
-                          <div className={styles.companyText}>
-                            <div className={styles.companyName}>
-                              {toCamelCase(customer?.company)}
-                            </div>
-                            <div className={styles.contactName}>
-                              {customer?.name}
-                            </div>
-                            <p className={styles.customerId}>
-                              Customer Id:{customer?.customer_no ?? " -"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className={styles.contactCol}>
-                        <div className={styles.contactEmail}>
-                          {customer?.email}
-                        </div>
-                        <div className={styles.contactPhone}>
-                          {customer?.mobile}
-                        </div>
-                      </div>
-
-                      <div className={styles.servicesCol}>
-                        {customer?.provider_ids?.map((providerId) => {
-                          const service = SIDEBAR_SERVICES_CONSTANTS.find(
-                            (item) => item.id === providerId,
-                          );
-
-                          return (
+                filteredCustomers
+                  ?.slice(startIndex, startIndex + itemPerPage)
+                  ?.map((customer, idx) => (
+                    <div
+                      key={idx}
+                      className={`${styles.contentRow} ${styles.btnDisplay} px-3 px-sm-4`}
+                    >
+                      <div className={styles.customerRow}>
+                        <div className={styles.companyCol}>
+                          <div className={styles.companyInfo}>
                             <div
-                              key={providerId}
-                              style={{
-                                width: 30,
-                                height: 30,
-                                borderRadius: "50%",
-                                background: "#ffffff",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                overflow: "hidden",
-                                marginRight: -8,
-                                border: "1px solid #E7E9EB",
-                              }}
+                              className={`${styles.customerAvatar} ${avatarColorClasses[idx % avatarColorClasses.length]}`}
                             >
+                              {customer?.company?.charAt(0)?.toUpperCase()}
+                            </div>
+                            <div className={styles.companyText}>
+                              <div className={styles.companyName}>
+                                {toCamelCase(customer?.company)}
+                              </div>
+                              <div className={styles.contactName}>
+                                {customer?.name}
+                              </div>
+                              <p className={styles.customerId}>
+                                Customer Id:{customer?.customer_no ?? " -"}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className={styles.contactCol}>
+                          <div className={styles.contactEmail}>
+                            {customer?.email}
+                          </div>
+                          <div className={styles.contactPhone}>
+                            {customer?.mobile}
+                          </div>
+                        </div>
+
+                        <div className={styles.servicesCol}>
+                          {customer?.provider_ids?.map((providerId) => {
+                            const service = SIDEBAR_SERVICES_CONSTANTS.find(
+                              (item) => item.id === providerId,
+                            );
+
+                            return (
                               <div
+                                key={providerId}
                                 style={{
-                                  width: 18,
-                                  height: 18,
+                                  width: 30,
+                                  height: 30,
+                                  borderRadius: "50%",
+                                  background: "#ffffff",
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "center",
+                                  overflow: "hidden",
+                                  marginRight: -8,
+                                  border: "1px solid #E7E9EB",
                                 }}
                               >
-                                {service?.image}
+                                <div
+                                  style={{
+                                    width: 18,
+                                    height: 18,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  {service?.image}
+                                </div>
                               </div>
-                            </div>
-                          );
-                        })}
-                      </div>
+                            );
+                          })}
+                        </div>
 
-                      <div className={styles.statusCol}>
-                        <span
-                          className={`${styles.statusBadge} ${customer?.status === "active" ? styles.activeBadge : styles.inactiveBadge}`}
-                        >
-                          {customer?.status}
-                        </span>
-                      </div>
-
-                      <div className={styles.dateCol}>
-                        Created on {customer?.created_date}
-                      </div>
-
-                      <div className={`${styles.actionCol} mobAction`}>
-                        <button
-                          className="crBtn"
-                          onClick={() =>
-                            router.push({
-                              pathname: "/customers/customer-details",
-                              query: {
-                                customerId: customer?.id,
-                              },
-                            })
-                          }
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="icon me-0"
+                        <div className={styles.statusCol}>
+                          <span
+                            className={`${styles.statusBadge} ${customer?.status === "active" ? styles.activeBadge : styles.inactiveBadge}`}
                           >
-                            <path d="m9 18 6-6-6-6" />
-                          </svg>
-                        </button>
+                            {customer?.status}
+                          </span>
+                        </div>
+
+                        <div className={styles.dateCol}>
+                          Created on {customer?.created_date}
+                        </div>
+
+                        <div className={`${styles.actionCol} mobAction`}>
+                          <button
+                            className="crBtn"
+                            onClick={() =>
+                              router.push({
+                                pathname: "/customers/customer-details",
+                                query: {
+                                  customerId: customer?.id,
+                                },
+                              })
+                            }
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="icon me-0"
+                            >
+                              <path d="m9 18 6-6-6-6" />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  ))
               ) : (
                 <p className="text-center m-0">No Customer Data</p>
               )}
@@ -356,6 +362,12 @@ export default function CustomerList({
           </div>
         </div>
       </div>
+      <Pagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        data={filteredCustomers}
+        itemPerPage={itemPerPage}
+      />
     </div>
   );
 }

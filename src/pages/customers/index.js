@@ -1,5 +1,5 @@
 import Layout from "@/components/layout/Layout";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import CustomerList from "@/components/customers/all-customers/AllCustomers";
@@ -7,6 +7,7 @@ import SummaryCounts from "@/common-components/summary-counts/SummaryCounts";
 import { Plus, UserRoundPlus } from "lucide-react";
 import SubscriptionHistory from "@/components/customers/subscription-history/SubscriptionHistory";
 import CustomerDetail from "@/components/customers/customers-details/CustomersDetails";
+import Pagination from "@/common-components/pagination/Pagination";
 
 const Customers = () => {
   const userData = Cookies.get("userData")
@@ -25,7 +26,7 @@ const Customers = () => {
     refetch();
   }, []);
 
-  console.log(allCustomers, "allCustomers");
+  console.log(allCustomers?.data?.customers, "allCustomers");
 
   return (
     <Layout>

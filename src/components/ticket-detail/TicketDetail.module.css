@@ -363,6 +363,40 @@
   text-decoration: underline;
 }
 
+.attachmentsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.attachmentThumb {
+  display: block;
+  width: 120px;
+  height: 120px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f9fafb;
+}
+
+.attachmentThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.attachmentLink {
+  color: #0355ac;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.attachmentLink:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 991px) {
   .contentGrid {
     grid-template-columns: 1fr;

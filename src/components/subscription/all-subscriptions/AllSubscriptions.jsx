@@ -29,14 +29,16 @@ const statusLabelMap = {
   "upgrade pending": "Upgrade Pending",
   "downgrade pending": "Downgrade Pending",
   "renewal pending": "Renewal Pending",
+  processing: "Processing",
 };
 
 const statusOrder = [
   "active",
-  "pending",
+  "processing",
+  // "pending",
   "draft",
-  "upgraded",
   "expiring",
+  "upgraded",
   "downgraded",
   "renewed",
   "cancelled",
@@ -311,6 +313,7 @@ const AllSubscriptions = ({
                                         ${subscription?.status?.toLowerCase() === "upgrade pending" ? styles.upgradePending : ""}
                                         ${subscription?.status?.toLowerCase() === "downgrade pending" ? styles.downgradePending : ""}
                                         ${subscription?.status?.toLowerCase() === "renewal pending" ? styles.renewalPending : ""}
+                                        ${subscription?.status?.toLowerCase() === "processing" ? styles.processing : ""}
                                         `}
                                 >
                                   {subscription?.status}

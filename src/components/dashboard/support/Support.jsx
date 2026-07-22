@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import styles from "@/components/dashboard/support/Support.module.css";
 import { ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { useGetTicketsMutation } from "@/redux/apis/supportTicketsApi";
