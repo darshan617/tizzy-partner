@@ -89,8 +89,9 @@
 
 .transactionRowInner {
   display: grid;
-  grid-template-columns: minmax(110px, 14%) minmax(180px, 36%) minmax(100px,
-      25%) minmax(100px, 25%);
+  grid-template-columns:
+    minmax(110px, 14%) minmax(180px, 36%) minmax(100px, 25%)
+    minmax(100px, 25%);
   align-items: center;
   gap: 12px 16px;
   width: 100%;
@@ -138,8 +139,9 @@
 
 .renewalRowInner {
   display: grid;
-  grid-template-columns: minmax(110px, 12%) minmax(220px, 1.5fr) minmax(180px,
-      1.2fr) 72px minmax(120px, auto) 36px;
+  grid-template-columns:
+    minmax(110px, 12%) minmax(220px, 1.5fr) minmax(180px, 1.2fr)
+    72px minmax(120px, auto) 36px;
   align-items: center;
   gap: 12px 16px;
   width: 100%;
@@ -366,6 +368,11 @@
   color: var(--purpleColor);
 }
 
+.processing {
+  background: var(--primarySubtleColor);
+  color: var(--primaryColor);
+}
+
 .draft {
   background: var(--borderColor);
   color: var(--textBodySecondary);
@@ -428,14 +435,16 @@
 
 @media (max-width: 991px) and (min-width: 768px) {
   .transactionRowInner {
-    grid-template-columns: minmax(100px, 14%) minmax(160px, 34%) minmax(90px,
-        26%) minmax(90px, 26%);
+    grid-template-columns:
+      minmax(100px, 14%) minmax(160px, 34%) minmax(90px, 26%)
+      minmax(90px, 26%);
     gap: 12px 14px;
   }
 
   .renewalRowInner {
-    grid-template-columns: minmax(96px, 110px) minmax(0, 1.4fr) minmax(150px,
-        1.2fr) minmax(100px, auto) 32px;
+    grid-template-columns:
+      minmax(96px, 110px) minmax(0, 1.4fr) minmax(150px, 1.2fr)
+      minmax(100px, auto) 32px;
     gap: 10px 12px;
   }
 

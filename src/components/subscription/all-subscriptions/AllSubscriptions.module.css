@@ -176,7 +176,7 @@
   background: var(--whiteColor);
 }
 
-.btn-check:checked+.filterItem {
+.btn-check:checked + .filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -200,8 +200,10 @@
 
 .rowInner {
   display: grid;
-  grid-template-columns:
-    80px minmax(0, 1.35fr) minmax(0, 1.30fr) 80px 100px 100px 40px;
+  grid-template-columns: 80px minmax(0, 1.35fr) minmax(
+      0,
+      1.3fr
+    ) 80px 100px 100px 40px;
   align-items: center;
   column-gap: 16px;
   width: 100%;
@@ -402,8 +404,8 @@
 }
 
 .activeBadge {
-  color: #1aa89a;
-  background: #e6f7f4;
+  color: var(--successColor);
+  background: var(--successSubtleColor);
 }
 
 .expiringBadge,
@@ -423,10 +425,13 @@
 }
 
 .upgradedBadge,
-.downgradedBadge,
-.processing {
+.downgradedBadge {
   color: var(--infoColor);
   background: var(--infoSubtleColor);
+}
+.processing {
+  background: var(--primarySubtleColor);
+  color: var(--primaryColor);
 }
 
 .renewedBadge {
@@ -451,7 +456,6 @@
   color: var(--purpleColor);
   background: var(--purpleSubtleColor);
 }
-
 
 .arrowCol {
   display: flex;
@@ -492,7 +496,6 @@
   font-size: var(--fs14);
 }
 
-
 .plansCount {
   font-size: var(--fs12);
   color: var(--textBodySecondary);
@@ -505,8 +508,10 @@
 
 @media (max-width: 1199.98px) {
   .rowInner {
-    grid-template-columns:
-      100px minmax(0, 1.3fr) minmax(0, 1fr) 110px 130px 100px 36px;
+    grid-template-columns: 100px minmax(0, 1.3fr) minmax(
+        0,
+        1fr
+      ) 110px 130px 100px 36px;
     column-gap: 12px;
   }
 }
