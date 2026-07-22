@@ -125,7 +125,7 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 0.75rem;
+  padding: 1.75rem 0.75rem;
   background: #fbfbfd;
 }
 
@@ -173,7 +173,7 @@
   background: var(--whiteColor);
 }
 
-.btn-check:checked + .filterItem {
+.btn-check:checked+.filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -449,7 +449,7 @@
   position: relative;
 }
 
-.servBadge + .servBadge {
+.servBadge+.servBadge {
   margin-left: -18px;
 }
 
@@ -496,7 +496,7 @@
   font-size: var(--fs12);
 }
 
-.pagination .active > .page-link {
+.pagination .active>.page-link {
   background: var(--primaryColor);
   color: var(--whiteColor);
   border-color: var(--primaryColor);
@@ -568,7 +568,7 @@
     font-size: var(--fs11);
   }
 
-  .contentRow > .row > .mobAction,
+  .contentRow>.row>.mobAction,
   .actionCol.mobAction {
     background: #f5f6f9;
     padding: 0.25rem 0.5rem;

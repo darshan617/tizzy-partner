@@ -938,7 +938,8 @@ strong {
 
 .statusBadge.down,
 .statusBadge.subtleDanger,
-.statusBadge.closed {
+.statusBadge.closed,
+.subtleresolved {
   color: var(--dangerColor);
   background: var(--dangerSubtleColor);
 }
