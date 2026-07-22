@@ -8,38 +8,21 @@ import { useGetTicketDetailMutation } from "@/redux/apis/supportTicketsApi";
 import Cookies from "js-cookie";
 import Image from "next/image";
 
-const activities = [
+const activitiesColor = [
   {
     id: 1,
-    date: "Today",
-    title: "Ticket Resolved",
-    description:
-      "Issue fixed after applying the latest patch. Confirmed working on staging.",
-    by: "User One",
     color: "rgba(2, 188, 156, 1)",
   },
   {
     id: 2,
-    date: "20 Mar 2026, 3:15 PM",
-    title: "Status Changed to 'In Progress'",
-    description: "Assigned to support agent for further investigation.",
-    by: "User Two",
     color: "rgba(91, 195, 225, 1)",
   },
   {
     id: 3,
-    date: "17 Mar 2026, 1:00 PM",
-    title: "User Comment Added",
-    description: "Customer mentioned the issue is urgent for production use.",
-    by: "User Two",
     color: "rgba(249, 191, 89, 1)",
   },
   {
     id: 4,
-    date: "15 Mar 2026, 4:30 PM",
-    title: "Ticket Created",
-    description: "Initial report about app freezing on login.",
-    by: "User One",
     color: "rgba(247, 87, 126, 1)",
   },
 ];
@@ -178,9 +161,40 @@ const TicketDetail = () => {
           <div className={styles.sectionBlock}>
             <p className={styles.fieldLabel}>Attachments</p>
             <div className={styles.descriptionBody}>
-              {ticketDetail?.attachments?.map((item) => (
-                <p>{item?.url}</p>
-              ))}
+              {ticketDetail?.attachments?.length > 0 ? (
+                ticketDetail?.attachments?.map((item) => {
+                  const src = item?.url?.replace(/([^:]\/)\/+/g, "$1");
+                  const isImage = item?.mime_type?.startsWith("image/");
+
+                  if (isImage) {
+                    return (
+                      <a
+                        key={item.id}
+                        href={src}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.attachmentThumb}
+                      >
+                        <img src={src} alt={item?.filename || "Attachment"} />
+                      </a>
+                    );
+                  }
+
+                  return (
+                    <a
+                      key={item.id}
+                      href={src}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.attachmentLink}
+                    >
+                      {item?.filename || "Download file"}
+                    </a>
+                  );
+                })
+              ) : (
+                <p className="text-muted small-text">No attachments found</p>
+              )}
             </div>
           </div>
 
@@ -206,13 +220,16 @@ const TicketDetail = () => {
           </div>
           <div className={styles.boder}></div>
           <ul className={styles.timeline}>
-            {activities.map((item) => (
+            {ticketDetail?.activities?.map((item, idx) => (
               <li key={item.id} className={styles.timelineItem}>
                 <div className={styles.timelineLeft}>
                   <span className={styles.timelineDate}>{item.date}</span>
                   <span
                     className={styles.timelineDot}
-                    style={{ backgroundColor: item.color }}
+                    style={{
+                      backgroundColor:
+                        activitiesColor?.[idx % activitiesColor.length]?.color,
+                    }}
                   />
                 </div>
                 <div className={styles.timelineContent}>

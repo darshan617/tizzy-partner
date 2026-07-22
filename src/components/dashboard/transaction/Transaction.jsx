@@ -12,6 +12,8 @@ const getStatusClass = (status) => {
     return styles.active;
   if (["upgraded", "downgraded", "renewed"].includes(key))
     return styles.upgradePending;
+  if (["processing"].includes(key)) return styles.processing;
+
   return styles.draft;
 };
 

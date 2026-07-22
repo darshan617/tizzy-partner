@@ -78,14 +78,23 @@ const OrderComplete = () => {
             {animationPhase === "done" ? (
               <IoIosCheckmarkCircle size={60} color="var(--primaryColor)" />
             ) : (
-              <Image
-                src={successGif}
-                alt="success"
-                width={250}
-                height={250}
-                unoptimized
-                className={styles.successGif}
-              />
+              <>
+                <Image
+                  src={successGif}
+                  alt="success"
+                  width={250}
+                  height={250}
+                  unoptimized
+                  className={styles.successGif}
+                />
+                <h1
+                  className="text-center"
+                  data-aos="fade-up"
+                  data-aos-delay="100"
+                >
+                  Order Place Successfully
+                </h1>
+              </>
             )}
           </div>
 
@@ -99,7 +108,7 @@ const OrderComplete = () => {
               data-aos="fade-up"
               data-aos-duration="1000"
             >
-              YOUR ORDER PURCHASE IS SUCCESSFULL.
+              YOUR ORDER IS PLACED SUCCESSFULL.
             </div>
             {/* <div className={`${styles.orderHead}  mb-3 text-center`}>
               <div>
