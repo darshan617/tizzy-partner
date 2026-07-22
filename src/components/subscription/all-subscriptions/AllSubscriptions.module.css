@@ -423,7 +423,8 @@
 }
 
 .upgradedBadge,
-.downgradedBadge {
+.downgradedBadge,
+.processing {
   color: var(--infoColor);
   background: var(--infoSubtleColor);
 }
