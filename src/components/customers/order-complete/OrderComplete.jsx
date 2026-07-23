@@ -163,7 +163,7 @@ const OrderComplete = () => {
               )}
             </Link>
             <Link href="/subscriptions" className={styles.doneBtn}>
-              Proceed
+              Done
             </Link>
           </div>
         </div>
