@@ -14,15 +14,16 @@ const cards = [
     value: "₹18,42,560",
     meta: "+12%",
     metaTheme: "green",
-    valueTheme: "blue",
+    valueTheme: "black",
     icon: "wallet",
+    iconTheme: "blueIcon",
   },
   {
     title: "Active Customers",
     value: "248",
     meta: "+18",
     metaTheme: "green",
-    valueTheme: "greenText",
+    valueTheme: "black",
     icon: "users",
     iconTheme: "greenIcon",
   },
@@ -31,7 +32,7 @@ const cards = [
     value: "186",
     meta: "92% Active",
     metaTheme: "green",
-    valueTheme: "purpleText",
+    valueTheme: "black",
     icon: "subscription",
     iconTheme: "purpleIcon",
   },
@@ -40,7 +41,7 @@ const cards = [
     value: "74",
     meta: "+19%",
     metaTheme: "green",
-    valueTheme: "greenText",
+    valueTheme: "black",
     icon: "cart",
     iconTheme: "greenIcon",
   },
@@ -49,7 +50,7 @@ const cards = [
     value: "48",
     meta: "80% Success Rate",
     metaTheme: "green",
-    valueTheme: "valueOrange",
+    valueTheme: "black",
     icon: "refresh",
     iconTheme: "orangeIcon",
   },
@@ -58,7 +59,7 @@ const cards = [
     value: "₹2,14,800",
     meta: "12 Pending",
     metaTheme: "pink",
-    valueTheme: "valuePink",
+    valueTheme: "black",
     icon: "invoice",
     iconTheme: "pink",
   },
@@ -122,7 +123,7 @@ const ReportsComponent = () => {
       </div>
 
       <div className={styles.metricsGrid}>
-        {cards.map((c, idx) => (
+        {cards?.map((c, idx) => (
           <div key={idx} className={styles.card}>
             <div>
               <div className={styles.cardTitle}>{c.title}</div>

@@ -41,6 +41,8 @@ const OrderSummaryCard = ({
   lisceneCounter,
   promoCode = 0,
   setPromoCode,
+  promoCodeInput,
+  setPromoCodeInput,
   cartDetails,
   handleUpdateCart,
   setDomainNames,
@@ -242,14 +244,15 @@ const OrderSummaryCard = ({
 
   const handlePromoCode = async () => {
     try {
-      if (!promoCode) return;
+      if (!promoCodeInput) return;
       const res = await applyPromoCode({
         body: {
-          code: promoCode,
+          code: promoCodeInput,
         },
       });
       if (res?.data?.success) {
         setDiscountedPercent(res?.data?.data?.discount_percent);
+        setPromoCode(promoCodeInput);
         showToast("Promo code applied successfully", "success");
       } else {
         showToast("Failed to apply promo code", "error");
@@ -399,15 +402,22 @@ const OrderSummaryCard = ({
   }, [isPopupOpen, domainNames]);
   console.log("type:", router?.query?.type);
 
+  // useEffect(() => {
+  //   if (!promoCode) {
+  //     setDiscountedPercent(0);
+  //     return;
+  //   }
+  //   setDiscountedPercent(
+  //     Number(cartDetails?.[0]?.coupon_discount_percent) || 0,
+  //   );
+  // }, [cartDetails, promoCode]);
   useEffect(() => {
-    if (!promoCode) {
-      setDiscountedPercent(0);
-      return;
+    const percent = Number(cartDetails?.[0]?.coupon_discount_percent);
+
+    if (!Number.isNaN(percent) && percent > 0) {
+      setDiscountedPercent(percent);
     }
-    setDiscountedPercent(
-      Number(cartDetails?.[0]?.coupon_discount_percent) || 0,
-    );
-  }, [cartDetails, promoCode]);
+  }, [cartDetails]);
 
   useEffect(() => {
     if (promoCode) {
@@ -435,6 +445,7 @@ const OrderSummaryCard = ({
                   setPromoCode("");
                   setDiscountedPercent(0);
                   setIsPromoCodeAdded(false);
+                  setPromoCodeInput("");
                 } else {
                   setIsPromoCodeAdded(true);
                 }
@@ -461,19 +472,20 @@ const OrderSummaryCard = ({
               type="text"
               placeholder="Enter Promo Code"
               className={styles.promoInput}
-              value={promoCode}
-              onChange={(e) => setPromoCode(e?.target?.value)}
+              value={promoCodeInput}
+              onChange={(e) => setPromoCodeInput(e?.target?.value)}
             />
 
             <button
               type="button"
               className={styles.applyBtn}
               onClick={handlePromoCode}
-              disabled={isLoadingPromoCode || !promoCode?.trim()}
+              disabled={isLoadingPromoCode || !promoCodeInput?.trim()}
               style={{
-                opacity: isLoadingPromoCode || !promoCode?.trim() ? 0.5 : 1,
+                opacity:
+                  isLoadingPromoCode || !promoCodeInput?.trim() ? 0.5 : 1,
                 cursor:
-                  isLoadingPromoCode || !promoCode?.trim()
+                  isLoadingPromoCode || !promoCodeInput?.trim()
                     ? "not-allowed"
                     : "pointer",
               }}
