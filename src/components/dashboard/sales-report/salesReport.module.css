@@ -1,238 +1,241 @@
 .report {
-    max-width: 1100px;
-    margin: 20px auto;
+  max-width: 1100px;
+  margin: 20px auto;
 }
 
 .invoiceCardsColumn {
-    display: flex;
-    width: 100%;
+  display: flex;
+  width: 100%;
 }
 
 .invoiceCardsGrid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-    width: 100%;
-    align-content: start;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  width: 100%;
+  align-content: start;
 }
 
 .invoiceCard {
-    background: var(--whiteColor);
-    border-radius: 12px;
-    padding: 16px;
-    min-height: 100px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    height: 100%;
+  background: var(--whiteColor);
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
 }
 
 .invoiceCardHeader {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .cardHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .sectionCardHead {
-    font-size: var(--fs14);
-    line-height: 1.5;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: var(--darkColor);
-    display: inline;
-    margin: 0;
+  font-size: var(--fs14);
+  line-height: 1.5;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--darkColor);
+  display: inline;
+  margin: 0;
 }
 
 .invoiceLabel {
-    font-size: var(--fs12);
-    line-height: 1.4;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: var(--darkColor);
-    margin: 0;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.25rem;
+  font-size: var(--fs12);
+  line-height: 1.4;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--darkColor);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
 }
 
 .invoiceCount {
-    font-weight: 500;
-    color: var(--textBodySecondary);
+  font-weight: 500;
+  color: var(--textBodySecondary);
 }
 
 .tabBtnGroup {
-    display: flex;
-    align-items: center;
-    background: var(--primarySubtleColor);
-    border-radius: 50rem;
-    overflow: hidden;
-    padding: 3px;
+  display: flex;
+  align-items: center;
+  background: var(--primarySubtleColor);
+  border-radius: 50rem;
+  overflow: hidden;
+  padding: 3px;
 }
 
 .tbgItem {
-    border: 1px solid transparent;
-    background: transparent;
-    font-size: var(--fs12);
-    line-height: 1.5;
-    padding: 7px 15px;
-    color: var(--textBodySecondary);
-    cursor: pointer;
-    text-align: center;
-    border-radius: 50rem;
-    transition: background 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: var(--fs12);
+  line-height: 1.5;
+  padding: 7px 15px;
+  color: var(--textBodySecondary);
+  cursor: pointer;
+  text-align: center;
+  border-radius: 50rem;
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease,
+    color 0.15s ease;
 }
 
 .tbgItemActive {
-    background: var(--whiteColor);
-    box-shadow: 05px 5px 10px #5091C526;
-    border: 1px solid var(--borderColor);
-    color: var(--darkColor);
+  background: var(--whiteColor);
+  box-shadow: 05px 5px 10px #5091c526;
+  border: 1px solid var(--borderColor);
+  color: var(--darkColor);
 }
 
 .tbgItemText {
-    font-weight: 500;
+  font-weight: 500;
 }
 
 .chartContainer {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    background: var(--subtleBg);
-    border-radius: 10px;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 100%;
+  /* aspect-ratio: 16 / 9; */
+  background: var(--subtleBg);
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .statValue {
-    font-size: var(--fs20);
-    font-weight: 700;
-    color: var(--textBody);
-    line-height: 1.2;
-    margin: 0;
-    word-break: break-word;
+  font-size: var(--fs20);
+  font-weight: 700;
+  color: var(--textBody);
+  line-height: 1.2;
+  margin: 0;
+  word-break: break-word;
 }
 
 .statusBadge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.15rem;
-    padding: 4px 8px;
-    font-size: var(--fs11);
-    line-height: 1;
-    font-weight: 500;
-    border-radius: 5px;
-    white-space: nowrap;
-    flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 4px 8px;
+  font-size: var(--fs11);
+  line-height: 1;
+  font-weight: 500;
+  border-radius: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .badgeNeutral {
-    background: #ececec;
-    color: var(--textBodySecondary);
+  background: #ececec;
+  color: var(--textBodySecondary);
 }
 
 .badgeUp {
-    color: var(--successColor);
-    background: var(--successSubtleColor);
+  color: var(--successColor);
+  background: var(--successSubtleColor);
 }
 
 .badgeDown {
-    color: var(--dangerColor);
-    background: var(--dangerSubtleColor);
+  color: var(--dangerColor);
+  background: var(--dangerSubtleColor);
 }
 
 .trendIcon {
-    width: 14px;
-    height: 14px;
-    stroke-width: 2.5;
-    flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.5;
+  flex-shrink: 0;
 }
 
 .trendIconDown {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .invoiceIcon {
-    width: 44px;
-    height: 44px;
-    flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
 }
 
 .invoiceIcon svg {
-    width: 100%;
-    height: 100%;
-    display: block;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .infoColor {
-    color: var(--infoColor);
+  color: var(--infoColor);
 }
 
 .dangerColor {
-    color: var(--dangerColor);
+  color: var(--dangerColor);
 }
 
 .warningColor {
-    color: var(--warningColor);
+  color: var(--warningColor);
 }
 
 .successColor {
-    color: var(--successColor);
+  color: var(--successColor);
 }
 
 @media (min-width: 480px) {
-    .invoiceCardsGrid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 14px;
-    }
+  .invoiceCardsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
 
-    .invoiceCard {
-        padding: 18px;
-    }
+  .invoiceCard {
+    padding: 18px;
+  }
 }
 
 @media (min-width: 576px) {
-    .invoiceCardsGrid {
-        gap: 16px;
-    }
+  .invoiceCardsGrid {
+    gap: 16px;
+  }
 
-    .invoiceIcon {
-        width: 48px;
-        height: 48px;
-    }
+  .invoiceIcon {
+    width: 48px;
+    height: 48px;
+  }
 }
 
 @media (min-width: 768px) {
-    .statValue {
-        font-size: var(--fs24);
-    }
+  .statValue {
+    font-size: var(--fs24);
+  }
 }
 
 @media (min-width: 1200px) {
-    .invoiceCardsColumn {
-        flex-direction: column;
-    }
+  .invoiceCardsColumn {
+    flex-direction: column;
+  }
 
-    .invoiceCardsGrid {
-        flex: 1;
-        height: 100%;
-        grid-template-rows: repeat(2, 1fr);
-        align-content: stretch;
-        gap: 12px;
-    }
+  .invoiceCardsGrid {
+    flex: 1;
+    height: 100%;
+    grid-template-rows: repeat(2, 1fr);
+    align-content: stretch;
+    gap: 12px;
+  }
 
-    .invoiceCard {
-        padding: 16px 18px;
-    }
+  .invoiceCard {
+    padding: 16px 18px;
+  }
 }

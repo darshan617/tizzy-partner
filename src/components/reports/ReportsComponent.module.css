@@ -246,6 +246,9 @@
   background: rgba(255, 92, 138, 0.12) !important;
   color: var(--dangerColor) !important;
 }
+.black {
+  color: var(--textColor);
+}
 
 .valueBlue {
   color: var(--primaryColor);
