@@ -315,6 +315,7 @@
     font-weight: 600;
     color: var(--whiteColor);
     line-height: 1.2;
+    word-break: break-word;
 }
 
 .creditBalanceInfo {
