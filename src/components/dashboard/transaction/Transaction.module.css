@@ -338,7 +338,8 @@
 }
 
 .expiring,
-.pending {
+.pending,
+.processing {
   background: var(--warningSubtleColor);
   color: var(--warningColor);
 }
@@ -366,10 +367,6 @@
   color: var(--purpleColor);
 }
 
-.processing {
-  background: var(--primarySubtleColor);
-  color: var(--primaryColor);
-}
 
 .draft {
   background: var(--borderColor);

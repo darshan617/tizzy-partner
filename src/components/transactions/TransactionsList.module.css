@@ -327,7 +327,8 @@
 }
 
 .pendingBadge,
-.pending {
+.pending,
+.processing {
   color: var(--warningColor);
   background: var(--warningSubtleColor);
 }
