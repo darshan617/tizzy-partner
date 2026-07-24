@@ -80,7 +80,9 @@ export default function TransactionSection({ data, isDataLoading }) {
         <div className="col-12 col-md-2 col-lg-2">
           <div className={styles.colDateMeta}>
             <p className={styles.txDate}>{formatDisplayDate(item)}</p>
-            <span className={styles.txIdBadge}>{item?.order_no || "-"}</span>
+            <span className={styles.txIdBadge}>
+              Order ID: {item?.order_no || "-"}
+            </span>
           </div>
         </div>
 
@@ -129,7 +131,7 @@ export default function TransactionSection({ data, isDataLoading }) {
         <div className={styles.colDateMeta}>
           <p className={styles.txDate}>{formatDisplayDate(item)}</p>
           <span className={styles.txIdBadge}>
-            {item?.order_no || item?.order_id || "-"}
+            Order ID: {item?.order_no || item?.order_id || "-"}
           </span>
         </div>
 
