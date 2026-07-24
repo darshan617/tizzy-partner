@@ -718,7 +718,7 @@ const RenewCart = ({
                     if (cartDetails?.[0]?.plan?.provider_id === 1) {
                       router.push("/services/tizzy");
                     } else if (cartDetails?.[0]?.plan?.provider_id === 2) {
-                      router.push("/services/microsoft-solution-partner");
+                      router.push("/services/microsoft-365");
                     } else if (cartDetails?.[0]?.plan?.provider_id === 3) {
                       router.push("/services/google-workspace");
                     }

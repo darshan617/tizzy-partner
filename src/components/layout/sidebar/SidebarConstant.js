@@ -2,7 +2,11 @@ import { LuWallet } from "react-icons/lu";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { FiBell } from "react-icons/fi";
 import { HiOutlineSupport } from "react-icons/hi";
-import { LuLayoutDashboard, LuReceiptIndianRupee, LuUsers } from "react-icons/lu";
+import {
+  LuLayoutDashboard,
+  LuReceiptIndianRupee,
+  LuUsers,
+} from "react-icons/lu";
 import { RiUserSettingsLine } from "react-icons/ri";
 import { MdAutorenew } from "react-icons/md";
 import { PiHandCoinsLight } from "react-icons/pi";
@@ -154,7 +158,7 @@ export const SIDEBAR_SERVICES_CONSTANTS = [
   },
   {
     id: 2,
-    title: "Microsoft Solution",
+    title: "Microsoft 365",
     image: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -187,7 +191,7 @@ export const SIDEBAR_SERVICES_CONSTANTS = [
         ></path>
       </svg>
     ),
-    href: "/services/microsoft-solution-partner",
+    href: "/services/microsoft-365",
   },
   {
     id: 1,

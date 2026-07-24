@@ -91,7 +91,7 @@ const getPlanStatusClass = (status) => {
 
 const getServicePath = (provider_id) => {
   if (provider_id === 1) return "tizzy";
-  if (provider_id === 2) return "microsoft-solution-partner";
+  if (provider_id === 2) return "microsoft-365";
   if (provider_id === 3) return "google-workspace";
   return "google-workspace";
 };

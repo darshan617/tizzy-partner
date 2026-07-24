@@ -510,7 +510,7 @@ export default function ServiceSlugPage({
                   : router?.query?.type === "downgrade"
                     ? "Downgrade Plan"
                     : router?.query?.slug === "tizzy" ||
-                        router?.query?.slug === "microsoft-solution-partner"
+                        router?.query?.slug === "microsoft-365"
                       ? plan?.plan_is_in_cart
                         ? "View Cart"
                         : "Add to Cart"

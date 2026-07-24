@@ -21,7 +21,7 @@ export const SERVICE_NAV_ITEMS = [
 ];
 
 export const SERVICE_CATALOG_BY_SLUG = {
-  "microsoft-solution-partner": {
+  "microsoft-365": {
     pageTitle: "Microsoft 365",
     breadcrumbLabel: "Microsoft 365",
     searchPlaceholder: "Search plan",
