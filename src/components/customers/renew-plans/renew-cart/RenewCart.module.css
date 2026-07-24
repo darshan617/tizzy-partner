@@ -424,6 +424,14 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
+    height: 33px;
+    padding: 5px 8px;
+    border: 1px solid #d7dbe2;
+    border-radius: 6px;
+}
+
+.domainNamesMainContainer {
+    width: 100%;
 }
 
 .domainNameContainer button {
@@ -447,6 +455,9 @@
     font-size: 12px;
     text-decoration: underline;
     transition: text-decoration 0.15s;
+    width: 100%;
+    text-align: right;
+    margin-top: 8px;
 }
 
 .addDomainIconBtn:hover:not(:disabled) {
@@ -673,13 +684,13 @@
 }
 
 .planDetailSubtotalLabel {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 600;
     color: #313a46;
 }
 
 .planDetailSubtotalVal {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 600;
     color: #111827;
 }

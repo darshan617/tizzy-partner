@@ -420,7 +420,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             <div className={styles.txMeta}>
                               <div className={styles.txDate}>{tx?.date}</div>
                               <div className={styles.txNumber}>
-                                {tx?.order_no}
+                                Order ID: {tx?.order_no}
                               </div>
                             </div>
                           </div>

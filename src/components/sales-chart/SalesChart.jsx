@@ -10,7 +10,7 @@ export default function SalesChart({ data }) {
       data: data?.datasets?.tizzy_mail,
     },
     {
-      name: "Microsoft Solution",
+      name: "Microsoft 365",
       type: "column",
       data: data?.datasets?.microsoft_solution,
     },

@@ -249,6 +249,11 @@
   font-weight: 600;
   display: inline-flex;
   overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
 }
 
 .txPlanName {
@@ -322,7 +327,8 @@
 }
 
 .pendingBadge,
-.pending {
+.pending,
+.processing {
   color: var(--warningColor);
   background: var(--warningSubtleColor);
 }

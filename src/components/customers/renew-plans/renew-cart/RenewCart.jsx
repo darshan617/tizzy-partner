@@ -18,6 +18,7 @@ import {
   selectIsPopupVisible,
   setIsPopupVisible,
 } from "@/redux/slices/popupSlice";
+import { GrDocumentText } from "react-icons/gr";
 
 const toDomainArray = (value) => {
   if (Array.isArray(value)) return value.filter(Boolean);
@@ -129,6 +130,11 @@ const RenewCart = ({
           )}
           {!router?.query?.type && (
             <>
+              {cartDetails?.[0]?.draft_cart && (
+                <p className="text-secondary fs-5 fw-600">
+                  <GrDocumentText size={16} /> Draft Cart
+                </p>
+              )}
               <div className={styles.customerDetailsCard}>
                 <div className={styles.customerDetailsHeader}>
                   <h3 className={styles.customerDetailsTitle}>
@@ -197,28 +203,33 @@ const RenewCart = ({
                   <div>
                     {domainList?.length > 0 && (
                       <div>
-                        <p className={styles.domainNamesLabel}>
+                        <p
+                          className={`${styles.domainNamesLabel}`}
+                          style={{ marginBottom: "4px" }}
+                        >
                           Domain Names{" "}
                           <span className={styles.required}>*</span>
                         </p>
 
-                        {domainList?.map((domain, index) => (
-                          <div
-                            key={`${domain}-${index}`}
-                            className={styles.domainNamesMainContainer}
-                          >
-                            <div className={styles.domainNameContainer}>
-                              <p className="m-0">{domain}</p>
+                        <div className="d-flex flex-wrap gap-1 w-100">
+                          {domainList?.map((domain, index) => (
+                            <div
+                              key={`${domain}-${index}`}
+                              className={styles.domainNamesMainContainer}
+                            >
+                              <div className={styles.domainNameContainer}>
+                                <p className="m-0">{domain}</p>
 
-                              <button
-                                type="button"
-                                onClick={() => handleDeleteDomain(domain)}
-                              >
-                                <IoClose />
-                              </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteDomain(domain)}
+                                >
+                                  <IoClose />
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                         {/* {cartDetails?.[0]?.plan?.provider_id === 2 &&
                           domainList?.length < 3 && (
                             <button
@@ -718,7 +729,7 @@ const RenewCart = ({
                     if (cartDetails?.[0]?.plan?.provider_id === 1) {
                       router.push("/services/tizzy");
                     } else if (cartDetails?.[0]?.plan?.provider_id === 2) {
-                      router.push("/services/microsoft-solution-partner");
+                      router.push("/services/microsoft-365");
                     } else if (cartDetails?.[0]?.plan?.provider_id === 3) {
                       router.push("/services/google-workspace");
                     }
