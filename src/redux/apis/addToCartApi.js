@@ -102,9 +102,9 @@ const addToCartApi = apiSlice.injectEndpoints({
       invalidatesTags: ["addToCart"],
     }),
     checkIsDomainAvailable: builder.query({
-      query: ({ domain_name }) => {
+      query: ({ domain_name, provider_id }) => {
         return {
-          url: `/orders-check-domain?domain_name=${domain_name}`,
+          url: `/orders-check-domain?domain_name=${domain_name}&provider_id=${provider_id}`,
           method: "GET",
         };
       },
