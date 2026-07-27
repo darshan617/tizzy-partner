@@ -474,7 +474,7 @@ export default function ServiceSlugPage({
               priceLabel={`₹${plan?.price ?? "0"}`}
               originalPriceLabel={plan?.actual_price ?? ""}
               discountPercent={plan?.discountPercent}
-              periodNote={"user/month, paid yearly"}
+              periodNote={`User/${plan?.billing_cycle}`}
               gstNote={"GST 18% Additional"}
               features={plan?.features}
               isProviderInCart={plan?.provider_in_cart}

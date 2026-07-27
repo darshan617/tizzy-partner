@@ -102,13 +102,16 @@
 .pillDanger {
   background: #F7577E;
 }
+
 .pillWarning {
   background-color: #fef3c7;
   color: #b45309;
 }
+
 .pillSuccess {
   background-color: #5bc3e1;
 }
+
 .pillDefault {
   background-color: #ffa000;
 
@@ -395,6 +398,12 @@
 
 .attachmentLink:hover {
   text-decoration: underline;
+}
+
+.allAttachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 @media (max-width: 991px) {

@@ -103,7 +103,9 @@ export default function PricingPlanCard({
             </span>
           </div>
           {periodNote && priceLabel !== "₹0.00" ? (
-            <div className={styles.periodNote}>{periodNote}</div>
+            <div className={`${styles.periodNote} text-capitalize`}>
+              {periodNote}
+            </div>
           ) : (
             <br />
           )}

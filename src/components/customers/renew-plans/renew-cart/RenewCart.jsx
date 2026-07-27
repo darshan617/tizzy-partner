@@ -130,11 +130,6 @@ const RenewCart = ({
           )}
           {!router?.query?.type && (
             <>
-              {cartDetails?.[0]?.draft_cart && (
-                <p className="text-secondary fs-5 fw-600">
-                  <GrDocumentText size={16} /> Draft Cart
-                </p>
-              )}
               <div className={styles.customerDetailsCard}>
                 <div className={styles.customerDetailsHeader}>
                   <h3 className={styles.customerDetailsTitle}>
@@ -536,9 +531,16 @@ const RenewCart = ({
                       ? Math.max(1, Number(item?.licenses) || 1)
                       : Number(lisceneCounter) || 0;
                     const lineTotal = unitPrice * lineLicenses;
-
                     return (
                       <div className={styles.planDetailItem} key={lineKey}>
+                        {item?.draft_cart && (
+                          <div className="text-secondary fs-6 fw-600 mb-0 d-flex align-items-center gap-1">
+                            <GrDocumentText size={12} />{" "}
+                            <span className="text-secondary fs-6 fw-600 mb-0">
+                              Draft
+                            </span>
+                          </div>
+                        )}
                         <div className={styles.cartRow}>
                           <div>
                             <span className={styles.iconCircle}>
