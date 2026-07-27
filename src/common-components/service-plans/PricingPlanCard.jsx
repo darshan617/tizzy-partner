@@ -25,8 +25,10 @@ function CheckIcon() {
 
 export default function PricingPlanCard({
   plan_id,
+  customer_limit,
   title,
   headerBg = "#333c4e",
+  planPrice,
   priceLabel,
   originalPriceLabel,
   discountPercent,
@@ -40,6 +42,8 @@ export default function PricingPlanCard({
   provider_id,
   enquiry,
   hasgoogleplans,
+  lisceneCounterForPlan,
+  setLisceneCounterForPlan,
 }) {
   const router = useRouter();
   const isPopupVisible = useSelector(selectIsPopupVisible);
@@ -112,6 +116,74 @@ export default function PricingPlanCard({
           {gstNote ? <div className={styles.gstNote}>{gstNote}</div> : null}
         </div>
 
+        <div className={styles.lisceneCounter}>
+          <div className={styles.licenseSide}>
+            <span className={styles.counterLabel}>Licenses</span>
+            <div className={styles.counterControl}>
+              <button
+                type="button"
+                className={styles.btnMinus}
+                aria-label="Decrease licenses"
+                disabled={
+                  Number(lisceneCounterForPlan) <= 1 ||
+                  Number(lisceneCounterForPlan) >= Number(customer_limit)
+                }
+                onClick={() =>
+                  setLisceneCounterForPlan(
+                    Math.max(1, Number(lisceneCounterForPlan) - 1),
+                  )
+                }
+              >
+                −
+              </button>
+              <input
+                type="number"
+                min={1}
+                className={styles.licenseCount}
+                value={lisceneCounterForPlan}
+                onChange={(e) => {
+                  const next = Number(e.target.value);
+                  setLisceneCounterForPlan(
+                    Number.isFinite(next) &&
+                      next >= 1 &&
+                      next <= Number(customer_limit)
+                      ? next
+                      : 1,
+                  );
+                }}
+              />
+              <button
+                type="button"
+                className={styles.btnPlus}
+                aria-label="Increase licenses"
+                onClick={() =>
+                  setLisceneCounterForPlan(
+                    Math.min(
+                      Number(lisceneCounterForPlan) + 1,
+                      Number(customer_limit),
+                    ),
+                  )
+                }
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.counterDivider} aria-hidden />
+
+          <div className={styles.totalSide}>
+            <span className={styles.counterLabel}>Total Amount</span>
+            <span className={styles.totalAmount}>
+              ₹{Number(planPrice) * Number(lisceneCounterForPlan || 0)}
+            </span>
+            <span className={styles.totalMeta}>
+              Excl. GST
+              {periodNote ? ` · ${String(periodNote).split("/").pop()}` : ""}
+            </span>
+          </div>
+        </div>
+
         <button
           type="button"
           className={styles.cta}
@@ -128,10 +200,10 @@ export default function PricingPlanCard({
           //   }
           // }}
           onClick={() => {
-            if (plan_is_in_cart) {
-              router.push("/order-summary");
-              return;
-            }
+            // if (plan_is_in_cart) {
+            //   router.push("/order-summary");
+            //   return;
+            // }
             if (enquiry) {
               dispatch(setIsPopupVisible("enquiry"));
               return;
