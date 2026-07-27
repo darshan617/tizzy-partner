@@ -531,7 +531,6 @@ const RenewCart = ({
                       ? Math.max(1, Number(item?.licenses) || 1)
                       : Number(lisceneCounter) || 0;
                     const lineTotal = unitPrice * lineLicenses;
-                    console.log("item", item);
                     return (
                       <div className={styles.planDetailItem} key={lineKey}>
                         {item?.draft_cart && (
