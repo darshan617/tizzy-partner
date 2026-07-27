@@ -285,7 +285,6 @@ export default function ServiceSlugPage({
 
   const handleAddToCart = useCallback(
     async (planId, lisceneCounter) => {
-      console.log(planId, "planId");
       try {
         const res = await addToCart({
           body: {

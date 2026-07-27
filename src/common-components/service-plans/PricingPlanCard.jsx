@@ -82,7 +82,6 @@ export default function PricingPlanCard({
       dispatch(setIsPopupVisible(""));
     }
   };
-  console.log("planPrice", planPrice);
 
   return (
     <article className={styles.card} key={plan_id}>
