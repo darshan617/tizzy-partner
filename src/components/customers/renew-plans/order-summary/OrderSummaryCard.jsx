@@ -73,8 +73,8 @@ const OrderSummaryCard = ({
   const isMaxDomainsReached = totalDomainCount >= MAX_DOMAINS;
   const gst = +(total * _gstRate_).toFixed(2);
 
-  const [isPromoCodeAdded, setIsPromoCodeAdded] = useState(false);
   const [domainInput, setDomainInput] = useState("");
+  const [isPromoCodeAdded, setIsPromoCodeAdded] = useState(false);
   const [domainFromApi, setDomainFromApi] = useState(null);
   const [transferDomainInput, setTransferDomainInput] = useState("");
   const [discountedPercent, setDiscountedPercent] = useState(0);
