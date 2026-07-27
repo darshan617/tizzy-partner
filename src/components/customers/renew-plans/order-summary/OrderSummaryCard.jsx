@@ -127,7 +127,7 @@ const OrderSummaryCard = ({
     isFetching: isCheckingDomainAvailable,
     isLoading: isLoadingDomainChecking,
   } = useCheckIsDomainAvailableQuery(
-    { domain_name: domainFromApi },
+    { domain_name: domainFromApi, provider_id: providerId },
     {
       skip: skipDomainVerification || !domainFromApi?.trim(),
     },
@@ -424,6 +424,9 @@ const OrderSummaryCard = ({
       setIsPromoCodeAdded(true);
     }
   }, [promoCode]);
+  useEffect(() => {
+    setPromoCodeInput(cartDetails?.[0]?.coupen);
+  }, [cartDetails]);
 
   return (
     <div>
