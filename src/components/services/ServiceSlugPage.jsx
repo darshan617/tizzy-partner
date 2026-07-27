@@ -62,6 +62,7 @@ export default function ServiceSlugPage({
   const valid = slug && isValidServiceSlug(slug);
   const [searchQuery, setSearchQuery] = useState("");
   const [planDetails, setPlanDetails] = useState(null);
+  const [lisceneCounterForPlan, setLisceneCounterForPlan] = useState({});
   const [activeCategoryId, setActiveCategoryId] = useState(
     () => config?.defaultCategoryId ?? "",
   );
@@ -283,13 +284,14 @@ export default function ServiceSlugPage({
   }, [config, activeCategoryId, searchQuery, showCategoryPills]);
 
   const handleAddToCart = useCallback(
-    async (planId) => {
+    async (planId, lisceneCounter) => {
       console.log(planId, "planId");
       try {
         const res = await addToCart({
           body: {
             partner_id: userData?.id,
             plan_id: planId,
+            license_count: lisceneCounter,
           },
         });
         if (res?.data?.success) {
@@ -471,6 +473,7 @@ export default function ServiceSlugPage({
               plan_id={plan?.plan_id || plan?.id}
               title={plan?.name}
               headerBg="#BCDAF9"
+              planPrice={plan?.price ?? "0"}
               priceLabel={`₹${plan?.price ?? "0"}`}
               originalPriceLabel={plan?.actual_price ?? ""}
               discountPercent={plan?.discountPercent}
@@ -482,13 +485,27 @@ export default function ServiceSlugPage({
               provider_id={plan?.provider_id}
               enquiry={plan?.enquiry}
               hasgoogleplans={plan?.hasgoogleplans}
+              customer_limit={plan?.customer_limit}
+              lisceneCounterForPlan={
+                lisceneCounterForPlan[plan?.plan_id || plan?.id] ?? 1
+              }
+              setLisceneCounterForPlan={(value) => {
+                const planKey = plan?.plan_id || plan?.id;
+                setLisceneCounterForPlan((prev) => ({
+                  ...prev,
+                  [planKey]: value,
+                }));
+              }}
               onCtaClick={() => {
                 if (router?.query?.type === "upgrade") {
                   handleUpgradeAddToCart(plan?.plan_id || plan?.id);
                 } else if (router?.query?.type === "downgrade") {
                   handleDowngradeAddToCart(plan?.plan_id || plan?.id);
                 } else {
-                  handleAddToCart(plan?.plan_id || plan?.id);
+                  handleAddToCart(
+                    plan?.plan_id || plan?.id,
+                    lisceneCounterForPlan[plan?.plan_id || plan?.id],
+                  );
                   // router.push({
                   //   pathname: `/order-summary`,
                   //   query: {
@@ -504,6 +521,22 @@ export default function ServiceSlugPage({
                   // });
                 }
               }}
+              // ctaLabel={
+              //   router?.query?.type === "upgrade"
+              //     ? "Upgrade Plan"
+              //     : router?.query?.type === "downgrade"
+              //       ? "Downgrade Plan"
+              //       : router?.query?.slug === "tizzy" ||
+              //           router?.query?.slug === "microsoft-365"
+              //         ? plan?.plan_is_in_cart
+              //           ? "View Cart"
+              //           : "Add to Cart"
+              //         : plan?.plan_is_in_cart
+              //           ? "View Cart"
+              //           : plan?.enquiry
+              //             ? "Enquire Now"
+              //             : "Buy Plan"
+              // }
               ctaLabel={
                 router?.query?.type === "upgrade"
                   ? "Upgrade Plan"
@@ -511,14 +544,10 @@ export default function ServiceSlugPage({
                     ? "Downgrade Plan"
                     : router?.query?.slug === "tizzy" ||
                         router?.query?.slug === "microsoft-365"
-                      ? plan?.plan_is_in_cart
-                        ? "View Cart"
-                        : "Add to Cart"
-                      : plan?.plan_is_in_cart
-                        ? "View Cart"
-                        : plan?.enquiry
-                          ? "Enquire Now"
-                          : "Buy Plan"
+                      ? "Add to Cart"
+                      : plan?.enquiry
+                        ? "Enquire Now"
+                        : "Buy Plan"
               }
             />
           ))}
