@@ -424,6 +424,9 @@ const OrderSummaryCard = ({
       setIsPromoCodeAdded(true);
     }
   }, [promoCode]);
+  useEffect(() => {
+    setPromoCodeInput(cartDetails?.[0]?.coupon_code);
+  }, [cartDetails]);
 
   return (
     <div>

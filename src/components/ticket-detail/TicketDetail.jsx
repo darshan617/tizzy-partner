@@ -160,7 +160,7 @@ const TicketDetail = () => {
 
           <div className={styles.sectionBlock}>
             <p className={styles.fieldLabel}>Attachments</p>
-            <div className={styles.descriptionBody}>
+            <div className={styles.allAttachments}>
               {ticketDetail?.attachments?.length > 0 ? (
                 ticketDetail?.attachments?.map((item) => {
                   const src = item?.url?.replace(/([^:]\/)\/+/g, "$1");
