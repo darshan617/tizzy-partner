@@ -6,10 +6,18 @@ import Link from "next/link";
 import { ArrowDownToLine } from "lucide-react";
 import { BiCheckCircle } from "react-icons/bi";
 import { FaLock } from "react-icons/fa";
-
+import { BsEye } from "react-icons/bs";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectIsPopupVisible,
+  setIsPopupVisible,
+} from "@/redux/slices/popupSlice";
+import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 const DraftPoComponent = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const esignRequired = router?.query?.sr === "true";
+  const isPopupVisible = useSelector(selectIsPopupVisible);
   // const handleGenerateNewOrder = async () => {
   //   const res = await generateNewOrder({
   //     body: {
@@ -40,63 +48,90 @@ const DraftPoComponent = () => {
   // }, [router?.isReady, router?.query?.main_cart_id]);
 
   return (
-    <div className={styles.draftPoContainer}>
-      <div
-        className={styles.draftPoSuccessText}
-        data-aos="fade-up"
-        data-aos-delay="100"
-      >
-        <BiCheckCircle /> Draft PO Generated Successfully{" "}
-      </div>
-      <div className={styles.draftPoIframeContainer}>
-        <iframe
-          src={`${router?.query?.pl}#toolbar=0`}
-          allowFullScreen
-          style={
-            {
-              // pointerEvents: "none",
-              // filter: esignRequired && "blur(2px)",
-              // opacity: esignRequired && 0.5,
+    <>
+      <div className={styles.draftPoContainer}>
+        <div
+          className={styles.draftPoSuccessText}
+          data-aos="fade-up"
+          data-aos-delay="100"
+        >
+          <BiCheckCircle /> Draft PO Generated Successfully{" "}
+        </div>
+        <div className={styles.draftPoIframeContainer}>
+          <iframe
+            src={`${router?.query?.pl}#toolbar=0`}
+            allowFullScreen
+            style={
+              {
+                // pointerEvents: "none",
+                // filter: esignRequired && "blur(2px)",
+                // opacity: esignRequired && 0.5,
+              }
             }
-          }
-        />
-        {/* {esignRequired && (
+          />
+          {/* {esignRequired && (
           <p className={styles.draftPoLockText}>
             <FaLock size={20} /> <br /> This is a draft purchase order. Complete
             e-sign to view the full document.{" "}
           </p>
         )} */}
-        {/* {!esignRequired && ( */}
-        <Link
-          href={`${router?.query?.pl}`}
-          target="_blank"
-          className={styles.downloadButton}
-        >
-          <ArrowDownToLine />
-        </Link>
-        {/* )} */}
+          {/* {!esignRequired && ( */}
+          <Link
+            href={`${router?.query?.pl}`}
+            target="_blank"
+            className={styles.downloadButton}
+          >
+            <ArrowDownToLine />
+          </Link>
+          <button
+            type="button"
+            className={styles.previewButton}
+            onClick={() => dispatch(setIsPopupVisible("preview"))}
+          >
+            <BsEye size={22} />
+          </button>
+          {/* )} */}
+        </div>
+        {esignRequired ? (
+          <button
+            className={styles.commonButton}
+            onClick={() =>
+              router.push({
+                pathname: "/verify-aadhar",
+                query: { ordId: router?.query?.ordId },
+              })
+            }
+          >
+            Continue To E-Sign
+          </button>
+        ) : (
+          <button
+            className={styles.commonButton}
+            onClick={() => router.push("/subscriptions")}
+          >
+            Done
+          </button>
+        )}
       </div>
-      {esignRequired ? (
-        <button
-          className={styles.commonButton}
-          onClick={() =>
-            router.push({
-              pathname: "/verify-aadhar",
-              query: { ordId: router?.query?.ordId },
-            })
-          }
+      {isPopupVisible === "preview" && (
+        <CustomPopup
+          isOpen={isPopupVisible === "preview"}
+          onClose={() => dispatch(setIsPopupVisible(""))}
+          maxWidth="900px"
         >
-          Continue To E-Sign
-        </button>
-      ) : (
-        <button
-          className={styles.commonButton}
-          onClick={() => router.push("/subscriptions")}
-        >
-          Done
-        </button>
+          <div className={styles.previewPopup}>
+            <iframe
+              src={`${router?.query?.pl}#toolbar=0`}
+              allowFullScreen
+              style={{
+                height: "453px",
+                width: "100%",
+              }}
+            />
+          </div>
+        </CustomPopup>
       )}
-    </div>
+    </>
   );
 };
 

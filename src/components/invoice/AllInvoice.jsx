@@ -146,7 +146,8 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
     ?.filter(
       (invoice) =>
         invoice?.status?.toLowerCase() !== "paid" &&
-        invoice?.status?.toLowerCase() !== "cancelled",
+        invoice?.status?.toLowerCase() !== "cancelled" &&
+        !invoice?.payment_link_expired,
     )
     ?.every((invoice) => selectedIds?.includes(invoice?.invoice_id));
 
@@ -167,7 +168,8 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
     const selectableInvoices = filteredInvoices?.filter(
       (invoice, idx) =>
         invoice?.status?.toLowerCase() !== "paid" &&
-        invoice?.status?.toLowerCase() !== "cancelled",
+        invoice?.status?.toLowerCase() !== "cancelled" &&
+        !invoice?.payment_link_expired,
     );
     const selectableIds = selectableInvoices?.map(
       (invoice) => invoice?.invoice_id,
@@ -249,11 +251,13 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
 
         rzp.open();
       } else {
-        showToast(res?.data?.message, "error");
+        console.log(res, "payment failed");
+
+        showToast(res?.data?.message || res?.error?.data?.message, "error");
       }
     } catch (error) {
       console.log(error, "payment error");
-      showToast(error?.data?.message, "error");
+      showToast(error?.data?.message || error?.error?.data?.message, "error");
     }
   };
 
@@ -430,12 +434,16 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                               }
                               disabled={
                                 invoice?.status?.toLowerCase() === "paid" ||
-                                invoice?.status?.toLowerCase() === "cancelled"
+                                invoice?.status?.toLowerCase() ===
+                                  "cancelled" ||
+                                invoice?.payment_link_expired
                               }
                               style={{
                                 cursor:
                                   invoice?.status?.toLowerCase() === "paid" ||
-                                  invoice?.status?.toLowerCase() === "cancelled"
+                                  invoice?.status?.toLowerCase() ===
+                                    "cancelled" ||
+                                  invoice?.payment_link_expired
                                     ? "not-allowed"
                                     : "pointer",
                               }}
@@ -493,24 +501,41 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                               <div
                                 className={`col-lg-2 col-md-12 col-12 ${styles.actionsCol} mt-2 mt-lg-0`}
                               >
-                                <button
-                                  type="button"
-                                  className={styles.payNowBtn}
-                                  disabled={!showPayNow(invoice?.status)}
-                                  style={{
-                                    cursor: showPayNow(invoice?.status)
-                                      ? "pointer"
-                                      : "not-allowed",
-                                    backgroundColor: showPayNow(invoice?.status)
-                                      ? "var(--primaryColor)"
-                                      : "#02499662",
-                                  }}
-                                  onClick={() =>
-                                    handlePayNow(invoice?.invoice_id)
-                                  }
-                                >
-                                  Pay Now
-                                </button>
+                                <div>
+                                  <button
+                                    type="button"
+                                    className={styles.payNowBtn}
+                                    disabled={
+                                      !showPayNow(invoice?.status) ||
+                                      invoice?.payment_link_expired
+                                    }
+                                    style={{
+                                      cursor:
+                                        showPayNow(invoice?.status) &&
+                                        !invoice?.payment_link_expired
+                                          ? "pointer"
+                                          : "not-allowed",
+                                      backgroundColor:
+                                        showPayNow(invoice?.status) &&
+                                        !invoice?.payment_link_expired
+                                          ? "var(--primaryColor)"
+                                          : "#02499662",
+                                    }}
+                                    onClick={() =>
+                                      handlePayNow(invoice?.invoice_id)
+                                    }
+                                  >
+                                    Pay Now
+                                  </button>
+                                  {invoice?.payment_link_expired && (
+                                    <p
+                                      className=" text-danger text-center"
+                                      style={{ fontSize: "12px" }}
+                                    >
+                                      {`${invoice?.remaining_hrs} hrs remaining to pay`}
+                                    </p>
+                                  )}
+                                </div>
 
                                 <Link
                                   href={`${invoice?.invoice_pdf_url}`}

@@ -61,6 +61,27 @@
     z-index: 10;
 }
 
+.previewButton {
+    width: auto;
+    background-color: var(--primaryColor);
+    color: var(--whiteColor);
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: absolute;
+    top: 30px;
+    right: -20px;
+    z-index: 10;
+}
+
 .draftPoSuccessText {
     font-size: 20px;
     font-weight: 600;

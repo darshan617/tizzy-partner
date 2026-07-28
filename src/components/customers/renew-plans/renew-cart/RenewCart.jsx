@@ -213,7 +213,7 @@ const RenewCart = ({
                               className={styles.domainNamesMainContainer}
                             >
                               <div className={styles.domainNameContainer}>
-                                <p className="m-0">{domain}</p>
+                                <p className="m-0 text-truncate">{domain}</p>
 
                                 <button
                                   type="button"
