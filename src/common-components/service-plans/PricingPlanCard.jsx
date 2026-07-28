@@ -57,6 +57,26 @@ export default function PricingPlanCard({
   const hasGooglePlanConflict =
     Number(provider_id) === 3 && Boolean(hasgoogleplans) && !plan_is_in_cart;
 
+  const parsedLimit = Number(customer_limit);
+  const maxLicenses =
+    Number.isFinite(parsedLimit) && parsedLimit > 0
+      ? parsedLimit
+      : Number.MAX_SAFE_INTEGER;
+  const parsedCount = Number(lisceneCounterForPlan);
+  const licenseCount =
+    Number.isFinite(parsedCount) && parsedCount >= 1 ? parsedCount : 1;
+  const clampLicenses = (value) =>
+    Math.min(maxLicenses, Math.max(1, Number(value) || 1));
+  const periodSuffix = periodNote
+    ? String(periodNote).split("/").pop()?.trim()
+    : "";
+  const showPeriodSuffix =
+    Boolean(periodNote) &&
+    String(periodNote).includes("/") &&
+    Boolean(periodSuffix) &&
+    periodSuffix.toLowerCase() !== "undefined" &&
+    periodSuffix.toLowerCase() !== "null";
+
   const { showToast } = useToast();
   const [getEnqueryNow, { isLoading: isEnqueryNowLoading }] =
     useGetEnqueryNowMutation();
@@ -106,7 +126,9 @@ export default function PricingPlanCard({
                 : priceLabel}
             </span>
           </div>
-          {periodNote && priceLabel !== "₹0.00" ? (
+          {periodNote &&
+          priceLabel !== "₹0.00" &&
+          !String(periodNote).toLowerCase().includes("undefined") ? (
             <div className={`${styles.periodNote} text-capitalize`}>
               {periodNote}
             </div>
@@ -124,14 +146,9 @@ export default function PricingPlanCard({
                 type="button"
                 className={styles.btnMinus}
                 aria-label="Decrease licenses"
-                disabled={
-                  Number(lisceneCounterForPlan) <= 1 ||
-                  Number(lisceneCounterForPlan) >= Number(customer_limit)
-                }
+                disabled={licenseCount <= 1}
                 onClick={() =>
-                  setLisceneCounterForPlan(
-                    Math.max(1, Number(lisceneCounterForPlan) - 1),
-                  )
+                  setLisceneCounterForPlan(clampLicenses(licenseCount - 1))
                 }
               >
                 −
@@ -139,16 +156,13 @@ export default function PricingPlanCard({
               <input
                 type="number"
                 min={1}
+                max={maxLicenses}
                 className={styles.licenseCount}
-                value={lisceneCounterForPlan}
+                value={licenseCount}
                 onChange={(e) => {
                   const next = Number(e.target.value);
                   setLisceneCounterForPlan(
-                    Number.isFinite(next) &&
-                      next >= 1 &&
-                      next <= Number(customer_limit)
-                      ? next
-                      : 1,
+                    Number.isFinite(next) ? clampLicenses(next) : 1,
                   );
                 }}
               />
@@ -156,13 +170,9 @@ export default function PricingPlanCard({
                 type="button"
                 className={styles.btnPlus}
                 aria-label="Increase licenses"
+                disabled={licenseCount >= maxLicenses}
                 onClick={() =>
-                  setLisceneCounterForPlan(
-                    Math.min(
-                      Number(lisceneCounterForPlan) + 1,
-                      Number(customer_limit),
-                    ),
-                  )
+                  setLisceneCounterForPlan(clampLicenses(licenseCount + 1))
                 }
               >
                 +
@@ -175,11 +185,11 @@ export default function PricingPlanCard({
           <div className={styles.totalSide}>
             <span className={styles.counterLabel}>Total Amount</span>
             <span className={styles.totalAmount}>
-              ₹{Number(planPrice) * Number(lisceneCounterForPlan || 0)}
+              ₹{(Number(planPrice) || 0) * licenseCount}
             </span>
             <span className={styles.totalMeta}>
               Excl. GST
-              {periodNote ? ` · ${String(periodNote).split("/").pop()}` : ""}
+              {showPeriodSuffix ? ` · ${periodSuffix}` : ""}
             </span>
           </div>
         </div>
