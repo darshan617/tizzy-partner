@@ -171,7 +171,8 @@
   filter: brightness(1.08);
 }
 
-.btnMinus:disabled {
+.btnMinus:disabled,
+.btnPlus:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
