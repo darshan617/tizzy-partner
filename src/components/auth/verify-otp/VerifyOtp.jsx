@@ -13,6 +13,7 @@ import AuthLayout from "../authLayout/AuthLayout";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import Layout from "@/components/layout/Layout";
 import {
+  useAadharNumberMutation,
   useOrderAadharVerifyMutation,
   useResendOrderOtpMutation,
   useVerifyAadharNumberOtpMutation,
@@ -57,7 +58,10 @@ const VerifyOtp = () => {
     useVerifyAadharNumberOtpMutation();
 
   const [resendOrderOtp, { isLoading: isResendOrderOtpLoading }] =
-    useResendOrderOtpMutation();
+    useAadharNumberMutation();
+
+  // const [resendOrderOtp, { isLoading: isResendOrderOtpLoading }] =
+  //   useResendOrderOtpMutation();
 
   const [orderAadharVerify, { isLoading: isOrderAadharVerifyLoading }] =
     useOrderAadharVerifyMutation();
@@ -132,6 +136,7 @@ const VerifyOtp = () => {
           aadhaar_number: router?.query?.aadhar_number,
         },
       });
+      console.log(res, "res");
       if (res?.data?.success) {
         showToast(res?.data?.message, "success");
         router?.push({
@@ -249,32 +254,50 @@ const VerifyOtp = () => {
   };
 
   const handleOrderOtpResend = async () => {
+    // try {
+    //   let body;
+    //   if (router?.query?.renew === "0") {
+    //     body = {
+    //       main_cart_id: router?.query?.main_cart_id,
+    //       resend_otp: 1,
+    //     };
+    //   } else {
+    //     body = {
+    //       partner_id: userDataFromCookie?.id,
+    //       order_id: router?.query?.order_id,
+    //       renew: router?.query?.renew,
+    //       resend_otp: 1,
+    //     };
+    //   }
+    //   const res = await resendOrderOtp({
+    //     body: body,
+    //   });
+    //   if (res?.data?.success) {
+    //     showToast("OTP resent successfully", "success");
+    //   } else {
+    //     showToast("Error while resending OTP", "error");
+    //   }
+    // } catch (error) {
+    //   console.log("error", error);
+    //   showToast(error, "error");
+    // }
+
     try {
-      let body;
-      if (router?.query?.renew === "0") {
-        body = {
-          main_cart_id: router?.query?.main_cart_id,
-          resend_otp: 1,
-        };
-      } else {
-        body = {
-          partner_id: userDataFromCookie?.id,
-          order_id: router?.query?.order_id,
-          renew: router?.query?.renew,
-          resend_otp: 1,
-        };
-      }
       const res = await resendOrderOtp({
-        body: body,
+        body: {
+          order_id: router?.query?.ordId,
+          aadhaar_number: router?.query?.aadhar_number,
+        },
       });
       if (res?.data?.success) {
         showToast("OTP resent successfully", "success");
       } else {
-        showToast("Error while resending OTP", "error");
+        showToast("Failed to resend OTP", "error");
       }
+      console.log(res, "res");
     } catch (error) {
       console.log("error", error);
-      showToast(error, "error");
+      showToast("Failed to resend OTP", "error");
     }
   };
 

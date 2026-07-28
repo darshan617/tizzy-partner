@@ -319,7 +319,7 @@ export default function ServiceSlugPage({
     [addToCart, router?.query?.slug, router.asPath],
   );
 
-  const handleUpgradeAddToCart = async (planId) => {
+  const handleUpgradeAddToCart = async (planId, lisceneCounter = 1) => {
     try {
       const res = await upgradeAddToCart({
         body: {
@@ -328,6 +328,7 @@ export default function ServiceSlugPage({
           customer_id: router?.query?.customer_id,
           order_id: router?.query?.order_id,
           order_sub_id: router?.query?.order_sub_id,
+          license_count: lisceneCounter,
         },
       });
       if (res?.data?.success) {
@@ -354,7 +355,7 @@ export default function ServiceSlugPage({
       console.log(error, "error upgrading to cart");
     }
   };
-  const handleDowngradeAddToCart = async (planId) => {
+  const handleDowngradeAddToCart = async (planId, lisceneCounter = 1) => {
     try {
       const res = await downgradeCart({
         body: {
@@ -363,6 +364,7 @@ export default function ServiceSlugPage({
           customer_id: router?.query?.customer_id,
           order_id: router?.query?.order_id,
           order_sub_id: router?.query?.order_sub_id,
+          license_count: lisceneCounter,
         },
       });
       if (res?.data?.success) {
@@ -476,7 +478,13 @@ export default function ServiceSlugPage({
               priceLabel={`₹${plan?.price ?? "0"}`}
               originalPriceLabel={plan?.actual_price ?? ""}
               discountPercent={plan?.discountPercent}
-              periodNote={`User/${plan?.billing_cycle}`}
+              periodNote={
+                plan?.billing_cycle
+                  ? `User/${plan.billing_cycle}`
+                  : plan?.billing_period
+                    ? `User/${plan.billing_period}`
+                    : "User"
+              }
               gstNote={"GST 18% Additional"}
               features={plan?.features}
               isProviderInCart={plan?.provider_in_cart}
@@ -484,7 +492,9 @@ export default function ServiceSlugPage({
               provider_id={plan?.provider_id}
               enquiry={plan?.enquiry}
               hasgoogleplans={plan?.hasgoogleplans}
-              customer_limit={plan?.customer_limit}
+              customer_limit={
+                plan?.customer_limit ?? plan?.customerLimit ?? plan?.max_licenses
+              }
               lisceneCounterForPlan={
                 lisceneCounterForPlan[plan?.plan_id || plan?.id] ?? 1
               }
@@ -496,15 +506,14 @@ export default function ServiceSlugPage({
                 }));
               }}
               onCtaClick={() => {
+                const planKey = plan?.plan_id || plan?.id;
+                const licenses = lisceneCounterForPlan[planKey] ?? 1;
                 if (router?.query?.type === "upgrade") {
-                  handleUpgradeAddToCart(plan?.plan_id || plan?.id);
+                  handleUpgradeAddToCart(planKey, licenses);
                 } else if (router?.query?.type === "downgrade") {
-                  handleDowngradeAddToCart(plan?.plan_id || plan?.id);
+                  handleDowngradeAddToCart(planKey, licenses);
                 } else {
-                  handleAddToCart(
-                    plan?.plan_id || plan?.id,
-                    lisceneCounterForPlan[plan?.plan_id || plan?.id],
-                  );
+                  handleAddToCart(planKey, licenses);
                   // router.push({
                   //   pathname: `/order-summary`,
                   //   query: {
