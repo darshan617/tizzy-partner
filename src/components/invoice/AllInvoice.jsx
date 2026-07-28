@@ -496,20 +496,29 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                                 <button
                                   type="button"
                                   className={styles.payNowBtn}
-                                  disabled={!showPayNow(invoice?.status)}
+                                  disabled={
+                                    !showPayNow(invoice?.status) ||
+                                    invoice?.payment_link_expired
+                                  }
                                   style={{
-                                    cursor: showPayNow(invoice?.status)
-                                      ? "pointer"
-                                      : "not-allowed",
-                                    backgroundColor: showPayNow(invoice?.status)
-                                      ? "var(--primaryColor)"
-                                      : "#02499662",
+                                    cursor:
+                                      showPayNow(invoice?.status) ||
+                                      invoice?.payment_link_expired
+                                        ? "pointer"
+                                        : "not-allowed",
+                                    backgroundColor:
+                                      showPayNow(invoice?.status) ||
+                                      invoice?.payment_link_expired
+                                        ? "var(--primaryColor)"
+                                        : "#02499662",
                                   }}
                                   onClick={() =>
                                     handlePayNow(invoice?.invoice_id)
                                   }
                                 >
-                                  Pay Now
+                                  {invoice?.payment_link_expired
+                                    ? `${invoice?.remaining_hrs} hrs remaining to pay`
+                                    : "Pay Now"}
                                 </button>
 
                                 <Link
