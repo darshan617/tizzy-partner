@@ -169,6 +169,18 @@ const OrderSummaryCard = ({
     Boolean(activeDomainPrefix) &&
     (isDomainCheckInProgress || Boolean(domainCheckResult));
 
+  const restrictedDomains = [
+    "onmicrosoft.com",
+    "onmicrosoftcom",
+    ".com",
+    ".in",
+    ".net",
+    ".org",
+    ".",
+  ];
+  const isRestrictedDomain =
+    skipDomainVerification &&
+    restrictedDomains.some((domain) => domainInput?.includes(domain));
   const handleClosePopup = () => {
     setIsPopupOpen("");
     setDomainInput("");
@@ -400,7 +412,6 @@ const OrderSummaryCard = ({
       setDomainInput(activePrefix);
     }
   }, [isPopupOpen, domainNames]);
-  console.log("type:", router?.query?.type);
 
   // useEffect(() => {
   //   if (!promoCode) {
@@ -827,6 +838,9 @@ const OrderSummaryCard = ({
                       )}
                     </span>
                   )}
+                  {skipDomainVerification && isRestrictedDomain && (
+                    <span style={{ color: "red" }}>Domain is restricted</span>
+                  )}
                 </>
               ))}
             </div>
@@ -836,7 +850,15 @@ const OrderSummaryCard = ({
                   type="button"
                   className={styles.addDomainIconBtn}
                   onClick={handleAddDomainRow}
-                  disabled={isMaxDomainsReached}
+                  style={{
+                    opacity:
+                      isMaxDomainsReached || isRestrictedDomain ? 0.5 : 1,
+                    cursor:
+                      isMaxDomainsReached || isRestrictedDomain
+                        ? "not-allowed"
+                        : "pointer",
+                  }}
+                  disabled={isMaxDomainsReached || isRestrictedDomain}
                 >
                   {isMaxDomainsReached
                     ? "Maximum domains reached"
@@ -849,10 +871,13 @@ const OrderSummaryCard = ({
               <button
                 type="button"
                 className={styles.proceedPopupActionBtn}
-                disabled={!canConfirmDomain}
+                disabled={!canConfirmDomain || isRestrictedDomain}
                 style={{
-                  opacity: !canConfirmDomain ? 0.5 : 1,
-                  cursor: !canConfirmDomain ? "not-allowed" : "pointer",
+                  opacity: !canConfirmDomain || isRestrictedDomain ? 0.5 : 1,
+                  cursor:
+                    !canConfirmDomain || isRestrictedDomain
+                      ? "not-allowed"
+                      : "pointer",
                 }}
                 onClick={() => {
                   handleUpdateCart(resolvedCartId);
