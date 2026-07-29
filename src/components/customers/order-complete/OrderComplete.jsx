@@ -1,71 +1,77 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import bag from "@/assets/images/bag.png";
-import invoice from "@/assets/images/invoice.png";
-import successGif from "@/assets/images/check.svg";
 import styles from "@/components/customers/order-complete/OrderComplete.module.css";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi";
 import Cookies from "js-cookie";
-import Loader from "@/common-components/loader/Loader";
-import { MdOutlineFileDownload } from "react-icons/md";
+import { MdOutlineFileDownload, MdDescription } from "react-icons/md";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-
+import successGif from "@/assets/images/check.svg";
+import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarConstant";
 const OrderComplete = () => {
   const router = useRouter();
-  const userData = Cookies?.get("userData")
-    ? JSON.parse(decodeURIComponent(Cookies?.get("userData")))
-    : {};
-  const { data: balanceAndCartData } = useGetBalanceAndCartDetailsQuery(
+
+  const [userData, setUserData] = useState({});
+  const [orderDetails, setOrderDetails] = useState({});
+  const [today, setToday] = useState("-");
+  const [animationPhase, setAnimationPhase] = useState("playing");
+  console.log(orderDetails, "orderDetails");
+
+  useEffect(() => {
+    const parsedUser = Cookies?.get("userData")
+      ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
+      : {};
+
+    const parsedOrder = Cookies.get("orderDetails")
+      ? JSON.parse(decodeURIComponent(Cookies.get("orderDetails")))
+      : {};
+
+    setUserData(parsedUser);
+    setOrderDetails(parsedOrder);
+    setToday(
+      new Date().toLocaleDateString("en-US", {
+        month: "long",
+        day: "2-digit",
+        year: "numeric",
+      }),
+    );
+  }, []);
+
+  useGetBalanceAndCartDetailsQuery(
     { partner_id: userData?.id },
     {
       skip: !userData?.id,
     },
   );
-  console.log(router.query.po);
-
-  const [animationPhase, setAnimationPhase] = useState("playing");
 
   useEffect(() => {
     const moveTimer = setTimeout(() => setAnimationPhase("done"), 1800);
     return () => clearTimeout(moveTimer);
   }, []);
 
+  const firstItem = orderDetails?.orders?.[0] || {};
+  const orderId = firstItem?.order_id;
+  const orderNo = firstItem?.order_no;
+  const companyName = firstItem?.company_name;
+  const domainName = firstItem?.domain_name;
+  const poLink = router?.query?.po || firstItem?.po?.po_link;
+  const poNumber = firstItem?.po?.po_number;
+
+  const totalAmount = router?.query?.crdUsage;
+
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+
+    const handlePopState = () => {
+      window.history.pushState(null, "", window.location.href);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
   return (
     <div>
-      {/* <div className="col">
-        <div className="row align-items-end">
-          <div className="col">
-            <nav className={`${styles.breadcrumb}`}>
-              <button
-                onClick={() => router.push("/dashboard")}
-                className={styles.breadcrumbItem}
-              >
-                Dashboard
-              </button>{" "}
-              /
-              <button
-                onClick={() => router.push("/customers")}
-                className={styles.breadcrumbItem}
-              >
-                Customers
-              </button>
-              /
-              <button
-                onClick={() => router.push("/customers")}
-                className={styles.breadcrumbItem}
-              >
-                Customers 00024
-              </button>
-              /
-              <h1 className="breadcrumb-item active" aria-current="page">
-                Renew plan
-              </h1>
-            </nav>
-          </div>
-        </div>
-      </div> */}
       <div className={`${styles.orderCard}`}>
         <div
           className={`d-flex flex-column align-items-center justify-content-center ${styles.stage}`}
@@ -75,9 +81,7 @@ const OrderComplete = () => {
             data-aos="zoom-in"
             data-aos-duration="1000"
           >
-            {animationPhase === "done" ? (
-              <IoIosCheckmarkCircle size={60} color="var(--primaryColor)" />
-            ) : (
+            {animationPhase === "done" ? null : (
               <>
                 <Image
                   src={successGif}
@@ -92,7 +96,7 @@ const OrderComplete = () => {
                   data-aos="fade-up"
                   data-aos-delay="100"
                 >
-                  Order Place Successfully
+                  Order Placed Successfully
                 </h1>
               </>
             )}
@@ -103,68 +107,145 @@ const OrderComplete = () => {
               animationPhase === "done" ? styles.show : ""
             }`}
           >
-            <div
-              className={`${styles.orderMainHead} mb-2`}
-              data-aos="fade-up"
-              data-aos-duration="1000"
-            >
-              YOUR ORDER IS PLACED SUCCESSFULL.
+            <div className={styles.confirmCard} data-aos="fade-up">
+              <div className={styles.metaRow}>
+                <div className={styles.metaBlock}>
+                  <span className={styles.metaLabel}>Date</span>
+                  <span className={styles.metaValue}>{today}</span>
+                </div>
+                <div className={styles.metaBlock}>
+                  <span className={styles.metaLabel}>Order Number</span>
+                  <span className={styles.metaValue}>{orderNo || "-"}</span>
+                </div>
+              </div>
+
+              <div className={styles.confirmBody}>
+                <div className={styles.poPreview}>
+                  {poLink ? (
+                    <>
+                      <div className={styles.poFrame}>
+                        <iframe
+                          className={styles.innerFrame}
+                          scrolling="no"
+                          src={`${poLink}#toolbar=0&navpanes=0&view=FitH`}
+                        />
+                      </div>
+                      <a
+                        href={poLink ? poLink : "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.downloadInvoiceBtn}
+                      >
+                        <MdOutlineFileDownload size={20} />
+                      </a>
+                    </>
+                  ) : (
+                    <div className={styles.poPlaceholder}>
+                      <MdDescription size={48} />
+                      <p>Loading Purchase Order PDF...</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className={styles.orderSummary}>
+                  <div className={styles.orderMainHead}>
+                    <IoIosCheckmarkCircle
+                      size={22}
+                      color="var(--primaryColor)"
+                    />
+                    Order Placed Successfully
+                  </div>
+
+                  <div className={styles.greeting}>
+                    <strong>Company Name: {companyName || "there"},</strong>
+                    <p>
+                      Your order has been confirmed
+                      {domainName ? (
+                        <>
+                          {" "}
+                          for <strong>{domainName}</strong>
+                        </>
+                      ) : null}
+                      . Your purchase order is ready to download.
+                    </p>
+                  </div>
+
+                  <div className={styles.itemList}>
+                    {orderDetails?.orders?.map((item, idx) => (
+                      <div className={styles.itemRow} key={item?.cart_item_id}>
+                        <div className={styles.itemIcon}>
+                          {
+                            SIDEBAR_SERVICES_CONSTANTS.find(
+                              (service) =>
+                                service?.id === orderDetails?.provider_id,
+                            )?.image
+                          }
+                        </div>
+                        <div className={styles.itemInfo}>
+                          <span className={styles.itemName}>
+                            {item?.plan_name}
+                          </span>
+                          <span className={styles.itemSub}>
+                            {item?.licenses} license
+                            {item?.licenses === 1 ? "" : "s"}
+                            {" - "}
+                            {item?.plan_amount ? `₹ ${item?.plan_amount}` : "-"}
+                          </span>
+                          {/* <span className={styles.itemSub}>
+                            {item?.plan_amount ? `₹ ${item?.plan_amount}` : "-"}
+                          </span> */}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className={styles.summaryDivider} />
+
+                  {/* <div className={styles.summaryRow}>
+                    <span>Order ID</span>
+                    <span>{orderId || "-"}</span>
+                  </div> */}
+                  <div className={styles.summaryRow}>
+                    <span>PO Number</span>
+                    <span>{poNumber || "-"}</span>
+                  </div>
+                  <div className={styles.summaryRow}>
+                    <span>GST</span>
+                    <span>
+                      {orderDetails?.gst ? `₹ ${orderDetails?.gst}` : "-"}
+                    </span>
+                  </div>
+                  <div className={styles.summaryRow}>
+                    <span>Coupon Discount</span>
+                    <span>
+                      {orderDetails?.coupon_discount
+                        ? `₹ ${orderDetails?.coupon_discount}`
+                        : "-"}
+                    </span>
+                  </div>
+                  <div className={`${styles.summaryRow} ${styles.totalRow}`}>
+                    <span>Total Amount</span>
+                    <span>
+                      {orderDetails?.total_amount
+                        ? `₹ ${orderDetails?.total_amount}`
+                        : "-"}
+                    </span>
+                  </div>
+
+                  <div className={styles.doneBtnContainer}>
+                    <button
+                      onClick={() => {
+                        router.push("/subscriptions");
+                        Cookies.remove("orderDetails");
+                      }}
+                      className={styles.doneBtn}
+                    >
+                      <span>Done</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
-            {/* <div className={`${styles.orderHead}  mb-3 text-center`}>
-              <div>
-                <span className={`${styles.value}`}>
-                  ₹ {router?.query?.crdUsage}{" "}
-                </span>
-                <span className={`${styles.valueContent}`}>
-                  deducted from your credits
-                </span>
-              </div>
-              <div className={`${styles.BalInfo}`}>
-                <span>Credit Balance: </span>
-                <span className={`${styles.CreditValue}`}>
-                  ₹{balanceAndCartData?.data?.wallet_balance}
-                </span>
-              </div>
-            </div> */}
-            {/* <div className={`${styles.InvoiceImg} my-4`}>
-              {router?.query?.po ? (
-                <Link
-                  href={router.query.po}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.downloadInvoiceBtn}
-                >
-                  Download Purchase Order PDF
-                </Link>
-              ) : null}
-            </div> */}
-            <Link
-              href={router?.query?.po || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.downloadInvoiceLink}
-            >
-              <button className={styles.downloadInvoiceBtn}>
-                <MdOutlineFileDownload size={20} />
-              </button>
-              {router?.query?.po ? (
-                <div className={styles.orderFrame}>
-                  <iframe
-                    className={styles.innerFrame}
-                    scrolling="no"
-                    src={`${router?.query?.po}#toolbar=0&navpanes=0&view=FitH`}
-                  />
-                </div>
-              ) : (
-                <div>
-                  <Loader />
-                  <p>Loading Purchase Order PDF...</p>
-                </div>
-              )}
-            </Link>
-            <Link href="/subscriptions" className={styles.doneBtn}>
-              Done
-            </Link>
           </div>
         </div>
       </div>
