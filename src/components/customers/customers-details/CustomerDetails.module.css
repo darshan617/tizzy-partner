@@ -257,6 +257,11 @@
   color: var(--purpleColor);
 }
 
+.processing {
+  background: var(--primarySubtleColor);
+  color: var(--primaryColor);
+}
+
 .statusBadge.draft,
 .draft {
   background: var(--borderColor);
@@ -861,7 +866,7 @@
 .subMeta {
   display: flex;
   align-items: center;
-  gap: 1.75rem;
+  gap: 20px;
   flex-wrap: wrap;
 }
 
