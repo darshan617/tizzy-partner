@@ -11,6 +11,7 @@ import { BsPlusCircleDotted } from "react-icons/bs";
 import { FaPen } from "react-icons/fa";
 import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
 import Image from "next/image";
+import { FiLayers } from "react-icons/fi";
 export default function CustomerDetail() {
   const router = useRouter();
   const userData = Cookies.get("userData")
@@ -886,6 +887,12 @@ export default function CustomerDetail() {
 
                     <div className={`${styles.subBottom}`}>
                       <div className={`${styles.subMeta} ps-1`}>
+                        <div className={`${styles.subMetaItem}`}>
+                          <FiLayers className={`${styles.subMetaIcon}`} />
+                          <div className={`${styles.subMetaValue}`}>
+                            #{innerPlan?.subscription_id}
+                          </div>
+                        </div>
                         <div className={`${styles.subMetaItem}`}>
                           <Calendar className={`${styles.subMetaIcon}`} />
                           <div>
