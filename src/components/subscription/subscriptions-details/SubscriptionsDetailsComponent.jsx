@@ -12,6 +12,7 @@ import { MdAutorenew } from "react-icons/md";
 import Loader from "@/common-components/loader/Loader";
 import { BiDownload } from "react-icons/bi";
 import { Calendar, Globe, User, Users } from "lucide-react";
+import { FiLayers } from "react-icons/fi";
 
 const planProviderIcons = [
   <svg
@@ -86,6 +87,7 @@ const getPlanStatusClass = (status) => {
   if (normalized === "upgraded") return styles.upgraded;
   if (normalized === "downgraded") return styles.downgraded;
   if (normalized === "renewed") return styles.renewed;
+  if (normalized === "processing") return styles.processing;
   return "";
 };
 
@@ -357,7 +359,7 @@ const SubscriptionsDetailsComponent = () => {
                       <span
                         className={`${styles.statusBadge} 
                         ${getPlanStatusClass(plan?.status)} 
-                        ${(plan?.status?.toLowerCase() === "upgrade pending" || plan?.status?.toLowerCase() === "downgrade pending" || plan?.status?.toLowerCase() === "renewal pending") && styles.upgradePending}`}
+                        ${(plan?.status?.toLowerCase() === "upgrade pending" || plan?.status?.toLowerCase() === "downgrade pending" || plan?.status?.toLowerCase() === "renewal pending") && styles.upgradePending} ${styles.subPlanStatus}`}
                       >
                         {formatPlanStatus(plan?.status)}
                       </span>
@@ -365,6 +367,14 @@ const SubscriptionsDetailsComponent = () => {
 
                     <div className={`${styles.subBottom}`}>
                       <div className={`${styles.subMeta} ps-1`}>
+                        <div className={`${styles.subMetaItem}`}>
+                          <FiLayers className={`${styles.subMetaIcon}`} />
+                          <div>
+                            <div className={`${styles.subMetaValue}`}>
+                              #{plan?.subscription_no}
+                            </div>
+                          </div>
+                        </div>
                         <div className={`${styles.subMetaItem}`}>
                           <Calendar className={`${styles.subMetaIcon}`} />
                           <div>
