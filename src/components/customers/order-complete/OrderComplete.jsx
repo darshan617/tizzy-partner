@@ -17,6 +17,10 @@ const OrderComplete = () => {
   const userData = Cookies?.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies?.get("userData")))
     : {};
+  const orderDetails = Cookies.get("orderDetails")
+    ? JSON.parse(decodeURIComponent(Cookies.get("orderDetails")))
+    : {};
+  console.log("orderDetails", orderDetails);
   const { data: balanceAndCartData } = useGetBalanceAndCartDetailsQuery(
     { partner_id: userData?.id },
     {
@@ -162,9 +166,15 @@ const OrderComplete = () => {
                 </div>
               )}
             </Link>
-            <Link href="/subscriptions" className={styles.doneBtn}>
-              Done
-            </Link>
+            <button
+              onClick={() => {
+                router.push("/subscriptions");
+                Cookies.remove("orderDetails");
+              }}
+              className={styles.doneBtn}
+            >
+              <span>Done</span>
+            </button>
           </div>
         </div>
       </div>

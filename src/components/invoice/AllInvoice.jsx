@@ -89,7 +89,12 @@ const invoiceColumns = [
   },
 ];
 
-const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
+const AllInvoice = ({
+  invoiceData,
+  isInvoiceDataLoading,
+  totalCount,
+  fetchInvoiceData,
+}) => {
   const { showToast } = useToast();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
@@ -142,14 +147,26 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
   //   filteredInvoices?.every((invoice) =>
   //     selectedIds?.includes(invoice?.invoice_id),
   //   );
-  const allVisibleSelected = filteredInvoices
-    ?.filter(
-      (invoice) =>
-        invoice?.status?.toLowerCase() !== "paid" &&
-        invoice?.status?.toLowerCase() !== "cancelled" &&
-        !invoice?.payment_link_expired,
-    )
-    ?.every((invoice) => selectedIds?.includes(invoice?.invoice_id));
+  // const allVisibleSelected = filteredInvoices
+  //   ?.filter(
+  //     (invoice) =>
+  //       invoice?.status?.toLowerCase() !== "paid" &&
+  //       invoice?.status?.toLowerCase() !== "cancelled" &&
+  //       !invoice?.payment_link_expired,
+  //   )
+  //   ?.every((invoice) => selectedIds?.includes(invoice?.invoice_id));
+  const selectableInvoices = filteredInvoices?.filter(
+    (invoice) =>
+      invoice?.status?.toLowerCase() !== "paid" &&
+      invoice?.status?.toLowerCase() !== "cancelled" &&
+      !invoice?.payment_link_expired,
+  );
+
+  const allVisibleSelected =
+    selectableInvoices?.length > 0 &&
+    selectableInvoices?.every((invoice) =>
+      selectedIds?.includes(invoice?.invoice_id),
+    );
 
   const toggleSelectAll = () => {
     //   if (allVisibleSelected) {
@@ -165,17 +182,20 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
     //   setSelectedIds((prev) => [...new Set([...prev, ...visibleIds])]);
     // };
 
-    const selectableInvoices = filteredInvoices?.filter(
-      (invoice, idx) =>
-        invoice?.status?.toLowerCase() !== "paid" &&
-        invoice?.status?.toLowerCase() !== "cancelled" &&
-        !invoice?.payment_link_expired,
-    );
+    // const selectableInvoices = filteredInvoices?.filter(
+    //   (invoice, idx) =>
+    //     invoice?.status?.toLowerCase() !== "paid" &&
+    //     invoice?.status?.toLowerCase() !== "cancelled" &&
+    //     !invoice?.payment_link_expired,
+    // );
     const selectableIds = selectableInvoices?.map(
       (invoice) => invoice?.invoice_id,
     );
 
-    const allSelected = selectableIds?.every((id) => selectedIds?.includes(id));
+    // const allSelected = selectableIds?.every((id) => selectedIds?.includes(id));
+    const allSelected =
+      selectableIds?.length > 0 &&
+      selectableIds?.every((id) => selectedIds?.includes(id));
     if (allSelected) {
       // remove only selectable invoices
       setSelectedIds((prev) =>
@@ -229,12 +249,13 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
                 "Payment Successful" || verifyPaymentRes?.data?.message,
                 "success",
               );
-              router.reload();
+              await fetchInvoiceData();
             } else {
               showToast(
                 "Payment Failed" || verifyPaymentRes?.data?.message,
                 "error",
               );
+              await fetchInvoiceData();
             }
           },
 
@@ -245,8 +266,9 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
 
         const rzp = new window.Razorpay(options);
 
-        rzp.on("payment.failed", function (response) {
+        rzp.on("payment.failed", async function (response) {
           showToast(response.error.description, "error");
+          await fetchInvoiceData();
         });
 
         rzp.open();
@@ -254,10 +276,12 @@ const AllInvoice = ({ invoiceData, isInvoiceDataLoading, totalCount }) => {
         console.log(res, "payment failed");
 
         showToast(res?.data?.message || res?.error?.data?.message, "error");
+        await fetchInvoiceData();
       }
     } catch (error) {
       console.log(error, "payment error");
       showToast(error?.data?.message || error?.error?.data?.message, "error");
+      await fetchInvoiceData();
     }
   };
 

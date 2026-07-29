@@ -313,7 +313,7 @@ const OrderSummaryCard = ({
       });
       if (res?.data?.success) {
         console.log("res?.data?.data", res?.data?.data);
-
+        Cookies.set("orderDetails", JSON.stringify(res?.data?.data?.orders));
         router?.push({
           pathname: "/draft-po",
           query: {
