@@ -173,7 +173,7 @@ const addToCartApi = apiSlice.injectEndpoints({
     resendOrderOtp: builder?.mutation({
       query: ({ body }) => {
         return {
-          url: "/orders-aadhaar-resend-otp",
+          url: "/order-aadhaar-resend-otp",
           method: "POST",
           body: body,
         };

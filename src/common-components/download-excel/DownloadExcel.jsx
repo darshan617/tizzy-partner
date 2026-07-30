@@ -1,3 +1,5 @@
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 import { MdOutlineFileDownload } from "react-icons/md";
 
 const DownloadExcel = ({
@@ -7,40 +9,99 @@ const DownloadExcel = ({
   className = "",
   buttonText = "Download",
 }) => {
-  const downloadExcel = () => {
-    if (!data || data.length === 0) return;
+  const downloadExcel = async () => {
+    if (!data.length) return;
 
-    const headers = columns.map((col) => col.label);
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Sheet1");
 
-    const rows = data.map((item) =>
-      columns.map((col) => {
-        const value = col.getValue ? col.getValue(item) : item[col.key];
+    // Header Row
+    const headerRow = worksheet.addRow(columns.map((col) => col.label));
 
-        return value ?? "";
-      }),
-    );
+    headerRow.eachCell((cell) => {
+      cell.font = {
+        bold: true,
+        color: { argb: "FFFFFFFF" },
+        size: 12,
+      };
 
-    const csvContent = [headers, ...rows]
-      .map((row) =>
-        row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(","),
-      )
-      .join("\n");
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "0355ac" },
+      };
 
-    const blob = new Blob([csvContent], {
-      type: "text/csv;charset=utf-8;",
+      cell.alignment = {
+        horizontal: "center",
+        vertical: "middle",
+      };
+
+      cell.border = {
+        top: { style: "thin" },
+        bottom: { style: "thin" },
+        left: { style: "thin" },
+        right: { style: "thin" },
+      };
     });
 
-    const url = URL.createObjectURL(blob);
+    // Data Rows
+    data.forEach((item) => {
+      worksheet.addRow(
+        columns.map((col) =>
+          col.getValue ? col.getValue(item) : (item[col.key] ?? ""),
+        ),
+      );
+    });
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${fileName}.csv`;
+    // Style Data Cells
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber === 1) return;
 
-    document.body.appendChild(link);
-    link.click();
+      row.eachCell((cell) => {
+        cell.alignment = {
+          vertical: "middle",
+          horizontal: "left",
+          wrapText: true,
+        };
 
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+        cell.border = {
+          top: { style: "thin" },
+          bottom: { style: "thin" },
+          left: { style: "thin" },
+          right: { style: "thin" },
+        };
+      });
+    });
+
+    // Auto Width
+    worksheet.columns.forEach((column) => {
+      let maxLength = 15;
+
+      column.eachCell?.({ includeEmpty: true }, (cell) => {
+        const length = cell.value ? cell.value.toString().length : 10;
+        if (length > maxLength) maxLength = length;
+      });
+
+      column.width = maxLength + 5;
+    });
+
+    // Freeze Header
+    worksheet.views = [
+      {
+        state: "frozen",
+        ySplit: 1,
+      },
+    ];
+
+    // Generate File
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    saveAs(
+      new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }),
+      `${fileName}.xlsx`,
+    );
   };
 
   return (

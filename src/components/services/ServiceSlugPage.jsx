@@ -270,18 +270,14 @@ export default function ServiceSlugPage({
     isUpgradingToCart;
 
   const filteredPlans = useMemo(() => {
-    if (!config?.plans) return [];
+    if (!allPlans) return [];
     const q = searchQuery.trim().toLowerCase();
-    let plans = config.plans;
-    if (showCategoryPills) {
-      plans = plans.filter((plan) => plan.categoryId === activeCategoryId);
-    }
-    return plans.filter((plan) => {
+    return allPlans?.filter((plan) => {
       if (!q) return true;
-      if (plan.title.toLowerCase().includes(q)) return true;
-      return plan.features.some((f) => f.toLowerCase().includes(q));
+      if (plan?.name?.toLowerCase().includes(q)) return true;
+      return plan?.features?.some((f) => f?.toLowerCase().includes(q));
     });
-  }, [config, activeCategoryId, searchQuery, showCategoryPills]);
+  }, [allPlans, searchQuery]);
 
   const handleAddToCart = useCallback(
     async (planId, lisceneCounter) => {
@@ -464,11 +460,11 @@ export default function ServiceSlugPage({
     <ServicePageLayout header={header}>
       {isPlansSectionLoading ? (
         <p className={styles.loading}>Loading plans…</p>
-      ) : allPlans?.length === 0 ? (
+      ) : filteredPlans?.length === 0 ? (
         <p className={styles.empty}>No plans match your search or category.</p>
       ) : (
         <div className={styles.grid}>
-          {allPlans?.map((plan) => (
+          {filteredPlans?.map((plan) => (
             <PricingPlanCard
               key={plan?.plan_id ?? plan?.id}
               plan_id={plan?.plan_id || plan?.id}
@@ -493,7 +489,9 @@ export default function ServiceSlugPage({
               enquiry={plan?.enquiry}
               hasgoogleplans={plan?.hasgoogleplans}
               customer_limit={
-                plan?.customer_limit ?? plan?.customerLimit ?? plan?.max_licenses
+                plan?.customer_limit ??
+                plan?.customerLimit ??
+                plan?.max_licenses
               }
               lisceneCounterForPlan={
                 lisceneCounterForPlan[plan?.plan_id || plan?.id] ?? 1
