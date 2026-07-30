@@ -123,6 +123,21 @@ const SubscriptionsDetailsComponent = () => {
     }
   };
 
+  const status = [
+    "completed",
+    "active",
+    "expiring_soon",
+    "expiring",
+    "pending",
+    "expired",
+    "cancelled",
+    "draft",
+    "upgraded",
+    "downgraded",
+    "renewed",
+    "processing",
+  ];
+
   useEffect(() => {
     if (router?.isReady) {
       fetchSubscriptionDetails();
@@ -467,7 +482,11 @@ const SubscriptionsDetailsComponent = () => {
                         plan?.status?.toLowerCase() !== "upgraded" &&
                         plan?.status?.toLowerCase() !== "downgrade pending" &&
                         plan?.status?.toLowerCase() !== "downgraded" &&
-                        plan?.status?.toLowerCase() !== "renewal pending" ? (
+                        plan?.status?.toLowerCase() !== "renewal pending" &&
+                        plan?.status?.toLowerCase() !== "expiring" &&
+                        plan?.status?.toLowerCase() !== "expired" &&
+                        plan?.status?.toLowerCase() !== "cancelled" &&
+                        plan?.status?.toLowerCase() !== "processing" ? (
                           <>
                             <Link
                               href={{
@@ -497,6 +516,18 @@ const SubscriptionsDetailsComponent = () => {
                             >
                               Upgrade
                             </Link>
+                            {/* <Link
+                              href={{
+                                pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                                query: {
+                                  type: "partial-upgrade",
+                                  order_id: subscriptionDetails?.order_id,
+                                },
+                              }}
+                              className={styles.subUpgradeTextLink}
+                            >
+                              Partial Upgrade
+                            </Link> */}
                           </>
                         ) : (
                           <button

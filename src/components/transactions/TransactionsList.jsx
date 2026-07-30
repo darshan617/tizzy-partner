@@ -80,6 +80,10 @@ const transactionColumns = [
     key: "order_no",
   },
   {
+    label: "Company Name",
+    key: "company_name",
+  },
+  {
     label: "Domain",
     key: "domain_name",
   },
@@ -88,8 +92,52 @@ const transactionColumns = [
     key: "status",
   },
   {
+    label: "Plan",
+    key: "plan",
+  },
+  {
+    label: "Order Category",
+    key: "order_category",
+  },
+  {
+    label: "Subtotal",
+    key: "subtotal",
+  },
+  {
+    label: "GST Amount",
+    key: "gst_amount",
+  },
+  {
+    label: "GST Rate",
+    key: "gst_rate",
+  },
+  {
+    label: "Coupon",
+    getValue: (tx) => tx?.coupon || "-",
+  },
+  {
+    label: "Discount Amount",
+    key: "discount_amount",
+  },
+  {
+    label: "Remaining Value",
+    key: "remaining_value",
+  },
+  {
+    label: "Pro Rata Adjustment",
+    key: "pro_rata_adjustment",
+  },
+  {
+    label: "Credit Used",
+    key: "credit_used",
+  },
+  {
     label: "Amount",
     key: "amount",
+  },
+  {
+    label: "Cancelled Reason",
+    getValue: (tx) => tx?.cancelled_reason || "-",
   },
   {
     label: "Invoice No",
