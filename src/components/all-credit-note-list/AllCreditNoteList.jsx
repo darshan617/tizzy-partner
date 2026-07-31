@@ -1,7 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import styles from "./AllCreditNoteList.module.css";
-import { useCreditNotesMutation } from "@/redux/apis/creditNote.Api";
-import Cookies from "js-cookie";
 import { FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
@@ -118,43 +116,12 @@ const creditNoteColumns = [
   },
 ];
 
-const AllCreditNoteList = () => {
-  const userData = Cookies.get("userData")
-    ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
-    : null;
-
-  const [creditNotesList, setCreditNotesList] = useState([]);
+const AllCreditNoteList = ({ creditNotesList, isLoading }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemPerPage] = useState(10);
-
-  const [creditNotes, { isLoading }] = useCreditNotesMutation();
-
-  const fetchCreditNotes = async () => {
-    try {
-      const res = await creditNotes({
-        body: {
-          partner_id: userData?.id,
-        },
-      });
-      if (res?.data?.success) {
-        const list =
-          res?.data?.data?.credit_notes ||
-          res?.data?.data?.data ||
-          res?.data?.data ||
-          [];
-        setCreditNotesList(Array.isArray(list) ? list : []);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchCreditNotes();
-  }, []);
 
   const toggleStatus = (status) => {
     setSelectedStatuses((prev) => (prev === status ? "all" : status));
