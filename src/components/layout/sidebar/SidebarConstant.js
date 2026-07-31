@@ -7,12 +7,13 @@ import {
   LuReceiptIndianRupee,
   LuUsers,
 } from "react-icons/lu";
-import { RiUserSettingsLine } from "react-icons/ri";
+import { RiNoCreditCardFill, RiUserSettingsLine } from "react-icons/ri";
 import { MdAutorenew } from "react-icons/md";
 import { PiHandCoinsLight } from "react-icons/pi";
 import { RiBankLine } from "react-icons/ri";
 import { VscFiles } from "react-icons/vsc";
 import { BsFileEarmarkBarGraph } from "react-icons/bs";
+import { HiOutlineDocumentCurrencyRupee } from "react-icons/hi2";
 
 export const ACCOUNT_PATHS = [
   "/my-account",
@@ -104,6 +105,12 @@ export const SIDEBAR_MENU_CONSTANTS = [
     title: "Reports",
     icon: BsFileEarmarkBarGraph,
     href: "/reports",
+  },
+  {
+    id: 8,
+    title: "Credit Notes",
+    icon: HiOutlineDocumentCurrencyRupee,
+    href: "/credit-notes",
   },
 ];
 

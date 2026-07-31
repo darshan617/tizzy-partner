@@ -6,6 +6,8 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
+import { HiOutlineDocumentCurrencyRupee } from "react-icons/hi2";
+import { TbCoinRupeeFilled } from "react-icons/tb";
 
 const TotalRevenue = () => (
   <svg
@@ -285,6 +287,8 @@ const Counter = ({ target, suffix, prefix }) => {
   );
 };
 
+const CreditNoteIcon = () => <HiOutlineDocumentCurrencyRupee size={30} />;
+
 export default function SummaryCounts({
   countData = [],
   isFetchingCountData = false,
@@ -317,7 +321,6 @@ export default function SummaryCounts({
       icon: <TotalRevenue />,
       redirectUrl: null,
     },
-
     "active customers": {
       boxClass: "successGrad",
       iconClass: "successColor",
@@ -433,6 +436,34 @@ export default function SummaryCounts({
     //   icon: <UploadInvoiceIcon />,
     //   redirectUrl: null,
     // },
+    "total credit notes": {
+      boxClass: "infoGrad",
+      iconClass: "infoColor",
+      badgeClass: "up",
+      icon: <CreditNoteIcon />,
+      redirectUrl: null,
+    },
+    "pending wallet credit": {
+      boxClass: "warningGrad",
+      iconClass: "warningColor",
+      badgeClass: "up",
+      icon: <CreditNoteIcon />,
+      redirectUrl: null,
+    },
+    "credited to wallet": {
+      boxClass: "secondaryGrad",
+      iconClass: "secondaryColor",
+      badgeClass: "up",
+      icon: <CreditNoteIcon />,
+      redirectUrl: null,
+    },
+    "total credited amount": {
+      boxClass: "successGrad",
+      iconClass: "successColor",
+      badgeClass: "up",
+      icon: <TbCoinRupeeFilled size={28} />,
+      redirectUrl: null,
+    },
   };
 
   return (
