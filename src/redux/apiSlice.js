@@ -23,6 +23,7 @@ export const apiSlice = createApi({
     "draftPo",
     "accountDetail",
     "supportTickets",
+    "creditNotes",
   ],
   endpoints: (builder) => ({}),
 });
