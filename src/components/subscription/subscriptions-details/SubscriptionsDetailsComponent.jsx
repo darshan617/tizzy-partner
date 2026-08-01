@@ -153,6 +153,7 @@ const SubscriptionsDetailsComponent = () => {
             order_sub_id: plan?.order_sub_id,
             licenses: plan?.licenses,
             customer_id: router?.query?.customerId,
+            main_cart_id: res?.data?.data?.main_cart_id,
           },
         });
       } else {

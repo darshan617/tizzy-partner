@@ -512,7 +512,8 @@ const OrderSummaryCard = ({
           <span className={styles.value}>₹ {gst.toFixed(2)}</span>
         </div>
         {(router?.query?.type === "upgrade" ||
-          router?.query?.type === "downgrade") && (
+          router?.query?.type === "downgrade" ||
+          router?.query?.type === "partial-upgrade") && (
           <div className={styles.summaryRow}>
             <span className={styles.label}>Remaining Value</span>
             <span className={styles.value}>₹ {remainingValue}</span>
