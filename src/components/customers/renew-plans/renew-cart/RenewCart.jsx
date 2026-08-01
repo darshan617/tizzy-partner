@@ -131,11 +131,11 @@ const RenewCart = ({
       });
       console.log("res", res);
       if (res?.data?.success) {
-        showToast("License decreament request submitted", "success");
+        showToast(res?.data?.message, "success");
 
         handleClosePopup();
       } else {
-        showToast("Error submitting license decreament request", "error");
+        showToast(res?.error?.data?.message, "error");
       }
     } catch (error) {
       console.log(error);
