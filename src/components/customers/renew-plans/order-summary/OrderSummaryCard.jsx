@@ -80,6 +80,7 @@ const OrderSummaryCard = ({
   const [discountedPercent, setDiscountedPercent] = useState(0);
   const [isTermsAndConditionsChecked, setIsTermsAndConditionsChecked] =
     useState(false);
+  const [isUploadPo, setIsUploadPo] = useState(false);
 
   const providerId = Number(cartDetails?.[0]?.plan?.provider_id);
   const skipDomainVerification = providerId === 2;
