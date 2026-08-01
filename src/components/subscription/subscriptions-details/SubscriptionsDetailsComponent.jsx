@@ -13,6 +13,8 @@ import Loader from "@/common-components/loader/Loader";
 import { BiDownload } from "react-icons/bi";
 import { Calendar, Globe, User, Users } from "lucide-react";
 import { FiLayers } from "react-icons/fi";
+import { usePartialUpgradeAddToCartMutation } from "@/redux/apis/addToCartApi";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
 
 const planProviderIcons = [
   <svg
@@ -100,12 +102,17 @@ const getServicePath = (provider_id) => {
 
 const SubscriptionsDetailsComponent = () => {
   const router = useRouter();
+  const { showToast } = useToast();
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
   const [subscriptionDetails, setSubscriptionDetails] = useState(null);
   const [getSubscriptionDetails, { isLoading: isSubscriptionDetailsLoading }] =
     useGetSubscriptionDetailsMutation();
+  const [
+    partialUpgradeAddToCart,
+    { isLoading: isPartialUpgradeAddToCartLoading },
+  ] = usePartialUpgradeAddToCartMutation();
 
   const fetchSubscriptionDetails = async () => {
     if (!router?.query?.orderId) return;
@@ -120,6 +127,40 @@ const SubscriptionsDetailsComponent = () => {
       }
     } catch (error) {
       console.log("Error", error);
+    }
+  };
+
+  const handlePartialUpgrade = async (plan) => {
+    console.log("Plan", plan);
+    try {
+      const res = await partialUpgradeAddToCart({
+        body: {
+          partner_id: userData?.id,
+          order_id: router?.query?.orderId,
+          order_sub_id: plan?.order_sub_id,
+          licenses: plan?.licenses,
+          customer_id: router?.query?.customerId,
+        },
+      });
+
+      if (res?.data?.success) {
+        console.log("Res", res?.data?.data);
+        router?.push({
+          pathname: "/order-summary",
+          query: {
+            type: "partial-upgrade",
+            order_id: router?.query?.orderId,
+            order_sub_id: plan?.order_sub_id,
+            licenses: plan?.licenses,
+            customer_id: router?.query?.customerId,
+          },
+        });
+      } else {
+        showToast(res?.error?.data?.message, "error");
+      }
+    } catch (error) {
+      console.log("partialUpgradeAddToCart Error", error);
+      showToast("Something went wrong", "error");
     }
   };
 
@@ -483,8 +524,8 @@ const SubscriptionsDetailsComponent = () => {
                         plan?.status?.toLowerCase() !== "downgrade pending" &&
                         plan?.status?.toLowerCase() !== "downgraded" &&
                         plan?.status?.toLowerCase() !== "renewal pending" &&
-                        plan?.status?.toLowerCase() !== "expiring" &&
-                        plan?.status?.toLowerCase() !== "expired" &&
+                        // plan?.status?.toLowerCase() !== "expiring" &&
+                        // plan?.status?.toLowerCase() !== "expired" &&
                         plan?.status?.toLowerCase() !== "cancelled" &&
                         plan?.status?.toLowerCase() !== "processing" ? (
                           <>
@@ -516,18 +557,12 @@ const SubscriptionsDetailsComponent = () => {
                             >
                               Upgrade
                             </Link>
-                            {/* <Link
-                              href={{
-                                pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                                query: {
-                                  type: "partial-upgrade",
-                                  order_id: subscriptionDetails?.order_id,
-                                },
-                              }}
+                            <button
+                              onClick={() => handlePartialUpgrade(plan)}
                               className={styles.subUpgradeTextLink}
                             >
                               Partial Upgrade
-                            </Link> */}
+                            </button>
                           </>
                         ) : (
                           <button
