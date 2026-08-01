@@ -7,6 +7,8 @@ import React, { useEffect, useState } from "react";
 import { BsPlusCircleDotted } from "react-icons/bs";
 
 const Subscriptions = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemPerPage, setItemPerPage] = useState(10);
   const [
     getAllSubscriptions,
     { refetch, isLoading: isAllSubscriptionDataLoading },
@@ -20,6 +22,8 @@ const Subscriptions = () => {
       const res = await getAllSubscriptions({
         body: {
           partner_id: userData?.id,
+          page_no: currentPage,
+          per_page: itemPerPage,
         },
       });
       if (res?.data?.success) {
@@ -31,7 +35,7 @@ const Subscriptions = () => {
   };
   useEffect(() => {
     fetchAllSubscriptions();
-  }, []);
+  }, [currentPage, itemPerPage]);
   return (
     <Layout>
       <SummaryCounts
@@ -49,6 +53,11 @@ const Subscriptions = () => {
       <AllSubcriptions
         allSubscriptionsData={allSubscriptionsData?.data?.order_details}
         isAllSubscriptionDataLoading={isAllSubscriptionDataLoading}
+        paginationData={allSubscriptionsData?.data?.pagination}
+        currentPage={currentPage}
+        itemPerPage={itemPerPage}
+        setCurrentPage={setCurrentPage}
+        setItemPerPage={setItemPerPage}
       />
     </Layout>
   );

@@ -176,7 +176,7 @@
   background: var(--whiteColor);
 }
 
-.btn-check:checked + .filterItem {
+.btn-check:checked+.filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -200,10 +200,8 @@
 
 .rowInner {
   display: grid;
-  grid-template-columns: 80px minmax(0, 1.35fr) minmax(
-      0,
-      1.3fr
-    ) 80px 100px 100px 40px;
+  grid-template-columns: 80px minmax(0, 1.35fr) minmax(0,
+      1.3fr) 80px 100px 100px 40px;
   align-items: center;
   column-gap: 16px;
   width: 100%;
@@ -429,6 +427,7 @@
   color: var(--infoColor);
   background: var(--infoSubtleColor);
 }
+
 .processing {
   background: var(--primarySubtleColor);
   color: var(--primaryColor);
@@ -506,12 +505,44 @@
   white-space: nowrap;
 }
 
+.paginationContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--borderColor);
+  background: var(--whiteColor);
+}
+
+.paginationButton {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  background: var(--whiteColor);
+  border: 1px solid var(--borderColor);
+  color: var(--darkColor);
+  font-size: var(--fs14);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in;
+}
+
+.paginationButton:hover {
+  background: var(--primaryColor);
+  color: var(--whiteColor) !important;
+  border-color: var(--primaryColor);
+}
+
 @media (max-width: 1199.98px) {
   .rowInner {
-    grid-template-columns: 100px minmax(0, 1.3fr) minmax(
-        0,
-        1fr
-      ) 110px 130px 100px 36px;
+    grid-template-columns: 100px minmax(0, 1.3fr) minmax(0,
+        1fr) 110px 130px 100px 36px;
     column-gap: 12px;
   }
 }
