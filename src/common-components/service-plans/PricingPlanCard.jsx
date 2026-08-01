@@ -44,6 +44,9 @@ export default function PricingPlanCard({
   hasgoogleplans,
   lisceneCounterForPlan,
   setLisceneCounterForPlan,
+  price_type,
+  market_price,
+  distributor_price,
 }) {
   const router = useRouter();
   const isPopupVisible = useSelector(selectIsPopupVisible);
@@ -117,13 +120,15 @@ export default function PricingPlanCard({
         ) : null}
         <div className={styles.priceBlock}>
           <div className={styles.priceRow}>
-            {originalPriceLabel ? (
+            {/* {originalPriceLabel ? (
               <span className={styles.wasPrice}>{originalPriceLabel}</span>
-            ) : null}
+            ) : null} */}
             <span className={styles.price}>
               {priceLabel === "₹0.00"
                 ? "Contact Sales For Pricing"
-                : priceLabel}
+                : price_type === "market_value"
+                  ? `₹${market_price}`
+                  : `₹${distributor_price}`}
             </span>
           </div>
           {periodNote &&

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "@/components/subscription/all-subscriptions/AllSubscriptions.module.css";
 import { FiFilter, FiGlobe } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
@@ -6,7 +6,7 @@ import { LuPencil } from "react-icons/lu";
 import Loader from "@/common-components/loader/Loader";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { BiUser } from "react-icons/bi";
+import { BiChevronLeft, BiChevronRight, BiUser } from "react-icons/bi";
 
 const avatarColorClasses = [
   "avatarRed",
@@ -48,14 +48,24 @@ const statusOrder = [
 ];
 
 const AllSubscriptions = ({
+  paginationData,
   allSubscriptionsData,
   isAllSubscriptionDataLoading,
+  currentPage,
+  itemPerPage,
+  setCurrentPage,
+  setItemPerPage,
 }) => {
   const router = useRouter();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState("all");
+
+  const pageNumbersArray = Array.from(
+    { length: Math.ceil(paginationData?.total / itemPerPage) },
+    (_, i) => i + 1,
+  );
 
   const toggleStatus = (status) => {
     setSelectedStatuses((prev) => (prev === status ? "all" : status));
@@ -91,6 +101,11 @@ const AllSubscriptions = ({
       );
     },
   );
+
+  useEffect(() => {
+    setCurrentPage(paginationData?.current_page);
+    setItemPerPage(paginationData?.per_page);
+  }, [paginationData]);
 
   return (
     <div className="col">
@@ -367,6 +382,37 @@ const AllSubscriptions = ({
             </div>
           </div>
         </div>
+      </div>
+      {/* Pagination */}
+
+      <div className={styles.paginationContainer}>
+        <button
+          className={styles.paginationButton}
+          onClick={() => setCurrentPage((prev) => prev - 1)}
+        >
+          <BiChevronLeft size={16} />
+        </button>
+        {pageNumbersArray?.map((page) => (
+          <button
+            className={styles.paginationButton}
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            style={{
+              backgroundColor:
+                currentPage === page ? "var(--primaryColor)" : "",
+              color:
+                currentPage === page ? "var(--whiteColor)" : "var(--darkColor)",
+            }}
+          >
+            {page}
+          </button>
+        ))}
+        <button
+          className={styles.paginationButton}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+        >
+          <BiChevronRight size={16} />
+        </button>
       </div>
     </div>
   );

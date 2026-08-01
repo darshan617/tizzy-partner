@@ -80,6 +80,7 @@ const OrderSummaryCard = ({
   const [discountedPercent, setDiscountedPercent] = useState(0);
   const [isTermsAndConditionsChecked, setIsTermsAndConditionsChecked] =
     useState(false);
+  const [isUploadPo, setIsUploadPo] = useState(false);
 
   const providerId = Number(cartDetails?.[0]?.plan?.provider_id);
   const skipDomainVerification = providerId === 2;
@@ -512,7 +513,8 @@ const OrderSummaryCard = ({
           <span className={styles.value}>₹ {gst.toFixed(2)}</span>
         </div>
         {(router?.query?.type === "upgrade" ||
-          router?.query?.type === "downgrade") && (
+          router?.query?.type === "downgrade" ||
+          router?.query?.type === "partial-upgrade") && (
           <div className={styles.summaryRow}>
             <span className={styles.label}>Remaining Value</span>
             <span className={styles.value}>₹ {remainingValue}</span>

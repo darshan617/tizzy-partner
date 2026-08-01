@@ -578,6 +578,9 @@ const CommonOrderSummary = () => {
           order_id: router?.query?.order_id,
           order_sub_id: router?.query?.order_sub_id,
           is_upgrade: router?.query?.type === "upgrade" ? true : false,
+          main_cart_id: router?.query?.main_cart_id,
+          upgrade_mode:
+            router?.query?.type === "partial-upgrade" ? "partial" : "full",
         },
       });
       const walletBalance = res?.data?.wallet_balance;
@@ -754,6 +757,7 @@ const CommonOrderSummary = () => {
     if (router?.query?.type === "renew-plan") return;
     if (router?.query?.type === "upgrade") return;
     if (router?.query?.type === "downgrade") return;
+    if (router?.query?.type === "partial-upgrade") return;
     handleGetCartDetails();
   }, [userData?.id, router?.isReady, router?.query?.type]);
 
@@ -779,13 +783,16 @@ const CommonOrderSummary = () => {
     const customerId = router?.query?.customer_id || customerData?.customer_id;
     if (
       router?.query?.type === "upgrade" ||
-      (router?.query?.type === "downgrade" && customerId)
+      (router?.query?.type === "downgrade" && customerId) ||
+      router?.query?.type === "partial-upgrade"
     ) {
       handleGetUpgradeCartDetails();
     }
   }, [
     router?.isReady,
-    router?.query?.type === "upgrade" || router?.query?.type === "downgrade",
+    router?.query?.type === "upgrade" ||
+      router?.query?.type === "downgrade" ||
+      router?.query?.type === "partial-upgrade",
     router?.query?.customer_id,
     router?.query?.order_id,
     router?.query?.order_sub_id,

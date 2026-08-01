@@ -200,6 +200,26 @@ const addToCartApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["addToCart"],
     }),
+    partialUpgradeAddToCart: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/partial-upgrade-add-to-cart `,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
+    licenseDecreaseRequest: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/license-decrease-request`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -225,4 +245,6 @@ export const {
   useRenewCartDetailsMutation,
   useDowngradeCartMutation,
   useGenerateRenewOrderMutation,
+  usePartialUpgradeAddToCartMutation,
+  useLicenseDecreaseRequestMutation,
 } = addToCartApi;

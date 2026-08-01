@@ -503,6 +503,9 @@ export default function ServiceSlugPage({
                   [planKey]: value,
                 }));
               }}
+              price_type={plan?.price_type || ""}
+              market_price={plan?.market_price || "0"}
+              distributor_price={plan?.distributor_price || "0"}
               onCtaClick={() => {
                 const planKey = plan?.plan_id || plan?.id;
                 const licenses = lisceneCounterForPlan[planKey] ?? 1;
