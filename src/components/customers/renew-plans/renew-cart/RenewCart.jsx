@@ -8,7 +8,10 @@ import CustomDropdown from "@/common-components/custom-dropdown/CustomDropdown";
 import Loader from "@/common-components/loader/Loader";
 import Image from "next/image";
 import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarConstant";
-import { useDeleteFromCartMutation } from "@/redux/apis/addToCartApi";
+import {
+  useDeleteFromCartMutation,
+  useLicenseDecreaseRequestMutation,
+} from "@/redux/apis/addToCartApi";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import { IoClose } from "react-icons/io5";
 import { IoMdArrowDown } from "react-icons/io";
@@ -19,6 +22,7 @@ import {
   setIsPopupVisible,
 } from "@/redux/slices/popupSlice";
 import { GrDocumentText } from "react-icons/gr";
+import Cookies from "js-cookie";
 
 const toDomainArray = (value) => {
   if (Array.isArray(value)) return value.filter(Boolean);
@@ -51,6 +55,10 @@ const RenewCart = ({
   const { showToast } = useToast();
   const isPopupVisiblle = useSelector(selectIsPopupVisible);
   const dispatch = useDispatch();
+  const [renewalsQuantity, setRenewalsQuantity] = useState(0);
+  const userDetails = Cookies.get("userData")
+    ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
+    : null;
 
   const [cartToDelete, setCartToDelete] = useState({
     cart_id: null,
@@ -58,6 +66,8 @@ const RenewCart = ({
   });
   const [deleteFromCart, { isLoading: isDeletingFromCart }] =
     useDeleteFromCartMutation();
+  const [licenseDecreaseRequest, { isLoading: isDecreasingLicense }] =
+    useLicenseDecreaseRequestMutation();
   const handleClosePopup = () => {
     setIsPopupOpen("");
     dispatch(setIsPopupVisible(""));
@@ -106,6 +116,30 @@ const RenewCart = ({
     );
     setTempDomainNames(updatedDomains);
     onRemoveDomain?.(updatedDomains);
+  };
+
+  const handleRenewDecrease = async (renewalsQuantity) => {
+    try {
+      const res = await licenseDecreaseRequest({
+        body: {
+          partner_id: userDetails?.id,
+          order_id: router?.query?.order_id,
+          requested_licenses: renewalsQuantity,
+          cart_id: cartDetails?.[0]?.main_cart_id,
+          remarks: "Need fewer seats",
+        },
+      });
+      console.log("res", res);
+      if (res?.data?.success) {
+        showToast("License decreament request submitted", "success");
+
+        handleClosePopup();
+      } else {
+        showToast("Error submitting license decreament request", "error");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -598,6 +632,10 @@ const RenewCart = ({
                                   router?.query?.variant === "downgrade"
                                 }
                                 onClick={() => {
+                                  if (router?.query?.type === "renew-plan") {
+                                    setIsPopupOpen("license-decrease");
+                                    return;
+                                  }
                                   if (listMode) {
                                     if (lineLicenses > 1) {
                                       onLineLicensesChange?.(
@@ -790,6 +828,35 @@ const RenewCart = ({
                   className={`${styles.cancelBtn}`}
                 >
                   Cancel
+                </button>
+              </div>
+            </CustomPopup>
+          )}
+          {isPopupOpen === "license-decrease" && (
+            <CustomPopup
+              onClose={handleClosePopup}
+              maxWidth="400px"
+              title="License Decreament Request"
+            >
+              <div className="d-flex flex-column gap-2">
+                <input
+                  type="text"
+                  placeholder="Enter Renewals Quantity"
+                  value={renewalsQuantity}
+                  onChange={(e) =>
+                    setRenewalsQuantity(
+                      new RegExp("^[0-9]*$").test(e.target.value)
+                        ? e.target.value
+                        : renewalsQuantity,
+                    )
+                  }
+                  className={styles.reqQtyInput}
+                />
+                <button
+                  onClick={() => handleRenewDecrease(renewalsQuantity)}
+                  className={styles.submitBtn}
+                >
+                  Submit Request
                 </button>
               </div>
             </CustomPopup>

@@ -578,6 +578,7 @@ const CommonOrderSummary = () => {
           order_id: router?.query?.order_id,
           order_sub_id: router?.query?.order_sub_id,
           is_upgrade: router?.query?.type === "upgrade" ? true : false,
+          main_cart_id: router?.query?.main_cart_id,
           upgrade_mode:
             router?.query?.type === "partial-upgrade" ? "partial" : "full",
         },
