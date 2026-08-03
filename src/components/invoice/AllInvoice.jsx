@@ -214,10 +214,10 @@ const AllInvoice = ({
     );
   };
 
-  const handlePayNow = async (invoiceId) => {
+  const handlePayNow = async (invoiceId, type = "single") => {
     try {
       const res = await invoicesPaymentDetails({
-        body: { invoice_id: invoiceId?.length > 1 ? invoiceId : [invoiceId] },
+        body: { invoice_id: type === "multiple" ? invoiceId : [invoiceId] },
       });
       if (res?.data?.success || res?.data?.status) {
         showToast(res?.data?.message, "success");
@@ -234,7 +234,7 @@ const AllInvoice = ({
           handler: async function (response) {
             const verifyPaymentRes = await paymentVerify({
               body: {
-                invoice_id: invoiceId?.length > 1 ? invoiceId : [invoiceId],
+                invoice_id: type === "multiple" ? invoiceId : [invoiceId],
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
                 razorpay_order_id: response.razorpay_order_id,
@@ -408,7 +408,7 @@ const AllInvoice = ({
 
           <div className="d-flex align-items-center gap-2">
             <button
-              onClick={() => handlePayNow(selectedIds)}
+              onClick={() => handlePayNow(selectedIds, "multiple")}
               disabled={selectedIds?.length === 0}
               style={{
                 opacity: selectedIds?.length === 0 ? 0.5 : 1,
@@ -546,7 +546,10 @@ const AllInvoice = ({
                                           : "#02499662",
                                     }}
                                     onClick={() =>
-                                      handlePayNow(invoice?.invoice_id)
+                                      handlePayNow(
+                                        invoice?.invoice_id,
+                                        "single",
+                                      )
                                     }
                                   >
                                     Pay Now

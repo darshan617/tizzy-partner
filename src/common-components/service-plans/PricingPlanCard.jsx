@@ -190,7 +190,12 @@ export default function PricingPlanCard({
           <div className={styles.totalSide}>
             <span className={styles.counterLabel}>Total Amount</span>
             <span className={styles.totalAmount}>
-              ₹{(Number(planPrice) || 0) * licenseCount}
+              ₹
+              {(Number(
+                price_type === "market_value"
+                  ? market_price
+                  : distributor_price,
+              ) || 0) * licenseCount}
             </span>
             <span className={styles.totalMeta}>
               Excl. GST
