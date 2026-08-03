@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Eye, Pencil, Trash2, Plus } from "lucide-react";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import styles from "./UserManagement.module.css";
-
+import { useGetPartnerUsersMutation } from "@/redux/apis/userManagement";
+import Cookies from "js-cookie";
 const MOCK_USERS = [
   {
     id: "EMP-1042",
@@ -47,13 +48,39 @@ const avatarColorClasses = [
 ];
 
 const UserManagement = () => {
+  const userData = Cookies.get("userData")
+    ? JSON.parse(Cookies.get("userData"))
+    : null;
+  const [getPartnerUsers, { isLoading }] = useGetPartnerUsersMutation();
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
-
+  const [formData, setFormData] = useState({
+    name: "",
+    mobile: "",
+    email: "",
+    employee_id: "",
+    designation: "",
+    permissions: [],
+  });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
   const handleCloseAddUser = () => setIsAddUserOpen(false);
 
-  const handleSaveUser = (e) => {
-    e.preventDefault();
-    setIsAddUserOpen(false);
+  const handleAddUser = async (e) => {
+    try {
+      const response = await partnerUserAdd({
+        name: formData.name,
+        mobile: formData.mobile,
+        email: formData.email,
+        employee_id: formData.employee_id,
+        designation: formData.designation,
+        permissions: formData.permissions,
+        partner_id: userData.id,
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -71,9 +98,7 @@ const UserManagement = () => {
 
       <section className={`sectionCard ${styles.userListCard}`}>
         <div className={styles.cardHeader}>
-          <h2 className={styles.cardTitle}>
-            User List ({MOCK_USERS.length})
-          </h2>
+          <h2 className={styles.cardTitle}>User List ({MOCK_USERS.length})</h2>
           <button
             type="button"
             className={styles.addUserBtn}
@@ -153,89 +178,100 @@ const UserManagement = () => {
       </section>
 
       {isAddUserOpen && (
-        <CustomPopup
-          onClose={handleCloseAddUser}
-          title="Add User"
-        >
-          <form className={styles.addUserForm} onSubmit={handleSaveUser}>
+        <CustomPopup onClose={handleCloseAddUser} title="Add User">
+          <div className={styles.addUserForm}>
             <div className={styles.formGrid}>
               <div className={styles.formGroup}>
-                <label className={styles.label} htmlFor="username">
-                  Username
+                <label className={styles.label} htmlFor="name">
+                  Name
                   <span className={styles.required}>*</span>
                 </label>
                 <input
-                  id="username"
+                  id="name"
                   type="text"
-                  name="username"
+                  name="name"
                   className="form-control"
                   required
+                  value={formData.name}
+                  onChange={handleChange}
                 />
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.label} htmlFor="password">
-                  Password
+                <label className={styles.label} htmlFor="mobile">
+                  Mobile
                   <span className={styles.required}>*</span>
                 </label>
                 <input
-                  id="password"
-                  type="password"
-                  name="password"
+                  id="mobile"
+                  type="number"
+                  name="mobile"
                   className="form-control"
                   required
+                  value={formData.mobile}
+                  onChange={handleChange}
                 />
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.label} htmlFor="confirmPassword">
-                  Confirm Password
+                <label className={styles.label} htmlFor="email">
+                  Email
                   <span className={styles.required}>*</span>
                 </label>
                 <input
-                  id="confirmPassword"
-                  type="password"
-                  name="confirmPassword"
+                  id="email"
+                  type="email"
+                  name="email"
                   className="form-control"
                   required
+                  value={formData.email}
+                  onChange={handleChange}
                 />
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.label} htmlFor="role">
-                  Role
+                <label className={styles.label} htmlFor="employee_id">
+                  Employee ID
                   <span className={styles.required}>*</span>
                 </label>
                 <input
-                  id="role"
+                  id="employee_id"
                   type="text"
-                  name="role"
+                  name="employee_id"
                   className="form-control"
                   required
+                  value={formData.employee_id}
+                  onChange={handleChange}
                 />
               </div>
 
               <div className={`${styles.formGroup} ${styles.halfWidth}`}>
-                <label className={styles.label} htmlFor="status">
-                  Status
+                <label className={styles.label} htmlFor="designation">
+                  Designation
                   <span className={styles.required}>*</span>
                 </label>
                 <input
-                  id="status"
+                  id="designation"
                   type="text"
-                  name="status"
+                  name="designation"
                   className="form-control"
                   required
+                  value={formData.designation}
+                  onChange={handleChange}
                 />
               </div>
             </div>
 
             <div className={styles.submitWrap}>
-              <button type="submit" className={styles.saveBtn}>
-                Save
+              <button
+                type="button"
+                className={styles.saveBtn}
+                onClick={handleAddUser}
+              >
+                Add User
               </button>
             </div>
-          </form>
+          </div>
         </CustomPopup>
       )}
     </div>
