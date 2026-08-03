@@ -188,9 +188,7 @@
   transition: box-shadow 0.15s ease-in-out;
   overflow: hidden;
   padding: 14px 20px;
-  border: none;
   border: 1px solid var(--borderColor);
-  /* box-shadow: 0 2px 10px rgba(17, 24, 39, 0.06); */
 }
 
 .contentRow:not(.noHover):hover {
@@ -198,16 +196,22 @@
   background: #fff;
 }
 
+/* ============================================================
+   Row grid — desktop base
+   Areas are named explicitly so every breakpoint can reflow
+   without leaving any column as an unplaced/auto-placed item.
+   ============================================================ */
 .rowInner {
   display: grid;
-  grid-template-columns: 80px minmax(0, 1.35fr) minmax(0,
-      1.3fr) 80px 100px 100px 40px;
+  grid-template-columns: 80px minmax(0, 1.35fr) minmax(0, 1.3fr) 80px 100px 100px 40px;
+  grid-template-areas: "txn company plan license enrollment status arrow";
   align-items: center;
   column-gap: 16px;
   width: 100%;
 }
 
 .txnCol {
+  grid-area: txn;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -238,6 +242,7 @@
 }
 
 .companyCol {
+  grid-area: company;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -303,6 +308,7 @@
 }
 
 .planCol {
+  grid-area: plan;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -329,6 +335,7 @@
 }
 
 .licenseLine {
+  grid-area: license;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -348,6 +355,7 @@
 }
 
 .enrollmentCol {
+  grid-area: enrollment;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -372,6 +380,7 @@
 }
 
 .statusCol {
+  grid-area: status;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -457,6 +466,7 @@
 }
 
 .arrowCol {
+  grid-area: arrow;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -501,7 +511,6 @@
   margin-left: 2px;
   font-weight: 400;
   flex-shrink: 0;
-  /* never gets clipped or squeezed */
   white-space: nowrap;
 }
 
@@ -539,50 +548,92 @@
   border-color: var(--primaryColor);
 }
 
+/* ============================================================
+   RESPONSIVE
+   Every stage below re-declares grid-template-areas so txn,
+   company, plan, license, enrollment, status and arrow all
+   have an explicit home — nothing is left to auto-placement,
+   which is what was causing the overlap/squeeze at narrow
+   widths in the old version.
+   ============================================================ */
+
+/* Large desktop → laptop: trim column widths, same 7-col row */
 @media (max-width: 1199.98px) {
   .rowInner {
-    grid-template-columns: 100px minmax(0, 1.3fr) minmax(0,
-        1fr) 110px 130px 100px 36px;
+    grid-template-columns: 90px minmax(0, 1.2fr) minmax(0, 1fr) 70px 110px 100px 36px;
     column-gap: 12px;
   }
 }
 
-@media (max-width: 991.98px) {
+/* Tablet landscape: drop to two rows, but still airy —
+   txn/company/arrow on top, plan/license/enrollment/status below */
+@media (max-width: 1023.98px) {
   .rowInner {
-    grid-template-columns: 100px minmax(0, 1fr) minmax(0, 1fr) auto;
+    grid-template-columns: 90px minmax(0, 1fr) minmax(0, 0.9fr) 70px 120px auto;
     grid-template-areas:
-      "txn company company arrow"
-      "plan plan enrollment status";
+      "txn company company company company arrow"
+      "plan plan license enrollment status status";
+    row-gap: 14px;
+    column-gap: 12px;
+  }
+
+  .statusCol {
+    justify-content: flex-end;
+  }
+
+  .planCol {
+    padding-right: 8px;
+    border-right: 1px solid var(--borderColor);
+  }
+
+  .licenseLine {
+    align-items: flex-start;
+    padding-left: 4px;
+  }
+}
+
+/* Tablet portrait: simplify further, license moves in with plan
+   so nothing feels orphaned, status gets its own line */
+@media (max-width: 767.98px) {
+  .rowInner {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "txn arrow"
+      "company company"
+      "plan license"
+      "enrollment status";
     row-gap: 12px;
     column-gap: 12px;
   }
 
-  .txnCol {
-    grid-area: txn;
-  }
-
-  .companyCol {
-    grid-area: company;
-  }
-
   .planCol {
-    grid-area: plan;
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .licenseLine {
+    align-items: flex-end;
+    flex-direction: row;
+    gap: 6px;
+    justify-self: end;
   }
 
   .enrollmentCol {
-    grid-area: enrollment;
+    justify-content: flex-start;
   }
 
   .statusCol {
-    grid-area: status;
     justify-content: flex-end;
   }
 
-  .arrowCol {
-    grid-area: arrow;
+  .statusBadgeGroup {
+    align-items: flex-end;
+    text-align: right;
   }
 }
 
+/* Mobile: full stack, card-style rows with clear labels so
+   every field reads top-to-bottom instead of squeezing sideways */
 @media (max-width: 575.98px) {
   .searchCount {
     font-size: var(--fs11);
@@ -593,14 +644,15 @@
   }
 
   .rowInner {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr;
     grid-template-areas:
-      "txn arrow"
-      "company company"
-      "plan plan"
-      "enrollment status";
-    row-gap: 10px;
-    column-gap: 10px;
+      "txn"
+      "company"
+      "plan"
+      "meta"
+      "status";
+    row-gap: 12px;
+    column-gap: 0;
   }
 
   .txnCol {
@@ -608,11 +660,53 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--borderColor);
+  }
+
+  .companyCol {
+    padding-bottom: 4px;
+  }
+
+  .planCol {
+    border-top: 1px dashed var(--borderColor);
+    padding-top: 10px;
+  }
+
+  /* license + enrollment share one row on mobile so the card
+     doesn't grow too tall; both get grid-area: meta */
+  .licenseLine,
+  .enrollmentCol {
+    grid-area: meta;
+  }
+
+  .licenseLine {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    justify-self: start;
+  }
+
+  .enrollmentCol {
+    justify-self: end;
+    text-align: right;
+    align-items: flex-end;
   }
 
   .statusCol {
-    justify-content: flex-end;
+    justify-content: space-between;
+    border-top: 1px dashed var(--borderColor);
+    padding-top: 10px;
   }
+
+  .statusBadgeGroup {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  /* .arrowCol {
+    display: none;
+  } */
 
   .adjustWidth {
     margin-left: -0.75rem;
