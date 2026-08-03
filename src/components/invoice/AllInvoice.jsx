@@ -12,6 +12,12 @@ import {
   usePaymentVerifyMutation,
 } from "@/redux/apis/invoiceApi";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
+import { useDispatch, useSelector } from "react-redux";
+import CustomPopup from "@/common-components/custom-popup/CustomPopup";
+import {
+  selectIsPopupVisible,
+  setIsPopupVisible,
+} from "@/redux/slices/popupSlice";
 
 const statusLabelMap = {
   active: "Active",
@@ -97,6 +103,9 @@ const AllInvoice = ({
 }) => {
   const { showToast } = useToast();
   const router = useRouter();
+  const isPopupupVisible = useSelector(selectIsPopupVisible);
+  const dispatch = useDispatch();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState("all");
@@ -240,6 +249,7 @@ const AllInvoice = ({
                 razorpay_order_id: response.razorpay_order_id,
               },
             });
+            dispatch(setIsPopupVisible("verifying-payment"));
 
             if (
               verifyPaymentRes?.data?.success ||
@@ -249,12 +259,14 @@ const AllInvoice = ({
                 "Payment Successful" || verifyPaymentRes?.data?.message,
                 "success",
               );
+              dispatch(setIsPopupVisible(null));
               await fetchInvoiceData();
             } else {
               showToast(
                 "Payment Failed" || verifyPaymentRes?.data?.message,
                 "error",
               );
+              dispatch(setIsPopupVisible(null));
               await fetchInvoiceData();
             }
           },
@@ -268,6 +280,7 @@ const AllInvoice = ({
 
         rzp.on("payment.failed", async function (response) {
           showToast(response.error.description, "error");
+          dispatch(setIsPopupVisible(null));
           await fetchInvoiceData();
         });
 
@@ -276,11 +289,13 @@ const AllInvoice = ({
         console.log(res, "payment failed");
 
         showToast(res?.data?.message || res?.error?.data?.message, "error");
+        dispatch(setIsPopupVisible(null));
         await fetchInvoiceData();
       }
     } catch (error) {
       console.log(error, "payment error");
       showToast(error?.data?.message || error?.error?.data?.message, "error");
+      dispatch(setIsPopupVisible(null));
       await fetchInvoiceData();
     }
   };
@@ -591,6 +606,18 @@ const AllInvoice = ({
           </div>
         </div>
       </div>
+      {isPopupupVisible === "verifying-payment" && (
+        <CustomPopup
+          isOpen={true}
+          onClose={() => dispatch(setIsPopupVisible(null))}
+        >
+          <div className={styles.verifyingPaymentPopup}>
+            <Loader />
+            <h2>Verifying Payment...</h2>
+            <p>Please wait while we verify your payment.</p>
+          </div>
+        </CustomPopup>
+      )}
     </div>
   );
 };
