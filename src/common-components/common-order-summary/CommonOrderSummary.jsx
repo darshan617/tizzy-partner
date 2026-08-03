@@ -92,6 +92,31 @@ const buildAutoUpdateCartBody = ({
   return body;
 };
 
+/** Pick the cart line from update-cart response (object, array, or plans wrapper). */
+const resolveUpdatedCartItem = (payload, { cartId, itemIndex = 0 } = {}) => {
+  if (!payload || typeof payload !== "object") return null;
+
+  const list = Array.isArray(payload)
+    ? payload
+    : Array.isArray(payload?.plans)
+      ? payload.plans
+      : null;
+
+  if (list) {
+    if (cartId != null && cartId !== "") {
+      const matched = list.find(
+        (row) =>
+          String(row?.cart_id ?? "") === String(cartId) ||
+          String(row?.id ?? "") === String(cartId),
+      );
+      if (matched) return matched;
+    }
+    return list[itemIndex] ?? list[0] ?? null;
+  }
+
+  return payload;
+};
+
 const normalizeUpgradePlans = (plans, walletBalance) => {
   const list = Array.isArray(plans) ? plans : plans ? [plans] : [];
   return list.map((item) => ({
@@ -126,6 +151,7 @@ const CommonOrderSummary = () => {
   const [aadharNumber, setAadharNumber] = useState("");
   const [transferCode, setTransferCode] = useState("");
   const [currentPlanDetails, setCurrentPlanDetails] = useState({});
+  const [uploadPoPdf, setUploadPoPdf] = useState(null);
 
   const DOMAIN_SUFFIX = ".onmicrosoft.com";
   useEffect(() => {
@@ -366,7 +392,9 @@ const CommonOrderSummary = () => {
           coupen: promoCode,
         },
       });
-      const updatedItem = updateRes?.data?.data;
+      const updatedItem = resolveUpdatedCartItem(updateRes?.data?.data, {
+        cartId: resolvedCartId,
+      });
       if (updatedItem) {
         setCartDetails((prev) => {
           if (Array.isArray(prev)) {
@@ -681,11 +709,10 @@ const CommonOrderSummary = () => {
 
     const timer = setTimeout(async () => {
       for (const [idx, item] of cartDetails.entries()) {
-        console.log("item:😉", item);
         const main_cart_id =
           item?.main_cart_id ?? item?.renew_plan?.main_cart_id;
 
-        if (!main_cart_id) return;
+        if (!main_cart_id) continue;
 
         const body = buildAutoUpdateCartBody({
           item,
@@ -699,18 +726,18 @@ const CommonOrderSummary = () => {
         });
 
         const updateRes = await updateCart({ body });
-        const updatedItem = updateRes?.data?.data;
+        const updatedItem = resolveUpdatedCartItem(updateRes?.data?.data, {
+          cartId: body?.cart_id ?? item?.cart_id,
+          itemIndex: idx,
+        });
+
         if (updatedItem) {
+          // Match by loop index first — API cart_id/id often differ from local row keys
           setCartDetails((prev) => {
-            if (!Array.isArray(prev)) return prev;
-            return prev.map((row, rowIdx) => {
-              const rowKey = row?.cart_id ?? row?.id ?? rowIdx;
-              const updatedKey =
-                updatedItem?.cart_id ?? updatedItem?.id ?? body?.cart_id;
-              return String(rowKey) === String(updatedKey)
-                ? { ...row, ...updatedItem }
-                : row;
-            });
+            if (!Array.isArray(prev)) return { ...prev, ...updatedItem };
+            return prev.map((row, rowIdx) =>
+              rowIdx === idx ? { ...row, ...updatedItem } : row,
+            );
           });
         }
       }
@@ -881,6 +908,8 @@ const CommonOrderSummary = () => {
               setTransferCode={setTransferCode}
               handleAadharNumber={handleAadharNumber}
               isAadharNumberLoading={isAadharNumberLoading}
+              uploadPoPdf={uploadPoPdf}
+              setUploadPoPdf={setUploadPoPdf}
             />
           </aside>
         </div>

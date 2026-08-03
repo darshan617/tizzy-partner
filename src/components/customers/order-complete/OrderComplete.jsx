@@ -55,7 +55,7 @@ const OrderComplete = () => {
   const companyName = firstItem?.company_name;
   const domainName = firstItem?.domain_name;
   const poLink = router?.query?.po || firstItem?.po?.po_link;
-  const poNumber = firstItem?.po?.po_number;
+  const poNumber = orderDetails?.po_number;
 
   const totalAmount = router?.query?.crdUsage;
 
