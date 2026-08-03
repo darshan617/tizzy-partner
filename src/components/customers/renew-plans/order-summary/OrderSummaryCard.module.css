@@ -295,6 +295,122 @@
     transform: scale(0.98);
 }
 
+.uploadPoPopup {
+    margin: -16px -18px -16px;
+    text-align: center;
+}
+
+.uploadPoPopupContent {
+    padding: 32px 28px 20px;
+}
+
+.uploadPoPopupTitle {
+    margin: 0 0 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.3;
+}
+
+.uploadPoPopupSubtitle {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: #6b7280;
+    line-height: 1.45;
+}
+
+.uploadPoPopupActions {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0 24px 28px;
+}
+
+.uploadPoHiddenInput {
+    display: none;
+}
+
+.uploadPoPrimaryBtn {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 30px 10px;
+    background: #cfe5ff;
+    color: var(--primaryColor);
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+    border: 2px dotted var(--primaryColor);
+}
+
+.uploadPoNumberInput {
+    margin-bottom: 10px;
+}
+
+.uploadPoRemoveBtn {
+    margin-bottom: 10px;
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    display: inline-block;
+}
+
+
+.uploadPoPrimaryBtn:active {
+    transform: scale(0.98);
+}
+
+.uploadPoDivider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 18px 0;
+    color: #9ca3af;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+}
+
+.uploadPoDivider::before,
+.uploadPoDivider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+.uploadPoSecondaryBtn {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    background: #ffffff;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+}
+
+.uploadPoSecondaryBtn:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.uploadPoSecondaryBtn:active {
+    transform: scale(0.98);
+}
+
 .newServicePopup {
     margin: -16px -18px -16px;
 }
@@ -546,6 +662,25 @@
 .transferSupportLink:hover {
     text-decoration: underline;
     color: #1e40af;
+}
+
+.uploadPoPdfPreview {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #111827;
+    line-height: 1.45;
+    margin: 10px 0;
+}
+
+.uploadPoNumberInput {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 400;
+    outline: none;
 }
 
 @media (max-width: 768px) {

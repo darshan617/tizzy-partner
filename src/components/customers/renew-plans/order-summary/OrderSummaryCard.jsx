@@ -14,7 +14,7 @@ import {
   usePromoCodeMutation,
   useTransferCodeMutation,
 } from "@/redux/apis/addToCartApi";
-import { BiCheck, BiX } from "react-icons/bi";
+import { BiCheck, BiUpload, BiX } from "react-icons/bi";
 import Cookies from "js-cookie";
 import {
   selectIsPopupVisible,
@@ -58,7 +58,10 @@ const OrderSummaryCard = ({
   setTransferCode,
   handleAadharNumber,
   isAadharNumberLoading,
+  uploadPoPdf,
+  setUploadPoPdf,
 }) => {
+  console.log("uploadPoPdf", uploadPoPdf);
   console.log("cartDetails", cartDetails);
   const dispatch = useDispatch();
   const isPopupVisible = useSelector(selectIsPopupVisible);
@@ -81,6 +84,8 @@ const OrderSummaryCard = ({
   const [isTermsAndConditionsChecked, setIsTermsAndConditionsChecked] =
     useState(false);
   const [isUploadPo, setIsUploadPo] = useState(false);
+  const [poNumber, setPoNumber] = useState("");
+  console.log("isUploadPo", isUploadPo);
 
   const providerId = Number(cartDetails?.[0]?.plan?.provider_id);
   const skipDomainVerification = providerId === 2;
@@ -304,13 +309,23 @@ const OrderSummaryCard = ({
 
   const handelProceed = async () => {
     try {
+      const formData = new FormData();
+
+      formData.append("partner_id", userData?.id);
+      formData.append(
+        "main_cart_id",
+        cartDetails?.[0]?.main_cart_id ||
+          cartDetails?.[0]?.renew_plan?.main_cart_id,
+      );
+      formData.append("po_mode", isUploadPo ? "uploaded" : "generated");
+      formData.append("po_number", poNumber);
+
+      if (uploadPoPdf) {
+        formData.append("po_document", uploadPoPdf); // Binary file
+      }
+
       const res = await generateNewOrder({
-        body: {
-          partner_id: userData?.id,
-          main_cart_id:
-            cartDetails?.[0]?.main_cart_id ||
-            cartDetails?.[0]?.renew_plan?.main_cart_id,
-        },
+        body: formData,
       });
       if (res?.data?.success) {
         router?.push({
@@ -475,7 +490,10 @@ const OrderSummaryCard = ({
               color: discountedAmount > 0 ? "#2dc718" : "#444444",
             }}
           >
-            ₹ -{discountedAmount?.toFixed(2) || "0.00"}
+            ₹ -
+            {discountedAmount?.toFixed(2) ||
+              cartDetails?.[0]?.discount_amount ||
+              "0.00"}
           </span>
         </div>
 
@@ -694,14 +712,27 @@ const OrderSummaryCard = ({
               tempDomainNames?.length >= 1 &&
               router?.query?.type !== "renew-plan"
             ) {
-              handelProceed();
+              if (!isUploadPo) {
+                setIsPopupOpen("upload-po");
+              } else {
+                handelProceed();
+              }
             } else if (
               router?.query?.type === "upgrade" ||
-              router?.query?.type === "downgrade"
+              router?.query?.type === "downgrade" ||
+              router?.query?.type === "partial-upgrade"
             ) {
-              handelUpgradeProceed();
+              if (!isUploadPo) {
+                setIsPopupOpen("upload-po");
+              } else {
+                handelUpgradeProceed();
+              }
             } else if (router?.query?.type === "renew-plan") {
-              handleRenewProceed();
+              if (!isUploadPo) {
+                setIsPopupOpen("upload-po");
+              } else {
+                handleRenewProceed();
+              }
             } else {
               setIsPopupOpen("proceed");
             }
@@ -1098,6 +1129,102 @@ const OrderSummaryCard = ({
               <strong>Note:</strong> Your existing subscription tenure with the
               previous provider will not be carried forward.
             </p>
+          </div>
+        </CustomPopup>
+      )}
+      {isPopupOpen === "upload-po" && (
+        <CustomPopup onClose={handleClosePopup} maxWidth="400px">
+          <div className={styles.uploadPoPopup}>
+            <div className={styles.uploadPoPopupContent}>
+              <h3 className={styles.uploadPoPopupTitle}>
+                How would you like to continue?
+              </h3>
+              <p className={styles.uploadPoPopupSubtitle}>
+                Upload a purchase order or proceed without one.
+              </p>
+            </div>
+            <div className={styles.uploadPoPopupActions}>
+              <input
+                id="poNumberInput"
+                type="text"
+                className={styles.uploadPoNumberInput}
+                placeholder="Enter PO Number"
+                value={poNumber}
+                onChange={(e) => setPoNumber(e.target.value)}
+              />
+              <label
+                htmlFor="uploadPoInput"
+                className={styles.uploadPoPrimaryBtn}
+              >
+                <BiUpload size={18} /> Upload PO
+              </label>
+
+              <input
+                id="uploadPoInput"
+                type="file"
+                accept=".pdf"
+                className={styles.uploadPoHiddenInput}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    setIsUploadPo(true);
+                    setUploadPoPdf(file);
+                  }
+                }}
+              />
+
+              {uploadPoPdf && (
+                <>
+                  <div>
+                    <p className={styles.uploadPoPdfPreview}>
+                      Selected File: {uploadPoPdf.name}
+                    </p>
+                    <button
+                      type="button"
+                      className={styles.uploadPoRemoveBtn}
+                      onClick={() => setUploadPoPdf(null)}
+                    >
+                      <BiX size={18} color="red" />
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.uploadPoSecondaryBtn}
+                    onClick={() => {
+                      if (
+                        router?.query?.type === "upgrade" ||
+                        router?.query?.type === "downgrade" ||
+                        router?.query?.type === "partial-upgrade"
+                      ) {
+                        handelUpgradeProceed();
+                      } else if (router?.query?.type === "renew-plan") {
+                        handleRenewProceed();
+                      } else {
+                        handelProceed();
+                      }
+                    }}
+                  >
+                    Proceed with your PO
+                  </button>
+                </>
+              )}
+
+              <div className={styles.uploadPoDivider}>
+                <span>OR</span>
+              </div>
+              <button
+                type="button"
+                className={styles.uploadPoSecondaryBtn}
+                onClick={() => handelProceed()}
+                disabled={uploadPoPdf}
+                style={{
+                  opacity: uploadPoPdf ? 0.5 : 1,
+                  cursor: uploadPoPdf ? "not-allowed" : "pointer",
+                }}
+              >
+                Proceed without PO
+              </button>
+            </div>
           </div>
         </CustomPopup>
       )}

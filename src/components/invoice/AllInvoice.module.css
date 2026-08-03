@@ -384,7 +384,15 @@
   color: var(--whiteColor);
   font-size: var(--fs14);
   font-weight: 500;
-  padding: 0 1rem;
+  padding: 1rem;
+}
+
+.verifyingPaymentPopup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 
