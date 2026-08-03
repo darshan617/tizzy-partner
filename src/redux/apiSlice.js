@@ -24,6 +24,7 @@ export const apiSlice = createApi({
     "accountDetail",
     "supportTickets",
     "creditNotes",
+    "userManagement",
   ],
   endpoints: (builder) => ({}),
 });

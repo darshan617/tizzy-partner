@@ -391,3 +391,15 @@
         font-size: var(--fs24);
     }
 }
+
+@media (max-width: 575px) {
+    .statAnchorIcon {
+        width: 16px ;
+        height: 16px ;
+        stroke-width: 2.5;
+    }
+    .statAnchor{
+        width: 20px;
+        height: 20px;
+    }
+}
