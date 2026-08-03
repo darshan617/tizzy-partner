@@ -85,6 +85,7 @@ const Support = () => {
           </div>
         </div>
 
+        {ticketsData?.length > 0 && isLoading ? (
         <div className="swiper supportSwiper px-sm-4 px-3 mb-4">
           <div className="swiper-wrapper mb-4">
             {ticketsData?.slice(0, 5)?.map((ticket, idx) => (
@@ -142,7 +143,15 @@ const Support = () => {
           </div>
           <div className="swiper-scrollbar"></div>
         </div>
-
+        ):(
+          <div className="d-sm-flex justify-content-center align-items-center px-sm-4 px-3 gap-2 mb-4">
+            <div className="col-auto lightText text-center">
+              <small>No Tickets Found</small>
+            </div>
+          </div>
+        )
+        }
+        {ticketsData?.length > 0 && (
         <div className="d-sm-flex justify-content-center align-items-center px-sm-4 px-3 gap-2 mb-4">
           <div className="col-auto lightText text-center">
             <small>Quick Links:</small>
@@ -161,12 +170,14 @@ const Support = () => {
               </a>
             </div> */}
             <div className="">
-              <Link href="/support" className="btn small btnDefault">
-                <span>View All Tickets</span>
-              </Link>
+              
+                <Link href="/support" className="btn small btnDefault">
+                  <span>View All Tickets</span>
+                  </Link> 
             </div>
           </div>
         </div>
+        )}
       </div>
     </div>
   );
