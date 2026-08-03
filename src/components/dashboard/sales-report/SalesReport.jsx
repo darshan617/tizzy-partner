@@ -169,7 +169,7 @@ const SalesReport = ({ data, isDataLoading }) => {
         },
       });
       if (res?.data?.success || res?.data?.status) {
-        setSalesData(res?.data);
+        setSalesData(res?.data?.data ?? res?.data);
       }
     } catch (error) {
       console.log("erorr", error);

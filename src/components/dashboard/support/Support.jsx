@@ -24,16 +24,26 @@ const Support = () => {
   }, [userData?.id]);
 
   useEffect(() => {
+    if (!ticketsData?.length) return;
+
+    let swiperInstance = null;
+    let cancelled = false;
+
     const initSwiper = async () => {
       const { default: Swiper } = await import("swiper");
       const { Scrollbar, Mousewheel } = await import("swiper/modules");
 
-      new Swiper(".supportSwiper", {
+      if (cancelled) return;
+
+      const el = document.querySelector(".supportSwiper");
+      if (!el) return;
+
+      swiperInstance = new Swiper(el, {
         modules: [Scrollbar, Mousewheel],
         slidesPerView: 1.1,
         spaceBetween: 15,
         scrollbar: {
-          el: ".swiper-scrollbar",
+          el: ".supportSwiper .swiper-scrollbar",
           hide: false,
           draggable: true,
           dragSize: 80,
@@ -55,7 +65,12 @@ const Support = () => {
     };
 
     initSwiper();
-  }, []);
+
+    return () => {
+      cancelled = true;
+      swiperInstance?.destroy?.(true, true);
+    };
+  }, [ticketsData]);
 
   const domainColor = [
     "avatarRed",
@@ -88,7 +103,7 @@ const Support = () => {
         <div className="swiper supportSwiper px-sm-4 px-3 mb-4">
           <div className="swiper-wrapper mb-4">
             {ticketsData?.slice(0, 5)?.map((ticket, idx) => (
-              <div className="swiper-slide">
+              <div className="swiper-slide" key={ticket?.ticket_id || idx}>
                 <div className="supportTkt btnDisplay d-flex flex-column">
                   <div className="stktTop d-flex align-items-center col-auto">
                     <div className="col">
