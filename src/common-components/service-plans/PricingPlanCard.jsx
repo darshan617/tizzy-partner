@@ -8,8 +8,8 @@ import {
   setIsPopupVisible,
 } from "@/redux/slices/popupSlice";
 import { FaRegQuestionCircle } from "react-icons/fa";
-import { useGetEnqueryNowMutation } from "@/redux/apis/servicesApi";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
+import { useGetEnqueryNowMutation } from "@/redux/apis/servicesApi";
 import Cookies from "js-cookie";
 
 function CheckIcon() {
