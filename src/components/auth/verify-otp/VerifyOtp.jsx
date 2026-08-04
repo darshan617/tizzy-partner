@@ -410,10 +410,16 @@ const VerifyOtp = () => {
   useEffect(() => {
     setOtpDetails((prev) => ({
       ...prev,
-      email: userData?.email,
-      mobile: userData?.mobile,
+      email:
+        router?.query?.inputType === "email"
+          ? router?.query?.inp
+          : userData?.email,
+      mobile:
+        router?.query?.inputType === "mobile"
+          ? router?.query?.inp
+          : userData?.mobile,
     }));
-  }, []);
+  }, [userData, router?.query?.inp]);
 
   return router?.query?.type === "order" ? (
     <Layout>{otpContent}</Layout>
