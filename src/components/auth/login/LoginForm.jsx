@@ -60,7 +60,14 @@ const LoginForm = () => {
       });
 
       if (res?.data?.success) {
-        router?.push("/auth/otp-verification?type=login");
+        router?.push({
+          pathname: "/auth/otp-verification",
+          query: {
+            type: "login",
+            inputType: inputType,
+            inp: input,
+          },
+        });
         setInput("");
         if (inputType === "mobile") {
           dispatch(setUserData({ mobile: input }));

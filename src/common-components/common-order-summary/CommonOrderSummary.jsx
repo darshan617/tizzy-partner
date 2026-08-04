@@ -467,6 +467,8 @@ const CommonOrderSummary = () => {
         body: {
           order_id: router?.query?.order_id,
           partner_id: userData?.id,
+          order_sub_id: router?.query?.order_sub_id,
+          plan_id: router?.query?.planId,
         },
       });
       if (res?.data?.success) {

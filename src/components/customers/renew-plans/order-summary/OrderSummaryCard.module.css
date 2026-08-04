@@ -163,10 +163,12 @@
     padding: 5px 2px 2px 5px;
     font-size: 14px;
     color: #111827;
+    text-transform: uppercase;
 }
 
 .promoInput::placeholder {
     color: #c0c0c0;
+    text-transform: capitalize;
 }
 
 .applyBtn {
