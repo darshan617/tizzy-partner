@@ -174,7 +174,7 @@
   background: var(--whiteColor);
 }
 
-.btn-check:checked+.filterItem {
+.btn-check:checked + .filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -395,7 +395,6 @@
   gap: 1rem;
 }
 
-
 @media (max-width: 1100px) {
   .amountValue {
     margin-left: -30px !important;
@@ -423,10 +422,18 @@
   .invoiceMeta {
     min-width: auto;
   }
+  .toolbar {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 720px) {
+  .toolbar {
+    margin-top: 20px;
+  }
 }
 
 @media (min-width: 768px) {
-
   .sectionCard {
     width: 100%;
     min-height: 600px;

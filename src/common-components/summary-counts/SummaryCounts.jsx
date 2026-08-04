@@ -477,7 +477,7 @@ export default function SummaryCounts({
             ) : null}
           </div>
 
-          <div className="row row-cols-md-4 row-cols-sm-4 row-cols-2 g-sm-4 g-3">
+          <div className="row row-cols-md-4 row-cols-sm-2 row-cols-2 g-sm-4 g-3">
             {infoBtn && (
               <div className="col pt-4 m-0">
                 <div
