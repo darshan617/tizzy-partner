@@ -12,12 +12,15 @@ import { FaPen } from "react-icons/fa";
 import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
 import Image from "next/image";
 import { FiLayers } from "react-icons/fi";
+import { usePartialUpgradeAddToCartMutation } from "@/redux/apis/addToCartApi";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
+
 export default function CustomerDetail() {
+  const { showToast } = useToast();
   const router = useRouter();
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
-
   const { data: customerDetailsData, refetch: refetchCustomerDetails } =
     useGetSpecificCustomerDetailsQuery(
       {
@@ -28,6 +31,10 @@ export default function CustomerDetail() {
         skip: !router?.isReady || !router?.query?.customerId || !userData?.id,
       },
     );
+  const [
+    partialUpgradeAddToCart,
+    { isLoading: isPartialUpgradeAddToCartLoading },
+  ] = usePartialUpgradeAddToCartMutation();
 
   const customerDetails = customerDetailsData?.data?.customer;
   const allPlans = customerDetailsData?.data?.current_plans;
@@ -192,6 +199,41 @@ export default function CustomerDetail() {
     if (provider_id === 2) return "microsoft-365";
     if (provider_id === 3) return "google-workspace";
     return "google-workspace";
+  };
+
+  const handlePartialUpgrade = async (plan) => {
+    console.log("Plan", plan);
+    try {
+      const res = await partialUpgradeAddToCart({
+        body: {
+          partner_id: userData?.id,
+          order_id: plan?.order_id,
+          order_sub_id: plan?.order_sub_id,
+          licenses: plan?.license_count,
+          customer_id: router?.query?.customerId,
+        },
+      });
+
+      if (res?.data?.success) {
+        console.log("Res", res?.data?.data);
+        router?.push({
+          pathname: "/order-summary",
+          query: {
+            type: "partial-upgrade",
+            order_id: plan?.order_id,
+            order_sub_id: plan?.order_sub_id,
+            licenses: plan?.license_count,
+            customer_id: router?.query?.customerId,
+            main_cart_id: res?.data?.data?.main_cart_id,
+          },
+        });
+      } else {
+        showToast(res?.error?.data?.message, "error");
+      }
+    } catch (error) {
+      console.log("partialUpgradeAddToCart Error", error);
+      showToast("Something went wrong", "error");
+    }
   };
 
   return (
@@ -941,6 +983,8 @@ export default function CustomerDetail() {
                                 query: {
                                   type: "renew-plan",
                                   order_id: innerPlan?.order_id,
+                                  order_sub_id: innerPlan?.order_sub_id,
+                                  planId: innerPlan?.plan_id,
                                 },
                               })
                             }
@@ -950,39 +994,47 @@ export default function CustomerDetail() {
                         )}
                         {innerPlan?.status?.toLowerCase() !== "draft" &&
                           innerPlan?.status?.toLowerCase() !== "pending" && (
-                            <Link
-                              href={{
-                                pathname: `/services/${
-                                  innerPlan?.provider_name === "Tizzy Mail"
-                                    ? "tizzy"
-                                    : innerPlan?.provider_name ===
-                                        "Microsoft 365"
-                                      ? "microsoft-365"
-                                      : "google-workspace"
-                                }`,
-                                query: {
-                                  type: "upgrade",
-                                  order_id: innerPlan?.order_id,
-                                  customer_id: router?.query?.customerId,
-                                  plan_id: innerPlan?.plan_id,
-                                  order_sub_id: innerPlan?.order_sub_id,
-                                },
-                              }}
-                              className={`${styles.subUpgradeBtn}`}
-                              onClick={() => {
-                                Cookies.remove("customerData");
-                                Cookies.set(
-                                  "customerData",
-                                  JSON.stringify({
-                                    partner_id: userData?.id,
+                            <>
+                              <Link
+                                href={{
+                                  pathname: `/services/${
+                                    innerPlan?.provider_name === "Tizzy Mail"
+                                      ? "tizzy"
+                                      : innerPlan?.provider_name ===
+                                          "Microsoft 365"
+                                        ? "microsoft-365"
+                                        : "google-workspace"
+                                  }`,
+                                  query: {
+                                    type: "upgrade",
+                                    order_id: innerPlan?.order_id,
                                     customer_id: router?.query?.customerId,
-                                    domain_name: innerPlan?.domain_name,
-                                  }),
-                                );
-                              }}
-                            >
-                              Upgrade
-                            </Link>
+                                    plan_id: innerPlan?.plan_id,
+                                    order_sub_id: innerPlan?.order_sub_id,
+                                  },
+                                }}
+                                className={`${styles.subUpgradeBtn}`}
+                                onClick={() => {
+                                  Cookies.remove("customerData");
+                                  Cookies.set(
+                                    "customerData",
+                                    JSON.stringify({
+                                      partner_id: userData?.id,
+                                      customer_id: router?.query?.customerId,
+                                      domain_name: innerPlan?.domain_name,
+                                    }),
+                                  );
+                                }}
+                              >
+                                Upgrade
+                              </Link>
+                              <button
+                                onClick={() => handlePartialUpgrade(innerPlan)}
+                                className={styles.subUpgradeTextLink}
+                              >
+                                Partial Upgrade
+                              </button>
+                            </>
                           )}
                         {(innerPlan?.status?.toLowerCase() === "expiring" ||
                           innerPlan?.status?.toLowerCase() === "expired") && (

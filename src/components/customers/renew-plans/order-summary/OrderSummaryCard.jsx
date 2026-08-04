@@ -840,6 +840,7 @@ const OrderSummaryCard = ({
                         setDomainInput(value);
                       }}
                       aria-label="Domain prefix"
+                      autoFocus={true}
                     />
                     {skipDomainVerification && (
                       <span className={styles.domainFieldSuffix}>
@@ -1215,7 +1216,19 @@ const OrderSummaryCard = ({
               <button
                 type="button"
                 className={styles.uploadPoSecondaryBtn}
-                onClick={() => handelProceed()}
+                onClick={() => {
+                  if (
+                    router?.query?.type === "upgrade" ||
+                    router?.query?.type === "downgrade" ||
+                    router?.query?.type === "partial-upgrade"
+                  ) {
+                    handelUpgradeProceed();
+                  } else if (router?.query?.type === "renew-plan") {
+                    handleRenewProceed();
+                  } else {
+                    handelProceed();
+                  }
+                }}
                 disabled={uploadPoPdf}
                 style={{
                   opacity: uploadPoPdf ? 0.5 : 1,
