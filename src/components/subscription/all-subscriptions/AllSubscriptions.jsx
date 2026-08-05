@@ -389,6 +389,8 @@ const AllSubscriptions = ({
         <button
           className={styles.paginationButton}
           onClick={() => setCurrentPage((prev) => prev - 1)}
+          disabled={currentPage === 1}
+        
         >
           <BiChevronLeft size={16} />
         </button>
@@ -410,6 +412,7 @@ const AllSubscriptions = ({
         <button
           className={styles.paginationButton}
           onClick={() => setCurrentPage((prev) => prev + 1)}
+          disabled={currentPage === pageNumbersArray?.length}
         >
           <BiChevronRight size={16} />
         </button>
