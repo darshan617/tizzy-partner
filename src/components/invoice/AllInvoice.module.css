@@ -426,6 +426,13 @@
   .toolbar {
     margin-top: 20px;
   }
+  .downloadListBtn{
+    font-size: 20px;
+    gap: 0;
+  }
+  .paySelectedBtn{
+    padding: 5px;
+  }
 }
 
 @media (max-width: 720px) {

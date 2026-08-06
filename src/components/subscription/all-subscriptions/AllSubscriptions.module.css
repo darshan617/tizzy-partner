@@ -517,8 +517,8 @@
   margin-top: 20px;
   padding: 10px;
   border-radius: 5px;
-  border: 1px solid var(--borderColor);
-  background: var(--whiteColor);
+  /* border: 1px solid var(--borderColor);
+  background: var(--whiteColor); */
 }
 
 .paginationButton {
@@ -685,6 +685,10 @@
     width: auto;
     border-radius: 0;
   }
+  
+.companyInfo {
+ padding: 10px  0;
+}
 }
 
 @media (min-width: 576px) {
