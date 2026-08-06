@@ -57,6 +57,7 @@ const Invoice = () => {
         isInvoiceDataLoading={isInvoiceDataLoading}
         totalCount={totalInvoices}
         fetchInvoiceData={fetchInvoiceData}
+        paymentAttempts={invoiceDetailsData?.payment_attempts}
       />
     </Layout>
   );
