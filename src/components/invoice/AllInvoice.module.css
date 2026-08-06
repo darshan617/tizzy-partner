@@ -174,7 +174,7 @@
   background: var(--whiteColor);
 }
 
-.btn-check:checked+.filterItem {
+.btn-check:checked + .filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -376,15 +376,16 @@
 }
 
 .paySelectedBtn {
-  min-width: 100px;
-  height: 34px;
-  border-radius: 50rem;
   border: 1px solid var(--borderColor);
   background: var(--primaryColor);
+  min-width: 100px;
+  /* height: 34px; */
   color: var(--whiteColor);
   font-size: var(--fs14);
+  border-radius: 50rem;
+  /* padding: 0rem; */
   font-weight: 500;
-  padding: 1rem;
+  padding: 5px 10px;
 }
 
 .verifyingPaymentPopup {
@@ -394,7 +395,6 @@
   justify-content: center;
   gap: 1rem;
 }
-
 
 @media (max-width: 1100px) {
   .amountValue {
@@ -423,10 +423,25 @@
   .invoiceMeta {
     min-width: auto;
   }
+  .toolbar {
+    margin-top: 20px;
+  }
+  .downloadListBtn{
+    font-size: 20px;
+    gap: 0;
+  }
+  .paySelectedBtn{
+    padding: 5px;
+  }
+}
+
+@media (max-width: 720px) {
+  .toolbar {
+    margin-top: 20px;
+  }
 }
 
 @media (min-width: 768px) {
-
   .sectionCard {
     width: 100%;
     min-height: 600px;

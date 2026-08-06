@@ -100,7 +100,9 @@ const AllInvoice = ({
   isInvoiceDataLoading,
   totalCount,
   fetchInvoiceData,
+  paymentAttempts,
 }) => {
+  console.log("paymentAttempts", paymentAttempts);
   const { showToast } = useToast();
   const router = useRouter();
   const isPopupupVisible = useSelector(selectIsPopupVisible);
@@ -168,7 +170,7 @@ const AllInvoice = ({
     (invoice) =>
       invoice?.status?.toLowerCase() !== "paid" &&
       invoice?.status?.toLowerCase() !== "cancelled" &&
-      !invoice?.payment_link_expired,
+      !paymentAttempts?.payment_link_expired,
   );
 
   const allVisibleSelected =
@@ -339,7 +341,7 @@ const AllInvoice = ({
                 </search>
               </div>
               <div
-                className={`${styles.searchCount} col-sm-auto order-sm-1 text-center my-2 my-sm-0`}
+                className={`${styles.searchCount} col-sm-auto order-sm-1 text-left my-2 my-sm-0`}
               >
                 Showing{" "}
                 <span className="fw-medium darkColor">
@@ -347,6 +349,10 @@ const AllInvoice = ({
                 </span>{" "}
                 from <span className="fw-medium darkColor">{resultTotal}</span>{" "}
                 {resultTotal === 1 ? "result" : "results"}
+                <p style={{ color: "#e0ac52" }}>
+                  (Note: You have {paymentAttempts?.remaining_attempts || 0}{" "}
+                  payment attempt(s) remaining across all invoices)
+                </p>
               </div>
             </div>
           </div>
@@ -475,14 +481,14 @@ const AllInvoice = ({
                                 invoice?.status?.toLowerCase() === "paid" ||
                                 invoice?.status?.toLowerCase() ===
                                   "cancelled" ||
-                                invoice?.payment_link_expired
+                                paymentAttempts?.payment_link_expired
                               }
                               style={{
                                 cursor:
                                   invoice?.status?.toLowerCase() === "paid" ||
                                   invoice?.status?.toLowerCase() ===
                                     "cancelled" ||
-                                  invoice?.payment_link_expired
+                                  paymentAttempts?.payment_link_expired
                                     ? "not-allowed"
                                     : "pointer",
                               }}
@@ -546,17 +552,17 @@ const AllInvoice = ({
                                     className={styles.payNowBtn}
                                     disabled={
                                       !showPayNow(invoice?.status) ||
-                                      invoice?.payment_link_expired
+                                      paymentAttempts?.payment_link_expired
                                     }
                                     style={{
                                       cursor:
                                         showPayNow(invoice?.status) &&
-                                        !invoice?.payment_link_expired
+                                        !paymentAttempts?.payment_link_expired
                                           ? "pointer"
                                           : "not-allowed",
                                       backgroundColor:
                                         showPayNow(invoice?.status) &&
-                                        !invoice?.payment_link_expired
+                                        !paymentAttempts?.payment_link_expired
                                           ? "var(--primaryColor)"
                                           : "#02499662",
                                     }}
@@ -569,12 +575,13 @@ const AllInvoice = ({
                                   >
                                     Pay Now
                                   </button>
-                                  {invoice?.payment_link_expired && (
+
+                                  {paymentAttempts?.payment_link_expired && (
                                     <p
                                       className=" text-danger text-center"
                                       style={{ fontSize: "12px" }}
                                     >
-                                      {`${invoice?.remaining_hrs} hrs remaining to pay`}
+                                      {`${paymentAttempts?.remaining_hrs || 0} hrs remaining to pay`}
                                     </p>
                                   )}
                                 </div>

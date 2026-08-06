@@ -208,35 +208,69 @@ const SubscriptionsDetailsComponent = () => {
     <Layout>
       <div className="row flex-column gy-4 py-4">
         <div className="col">
-          <div className="row align-items-end">
-            <div className="col">
-              <nav className={`${styles.breadcrumb} mb-0`}>
-                <Link href="/dashboard">Dashboard</Link> /{" "}
-                {router?.query?.type === "renewals" ? (
-                  <Link href="/renewals">Renewals</Link>
-                ) : (
-                  <Link href="/subscriptions">Subscriptions</Link>
-                )}
-                <span className="breadcrumb-item" />
-                <h1 className="breadcrumb-item active" aria-current="page">
-                  {router?.query?.type === "renewals"
-                    ? "Renewal"
-                    : "Subscription"}{" "}
-                  - {router?.query?.orderId}
-                </h1>
-              </nav>
-            </div>
-            <div className="col-auto">
-              <button
-                onClick={() => router?.back()}
-                className="btn small btnWhite"
-              >
-                <IoMdArrowBack />
-                <span>Back</span>
-              </button>
+          <div className={`${styles.pageWrap}`}>
+            <div className={`${styles.headerRow} row align-items-end`}>
+              <div className="col">
+                <nav className={`${styles.breadcrumbs} mb-0`}>
+                  <Link href={"/dashboard"}>Dashboard</Link> /{" "}
+                  {router?.query?.type === "renewals" ? (
+                    <Link href="/renewals">Renewals</Link>
+                  ) : (
+                    <Link href="/subscriptions">Subscriptions</Link>
+                  )}
+                  <h1
+                    className={`${styles.breadcrumbItem} active fs-4`}
+                    aria-current="page"
+                  >
+                    {router?.query?.type === "renewals"
+                      ? "Renewal"
+                      : "Subscription"}{" "}
+                    - {router?.query?.orderId}
+                  </h1>
+                </nav>
+              </div>
+              <div className="col-auto">
+                <button
+                  onClick={() => router?.back()}
+                  className="btn small btnWhite"
+                >
+                  <IoMdArrowBack />
+                  <span>Back</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
+        {/* <div className="col">
+            <div className="row align-items-end">
+              <div className="col">
+                <nav className={`${styles.breadcrumb} mb-0`}>
+                  <Link href="/dashboard">Dashboard</Link> /{" "}
+                  {router?.query?.type === "renewals" ? (
+                    <Link href="/renewals">Renewals</Link>
+                  ) : (
+                    <Link href="/subscriptions">Subscriptions</Link>
+                  )}
+                  <span className="breadcrumb-item" />
+                  <h1 className="breadcrumb-item active" aria-current="page">
+                    {router?.query?.type === "renewals"
+                      ? "Renewal"
+                      : "Subscription"}{" "}
+                    - {router?.query?.orderId}
+                  </h1>
+                </nav>
+              </div>
+              <div className="col-auto">
+                <button
+                  onClick={() => router?.back()}
+                  className="btn small btnWhite"
+                >
+                  <IoMdArrowBack />
+                  <span>Back</span>
+                </button>
+              </div>
+            </div>
+          </div> */}
 
         <div className="col">
           <div

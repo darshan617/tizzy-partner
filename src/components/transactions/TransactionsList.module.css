@@ -155,7 +155,9 @@
 .filterGroup {
   display: flex;
   align-items: center;
-  overflow: hidden;
+  overflow: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -377,6 +379,9 @@
 
   .txMeta {
     min-width: auto;
+  }
+  .downloadListBtn{
+    font-size: 20px;
   }
 }
 

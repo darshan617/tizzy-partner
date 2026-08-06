@@ -196,11 +196,6 @@
   background: #fff;
 }
 
-/* ============================================================
-   Row grid — desktop base
-   Areas are named explicitly so every breakpoint can reflow
-   without leaving any column as an unplaced/auto-placed item.
-   ============================================================ */
 .rowInner {
   display: grid;
   grid-template-columns: 80px minmax(0, 1.35fr) minmax(0, 1.3fr) 80px 100px 100px 40px;
@@ -522,8 +517,8 @@
   margin-top: 20px;
   padding: 10px;
   border-radius: 5px;
-  border: 1px solid var(--borderColor);
-  background: var(--whiteColor);
+  /* border: 1px solid var(--borderColor);
+  background: var(--whiteColor); */
 }
 
 .paginationButton {
@@ -548,25 +543,15 @@
   border-color: var(--primaryColor);
 }
 
-/* ============================================================
-   RESPONSIVE
-   Every stage below re-declares grid-template-areas so txn,
-   company, plan, license, enrollment, status and arrow all
-   have an explicit home — nothing is left to auto-placement,
-   which is what was causing the overlap/squeeze at narrow
-   widths in the old version.
-   ============================================================ */
 
-/* Large desktop → laptop: trim column widths, same 7-col row */
+
 @media (max-width: 1199.98px) {
-  .rowInner {
+  /* .rowInner {
     grid-template-columns: 90px minmax(0, 1.2fr) minmax(0, 1fr) 70px 110px 100px 36px;
     column-gap: 12px;
-  }
+  } */
 }
 
-/* Tablet landscape: drop to two rows, but still airy —
-   txn/company/arrow on top, plan/license/enrollment/status below */
 @media (max-width: 1023.98px) {
   .rowInner {
     grid-template-columns: 90px minmax(0, 1fr) minmax(0, 0.9fr) 70px 120px auto;
@@ -592,10 +577,9 @@
   }
 }
 
-/* Tablet portrait: simplify further, license moves in with plan
-   so nothing feels orphaned, status gets its own line */
+
 @media (max-width: 767.98px) {
-  .rowInner {
+  /* .rowInner {
     grid-template-columns: 1fr auto;
     grid-template-areas:
       "txn arrow"
@@ -604,7 +588,7 @@
       "enrollment status";
     row-gap: 12px;
     column-gap: 12px;
-  }
+  } */
 
   .planCol {
     border-right: none;
@@ -632,9 +616,7 @@
   }
 }
 
-/* Mobile: full stack, card-style rows with clear labels so
-   every field reads top-to-bottom instead of squeezing sideways */
-@media (max-width: 575.98px) {
+  @media (max-width: 575.98px) {
   .searchCount {
     font-size: var(--fs11);
   }
@@ -644,15 +626,10 @@
   }
 
   .rowInner {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "txn"
-      "company"
-      "plan"
-      "meta"
-      "status";
-    row-gap: 12px;
-    column-gap: 0;
+   display: block;
+  }
+  .arrowCol {
+    margin-top: -22px;
   }
 
   .txnCol {
@@ -673,8 +650,6 @@
     padding-top: 10px;
   }
 
-  /* license + enrollment share one row on mobile so the card
-     doesn't grow too tall; both get grid-area: meta */
   .licenseLine,
   .enrollmentCol {
     grid-area: meta;
@@ -704,16 +679,16 @@
     text-align: left;
   }
 
-  /* .arrowCol {
-    display: none;
-  } */
-
   .adjustWidth {
     margin-left: -0.75rem;
     margin-right: -0.75rem;
     width: auto;
     border-radius: 0;
   }
+  
+.companyInfo {
+ padding: 10px  0;
+}
 }
 
 @media (min-width: 576px) {

@@ -685,6 +685,12 @@
     outline: none;
 }
 
+.errorText {
+    color: #dc2626;
+    font-size: 12px;
+    text-align: left;
+}
+
 @media (max-width: 768px) {
     .transferServicePopupBody {
         flex-direction: column;

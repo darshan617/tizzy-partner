@@ -209,3 +209,13 @@
   color: var(--textBodySecondary);
   font-size: var(--fs14);
 }
+
+@media (max-width: 425px){
+  .tab{
+    font-size: 13px;
+    padding: 3px 8px;
+  }
+  .tabs{
+    display: block;
+  }
+}

@@ -402,4 +402,7 @@
         width: 20px;
         height: 20px;
     }
+    .creditBalanceCard {
+        padding: 10px;
+    }
 }

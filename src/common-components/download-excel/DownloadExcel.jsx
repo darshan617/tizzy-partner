@@ -107,7 +107,7 @@ const DownloadExcel = ({
   return (
     <button type="button" className={className} onClick={downloadExcel}>
       <MdOutlineFileDownload />
-      {buttonText}
+      <p className="m-0 d-none d-sm-block">{buttonText}</p>
     </button>
   );
 };
