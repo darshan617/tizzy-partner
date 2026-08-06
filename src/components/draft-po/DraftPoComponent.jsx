@@ -13,6 +13,7 @@ import {
   setIsPopupVisible,
 } from "@/redux/slices/popupSlice";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
+import Image from "next/image";
 const DraftPoComponent = () => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -57,26 +58,20 @@ const DraftPoComponent = () => {
         >
           <BiCheckCircle /> Draft PO Generated Successfully{" "}
         </div>
-        <div className={styles.draftPoIframeContainer}>
+        <div className={`${styles.draftPoIframeContainer} sectionCard mb-0`}>
           <iframe
-            src={`${router?.query?.pl}#toolbar=0`}
+            src={`${router.query.pl}#toolbar=0&view=FitH`}
             allowFullScreen
-            style={
-              {
-                // pointerEvents: "none",
-                // filter: esignRequired && "blur(2px)",
-                // opacity: esignRequired && 0.5,
-              }
-            }
           />
-          {/* {esignRequired && (
-          <p className={styles.draftPoLockText}>
-            <FaLock size={20} /> <br /> This is a draft purchase order. Complete
-            e-sign to view the full document.{" "}
-          </p>
-        )} */}
-          {/* {!esignRequired && ( */}
-          <Link
+          {/* <Image
+            src={`${router?.query?.pl}`}
+            alt="draft po"
+            width={100}
+            height={100}
+            className={styles.draftPoImage}
+          /> */}
+
+          {/* <Link
             href={`${router?.query?.pl}`}
             target="_blank"
             className={styles.downloadButton}
@@ -89,7 +84,7 @@ const DraftPoComponent = () => {
             onClick={() => dispatch(setIsPopupVisible("preview"))}
           >
             <BsEye size={22} />
-          </button>
+          </button> */}
           {/* )} */}
         </div>
         {esignRequired ? (

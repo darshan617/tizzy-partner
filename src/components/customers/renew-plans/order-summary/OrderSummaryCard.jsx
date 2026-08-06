@@ -14,7 +14,7 @@ import {
   usePromoCodeMutation,
   useTransferCodeMutation,
 } from "@/redux/apis/addToCartApi";
-import { BiCheck, BiUpload, BiX } from "react-icons/bi";
+import { BiCheck, BiTrash, BiUpload, BiX } from "react-icons/bi";
 import Cookies from "js-cookie";
 import {
   selectIsPopupVisible,
@@ -74,7 +74,6 @@ const OrderSummaryCard = ({
   const pendingDomainCount = domainNames?.length || 0;
   const totalDomainCount = savedDomainCount + pendingDomainCount;
   const isMaxDomainsReached = totalDomainCount >= MAX_DOMAINS;
-  const gst = +(total * _gstRate_).toFixed(2);
 
   const [domainInput, setDomainInput] = useState("");
   const [isPromoCodeAdded, setIsPromoCodeAdded] = useState(false);
@@ -85,7 +84,7 @@ const OrderSummaryCard = ({
     useState(false);
   const [isUploadPo, setIsUploadPo] = useState(false);
   const [poNumber, setPoNumber] = useState("");
-  console.log("isUploadPo", isUploadPo);
+  const [poError, setPoError] = useState(false);
 
   const providerId = Number(cartDetails?.[0]?.plan?.provider_id);
   const skipDomainVerification = providerId === 2;
@@ -99,12 +98,14 @@ const OrderSummaryCard = ({
         cartSummaryItem?.pricing?.pro_rata_adjustment ??
         0,
     ) || 0;
+  const gst = +((total - remainingValue) * _gstRate_).toFixed(2);
   const totals = +(
     total +
     gst -
     remainingValue -
     (discountedPercent / 100) * total
   ).toFixed(2);
+
   const isInsufficient = _creditBalance_ < totals;
 
   const discountedAmount = (discountedPercent / 100) * total;
@@ -133,7 +134,11 @@ const OrderSummaryCard = ({
     isFetching: isCheckingDomainAvailable,
     isLoading: isLoadingDomainChecking,
   } = useCheckIsDomainAvailableQuery(
-    { domain_name: domainFromApi, provider_id: providerId },
+    {
+      domain_name: domainFromApi,
+      provider_id: providerId,
+      partner_id: userData?.id,
+    },
     {
       skip: skipDomainVerification || !domainFromApi?.trim(),
     },
@@ -308,6 +313,11 @@ const OrderSummaryCard = ({
     tempDomainNames?.length > 0;
 
   const handelProceed = async () => {
+    if (!poNumber.trim()) {
+      setPoError(true);
+      return;
+    }
+    setPoError(false);
     try {
       const formData = new FormData();
 
@@ -1149,10 +1159,19 @@ const OrderSummaryCard = ({
                 id="poNumberInput"
                 type="text"
                 className={styles.uploadPoNumberInput}
-                placeholder="Enter PO Number"
+                placeholder="Enter PO Number*"
                 value={poNumber}
-                onChange={(e) => setPoNumber(e.target.value)}
+                onChange={(e) => {
+                  setPoNumber(e.target.value);
+                  if (e.target.value.trim()) {
+                    setPoError(false);
+                  }
+                }}
               />
+              {poError && (
+                <p className={styles.errorText}>PO Number is required.</p>
+              )}
+
               <label
                 htmlFor="uploadPoInput"
                 className={styles.uploadPoPrimaryBtn}
@@ -1185,7 +1204,8 @@ const OrderSummaryCard = ({
                       className={styles.uploadPoRemoveBtn}
                       onClick={() => setUploadPoPdf(null)}
                     >
-                      <BiX size={18} color="red" />
+                      {" "}
+                      <BiTrash size={14} color="red" />
                     </button>
                   </div>
                   <button

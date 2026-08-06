@@ -212,9 +212,7 @@ const OrderComplete = () => {
                   <div className={styles.summaryRow}>
                     <span>GST</span>
                     <span>
-                      {orderDetails?.gst
-                        ? `₹ ${orderDetails?.gst_amount}`
-                        : "-"}
+                      {orderDetails?.gst ? `₹ ${orderDetails?.gst}` : "-"}
                     </span>
                   </div>
                   <div className={styles.summaryRow}>

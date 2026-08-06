@@ -96,6 +96,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     Cookies.remove("userData");
     Cookies.remove("customerData");
     Cookies.remove("partnerApproval");
+    Cookies.remove("userToken");
     router?.push("/auth/login");
     showToast("Signed Out successfully", "success");
   };
@@ -338,7 +339,9 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                     <div
                       className={`${styles.dropdownMenu} shadow-lg ${isDropdownOpen ? styles.show : ""}`}
                     >
-                      <div className={`${styles.profDropdownMenu} position-relative d-flex flex-column justify-content-center align-items-center p-3 mb-3 gap-1 text-white`}>
+                      <div
+                        className={`${styles.profDropdownMenu} position-relative d-flex flex-column justify-content-center align-items-center p-3 mb-3 gap-1 text-white`}
+                      >
                         <Image
                           src={createBtnBg}
                           alt=""
