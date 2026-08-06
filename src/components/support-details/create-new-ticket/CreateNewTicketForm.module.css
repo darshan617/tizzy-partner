@@ -240,10 +240,10 @@
 }
 
 @media (max-width: 575.98px) {
-  .headerRow {
+  /* .headerRow {
     flex-direction: column;
     align-items: flex-start;
-  }
+  } */
 
   .backBtn {
     align-self: flex-end;
