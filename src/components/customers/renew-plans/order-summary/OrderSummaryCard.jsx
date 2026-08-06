@@ -74,7 +74,6 @@ const OrderSummaryCard = ({
   const pendingDomainCount = domainNames?.length || 0;
   const totalDomainCount = savedDomainCount + pendingDomainCount;
   const isMaxDomainsReached = totalDomainCount >= MAX_DOMAINS;
-  const gst = +(total * _gstRate_).toFixed(2);
 
   const [domainInput, setDomainInput] = useState("");
   const [isPromoCodeAdded, setIsPromoCodeAdded] = useState(false);
@@ -99,12 +98,14 @@ const OrderSummaryCard = ({
         cartSummaryItem?.pricing?.pro_rata_adjustment ??
         0,
     ) || 0;
+  const gst = +((total - remainingValue) * _gstRate_).toFixed(2);
   const totals = +(
     total +
     gst -
     remainingValue -
     (discountedPercent / 100) * total
   ).toFixed(2);
+
   const isInsufficient = _creditBalance_ < totals;
 
   const discountedAmount = (discountedPercent / 100) * total;
@@ -133,7 +134,11 @@ const OrderSummaryCard = ({
     isFetching: isCheckingDomainAvailable,
     isLoading: isLoadingDomainChecking,
   } = useCheckIsDomainAvailableQuery(
-    { domain_name: domainFromApi, provider_id: providerId },
+    {
+      domain_name: domainFromApi,
+      provider_id: providerId,
+      partner_id: userData?.id,
+    },
     {
       skip: skipDomainVerification || !domainFromApi?.trim(),
     },
