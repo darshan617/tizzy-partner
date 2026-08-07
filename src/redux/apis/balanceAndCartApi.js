@@ -9,7 +9,12 @@ const balanceAndCartApi = apiSlice.injectEndpoints({
           method: "GET",
         };
       },
-      providesTags: ["balanceAndCart", "addToCart"],
+      providesTags: [
+        "balanceAndCart",
+        "addToCart",
+        "orderDetails",
+        "orderPlaceWithoutAadhaar",
+      ],
     }),
   }),
 });

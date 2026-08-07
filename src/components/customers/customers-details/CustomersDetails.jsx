@@ -1016,38 +1016,84 @@ export default function CustomerDetail() {
                       ) : allInvoices?.length > 0 ? (
                         <>
                           <div className={styles.invToolbar}>
-                            <label className={styles.invCheckAll}>
+                            <label
+                              className={styles.invCheckAll}
+                              style={{
+                                cursor:
+                                  selectableInvoiceIds.length === 0 ||
+                                  allInvoices?.some(
+                                    (invoice) =>
+                                      invoice?.payment_retry
+                                        ?.payment_link_expired,
+                                  )
+                                    ? "not-allowed"
+                                    : "pointer",
+                              }}
+                            >
                               <input
                                 type="checkbox"
                                 className="form-check-input"
                                 checked={allInvoicesSelected}
                                 onChange={toggleSelectAllInvoices}
-                                disabled={selectableInvoiceIds.length === 0}
+                                disabled={
+                                  selectableInvoiceIds.length === 0 ||
+                                  allInvoices?.some(
+                                    (invoice) =>
+                                      invoice?.payment_retry
+                                        ?.payment_link_expired,
+                                  )
+                                }
+                                style={{
+                                  pointerEvents:
+                                    selectableInvoiceIds.length === 0 ||
+                                    allInvoices?.some(
+                                      (invoice) =>
+                                        invoice?.payment_retry
+                                          ?.payment_link_expired,
+                                    )
+                                      ? "none"
+                                      : undefined,
+                                }}
                               />
                               <span>Check All</span>
                             </label>
 
                             <div className="d-flex align-items-center gap-2">
-                              <button
-                                className="btnDefault btn small"
-                                disabled={selectedInvoiceIds?.length === 0}
-                                style={{
-                                  opacity:
-                                    selectedInvoiceIds?.length === 0 ? 0.5 : 1,
-                                  cursor:
-                                    selectedInvoiceIds?.length === 0
-                                      ? "not-allowed"
-                                      : "pointer",
-                                }}
-                                onClick={() =>
-                                  handleInvoicePayNow(
-                                    selectedInvoiceIds,
-                                    "multiple",
-                                  )
+                              <span
+                                className={
+                                  selectedInvoiceIds?.length === 0
+                                    ? styles.disabledCursorWrap
+                                    : undefined
+                                }
+                                style={
+                                  selectedInvoiceIds?.length === 0
+                                    ? undefined
+                                    : { display: "inline-flex", cursor: "pointer" }
                                 }
                               >
-                                Pay Selected
-                              </button>
+                                <button
+                                  className="btnDefault btn small"
+                                  disabled={selectedInvoiceIds?.length === 0}
+                                  style={{
+                                    opacity:
+                                      selectedInvoiceIds?.length === 0
+                                        ? 0.5
+                                        : 1,
+                                    pointerEvents:
+                                      selectedInvoiceIds?.length === 0
+                                        ? "none"
+                                        : undefined,
+                                  }}
+                                  onClick={() =>
+                                    handleInvoicePayNow(
+                                      selectedInvoiceIds,
+                                      "multiple",
+                                    )
+                                  }
+                                >
+                                  Pay Selected
+                                </button>
+                              </span>
                               <DownloadExcel
                                 data={allInvoices}
                                 columns={invoiceDownloadColumns}
@@ -1070,7 +1116,17 @@ export default function CustomerDetail() {
                                   className={styles.invCard}
                                   key={invoiceId || i}
                                 >
-                                  <div className={styles.invCheckCol}>
+                                  <div
+                                    className={styles.invCheckCol}
+                                    style={{
+                                      cursor:
+                                        canSelect &&
+                                        !invoice?.payment_retry
+                                          ?.payment_link_expired
+                                          ? "pointer"
+                                          : "not-allowed",
+                                    }}
+                                  >
                                     <input
                                       type="checkbox"
                                       className="form-check-input"
@@ -1080,11 +1136,18 @@ export default function CustomerDetail() {
                                       onChange={() =>
                                         toggleSelectInvoice(invoiceId)
                                       }
-                                      disabled={!canSelect}
+                                      disabled={
+                                        !canSelect ||
+                                        invoice?.payment_retry
+                                          ?.payment_link_expired
+                                      }
                                       style={{
-                                        cursor: canSelect
-                                          ? "pointer"
-                                          : "not-allowed",
+                                        pointerEvents:
+                                          !canSelect ||
+                                          invoice?.payment_retry
+                                            ?.payment_link_expired
+                                            ? "none"
+                                            : undefined,
                                       }}
                                     />
                                   </div>
@@ -1136,25 +1199,43 @@ export default function CustomerDetail() {
                                       </strong>
 
                                       <div className={styles.invActions}>
-                                        <button
-                                          type="button"
-                                          className={styles.invPayNowBtn}
-                                          disabled={!canPay}
-                                          style={{
-                                            cursor: canPay
-                                              ? "pointer"
-                                              : "not-allowed",
-                                            opacity: canPay ? 1 : 0.55,
-                                          }}
-                                          onClick={() =>
-                                            handleInvoicePayNow(
-                                              invoiceId,
-                                              "single",
-                                            )
+                                        <span
+                                          className={
+                                            !canPay ||
+                                            invoice?.payment_retry
+                                              ?.payment_link_expired
+                                              ? styles.disabledCursorWrap
+                                              : undefined
+                                          }
+                                          style={
+                                            canPay &&
+                                            !invoice?.payment_retry
+                                              ?.payment_link_expired
+                                              ? {
+                                                  display: "inline-flex",
+                                                  cursor: "pointer",
+                                                }
+                                              : undefined
                                           }
                                         >
-                                          Pay Now
-                                        </button>
+                                          <button
+                                            type="button"
+                                            className={styles.invPayNowBtn}
+                                            disabled={
+                                              !canPay ||
+                                              invoice?.payment_retry
+                                                ?.payment_link_expired
+                                            }
+                                            onClick={() =>
+                                              handleInvoicePayNow(
+                                                invoiceId,
+                                                "single",
+                                              )
+                                            }
+                                          >
+                                            Pay Now
+                                          </button>
+                                        </span>
                                         {pdfUrl ? (
                                           <Link
                                             href={pdfUrl}

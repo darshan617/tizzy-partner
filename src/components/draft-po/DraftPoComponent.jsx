@@ -87,7 +87,7 @@ const DraftPoComponent = () => {
           </button> */}
           {/* )} */}
         </div>
-        {esignRequired ? (
+        {/* {esignRequired ? (
           <button
             className={styles.commonButton}
             onClick={() =>
@@ -106,7 +106,20 @@ const DraftPoComponent = () => {
           >
             Done
           </button>
-        )}
+        )} */}
+        <button
+          className={styles.commonButton}
+          onClick={() =>
+            router.push({
+              pathname: "/order-details",
+              query: {
+                ordId: router?.query?.ordId,
+              },
+            })
+          }
+        >
+          Proceed To Checkout
+        </button>
       </div>
       {isPopupVisible === "preview" && (
         <CustomPopup
