@@ -396,8 +396,8 @@
 }
 
 .arrowBtn:hover {
-  border-color: var(--primaryColor);
-  color: var(--primaryColor);
+  color: #ffffff;
+  background: #0056b3;
 }
 
 .emptyState {

@@ -76,52 +76,85 @@ export default function TransactionSection({ data, isDataLoading }) {
 
   const renderTransactionRow = (item, index) => (
     <div className={styles.contentRow} key={item?.order_id || index}>
-      <div className="row align-items-center g-2">
-        <div className="col-12 col-md-2 col-lg-2">
-          <div className={styles.colDateMeta}>
-            <p className={styles.txDate}>{formatDisplayDate(item)}</p>
-            <span className={styles.txIdBadge}>
-              ORD ID: {item?.order_no || "-"}
-            </span>
-          </div>
-        </div>
-
-        <div className="col-12 col-md-3 col-lg-4">
-          <div className={styles.colDomainBlock}>
-            <div className={`${styles.avatar} ${styles[`avatar${index % 5}`]}`}>
-              {item?.company_name?.charAt(0)?.toUpperCase() || "?"}
+      <Link
+        href={{
+          pathname: "/transactions/transaction-details",
+        }}
+      >
+        <div className="row align-items-center g-2 justify-content-between">
+          <div className="col-12 col-md-2 col-lg-2">
+            <div className={styles.colDateMeta}>
+              <p className={styles.txDate}>{formatDisplayDate(item)}</p>
+              <span className={styles.txIdBadge}>
+                ORD ID: {item?.order_no || "-"}
+              </span>
             </div>
-            <div className={styles.domainInfo}>
-              <p className={styles.subText}>{getCompanyName(item)}</p>
-              <div className={styles.domainNameContainer}>
-                <FiGlobe className={styles.domainIcon} size={16} />
-                <p className={styles.domainName}>{item?.domain}</p>
+          </div>
+
+          <div className="col-12 col-md-2 col-lg-3">
+            <div className={styles.colDomainBlock}>
+              <div
+                className={`${styles.avatar} ${styles[`avatar${index % 5}`]}`}
+              >
+                {item?.company_name?.charAt(0)?.toUpperCase() || "?"}
+              </div>
+              <div className={styles.domainInfo}>
+                <p className={styles.subText}>{getCompanyName(item)}</p>
+                <div className={styles.domainNameContainer}>
+                  <FiGlobe className={styles.domainIcon} size={16} />
+                  <p className={styles.domainName}>{item?.domain}</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="col-12 col-md-3 col-lg-3">
-          <div className={styles.txMeta}>
-            <div className={styles.txPlanName}>{item?.plan}</div>
-            <div className={styles.categoryName}>{item?.category}</div>
+          <div className="col-12 col-md-2 col-lg-2">
+            <div className={styles.txMeta}>
+              <div className={styles.txPlanName}>{item?.plan}</div>
+              <div className={styles.categoryName}>{item?.category}</div>
+            </div>
+          </div>
+
+          <div className="col-6 col-md-2 col-lg-2 text-md-center">
+            <span
+              className={`${styles.statusBadge} ${getStatusClass(item?.status)}`}
+            >
+              {item?.status}
+            </span>
+          </div>
+
+          <div className="col-6 col-md-2 col-lg-2 text-end">
+            <span className={styles.amountValue}>
+              {formatAmount(item?.amount)}
+            </span>
+          </div>
+          <div
+            className={`${styles.colArrow} col-6 col-md-2 col-lg-2 text-end`}
+          >
+            <Link
+              href={{
+                pathname: "/transactions/transaction-details",
+              }}
+              className={styles.arrowBtn}
+              aria-label="View renewal details"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </Link>
           </div>
         </div>
-
-        <div className="col-6 col-md-2 col-lg-2 text-md-center">
-          <span
-            className={`${styles.statusBadge} ${getStatusClass(item?.status)}`}
-          >
-            {item?.status}
-          </span>
-        </div>
-
-        <div className="col-6 col-md-2 col-lg-1 text-end">
-          <span className={styles.amountValue}>
-            {formatAmount(item?.amount)}
-          </span>
-        </div>
-      </div>
+      </Link>
     </div>
   );
 

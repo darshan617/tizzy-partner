@@ -240,7 +240,12 @@ const AllSubscriptions = ({
                           key={idx}
                           className={`${styles.contentRow} ${styles.btnDisplay}`}
                         >
+                          <Link href={{
+                                  pathname:
+                                    "/subscriptions/subscriptions-details",
+                                }}>
                           <div className={styles.rowInner}>
+                            
                             <div className={styles.txnCol}>
                               <div className={styles.txnDate}>
                                 {subscription?.due_date || "-"}
@@ -369,7 +374,8 @@ const AllSubscriptions = ({
                                 </svg>
                               </Link>
                             </div>
-                          </div>
+                            </div>
+                          </Link>
                         </div>
                       );
                     })
