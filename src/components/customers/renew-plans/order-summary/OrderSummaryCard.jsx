@@ -85,6 +85,7 @@ const OrderSummaryCard = ({
   const [isUploadPo, setIsUploadPo] = useState(false);
   const [poNumber, setPoNumber] = useState("");
   const [poError, setPoError] = useState(false);
+  console.log(isUploadPo, "isUploadPo");
 
   const providerId = Number(cartDetails?.[0]?.plan?.provider_id);
   const skipDomainVerification = providerId === 2;
@@ -313,7 +314,7 @@ const OrderSummaryCard = ({
     tempDomainNames?.length > 0;
 
   const handelProceed = async () => {
-    if (!poNumber.trim()) {
+    if (!poNumber.trim() && isUploadPo) {
       setPoError(true);
       return;
     }
@@ -343,7 +344,7 @@ const OrderSummaryCard = ({
           query: {
             pl: res?.data?.data?.po_link,
             sr: res?.data?.data?.sign_required === "yes" ? true : false,
-            ordId: res?.data?.data?.order_id,
+            ordId: res?.data?.data?.ordId,
           },
         });
       } else {
@@ -1202,7 +1203,10 @@ const OrderSummaryCard = ({
                     <button
                       type="button"
                       className={styles.uploadPoRemoveBtn}
-                      onClick={() => setUploadPoPdf(null)}
+                      onClick={() => {
+                        setUploadPoPdf(null);
+                        setIsUploadPo(false);
+                      }}
                     >
                       {" "}
                       <BiTrash size={14} color="red" />
@@ -1255,7 +1259,7 @@ const OrderSummaryCard = ({
                   cursor: uploadPoPdf ? "not-allowed" : "pointer",
                 }}
               >
-                Proceed without PO
+                Generate Purchase Order
               </button>
             </div>
           </div>

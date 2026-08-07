@@ -1002,6 +1002,13 @@
 
 .invPayNowBtn:disabled {
   background: #02499662;
+  /* Native disabled controls ignore cursor; parent shows not-allowed */
+  pointer-events: none;
+}
+
+.disabledCursorWrap {
+  display: inline-flex;
+  cursor: not-allowed;
 }
 
 .invDownloadBtn {
