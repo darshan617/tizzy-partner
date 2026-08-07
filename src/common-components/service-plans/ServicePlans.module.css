@@ -38,6 +38,7 @@
   max-width: 1100px;
   line-height: 1.25;
   text-transform: capitalize;
+  padding: 5px 0;
 }
 
 .navCard {
@@ -87,7 +88,7 @@
   color: var(--darkColor);
   background: var(--whiteColor);
   border-color: var(--borderColor);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0, 12, 180, 0.452);
 }
 
 .searchWrap {
@@ -177,12 +178,12 @@
 }
 
 .pill:hover {
-  border-color: var(--darkColor);
+  border-color: #0056b3;
   color: var(--darkColor);
 }
 
 .pillActive {
-  border-color: var(--darkColor);
+  border-color: #0056b3 ;
   color: var(--darkColor);
   background: var(--whiteColor);
 }
