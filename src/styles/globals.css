@@ -337,8 +337,8 @@ strong {
 }
 
 .btn.small {
-  height: 30px;
-  font-size: var(--fs12);
+  height: 35px;
+  font-size: var(--fs13);
 }
 
 .btn.small .icon {

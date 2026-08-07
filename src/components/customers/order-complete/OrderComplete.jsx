@@ -1,21 +1,66 @@
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "@/components/customers/order-complete/OrderComplete.module.css";
 import { useRouter } from "next/router";
 import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi";
 import Cookies from "js-cookie";
-import { MdOutlineFileDownload, MdDescription } from "react-icons/md";
-import { IoIosCheckmarkCircle } from "react-icons/io";
-import successGif from "@/assets/images/check.svg";
 import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarConstant";
+import { useOrderPlaceWithoutAadhaarMutation } from "@/redux/apis/orderDetailsApi";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
+import Loader from "@/common-components/loader/Loader";
+import {
+  Calendar,
+  Eye,
+  FileText,
+  Globe,
+  LayoutDashboard,
+  Layers,
+  Users,
+} from "lucide-react";
+import { FaIndianRupeeSign } from "react-icons/fa6";
+import { MdOutlineFileDownload } from "react-icons/md";
+import { IoIosCheckmark } from "react-icons/io";
+
+const formatCurrency = (value) =>
+  `₹${Number(value || 0).toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+
+const formatDate = (value) => {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+const formatEnrollmentType = (orderType) => {
+  if (!orderType) return "New Service";
+  const normalized = String(orderType).toLowerCase();
+  if (normalized === "b2b" || normalized === "new") return "New Service";
+  return String(orderType)
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
+const getServiceIcon = (providerId) =>
+  SIDEBAR_SERVICES_CONSTANTS.find((s) => s.id === Number(providerId))?.image ||
+  SIDEBAR_SERVICES_CONSTANTS.find((s) => s.id === 1)?.image;
+
 const OrderComplete = () => {
   const router = useRouter();
-
+  const { showToast } = useToast();
+  const hasPlacedOrder = useRef(false);
   const [userData, setUserData] = useState({});
-  const [orderDetails, setOrderDetails] = useState({});
-  const [today, setToday] = useState("-");
-  const [animationPhase, setAnimationPhase] = useState("playing");
-  console.log(orderDetails, "orderDetails");
+  const [orderData, setOrderData] = useState(null);
+
+  const [
+    orderPlaceWithoutAadhaar,
+    { isLoading: isOrderPlaceLoading },
+  ] = useOrderPlaceWithoutAadhaarMutation();
 
   useEffect(() => {
     const parsedUser = Cookies?.get("userData")
@@ -24,18 +69,53 @@ const OrderComplete = () => {
 
     const parsedOrder = Cookies.get("orderDetails")
       ? JSON.parse(decodeURIComponent(Cookies.get("orderDetails")))
-      : {};
+      : null;
 
     setUserData(parsedUser);
-    setOrderDetails(parsedOrder);
-    setToday(
-      new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "2-digit",
-        year: "numeric",
-      }),
-    );
-  }, []);
+    if (parsedOrder && !router?.query?.ordId) {
+      setOrderData(parsedOrder);
+    }
+  }, [router?.query?.ordId]);
+
+  const handleOrderPlaceWithoutAadhaar = async () => {
+    if (!router?.query?.ordId || !userData?.id) return;
+    try {
+      const response = await orderPlaceWithoutAadhaar({
+        body: {
+          order_id: router?.query?.ordId,
+        },
+      });
+      if (response?.data?.success) {
+        const data = response?.data?.data || {};
+        setOrderData(data);
+        Cookies.set("orderDetails", JSON.stringify(data));
+        showToast(
+          response?.data?.message || "Order placed successfully",
+          "success",
+        );
+      } else {
+        showToast(
+          response?.error?.data?.message || "Failed to place order",
+          "error",
+        );
+      }
+    } catch (error) {
+      showToast(error?.data?.message || "Failed to place order", "error");
+    }
+  };
+
+  useEffect(() => {
+    if (
+      !router?.isReady ||
+      !userData?.id ||
+      !router?.query?.ordId ||
+      hasPlacedOrder.current
+    ) {
+      return;
+    }
+    hasPlacedOrder.current = true;
+    handleOrderPlaceWithoutAadhaar();
+  }, [userData?.id, router?.query?.ordId, router?.isReady]);
 
   useGetBalanceAndCartDetailsQuery(
     { partner_id: userData?.id },
@@ -43,21 +123,6 @@ const OrderComplete = () => {
       skip: !userData?.id,
     },
   );
-
-  useEffect(() => {
-    const moveTimer = setTimeout(() => setAnimationPhase("done"), 1800);
-    return () => clearTimeout(moveTimer);
-  }, []);
-
-  const firstItem = orderDetails?.orders?.[0] || {};
-  const orderId = firstItem?.order_id;
-  const orderNo = firstItem?.order_no;
-  const companyName = firstItem?.company_name;
-  const domainName = firstItem?.domain_name;
-  const poLink = router?.query?.po || firstItem?.po?.po_link;
-  const poNumber = orderDetails?.po_number;
-
-  const totalAmount = router?.query?.crdUsage;
 
   useEffect(() => {
     window.history.pushState(null, "", window.location.href);
@@ -70,184 +135,212 @@ const OrderComplete = () => {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  const clearOrderCookieAndNavigate = (path) => {
+    Cookies.remove("orderDetails");
+    router.push(path);
+  };
+
+  const plans = Array.isArray(orderData?.plans)
+    ? orderData.plans
+    : Array.isArray(orderData?.orders)
+      ? orderData.orders
+      : [];
+  const firstPlan = plans[0] || {};
+  const poDetails = orderData?.po_details || {};
+  const orderNo = orderData?.order_no || firstPlan?.order_no || "-";
+  const poNumber =
+    poDetails?.po_number || orderData?.po_number || "-";
+  const poLink =
+    poDetails?.final_po_link ||
+    poDetails?.po_link ||
+    orderData?.final_po_link ||
+    orderData?.po_link ||
+    router?.query?.po ||
+    "";
+  const domainName = firstPlan?.domain_name || "-";
+  const billingCycle =
+    firstPlan?.subscription_start_date && firstPlan?.subscription_end_date
+      ? `${formatDate(firstPlan.subscription_start_date)} - ${formatDate(
+          firstPlan.subscription_end_date,
+        )}`
+      : "-";
+  const documentMeta = `${poNumber !== "-" ? poNumber : "PO"} - ${formatDate(
+    orderData?.order_date,
+  )}`;
+
+  if (isOrderPlaceLoading && !orderData) {
+    return <Loader />;
+  }
+
   return (
-    <div>
-      <div className={`${styles.orderCard}`}>
-        <div
-          className={`d-flex flex-column align-items-center justify-content-center ${styles.stage}`}
-        >
-          <div
-            className={`mb-3 ${styles.gifWrapper} ${styles[animationPhase]}`}
-            data-aos="zoom-in"
-            data-aos-duration="1000"
+    <div className={styles.pageWrap}>
+      <div className={styles.successCard}>
+        <div className={styles.successIcon} aria-hidden>
+          <IoIosCheckmark size={42} color="#fff" className={styles.checkMark} />
+        </div>
+        <h1 className={styles.successTitle}>Order Completed Successfully</h1>
+        <p className={styles.successSubtitle}>
+          Your order is in process. We will update you once it is activated.
+        </p>
+        <div className={styles.successActions}>
+          <button
+            type="button"
+            className={styles.btnPrimary}
+            onClick={() => clearOrderCookieAndNavigate("/dashboard")}
           >
-            {animationPhase === "done" ? null : (
-              <>
-                <Image
-                  src={successGif}
-                  alt="success"
-                  width={250}
-                  height={250}
-                  unoptimized
-                  className={styles.successGif}
-                />
-                <h1
-                  className="text-center"
-                  data-aos="fade-up"
-                  data-aos-delay="100"
-                >
-                  Order Placed Successfully
-                </h1>
-              </>
-            )}
-          </div>
+            <LayoutDashboard size={16} />
+            Go to Dashboard
+          </button>
+          <button
+            type="button"
+            className={styles.btnSecondary}
+            onClick={() => clearOrderCookieAndNavigate("/subscriptions")}
+          >
+            <Eye size={16} />
+            View Subscriptions
+          </button>
+        </div>
+      </div>
 
-          <div
-            className={`${styles.contentWrapper} ${
-              animationPhase === "done" ? styles.show : ""
-            }`}
-          >
-            <div className={styles.confirmCard} data-aos="fade-up">
-              <div className={styles.metaRow}>
-                <div className={styles.metaBlock}>
-                  <span className={styles.metaLabel}>Date</span>
-                  <span className={styles.metaValue}>{today}</span>
-                </div>
-                <div className={styles.metaBlock}>
-                  <span className={styles.metaLabel}>Order Number</span>
-                  <span className={styles.metaValue}>{orderNo || "-"}</span>
-                </div>
+      <div className={styles.split}>
+        <div className={styles.leftCol}>
+          <div className={styles.card}>
+            <div className={styles.sectionHeader}>
+              <h3 className={styles.sectionTitle}>
+                <Layers size={18} />
+                Subscription Details
+              </h3>
+              <span className={styles.billingBadge}>
+                <Calendar size={13} />
+                Billing Cycle: {billingCycle}
+              </span>
+            </div>
+
+            <div className={styles.domainBar}>
+              <div className={styles.domainLeft}>
+                <Globe size={16} />
+                <span className={styles.domainName}>{domainName}</span>
               </div>
+              <div className={styles.orderIdWrap}>
+                <span className={styles.orderIdLabel}>Order ID</span>
+                <span className={styles.orderIdBadge}>{orderNo}</span>
+              </div>
+            </div>
 
-              <div className={styles.confirmBody}>
-                <div className={styles.poPreview}>
-                  {poLink ? (
-                    <>
-                      <div className={styles.poFrame}>
-                        <iframe
-                          className={styles.innerFrame}
-                          scrolling="no"
-                          src={`${poLink}#toolbar=0&navpanes=0&view=FitH`}
-                        />
-                      </div>
-                      <a
-                        href={poLink ? poLink : "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.downloadInvoiceBtn}
-                      >
-                        <MdOutlineFileDownload size={20} />
-                      </a>
-                    </>
-                  ) : (
-                    <div className={styles.poPlaceholder}>
-                      <MdDescription size={48} />
-                      <p>Loading Purchase Order PDF...</p>
+            <div className={styles.subItems}>
+              {plans.length > 0 ? (
+                plans.map((item, idx) => (
+                  <div
+                    key={`${item?.subscription_id || item?.plan_name}-${idx}`}
+                    className={styles.subItem}
+                  >
+                    <div className={styles.planIcon}>
+                      {getServiceIcon(
+                        item?.provider_id || orderData?.provider_id,
+                      )}
                     </div>
-                  )}
-                </div>
-
-                <div className={styles.orderSummary}>
-                  <div className={styles.orderMainHead}>
-                    <IoIosCheckmarkCircle
-                      size={22}
-                      color="var(--primaryColor)"
-                    />
-                    Order Placed Successfully
-                  </div>
-
-                  <div className={styles.greeting}>
-                    <strong>Company Name: {companyName || "there"},</strong>
-                    <p>
-                      Your order has been confirmed
-                      {domainName ? (
-                        <>
-                          {" "}
-                          for <strong>{domainName}</strong>
-                        </>
-                      ) : null}
-                      . Your purchase order is ready to download.
-                    </p>
-                  </div>
-
-                  <div className={styles.itemList}>
-                    {orderDetails?.orders?.map((item, idx) => (
-                      <div className={styles.itemRow} key={item?.cart_item_id}>
-                        <div className={styles.itemIcon}>
+                    <div className={styles.planInfo}>
+                      <p className={styles.planName}>
+                        {item?.plan_name || "-"}
+                      </p>
+                      <p className={styles.planPrice}>
+                        {formatCurrency(item?.unit_price ?? item?.plan_amount)}{" "}
+                        Per User / Per Year
+                      </p>
+                    </div>
+                    <div className={styles.planMeta}>
+                      <span className={styles.metaItem}>
+                        <Layers size={14} color="var(--primaryColor)" />
+                        {item?.subscription_id || "-"}
+                      </span>
+                      <span className={styles.metaItem}>
+                        <Users size={14} color="var(--primaryColor)" />
+                        {item?.licenses ?? 0} Users
+                      </span>
+                      <span className={styles.metaItem}>
+                        <FaIndianRupeeSign
+                          size={12}
+                          color="var(--primaryColor)"
+                        />
+                        {Number(item?.plan_amount || 0).toLocaleString(
+                          "en-IN",
                           {
-                            SIDEBAR_SERVICES_CONSTANTS.find(
-                              (service) =>
-                                service?.id === orderDetails?.provider_id,
-                            )?.image
-                          }
-                        </div>
-                        <div className={styles.itemInfo}>
-                          <span className={styles.itemName}>
-                            {item?.plan_name}
-                          </span>
-                          <span className={styles.itemSub}>
-                            {item?.licenses} license
-                            {item?.licenses === 1 ? "" : "s"}
-                            {" - "}
-                            {item?.plan_amount ? `₹ ${item?.plan_amount}` : "-"}
-                          </span>
-                          {/* <span className={styles.itemSub}>
-                            {item?.plan_amount ? `₹ ${item?.plan_amount}` : "-"}
-                          </span> */}
-                        </div>
-                      </div>
-                    ))}
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          },
+                        )}
+                      </span>
+                    </div>
                   </div>
-
-                  <div className={styles.summaryDivider} />
-
-                  {/* <div className={styles.summaryRow}>
-                    <span>Order ID</span>
-                    <span>{orderId || "-"}</span>
-                  </div> */}
-                  <div className={styles.summaryRow}>
-                    <span>PO Number</span>
-                    <span>{poNumber || "-"}</span>
-                  </div>
-                  <div className={styles.summaryRow}>
-                    <span>GST</span>
-                    <span>
-                      {orderDetails?.gst ? `₹ ${orderDetails?.gst}` : "-"}
-                    </span>
-                  </div>
-                  <div className={styles.summaryRow}>
-                    <span>Coupon Discount</span>
-                    <span>
-                      {orderDetails?.discount_amount
-                        ? `₹ ${orderDetails?.discount_amount}`
-                        : "-"}
-                    </span>
-                  </div>
-                  <div className={`${styles.summaryRow} ${styles.totalRow}`}>
-                    <span>Total Amount</span>
-                    <span>
-                      {orderDetails?.total_amount
-                        ? `₹ ${orderDetails?.total_amount}`
-                        : "-"}
-                    </span>
-                  </div>
-
-                  <div className={styles.doneBtnContainer}>
-                    <button
-                      onClick={() => {
-                        router.push("/subscriptions");
-                        Cookies.remove("orderDetails");
-                      }}
-                      className={styles.doneBtn}
-                    >
-                      <span>Done</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
+                ))
+              ) : (
+                <p className={styles.emptyText}>No subscription plans found.</p>
+              )}
             </div>
           </div>
         </div>
+
+        <aside className={styles.rightCol}>
+          <div className={styles.card}>
+            <div className={styles.sectionHeader}>
+              <h3 className={styles.sectionTitle}>Purchase Snapshot</h3>
+            </div>
+            <div className={styles.sideBody}>
+              <div className={styles.kvRow}>
+                <span className={styles.kvLabel}>Order ID</span>
+                <span className={styles.kvValue}>{orderNo}</span>
+              </div>
+              <div className={styles.kvRow}>
+                <span className={styles.kvLabel}>PO Number</span>
+                <span className={styles.kvValue}>{poNumber}</span>
+              </div>
+              <div className={styles.kvRow}>
+                <span className={styles.kvLabel}>Enrollment Type</span>
+                <span className={styles.kvValue}>
+                  {formatEnrollmentType(orderData?.order_type)}
+                </span>
+              </div>
+              <div className={`${styles.kvRow} ${styles.totalKvRow}`}>
+                <span className={styles.kvLabel}>Total Amount</span>
+                <span className={styles.totalAmount}>
+                  {formatCurrency(
+                    orderData?.total_amount ?? router?.query?.crdUsage,
+                  )}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.card}>
+            <div className={styles.sectionHeader}>
+              <h3 className={styles.sectionTitle}>Generated Documents</h3>
+            </div>
+            <div className={styles.docBody}>
+              {poLink ? (
+                <div className={styles.docItem}>
+                  <div className={styles.docIcon}>
+                    <FileText size={20} color="var(--primaryColor)" />
+                  </div>
+                  <div className={styles.docInfo}>
+                    <p className={styles.docTitle}>Purchase Order</p>
+                    <p className={styles.docMeta}>{documentMeta}</p>
+                  </div>
+                  <a
+                    href={poLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.docDownload}
+                    aria-label="Download Purchase Order"
+                  >
+                    <MdOutlineFileDownload size={22} />
+                  </a>
+                </div>
+              ) : (
+                <p className={styles.emptyText}>No documents available yet.</p>
+              )}
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );

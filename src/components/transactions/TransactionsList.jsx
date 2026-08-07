@@ -293,7 +293,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                           {formatAmount(tx?.amount)}
                         </span>
                       </div>
-                      {/* 
+
                       <div className={styles.billingColArrow}>
                         <button
                           type="button"
@@ -314,7 +314,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             <path d="m9 18 6-6-6-6" />
                           </svg>
                         </button>
-                      </div> */}
+                      </div>
                     </div>
                   </article>
                 ))}
@@ -473,7 +473,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </div>
                           </div>
 
-                          <div className="col-12 col-md-3 col-lg-4">
+                          <div className="col-12 col-md-2 col-lg-3">
                             <div className="d-flex align-items-center">
                               <div
                                 className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
@@ -503,7 +503,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </div>
                           </div>
 
-                          <div className="col-12 col-md-3 col-lg-3">
+                          <div className="col-12 col-md-2 col-lg-2">
                             <div className={styles.txMeta}>
                               <div className={styles.txPlanName}>
                                 {tx?.plan}
@@ -522,10 +522,35 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </span>
                           </div>
 
-                          <div className="col-6 col-md-2 col-lg-1 text-end">
+                          <div className="col-6 col-md-2 col-lg-2 text-end">
                             <span className={styles.amountValue}>
                               {formatAmount(tx?.amount)}
                             </span>
+                          </div>
+                          <div className="col-12 col-md-2 col-lg-1 text-end">
+                            <button
+                              className="crBtn"
+                              onClick={() =>
+                                router.push({
+                                  pathname: "/transactions/transaction-details",
+                                })
+                              }
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="icon me-0"
+                              >
+                                <path d="m9 18 6-6-6-6" />
+                              </svg>
+                            </button>
                           </div>
                         </div>
                       </div>

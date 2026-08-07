@@ -25,6 +25,8 @@ export const apiSlice = createApi({
     "supportTickets",
     "creditNotes",
     "userManagement",
+    "orderPlaceWithoutAadhaar",
+    "orderDetails",
   ],
   endpoints: (builder) => ({}),
 });
