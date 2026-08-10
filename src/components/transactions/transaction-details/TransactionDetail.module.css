@@ -330,4 +330,17 @@
         flex-direction: column;
         gap: 10px;
     }
+    .subCard {
+      padding: 10px;
+    }
+    .subIcon{
+      padding: 2px;
+    }
+    .subMetaItem{
+      font-size: 12px;
+      gap: 4px;
+    }
+    .subMetaIcon {
+      font-size: 12px;
+    }
   }

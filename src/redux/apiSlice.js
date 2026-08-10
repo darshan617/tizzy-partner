@@ -25,6 +25,7 @@ export const apiSlice = createApi({
     "supportTickets",
     "creditNotes",
     "userManagement",
+    "transactionDetails",
     "orderPlaceWithoutAadhaar",
     "orderDetails",
   ],

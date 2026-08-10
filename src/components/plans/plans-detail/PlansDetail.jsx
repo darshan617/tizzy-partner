@@ -41,7 +41,7 @@ const timelineItems = [
 export default function PlansDetail() {
   return (
     <div className={styles.page}>
-      <div className="container-fluid">
+      <div className="container px-0">
         {/* Breadcrumb + Header */}
         <div className="d-flex justify-content-between align-items-start mb-3">
           <div>
