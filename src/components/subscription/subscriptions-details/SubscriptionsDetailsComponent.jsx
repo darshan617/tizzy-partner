@@ -119,6 +119,7 @@ const SubscriptionsDetailsComponent = () => {
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
   const [subscriptionDetails, setSubscriptionDetails] = useState(null);
+  console.log("subscriptionDetails", subscriptionDetails);
   const [reason, setReason] = useState("");
   const [orderCancel, { isLoading: isOrderCancelLoading }] =
     useOrderCancelMutation();
@@ -394,16 +395,17 @@ const SubscriptionsDetailsComponent = () => {
                   </div>
                   <div className="position-absolute top-1 end-0 w-auto d-flex gap-2">
                     {subscriptionDetails?.status?.toLowerCase() !==
-                      "cancelled" && (
-                      <button
-                        className={styles.cancelOrderBtn}
-                        onClick={() =>
-                          dispatch(setIsPopupVisible("cancelOrder"))
-                        }
-                      >
-                        Cancel Order <GiCancel size={14} />
-                      </button>
-                    )}
+                      "cancelled" &&
+                      subscriptionDetails?.plans?.[0]?.provider_id !== 3 && (
+                        <button
+                          className={styles.cancelOrderBtn}
+                          onClick={() =>
+                            dispatch(setIsPopupVisible("cancelOrder"))
+                          }
+                        >
+                          Cancel Order <GiCancel size={14} />
+                        </button>
+                      )}
                     {subscriptionDetails?.credit_note_link ? (
                       <Link
                         href={subscriptionDetails?.credit_note_link || "#"}
@@ -737,7 +739,7 @@ const SubscriptionsDetailsComponent = () => {
         )}
       </Layout>
       {isPopupVisible === "cancelOrder" && (
-        <CustomPopup>
+        <CustomPopup onClose={() => dispatch(setIsPopupVisible(null))}>
           <div className="d-flex flex-column">
             {" "}
             <h3>Cancel Order</h3>
