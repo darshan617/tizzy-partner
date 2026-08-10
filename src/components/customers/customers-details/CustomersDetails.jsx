@@ -902,6 +902,7 @@ export default function CustomerDetail() {
                                             pathname: "/plan-details",
                                             query: {
                                               planId: innerPlan?.plan_id,
+                                              orderId: innerPlan?.order_id,
                                             },
                                           })
                                         }
