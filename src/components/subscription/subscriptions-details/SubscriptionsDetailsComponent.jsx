@@ -4,7 +4,10 @@ import { IoMdArrowBack } from "react-icons/io";
 import Link from "next/link";
 import styles from "@/components/customers/customers-details/CustomerDetails.module.css";
 import Layout from "@/components/layout/Layout";
-import { useGetSubscriptionDetailsMutation } from "@/redux/apis/subscriptions";
+import {
+  useGetSubscriptionDetailsMutation,
+  useOrderCancelMutation,
+} from "@/redux/apis/subscriptions";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { FaPen } from "react-icons/fa";
@@ -15,6 +18,13 @@ import { Calendar, Globe, User, Users } from "lucide-react";
 import { FiLayers } from "react-icons/fi";
 import { usePartialUpgradeAddToCartMutation } from "@/redux/apis/addToCartApi";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
+import { GiCancel } from "react-icons/gi";
+import {
+  selectIsPopupVisible,
+  setIsPopupVisible,
+} from "@/redux/slices/popupSlice";
+import { useDispatch, useSelector } from "react-redux";
+import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 
 const planProviderIcons = [
   <svg
@@ -103,10 +113,16 @@ const getServicePath = (provider_id) => {
 const SubscriptionsDetailsComponent = () => {
   const router = useRouter();
   const { showToast } = useToast();
+  const dispatch = useDispatch();
+  const isPopupVisible = useSelector(selectIsPopupVisible);
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
   const [subscriptionDetails, setSubscriptionDetails] = useState(null);
+  console.log("subscriptionDetails", subscriptionDetails);
+  const [reason, setReason] = useState("");
+  const [orderCancel, { isLoading: isOrderCancelLoading }] =
+    useOrderCancelMutation();
   const [getSubscriptionDetails, { isLoading: isSubscriptionDetailsLoading }] =
     useGetSubscriptionDetailsMutation();
   const [
@@ -165,6 +181,28 @@ const SubscriptionsDetailsComponent = () => {
     }
   };
 
+  const handleCancelOrder = async () => {
+    try {
+      const res = await orderCancel({
+        body: {
+          order_id: router?.query?.orderId,
+          cancel_reason: reason,
+          partner_id: userData?.id,
+        },
+      });
+      if (res?.data?.success) {
+        showToast(res?.data?.message, "success");
+        dispatch(setIsPopupVisible(null));
+        router?.push("/subscriptions");
+      } else {
+        showToast(res?.error?.data?.message, "error");
+      }
+    } catch (error) {
+      console.log("handleCancelOrder Error", error);
+      showToast("Something went wrong", "error");
+    }
+  };
+
   const status = [
     "completed",
     "active",
@@ -205,43 +243,44 @@ const SubscriptionsDetailsComponent = () => {
   }
 
   return (
-    <Layout>
-      <div className="row flex-column gy-4 py-4">
-        <div className="col">
-          <div className={`${styles.pageWrap}`}>
-            <div className={`${styles.headerRow} row align-items-end`}>
-              <div className="col">
-                <nav className={`${styles.breadcrumbs} mb-0`}>
-                  <Link href={"/dashboard"}>Dashboard</Link> /{" "}
-                  {router?.query?.type === "renewals" ? (
-                    <Link href="/renewals">Renewals</Link>
-                  ) : (
-                    <Link href="/subscriptions">Subscriptions</Link>
-                  )}
-                  <h1
-                    className={`${styles.breadcrumbItem} active fs-4`}
-                    aria-current="page"
+    <>
+      <Layout>
+        <div className="row flex-column gy-4 py-4">
+          <div className="col">
+            <div className={`${styles.pageWrap}`}>
+              <div className={`${styles.headerRow} row align-items-end`}>
+                <div className="col">
+                  <nav className={`${styles.breadcrumbs} mb-0`}>
+                    <Link href={"/dashboard"}>Dashboard</Link> /{" "}
+                    {router?.query?.type === "renewals" ? (
+                      <Link href="/renewals">Renewals</Link>
+                    ) : (
+                      <Link href="/subscriptions">Subscriptions</Link>
+                    )}
+                    <h1
+                      className={`${styles.breadcrumbItem} active fs-4`}
+                      aria-current="page"
+                    >
+                      {router?.query?.type === "renewals"
+                        ? "Renewal"
+                        : "Subscription"}{" "}
+                      - {router?.query?.orderId}
+                    </h1>
+                  </nav>
+                </div>
+                <div className="col-auto">
+                  <button
+                    onClick={() => router?.back()}
+                    className="btn small btnWhite"
                   >
-                    {router?.query?.type === "renewals"
-                      ? "Renewal"
-                      : "Subscription"}{" "}
-                    - {router?.query?.orderId}
-                  </h1>
-                </nav>
-              </div>
-              <div className="col-auto">
-                <button
-                  onClick={() => router?.back()}
-                  className="btn small btnWhite"
-                >
-                  <IoMdArrowBack />
-                  <span>Back</span>
-                </button>
+                    <IoMdArrowBack />
+                    <span>Back</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        {/* <div className="col">
+          {/* <div className="col">
             <div className="row align-items-end">
               <div className="col">
                 <nav className={`${styles.breadcrumb} mb-0`}>
@@ -272,115 +311,129 @@ const SubscriptionsDetailsComponent = () => {
             </div>
           </div> */}
 
-        <div className="col">
-          <div
-            className={`sectionCard py-4 py-sm-4 px-sm-4 px-3`}
-            style={{ minHeight: "0px" }}
-          >
-            <div className="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3 gap-lg-4">
-              <div className="d-flex align-items-center min-w-0">
-                <div
-                  className={`${styles.profAvatar} ${styles.avatarColor_2} flex-shrink-0 text-capitalize`}
-                >
-                  {customer?.company_name?.charAt(0) || "?"}
-                </div>
-                <div className={`${styles.profUser} ms-2 min-w-0`}>
-                  <p className="mb-2 fw-semibold text-capitalize text-truncate">
-                    {customer?.company_name || "-"}
-                  </p>
-                  <div className="d-flex align-items-center flex-wrap gap-2">
-                    {router?.query?.type !== "renewals" && (
-                      <div className={styles.idBadge}>
-                        <strong className="fs-6">
-                          Customer Id :{" "}
-                          {customer?.customer_id ||
-                            router?.query?.customerId ||
-                            "-"}
-                        </strong>
+          <div className="col">
+            <div
+              className={`sectionCard py-4 py-sm-4 px-sm-4 px-3`}
+              style={{ minHeight: "0px" }}
+            >
+              <div className="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3 gap-lg-4">
+                <div className="d-flex align-items-center min-w-0">
+                  <div
+                    className={`${styles.profAvatar} ${styles.avatarColor_2} flex-shrink-0 text-capitalize`}
+                  >
+                    {customer?.company_name?.charAt(0) || "?"}
+                  </div>
+                  <div className={`${styles.profUser} ms-2 min-w-0`}>
+                    <p className="mb-2 fw-semibold text-capitalize text-truncate">
+                      {customer?.company_name || "-"}
+                    </p>
+                    <div className="d-flex align-items-center flex-wrap gap-2">
+                      {router?.query?.type !== "renewals" && (
+                        <div className={styles.idBadge}>
+                          <strong className="fs-6">
+                            Customer Id :{" "}
+                            {customer?.customer_id ||
+                              router?.query?.customerId ||
+                              "-"}
+                          </strong>
+                        </div>
+                      )}
+                      <div className="d-flex align-items-center gap-1 text-muted">
+                        <User size={14} strokeWidth={1.75} />
+                        <span className="text-capitalize">
+                          {customer?.customer_name || "-"}
+                        </span>
                       </div>
-                    )}
-                    <div className="d-flex align-items-center gap-1 text-muted">
-                      <User size={14} strokeWidth={1.75} />
-                      <span className="text-capitalize">
-                        {customer?.customer_name || "-"}
-                      </span>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="d-flex flex-column flex-sm-row gap-3 gap-sm-5 ms-lg-auto">
-                <div>
-                  <small className="d-block textLight mb-1">Email</small>
-                  <Link
-                    href={`mailto:${customer?.email || "#"}`}
-                    className="text-body text-decoration-none"
-                  >
-                    {customer?.email || "-"}
-                  </Link>
-                </div>
-                <div>
-                  <small className="d-block textLight mb-1">Contact No.</small>
-                  <Link
-                    href={`tel:${customer?.mobile || ""}`}
-                    className="text-body text-decoration-none"
-                  >
-                    {customer?.mobile || "-"}
-                  </Link>
+                <div className="d-flex flex-column flex-sm-row gap-3 gap-sm-5 ms-lg-auto">
+                  <div>
+                    <small className="d-block textLight mb-1">Email</small>
+                    <Link
+                      href={`mailto:${customer?.email || "#"}`}
+                      className="text-body text-decoration-none"
+                    >
+                      {customer?.email || "-"}
+                    </Link>
+                  </div>
+                  <div>
+                    <small className="d-block textLight mb-1">
+                      Contact No.
+                    </small>
+                    <Link
+                      href={`tel:${customer?.mobile || ""}`}
+                      className="text-body text-decoration-none"
+                    >
+                      {customer?.mobile || "-"}
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="col">
-          <div className={`sectionCard px-sm-4 px-3 py-1`}>
-            <div className="border-bottom py-sm-2 py-3">
-              <div className="row align-items-center position-relative">
-                <div className="col-md-3 d-none d-md-block" />
-                <div className="col-md-6 col text-center d-flex align-items-center justify-content-md-center flex-column">
-                  <div className="d-inline-flex align-items-center domainSection">
-                    <CiGlobe />
-                    <h3 className="mb-0 ms-2 fw-semibold primaryColor">
-                      {domainName || ""}
-                    </h3>
+          <div className="col">
+            <div className={`sectionCard px-sm-4 px-3 py-1`}>
+              <div className="border-bottom py-sm-2 py-3">
+                <div className="row align-items-center position-relative">
+                  <div className="col-md-3 d-none d-md-block" />
+                  <div className="col-md-6 col text-center d-flex align-items-center justify-content-md-center flex-column">
+                    <div className="d-inline-flex align-items-center domainSection">
+                      <CiGlobe />
+                      <h3 className="mb-0 ms-2 fw-semibold primaryColor">
+                        {domainName || ""}
+                      </h3>
+                    </div>
+                    <p className="m-0 text-center small mt-1">
+                      Order Id:{" "}
+                      <span className="fw-bold">
+                        {subscriptionDetails?.order_no}
+                      </span>
+                    </p>
                   </div>
-                  <p className="m-0 text-center small mt-1">
-                    Order Id:{" "}
-                    <span className="fw-bold">
-                      {subscriptionDetails?.order_no}
-                    </span>
-                  </p>
-                </div>
-                <div className="position-absolute top-1 end-0 w-auto">
-                  {subscriptionDetails?.credit_note_link ? (
-                    <Link
-                      href={subscriptionDetails?.credit_note_link || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn small btnWhite d-flex align-items-center gap-2"
-                    >
-                      View Credit Note <BiDownload size={14} />
-                    </Link>
-                  ) : plans?.[0]?.status?.toLowerCase() === "draft" ? (
-                    <button
-                      className="btn small btnWhite d-flex align-items-center gap-2"
-                      style={{ cursor: "not-allowed" }}
-                    >
-                      View PO <BiDownload size={14} />
-                    </button>
-                  ) : (
-                    <Link
-                      href={subscriptionDetails?.po_link || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn small btnWhite d-flex align-items-center gap-2"
-                    >
-                      View PO <BiDownload size={14} />
-                    </Link>
-                  )}
-                </div>
-                {/* {(plans?.[0]?.status?.toLowerCase() === "expiring" ||
+                  <div className="position-absolute top-1 end-0 w-auto d-flex gap-2">
+                    {subscriptionDetails?.status?.toLowerCase() !==
+                      "cancelled" &&
+                      subscriptionDetails?.plans?.[0]?.provider_id !== 3 && (
+                        <button
+                          className={styles.cancelOrderBtn}
+                          onClick={() =>
+                            dispatch(setIsPopupVisible("cancelOrder"))
+                          }
+                        >
+                          Cancel Order <GiCancel size={14} />
+                        </button>
+                      )}
+                    {subscriptionDetails?.credit_note_link ? (
+                      <Link
+                        href={subscriptionDetails?.credit_note_link || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn small btnWhite d-flex align-items-center gap-2"
+                      >
+                        View Credit Note <BiDownload size={14} />
+                      </Link>
+                    ) : plans?.[0]?.status?.toLowerCase() === "draft" ? (
+                      <button
+                        className="btn small btnWhite d-flex align-items-center gap-2"
+                        style={{ cursor: "not-allowed" }}
+                      >
+                        View PO <BiDownload size={14} />
+                      </button>
+                    ) : (
+                      <Link
+                        href={subscriptionDetails?.po_link || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn small btnWhite d-flex align-items-center gap-2"
+                      >
+                        View PO <BiDownload size={14} />
+                      </Link>
+                    )}
+                  </div>
+                  {/* {(plans?.[0]?.status?.toLowerCase() === "expiring" ||
                   plans?.[0]?.status?.toLowerCase() === "expired") && (
                   <div className="col-md-3 col-auto d-flex gap-2 justify-content-end">
                     <button
@@ -405,112 +458,114 @@ const SubscriptionsDetailsComponent = () => {
                     </button>
                   </div>
                 )} */}
-              </div>
-            </div>
-
-            <div className="py-3">
-              <div className="d-flex align-items-center justify-content-between mb-2">
-                <div>
-                  <h2 className={styles.sectionCardHead}>
-                    CURRENT SUBSCRIPTION <span>({plans?.length || 0})</span>
-                  </h2>
-                </div>
-                <div>
-                  <Link
-                    href={{
-                      pathname: "/subscriptions/domain-history",
-                      query: {
-                        domains: domainName,
-                        customerId: router?.query?.customerId,
-                      },
-                    }}
-                    className={`${styles.viewAll} text-decoration-underline`}
-                  >
-                    View History
-                  </Link>
                 </div>
               </div>
 
-              {plans?.length > 0 ? (
-                plans?.map((plan) => (
-                  <div
-                    key={plan?.order_sub_id}
-                    className={`${styles.subRow} noHover`}
-                  >
-                    <div className={`${styles.subTop}`}>
-                      <div className={`${styles.subPlan}`}>
-                        <p
-                          className={`${styles.subPlanIcon} m-0 flex-shrink-0`}
-                        >
-                          {planProviderIcons?.[plan?.provider_id - 1] || "-"}
-                        </p>
-                        <div className="ms-2">
-                          <div className={`${styles.subPlanName}`}>
-                            {plan?.plan_name || "-"}
+              <div className="py-3">
+                <div className="d-flex align-items-center justify-content-between mb-2">
+                  <div>
+                    <h2 className={styles.sectionCardHead}>
+                      CURRENT SUBSCRIPTION <span>({plans?.length || 0})</span>
+                    </h2>
+                  </div>
+                  <div>
+                    <Link
+                      href={{
+                        pathname: "/subscriptions/domain-history",
+                        query: {
+                          domains: domainName,
+                          customerId: router?.query?.customerId,
+                        },
+                      }}
+                      className={`${styles.viewAll} text-decoration-underline`}
+                    >
+                      View History
+                    </Link>
+                  </div>
+                </div>
+
+                {plans?.length > 0 ? (
+                  plans?.map((plan) => (
+                    <div
+                      key={plan?.order_sub_id}
+                      className={`${styles.subRow} noHover`}
+                    >
+                      <div className={`${styles.subTop}`}>
+                        <div className={`${styles.subPlan}`}>
+                          <p
+                            className={`${styles.subPlanIcon} m-0 flex-shrink-0`}
+                          >
+                            {planProviderIcons?.[plan?.provider_id - 1] || "-"}
+                          </p>
+                          <div className="ms-2">
+                            <div className={`${styles.subPlanName}`}>
+                              {plan?.plan_name || "-"}
+                            </div>
+                            <small className={`${styles.subPlanPrice}`}>
+                              ₹ {plan?.subtotal ?? "-"}{" "}
+                              {/* <span>Per User / Per Year</span> */}
+                            </small>
                           </div>
-                          <small className={`${styles.subPlanPrice}`}>
-                            ₹ {plan?.subtotal ?? "-"}{" "}
-                            {/* <span>Per User / Per Year</span> */}
-                          </small>
                         </div>
-                      </div>
 
-                      <span
-                        className={`${styles.statusBadge} 
+                        <span
+                          className={`${styles.statusBadge} 
                         ${getPlanStatusClass(plan?.status)} 
                         ${(plan?.status?.toLowerCase() === "upgrade pending" || plan?.status?.toLowerCase() === "downgrade pending" || plan?.status?.toLowerCase() === "renewal pending") && styles.upgradePending} ${styles.subPlanStatus}`}
-                      >
-                        {formatPlanStatus(plan?.status)}
-                      </span>
-                    </div>
+                        >
+                          {formatPlanStatus(plan?.status)}
+                        </span>
+                      </div>
 
-                    <div className={`${styles.subBottom}`}>
-                      <div className={`${styles.subMeta} ps-1`}>
-                        <div className={`${styles.subMetaItem}`}>
-                          <FiLayers className={`${styles.subMetaIcon}`} />
-                          <div>
-                            <div className={`${styles.subMetaValue}`}>
-                              #{plan?.subscription_no}
+                      <div className={`${styles.subBottom}`}>
+                        <div className={`${styles.subMeta} ps-1`}>
+                          <div className={`${styles.subMetaItem}`}>
+                            <FiLayers className={`${styles.subMetaIcon}`} />
+                            <div>
+                              <div className={`${styles.subMetaValue}`}>
+                                #{plan?.subscription_no}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className={`${styles.subMetaItem}`}>
-                          <Calendar className={`${styles.subMetaIcon}`} />
-                          <div>
-                            {/* <small className={`${styles.infoLabel}`}>
+                          <div className={`${styles.subMetaItem}`}>
+                            <Calendar className={`${styles.subMetaIcon}`} />
+                            <div>
+                              {/* <small className={`${styles.infoLabel}`}>
                               Billing Cycle
                             </small> */}
-                            <div className={`${styles.subMetaValue}`}>
-                              {plan?.subscription_start_date ||
-                                periodStart ||
-                                "-"}{" "}
-                              -{" "}
-                              {plan?.subscription_end_date || periodEnd || "-"}
+                              <div className={`${styles.subMetaValue}`}>
+                                {plan?.subscription_start_date ||
+                                  periodStart ||
+                                  "-"}{" "}
+                                -{" "}
+                                {plan?.subscription_end_date ||
+                                  periodEnd ||
+                                  "-"}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        <div className={`${styles.subMetaItem}`}>
-                          <Globe className={`${styles.subMetaIcon}`} />
-                          <div>
-                            {/* <small className={`${styles.infoLabel}`}>
+                          <div className={`${styles.subMetaItem}`}>
+                            <Globe className={`${styles.subMetaIcon}`} />
+                            <div>
+                              {/* <small className={`${styles.infoLabel}`}>
                               Domain
                             </small> */}
-                            <div className={`${styles.subMetaValue}`}>
-                              {domainName || "-"}
+                              <div className={`${styles.subMetaValue}`}>
+                                {domainName || "-"}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        <div className={`${styles.subMetaItem}`}>
-                          <Users className={`${styles.subMetaIcon}`} />
-                          <div>
-                            {/* <small className={`${styles.infoLabel}`}>
+                          <div className={`${styles.subMetaItem}`}>
+                            <Users className={`${styles.subMetaIcon}`} />
+                            <div>
+                              {/* <small className={`${styles.infoLabel}`}>
                               Licenses
                             </small> */}
-                            <div className={`${styles.subMetaValue}`}>
-                              {plan?.licenses ?? "-"} Users
-                              {/* <button
+                              <div className={`${styles.subMetaValue}`}>
+                                {plan?.licenses ?? "-"} Users
+                                {/* <button
                                 type="button"
                                 className={`${styles.iconBtn} btnWhite btn`}
                                 onClick={() =>
@@ -525,164 +580,195 @@ const SubscriptionsDetailsComponent = () => {
                               >
                                 <FaPen size={10} />
                               </button> */}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* {plan?.status?.toLowerCase() === "expiring" ||
+                        {/* {plan?.status?.toLowerCase() === "expiring" ||
                       plan?.status?.toLowerCase() === "expired" ? ( */}
-                      <div className={`${styles.subActions}`}>
-                        {(plan?.status?.toLowerCase() === "expiring" ||
-                          plan?.status?.toLowerCase() === "expired") && (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                router?.push({
-                                  pathname: "/order-summary",
-                                  query: {
-                                    type: "renew-plan",
-                                    order_id: subscriptionDetails?.order_id,
-                                    order_sub_id: plan?.order_sub_id,
-                                    planId: plan?.plan_id,
-                                  },
-                                })
-                              }
-                              className={`${styles.subRenewBtn}`}
-                            >
-                              <MdAutorenew
-                                className="me-2"
-                                size={14}
-                                style={{ minWidth: "14px" }}
-                              />
-                              <span>Renew</span>
-                            </button>
-                          </>
-                        )}
+                        <div className={`${styles.subActions}`}>
+                          {(plan?.status?.toLowerCase() === "expiring" ||
+                            plan?.status?.toLowerCase() === "expired") && (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  router?.push({
+                                    pathname: "/order-summary",
+                                    query: {
+                                      type: "renew-plan",
+                                      order_id: subscriptionDetails?.order_id,
+                                      order_sub_id: plan?.order_sub_id,
+                                      planId: plan?.plan_id,
+                                    },
+                                  })
+                                }
+                                className={`${styles.subRenewBtn}`}
+                              >
+                                <MdAutorenew
+                                  className="me-2"
+                                  size={14}
+                                  style={{ minWidth: "14px" }}
+                                />
+                                <span>Renew</span>
+                              </button>
+                            </>
+                          )}
 
-                        {plan?.status?.toLowerCase() !== "draft" &&
-                        plan?.status?.toLowerCase() !== "pending" &&
-                        plan?.status?.toLowerCase() !== "cancelled" &&
-                        plan?.status?.toLowerCase() !== "upgrade pending" &&
-                        plan?.status?.toLowerCase() !== "upgraded" &&
-                        plan?.status?.toLowerCase() !== "downgrade pending" &&
-                        plan?.status?.toLowerCase() !== "downgraded" &&
-                        plan?.status?.toLowerCase() !== "renewal pending" &&
-                        // plan?.status?.toLowerCase() !== "expiring" &&
-                        // plan?.status?.toLowerCase() !== "expired" &&
-                        plan?.status?.toLowerCase() !== "cancelled" &&
-                        plan?.status?.toLowerCase() !== "processing" ? (
-                          <>
-                            <Link
-                              href={{
-                                pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                                query: {
-                                  type: "upgrade",
-                                  order_id: subscriptionDetails?.order_id,
-                                  customer_id:
-                                    router?.query?.customerId ||
-                                    plan?.customer_id,
-                                  plan_id: plan?.plan_id,
-                                  order_sub_id: plan?.order_sub_id,
-                                },
+                          {plan?.status?.toLowerCase() !== "draft" &&
+                          plan?.status?.toLowerCase() !== "pending" &&
+                          plan?.status?.toLowerCase() !== "cancelled" &&
+                          plan?.status?.toLowerCase() !== "upgrade pending" &&
+                          plan?.status?.toLowerCase() !== "upgraded" &&
+                          plan?.status?.toLowerCase() !== "downgrade pending" &&
+                          plan?.status?.toLowerCase() !== "downgraded" &&
+                          plan?.status?.toLowerCase() !== "renewal pending" &&
+                          // plan?.status?.toLowerCase() !== "expiring" &&
+                          // plan?.status?.toLowerCase() !== "expired" &&
+                          plan?.status?.toLowerCase() !== "cancelled" &&
+                          plan?.status?.toLowerCase() !== "processing" ? (
+                            <>
+                              <Link
+                                href={{
+                                  pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                                  query: {
+                                    type: "upgrade",
+                                    order_id: subscriptionDetails?.order_id,
+                                    customer_id:
+                                      router?.query?.customerId ||
+                                      plan?.customer_id,
+                                    plan_id: plan?.plan_id,
+                                    order_sub_id: plan?.order_sub_id,
+                                  },
+                                }}
+                                className={styles.subUpgradeTextLink}
+                                onClick={() => {
+                                  Cookies.remove("customerData");
+                                  Cookies.set(
+                                    "customerData",
+                                    JSON.stringify({
+                                      partner_id: userData?.id,
+                                      customer_id: router?.query?.customerId,
+                                      domain_name: domainName,
+                                    }),
+                                  );
+                                }}
+                              >
+                                Upgrade
+                              </Link>
+                              <button
+                                onClick={() => handlePartialUpgrade(plan)}
+                                className={styles.subUpgradeTextLink}
+                              >
+                                Partial Upgrade
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              style={{
+                                width: "fit-content",
+                                fontSize: "12px",
+                                cursor: "not-allowed",
+                                textUnderlineOffset: "3px",
                               }}
-                              className={styles.subUpgradeTextLink}
-                              onClick={() => {
-                                Cookies.remove("customerData");
-                                Cookies.set(
-                                  "customerData",
-                                  JSON.stringify({
-                                    partner_id: userData?.id,
-                                    customer_id: router?.query?.customerId,
-                                    domain_name: domainName,
-                                  }),
-                                );
-                              }}
+                              className="bg-transparent border-0 p-0 text-decoration-underline text-muted"
                             >
                               Upgrade
-                            </Link>
-                            <button
-                              onClick={() => handlePartialUpgrade(plan)}
-                              className={styles.subUpgradeTextLink}
-                            >
-                              Partial Upgrade
                             </button>
-                          </>
-                        ) : (
-                          <button
-                            style={{
-                              width: "fit-content",
-                              fontSize: "12px",
-                              cursor: "not-allowed",
-                              textUnderlineOffset: "3px",
-                            }}
-                            className="bg-transparent border-0 p-0 text-decoration-underline text-muted"
-                          >
-                            Upgrade
-                          </button>
-                        )}
+                          )}
 
-                        {(plan?.status?.toLowerCase() === "expiring" ||
-                          plan?.status?.toLowerCase() === "expired") && (
-                          <>
-                            <Link
-                              className={styles.downgradeBtn}
-                              href={{
-                                pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                                query: {
-                                  type: "downgrade",
-                                  order_id: subscriptionDetails?.order_id,
-                                  customer_id: router?.query?.customerId,
-                                  plan_id: plan?.plan_id,
-                                  order_sub_id: plan?.order_sub_id,
-                                },
-                              }}
-                              onClick={() => {
-                                Cookies.remove("customerData");
-                                Cookies.set(
-                                  "customerData",
-                                  JSON.stringify({
-                                    partner_id: userData?.id,
+                          {(plan?.status?.toLowerCase() === "expiring" ||
+                            plan?.status?.toLowerCase() === "expired") && (
+                            <>
+                              <Link
+                                className={styles.downgradeBtn}
+                                href={{
+                                  pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                                  query: {
+                                    type: "downgrade",
+                                    order_id: subscriptionDetails?.order_id,
                                     customer_id: router?.query?.customerId,
-                                    domain_name: domainName,
-                                  }),
-                                );
-                              }}
-                            >
-                              Downgrade
-                            </Link>
-                          </>
-                        )}
+                                    plan_id: plan?.plan_id,
+                                    order_sub_id: plan?.order_sub_id,
+                                  },
+                                }}
+                                onClick={() => {
+                                  Cookies.remove("customerData");
+                                  Cookies.set(
+                                    "customerData",
+                                    JSON.stringify({
+                                      partner_id: userData?.id,
+                                      customer_id: router?.query?.customerId,
+                                      domain_name: domainName,
+                                    }),
+                                  );
+                                }}
+                              >
+                                Downgrade
+                              </Link>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center">
+                    <p className="text-muted">No plans found</p>
                   </div>
-                ))
-              ) : (
-                <div className="text-center">
-                  <p className="text-muted">No plans found</p>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      {subscriptionDetails?.status?.toLowerCase() === "draft" && (
-        <div className="text-center">
-          <button
-            className={styles.eSignBtn}
-            onClick={() =>
-              router?.push({
-                pathname: "/verify-aadhar",
-                query: { ordId: router?.query?.orderId },
-              })
-            }
-          >
-            E-Sign
-          </button>
-        </div>
+        {subscriptionDetails?.status?.toLowerCase() === "draft" && (
+          <div className="text-center">
+            <button
+              className={styles.eSignBtn}
+              onClick={() =>
+                router?.push({
+                  pathname: "/verify-aadhar",
+                  query: { ordId: router?.query?.orderId },
+                })
+              }
+            >
+              E-Sign
+            </button>
+          </div>
+        )}
+      </Layout>
+      {isPopupVisible === "cancelOrder" && (
+        <CustomPopup onClose={() => dispatch(setIsPopupVisible(null))}>
+          <div className="d-flex flex-column">
+            {" "}
+            <h3>Cancel Order</h3>
+            <p>Are you sure you want to cancel this order?</p>
+            <textarea
+              placeholder="Enter reason for cancellation"
+              className="form-control"
+              style={{ minHeight: "100px" }}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+            />
+            <div className="d-flex gap-2 mt-3 justify-content-end">
+              <button
+                className={styles.cancelCancelOrderBtn}
+                onClick={() => dispatch(setIsPopupVisible(null))}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.confirmCancelOrderBtn}
+                onClick={() => handleCancelOrder()}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </CustomPopup>
       )}
-    </Layout>
+    </>
   );
 };
 

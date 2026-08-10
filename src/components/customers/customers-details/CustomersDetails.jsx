@@ -32,6 +32,7 @@ import { BiChevronRight } from "react-icons/bi";
 import { MdOutlineFileDownload } from "react-icons/md";
 import DownloadExcel from "@/common-components/download-excel/DownloadExcel";
 import Pagination from "@/common-components/pagination/Pagination";
+import Loader from "@/common-components/loader/Loader";
 
 const TXN_ITEM_PER_PAGE = 5;
 
@@ -127,16 +128,20 @@ export default function CustomerDetail() {
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
-  const { data: customerDetailsData, refetch: refetchCustomerDetails } =
-    useGetSpecificCustomerDetailsQuery(
-      {
-        customer_id: router?.query?.customerId,
-        partner_id: userData?.id,
-      },
-      {
-        skip: !router?.isReady || !router?.query?.customerId || !userData?.id,
-      },
-    );
+  const {
+    data: customerDetailsData,
+    isLoading: isCustomerDetailsLoading,
+    refetch: refetchCustomerDetails,
+  } = useGetSpecificCustomerDetailsQuery(
+    {
+      customer_id: router?.query?.customerId,
+      partner_id: userData?.id,
+    },
+    {
+      skip: !router.isReady || !router?.query?.customerId,
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const [
     partialUpgradeAddToCart,
     { isLoading: isPartialUpgradeAddToCartLoading },
@@ -244,14 +249,6 @@ export default function CustomerDetail() {
       showToast(error?.data?.message || error?.error?.data?.message, "error");
     }
   };
-
-  useEffect(() => {
-    if (router?.isReady) {
-      if (router?.query?.customerId) {
-        refetchCustomerDetails();
-      }
-    }
-  }, [router?.isReady]);
 
   useEffect(() => {
     const initSwiper = async () => {
@@ -456,300 +453,330 @@ export default function CustomerDetail() {
 
   return (
     <Layout>
-      <div className="row flex-column gy-4 py-4">
-        <div className="col">
-          <div className={`${styles.pageWrap}`}>
-            <div className={`${styles.headerRow} row align-items-end`}>
-              <div className="col">
-                <nav className={`${styles.breadcrumbs} mb-0`}>
-                  <Link href={"/dashboard"}>Dashboard</Link> /{" "}
-                  <Link href={"/customers"}>Customer</Link>
-                  <h1
-                    className={`${styles.breadcrumbItem} active fs-4`}
-                    aria-current="page"
-                  >
-                    Customer - {customerDetails?.name}
-                  </h1>
-                </nav>
-              </div>
-              <div className="col-auto">
-                <Link href="/customers" className="btn small btnWhite">
-                  <IoMdArrowBack />
-                  <span>Back</span>
-                </Link>
+      {isCustomerDetailsLoading ? (
+        <Loader />
+      ) : (
+        <div className="row flex-column gy-4 py-4">
+          <div className="col">
+            <div className={`${styles.pageWrap}`}>
+              <div className={`${styles.headerRow} row align-items-end`}>
+                <div className="col">
+                  <nav className={`${styles.breadcrumbs} mb-0`}>
+                    <Link href={"/dashboard"}>Dashboard</Link> /{" "}
+                    <Link href={"/customers"}>Customer</Link>
+                    <h1
+                      className={`${styles.breadcrumbItem} active fs-4`}
+                      aria-current="page"
+                    >
+                      Customer - {customerDetails?.name}
+                    </h1>
+                  </nav>
+                </div>
+                <div className="col-auto">
+                  <Link href="/customers" className="btn small btnWhite">
+                    <IoMdArrowBack />
+                    <span>Back</span>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="col">
-          <div className={`${styles.pageWrap}`}>
-            <div className="row gy-4">
-              {/* LEFT: Profile + Quick Action */}
-              <div className="col-lg-4 col-12">
-                <div className="d-flex flex-column gap-3">
-                  <div className={styles.sideCard}>
-                    <div className={styles.sideCardHeader}>
-                      <div className={styles.sideCardTitle}>
-                        <UserRound size={18} strokeWidth={1.75} />
-                        <span>Customer Information</span>
-                      </div>
-                      <span
-                        className={`${styles.custStatusBadge} ${
-                          String(
-                            customerDetails?.status || "",
-                          ).toLowerCase() === "active" ||
-                          !customerDetails?.status
-                            ? styles.custStatusActive
-                            : styles.custStatusInactive
-                        }`}
-                      >
-                        {customerDetails?.status
-                          ? String(customerDetails.status)
-                              .charAt(0)
-                              .toUpperCase() +
-                            String(customerDetails.status).slice(1)
-                          : "Active"}
-                      </span>
-                    </div>
-
-                    <div className={styles.sideCardBody}>
-                      <div className={styles.custIdentity}>
-                        <div className={`${styles.custAvatar} text-capitalize`}>
-                          {customerDetails?.company_name?.charAt(0) || "-"}
+          <div className="col">
+            <div className={`${styles.pageWrap}`}>
+              <div className="row gy-4">
+                {/* LEFT: Profile + Quick Action */}
+                <div className="col-lg-4 col-12">
+                  <div className="d-flex flex-column gap-3">
+                    <div className={styles.sideCard}>
+                      <div className={styles.sideCardHeader}>
+                        <div className={styles.sideCardTitle}>
+                          <UserRound size={18} strokeWidth={1.75} />
+                          <span>Customer Information</span>
                         </div>
-                        <div className={styles.custIdentityMeta}>
-                          <h2
-                            className={`${styles.custCompanyName} text-capitalize`}
+                        <span
+                          className={`${styles.custStatusBadge} ${
+                            String(
+                              customerDetails?.status || "",
+                            ).toLowerCase() === "active" ||
+                            !customerDetails?.status
+                              ? styles.custStatusActive
+                              : styles.custStatusInactive
+                          }`}
+                        >
+                          {customerDetails?.status
+                            ? String(customerDetails.status)
+                                .charAt(0)
+                                .toUpperCase() +
+                              String(customerDetails.status).slice(1)
+                            : "Active"}
+                        </span>
+                      </div>
+
+                      <div className={styles.sideCardBody}>
+                        <div className={styles.custIdentity}>
+                          <div
+                            className={`${styles.custAvatar} text-capitalize`}
                           >
-                            {customerDetails?.company_name || "-"}
-                          </h2>
-                          <div className={styles.custIdBadge}>
-                            Customer Id : {customerDetails?.id || "-"}
+                            {customerDetails?.company_name?.charAt(0) || "-"}
+                          </div>
+                          <div className={styles.custIdentityMeta}>
+                            <h2
+                              className={`${styles.custCompanyName} text-capitalize`}
+                            >
+                              {customerDetails?.company_name || "-"}
+                            </h2>
+                            <div className={styles.custIdBadge}>
+                              Customer Id : {customerDetails?.id || "-"}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className={styles.infoItem}>
+                          <small className={styles.infoLabel}>Full Name</small>
+                          <div
+                            className={`${styles.infoValue} text-capitalize`}
+                          >
+                            {customerDetails?.name || "-"}
+                          </div>
+                        </div>
+
+                        <div className={styles.infoItem}>
+                          <small className={styles.infoLabel}>Email</small>
+                          <div className={styles.infoValue}>
+                            <Link
+                              href={`mailto:${customerDetails?.email || "#"}`}
+                            >
+                              {customerDetails?.email || "-"}
+                            </Link>
+                          </div>
+                        </div>
+
+                        <div className={styles.infoItem}>
+                          <small className={styles.infoLabel}>
+                            Contact No.
+                          </small>
+                          <div className={styles.infoValue}>
+                            <Link
+                              href={`tel:${customerDetails?.mobile || "#"}`}
+                            >
+                              {customerDetails?.mobile || "-"}
+                            </Link>
+                          </div>
+                        </div>
+
+                        <div className={styles.infoItem}>
+                          <small className={styles.infoLabel}>GSTIN</small>
+                          <div className={styles.infoValue}>
+                            {customerDetails?.gstin || "-"}
+                          </div>
+                        </div>
+
+                        <div className={styles.infoItem}>
+                          <small className={styles.infoLabel}>PAN No.</small>
+                          <div className={`${styles.infoValue} text-uppercase`}>
+                            {customerDetails?.pan_no || "-"}
+                          </div>
+                        </div>
+
+                        <div className={styles.infoItem}>
+                          <small className={styles.infoLabel}>Address</small>
+                          <address
+                            className={`${styles.infoValue} text-capitalize mb-0`}
+                          >
+                            {customerDetails?.company_address || "-"}
+                          </address>
+                        </div>
+
+                        <div className={`${styles.infoItem} mb-0`}>
+                          <small className={styles.infoLabel}>Create On</small>
+                          <div className={styles.infoValue}>
+                            {customerDetails?.created_at || "-"}
                           </div>
                         </div>
                       </div>
+                    </div>
 
-                      <div className={styles.infoItem}>
-                        <small className={styles.infoLabel}>Full Name</small>
-                        <div className={`${styles.infoValue} text-capitalize`}>
-                          {customerDetails?.name || "-"}
+                    <div className={styles.sideCard}>
+                      <div className={styles.sideCardHeader}>
+                        <div className={styles.sideCardTitle}>
+                          <WandSparkles size={18} strokeWidth={1.75} />
+                          <span>Quick Action</span>
                         </div>
                       </div>
 
-                      <div className={styles.infoItem}>
-                        <small className={styles.infoLabel}>Email</small>
-                        <div className={styles.infoValue}>
-                          <Link
-                            href={`mailto:${customerDetails?.email || "#"}`}
-                          >
-                            {customerDetails?.email || "-"}
-                          </Link>
-                        </div>
-                      </div>
-
-                      <div className={styles.infoItem}>
-                        <small className={styles.infoLabel}>Contact No.</small>
-                        <div className={styles.infoValue}>
-                          <Link href={`tel:${customerDetails?.mobile || "#"}`}>
-                            {customerDetails?.mobile || "-"}
-                          </Link>
-                        </div>
-                      </div>
-
-                      <div className={styles.infoItem}>
-                        <small className={styles.infoLabel}>GSTIN</small>
-                        <div className={styles.infoValue}>
-                          {customerDetails?.gstin || "-"}
-                        </div>
-                      </div>
-
-                      <div className={styles.infoItem}>
-                        <small className={styles.infoLabel}>PAN No.</small>
-                        <div className={`${styles.infoValue} text-uppercase`}>
-                          {customerDetails?.pan_no || "-"}
-                        </div>
-                      </div>
-
-                      <div className={styles.infoItem}>
-                        <small className={styles.infoLabel}>Address</small>
-                        <address
-                          className={`${styles.infoValue} text-capitalize mb-0`}
+                      <div className={styles.quickActionBody}>
+                        <Link
+                          href={`/customers/edit-customer?customerId=${router?.query?.customerId}`}
+                          className={styles.quickActionItem}
                         >
-                          {customerDetails?.company_address || "-"}
-                        </address>
+                          <SquarePen size={16} strokeWidth={1.75} />
+                          <span>Edit Customer</span>
+                        </Link>
+                        <Link
+                          href={`/services/google-workspace?customerId=${router?.query?.customerId}`}
+                          className={styles.quickActionItem}
+                        >
+                          <ShoppingCart size={16} strokeWidth={1.75} />
+                          <span>Create Order</span>
+                        </Link>
                       </div>
-
-                      <div className={`${styles.infoItem} mb-0`}>
-                        <small className={styles.infoLabel}>Create On</small>
-                        <div className={styles.infoValue}>
-                          {customerDetails?.created_at || "-"}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.sideCard}>
-                    <div className={styles.sideCardHeader}>
-                      <div className={styles.sideCardTitle}>
-                        <WandSparkles size={18} strokeWidth={1.75} />
-                        <span>Quick Action</span>
-                      </div>
-                    </div>
-
-                    <div className={styles.quickActionBody}>
-                      <Link
-                        href={`/customers/edit-customer?customerId=${router?.query?.customerId}`}
-                        className={styles.quickActionItem}
-                      >
-                        <SquarePen size={16} strokeWidth={1.75} />
-                        <span>Edit Customer</span>
-                      </Link>
-                      <Link
-                        href={`/services/google-workspace?customerId=${router?.query?.customerId}`}
-                        className={styles.quickActionItem}
-                      >
-                        <ShoppingCart size={16} strokeWidth={1.75} />
-                        <span>Create Order</span>
-                      </Link>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="col-lg-8 col-12">
-                <div className="row flex-column gy-4">
-                  <div className="col">
-                    <div className="row g-3">
-                      {metricCards.map((metric, index) => (
-                        <div className="col-6 col-xl-3" key={index}>
-                          <div className={styles.metricCard}>
-                            <div className={styles.metricCardTop}>
-                              <div
-                                className={`${styles.metricIcon} ${styles[metric.iconTheme]}`}
-                              >
-                                {metric.icon}
-                              </div>
-                              <span className={styles.metricBadge}>
-                                {metric.badge}
-                              </span>
-                            </div>
-                            <div className={styles.metricTitle}>
-                              {metric.title}
-                            </div>
-                            <div className={styles.metricValue}>
-                              {metric.value}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="col">
-                    <div className={`${styles.pageWrap}`}>
-                      <div className={`${styles.card} p-sm-4 p-3`}>
-                        <div className="d-flex align-items-center justify-content-between mb-3">
-                          <h2 className={`${styles.cardHead}`}>
-                            Current Subscription{" "}
-                            <span>({allInnerPlans?.length || 0})</span>
-                          </h2>
-                          <Link
-                            href={`/subscriptions?customerId=${router?.query?.customerId}`}
-                            className={`${styles.viewAll} text-decoration-underline`}
-                          >
-                            View All
-                          </Link>
-                        </div>
-
-                        {allInnerPlans?.length === 0 ? (
-                          <div className="text-center d-flex flex-column align-items-center justify-content-center gap-2 py-3">
-                            <p className="m-0">No Subscriptions</p>
-                            <button
-                              className="small btnDefault btn"
-                              onClick={() =>
-                                router.push("/services/google-workspace")
-                              }
-                            >
-                              <BsPlusCircleDotted className="me-2" size={14} />
-                              <span>Buy New Subscription</span>
-                            </button>
-                          </div>
-                        ) : (
-                          allInnerPlans?.slice(0, 5)?.map((innerPlan, idx) => (
-                            <div className={`${styles.subRow}`} key={idx}>
-                              <div className={`${styles.subTop}`}>
-                                <div className={`${styles.subPlan}`}>
-                                  <p
-                                    className={`${styles.subPlanIcon} m-0 flex-shrink-0`}
-                                  >
-                                    {plansImg?.[innerPlan?.provider_id - 1] ||
-                                      "-"}
-                                  </p>
-                                  <div className="ms-2">
-                                    <div className={`${styles.subPlanName}`}>
-                                      {innerPlan?.plan_name || "-"}
-                                    </div>
-                                    <small className={`${styles.subPlanPrice}`}>
-                                      ₹{innerPlan?.price}{" "}
-                                      <span>Per User / Per Year</span>
-                                    </small>
-                                  </div>
-                                </div>
-
-                                <span
-                                  className={`${styles.statusBadge} ${styles?.[innerPlan?.status?.toLowerCase()?.replace(" ", "_")]}`}
+                <div className="col-lg-8 col-12">
+                  <div className="row flex-column gy-4">
+                    <div className="col">
+                      <div className="row g-3">
+                        {metricCards.map((metric, index) => (
+                          <div className="col-6 col-xl-3" key={index}>
+                            <div className={styles.metricCard}>
+                              <div className={styles.metricCardTop}>
+                                <div
+                                  className={`${styles.metricIcon} ${styles[metric.iconTheme]}`}
                                 >
-                                  {innerPlan?.status || "-"}
+                                  {metric.icon}
+                                </div>
+                                <span className={styles.metricBadge}>
+                                  {metric.badge}
                                 </span>
                               </div>
+                              <div className={styles.metricTitle}>
+                                {metric.title}
+                              </div>
+                              <div className={styles.metricValue}>
+                                {metric.value}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
-                              <div className={`${styles.subBottom}`}>
-                                <div className={`${styles.subMeta} ps-1`}>
-                                  <div className={`${styles.subMetaItem}`}>
-                                    <FiLayers
-                                      className={`${styles.subMetaIcon}`}
-                                    />
-                                    <div className={`${styles.subMetaValue}`}>
-                                      #{innerPlan?.subscription_id}
-                                    </div>
-                                  </div>
-                                  <div className={`${styles.subMetaItem}`}>
-                                    <Calendar
-                                      className={`${styles.subMetaIcon}`}
-                                    />
-                                    <div>
-                                      <div className={`${styles.subMetaValue}`}>
-                                        {innerPlan?.start_date} -{" "}
-                                        {innerPlan?.end_date}
+                    <div className="col">
+                      <div className={`${styles.pageWrap}`}>
+                        <div className={`${styles.card} p-sm-4 p-3`}>
+                          <div className="d-flex align-items-center justify-content-between mb-3">
+                            <h2 className={`${styles.cardHead}`}>
+                              Current Subscription{" "}
+                              <span>({allInnerPlans?.length || 0})</span>
+                            </h2>
+                            <Link
+                              href={`/subscriptions?customerId=${router?.query?.customerId}`}
+                              className={`${styles.viewAll} text-decoration-underline`}
+                            >
+                              View All
+                            </Link>
+                          </div>
+
+                          {allInnerPlans?.length === 0 ? (
+                            <div className="text-center d-flex flex-column align-items-center justify-content-center gap-2 py-3">
+                              <p className="m-0">No Subscriptions</p>
+                              <button
+                                className="small btnDefault btn"
+                                onClick={() =>
+                                  router.push("/services/google-workspace")
+                                }
+                              >
+                                <BsPlusCircleDotted
+                                  className="me-2"
+                                  size={14}
+                                />
+                                <span>Buy New Subscription</span>
+                              </button>
+                            </div>
+                          ) : (
+                            allInnerPlans
+                              ?.slice(0, 5)
+                              ?.map((innerPlan, idx) => (
+                                <div className={`${styles.subRow}`} key={idx}>
+                                  <div className={`${styles.subTop}`}>
+                                    <div className={`${styles.subPlan}`}>
+                                      <p
+                                        className={`${styles.subPlanIcon} m-0 flex-shrink-0`}
+                                      >
+                                        {plansImg?.[
+                                          innerPlan?.provider_id - 1
+                                        ] || "-"}
+                                      </p>
+                                      <div className="ms-2">
+                                        <div
+                                          className={`${styles.subPlanName}`}
+                                        >
+                                          {innerPlan?.plan_name || "-"}
+                                        </div>
+                                        <small
+                                          className={`${styles.subPlanPrice}`}
+                                        >
+                                          ₹{innerPlan?.price}{" "}
+                                          <span>Per User / Per Year</span>
+                                        </small>
                                       </div>
                                     </div>
+
+                                    <span
+                                      className={`${styles.statusBadge} ${styles?.[innerPlan?.status?.toLowerCase()?.replace(" ", "_")]}`}
+                                    >
+                                      {innerPlan?.status || "-"}
+                                    </span>
                                   </div>
 
-                                  <div className={`${styles.subMetaItem}`}>
-                                    <Globe
-                                      className={`${styles.subMetaIcon}`}
-                                    />
-                                    <div>
-                                      <div className={`${styles.subMetaValue}`}>
-                                        {innerPlan?.domain_name || "-"}
+                                  <div className={`${styles.subBottom}`}>
+                                    <div className={`${styles.subMeta} ps-1`}>
+                                      <div className={`${styles.subMetaItem}`}>
+                                        <FiLayers
+                                          className={`${styles.subMetaIcon}`}
+                                        />
+                                        <div
+                                          className={`${styles.subMetaValue}`}
+                                        >
+                                          #{innerPlan?.subscription_id}
+                                        </div>
+                                      </div>
+                                      <div className={`${styles.subMetaItem}`}>
+                                        <Calendar
+                                          className={`${styles.subMetaIcon}`}
+                                        />
+                                        <div>
+                                          <div
+                                            className={`${styles.subMetaValue}`}
+                                          >
+                                            {innerPlan?.start_date} -{" "}
+                                            {innerPlan?.end_date}
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <div className={`${styles.subMetaItem}`}>
+                                        <Globe
+                                          className={`${styles.subMetaIcon}`}
+                                        />
+                                        <div>
+                                          <div
+                                            className={`${styles.subMetaValue}`}
+                                          >
+                                            {innerPlan?.domain_name || "-"}
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <div className={`${styles.subMetaItem}`}>
+                                        <Users
+                                          className={`${styles.subMetaIcon}`}
+                                        />
+                                        <div>
+                                          <div
+                                            className={`${styles.subMetaValue}`}
+                                          >
+                                            {innerPlan?.license_count || "-"}{" "}
+                                            Users
+                                          </div>
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
 
-                                  <div className={`${styles.subMetaItem}`}>
-                                    <Users
-                                      className={`${styles.subMetaIcon}`}
-                                    />
-                                    <div>
-                                      <div className={`${styles.subMetaValue}`}>
-                                        {innerPlan?.license_count || "-"} Users
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* <div className={`${styles.subActions}`}>
+                                    {/* <div className={`${styles.subActions}`}>
                                   {(innerPlan?.status?.toLowerCase() ===
                                     "expiring" ||
                                     innerPlan?.status?.toLowerCase() ===
@@ -865,416 +892,433 @@ export default function CustomerDetail() {
                                     </>
                                   )}
                                 </div> */}
-                                <div className={`${styles.subActions}`}>
-                                  <button
-                                    className={styles.subActionBtnViewMore}
-                                  >
-                                    <BiChevronRight size={16} />
-                                  </button>
+                                    <div className={`${styles.subActions}`}>
+                                      <button
+                                        className={styles.subActionBtnViewMore}
+                                        onClick={() =>
+                                          router.push({
+                                            pathname: "/plan-details",
+                                            query: {
+                                              planId: innerPlan?.plan_id,
+                                            },
+                                          })
+                                        }
+                                      >
+                                        <BiChevronRight size={16} />
+                                      </button>
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
-                          ))
-                        )}
+                              ))
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="col">
-                    <div className={`${styles.card} p-sm-4 p-3`}>
-                      <div className="d-flex align-items-start justify-content-between gap-3 mb-3">
-                        <div>
-                          <h2 className={styles.cardHead}>Transactions</h2>
-                          <p className={`${styles.txnShowing} mb-0`}>
-                            Showing{" "}
-                            <strong>
-                              {txnTotal === 0
-                                ? "0 - 0"
-                                : `${txnStartIndex + 1} - ${txnEndIndex}`}
-                            </strong>{" "}
-                            from <strong>{txnTotal}</strong> Transactions
-                          </p>
-                        </div>
-                        <Link
-                          href={`/transactions?customerId=${router?.query?.customerId}`}
-                          className={`${styles.viewAll} text-decoration-underline`}
-                        >
-                          View All
-                        </Link>
-                      </div>
-
-                      <div className={styles.txnToolbar}>
-                        <div className={styles.txnTabs} role="tablist">
-                          <button
-                            type="button"
-                            role="tab"
-                            aria-selected={txnTab === "transactions"}
-                            className={`${styles.txnTab} ${
-                              txnTab === "transactions"
-                                ? styles.txnTabActive
-                                : ""
-                            }`}
-                            onClick={() => {
-                              setTxnTab("transactions");
-                              setTxnPage(1);
-                            }}
+                    <div className="col">
+                      <div className={`${styles.card} p-sm-4 p-3`}>
+                        <div className="d-flex align-items-start justify-content-between gap-3 mb-3">
+                          <div>
+                            <h2 className={styles.cardHead}>Transactions</h2>
+                            <p className={`${styles.txnShowing} mb-0`}>
+                              Showing{" "}
+                              <strong>
+                                {txnTotal === 0
+                                  ? "0 - 0"
+                                  : `${txnStartIndex + 1} - ${txnEndIndex}`}
+                              </strong>{" "}
+                              from <strong>{txnTotal}</strong> Transactions
+                            </p>
+                          </div>
+                          <Link
+                            href={`/transactions?customerId=${router?.query?.customerId}`}
+                            className={`${styles.viewAll} text-decoration-underline`}
                           >
-                            TRANSACTIONS
-                          </button>
-                          <button
-                            type="button"
-                            role="tab"
-                            aria-selected={txnTab === "invoice"}
-                            className={`${styles.txnTab} ${
-                              txnTab === "invoice" ? styles.txnTabActive : ""
-                            }`}
-                            onClick={() => {
-                              setTxnTab("invoice");
-                              setTxnPage(1);
-                              setSelectedInvoiceIds([]);
-                            }}
-                          >
-                            Invoice
-                          </button>
+                            View All
+                          </Link>
                         </div>
-                        {txnTab === "transactions" && (
-                          <DownloadExcel
-                            data={allTransactions}
-                            columns={txnDownloadColumns}
-                            fileName="customer-transactions"
-                            className={styles.txnDownloadBtn}
-                            buttonText="Download List"
-                          />
-                        )}
-                      </div>
 
-                      {txnTab === "transactions" ? (
-                        allTransactions?.length > 0 ? (
-                          <>
-                            <div className={styles.txnList}>
-                              {pagedTransactions?.map((txn, i) => (
-                                <div
-                                  className={styles.txnCard}
-                                  key={txn?.order_no || txn?.id || i}
-                                >
-                                  <div className={styles.txnMeta}>
-                                    <div className={styles.txnDate}>
-                                      {txn?.created_at || "-"}
-                                    </div>
-                                    <div className={styles.txnId}>
-                                      {txn?.order_no || "-"}
-                                    </div>
-                                  </div>
-
-                                  <div className={styles.txnInfo}>
-                                    <div className={styles.txnPlanName}>
-                                      {txn?.order_name ||
-                                        txn?.plan ||
-                                        txn?.domain_name ||
-                                        "-"}
-                                    </div>
-                                    <div className={styles.txnCategory}>
-                                      {txn?.order_category ||
-                                        txn?.domain_name ||
-                                        "-"}
-                                    </div>
-                                  </div>
-
-                                  <div className={styles.txnRight}>
-                                    <span
-                                      className={`${styles.txnStatus} ${getTxnStatusClass(
-                                        txn?.status,
-                                        styles,
-                                      )}`}
-                                    >
-                                      {formatTxnStatus(txn?.status)}
-                                    </span>
-                                    <strong className={styles.txnPrice}>
-                                      {formatTxnAmount(txn?.price)}
-                                    </strong>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-
-                            {txnTotal > TXN_ITEM_PER_PAGE && (
-                              <div className="mt-3">
-                                <Pagination
-                                  data={allTransactions}
-                                  currentPage={txnPage}
-                                  setCurrentPage={setTxnPage}
-                                  itemPerPage={TXN_ITEM_PER_PAGE}
-                                />
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <p className="text-center m-0 text-secondary py-3">
-                            No transactions found
-                          </p>
-                        )
-                      ) : allInvoices?.length > 0 ? (
-                        <>
-                          <div className={styles.invToolbar}>
-                            <label
-                              className={styles.invCheckAll}
-                              style={{
-                                cursor:
-                                  selectableInvoiceIds.length === 0 ||
-                                  allInvoices?.some(
-                                    (invoice) =>
-                                      invoice?.payment_retry
-                                        ?.payment_link_expired,
-                                  )
-                                    ? "not-allowed"
-                                    : "pointer",
+                        <div className={styles.txnToolbar}>
+                          <div className={styles.txnTabs} role="tablist">
+                            <button
+                              type="button"
+                              role="tab"
+                              aria-selected={txnTab === "transactions"}
+                              className={`${styles.txnTab} ${
+                                txnTab === "transactions"
+                                  ? styles.txnTabActive
+                                  : ""
+                              }`}
+                              onClick={() => {
+                                setTxnTab("transactions");
+                                setTxnPage(1);
                               }}
                             >
-                              <input
-                                type="checkbox"
-                                className="form-check-input"
-                                checked={allInvoicesSelected}
-                                onChange={toggleSelectAllInvoices}
-                                disabled={
-                                  selectableInvoiceIds.length === 0 ||
-                                  allInvoices?.some(
-                                    (invoice) =>
-                                      invoice?.payment_retry
-                                        ?.payment_link_expired,
-                                  )
-                                }
+                              TRANSACTIONS
+                            </button>
+                            <button
+                              type="button"
+                              role="tab"
+                              aria-selected={txnTab === "invoice"}
+                              className={`${styles.txnTab} ${
+                                txnTab === "invoice" ? styles.txnTabActive : ""
+                              }`}
+                              onClick={() => {
+                                setTxnTab("invoice");
+                                setTxnPage(1);
+                                setSelectedInvoiceIds([]);
+                              }}
+                            >
+                              Invoice
+                            </button>
+                          </div>
+                          {txnTab === "transactions" && (
+                            <DownloadExcel
+                              data={allTransactions}
+                              columns={txnDownloadColumns}
+                              fileName="customer-transactions"
+                              className={styles.txnDownloadBtn}
+                              buttonText="Download List"
+                            />
+                          )}
+                        </div>
+
+                        {txnTab === "transactions" ? (
+                          allTransactions?.length > 0 ? (
+                            <>
+                              <div className={styles.txnList}>
+                                {pagedTransactions?.map((txn, i) => (
+                                  <div
+                                    className={styles.txnCard}
+                                    key={txn?.order_no || txn?.id || i}
+                                  >
+                                    <div className={styles.txnMeta}>
+                                      <div className={styles.txnDate}>
+                                        {txn?.created_at || "-"}
+                                      </div>
+                                      <div className={styles.txnId}>
+                                        {txn?.order_no || "-"}
+                                      </div>
+                                    </div>
+
+                                    <div className={styles.txnInfo}>
+                                      <div className={styles.txnPlanName}>
+                                        {txn?.order_name ||
+                                          txn?.plan ||
+                                          txn?.domain_name ||
+                                          "-"}
+                                      </div>
+                                      <div className={styles.txnCategory}>
+                                        {txn?.order_category ||
+                                          txn?.domain_name ||
+                                          "-"}
+                                      </div>
+                                    </div>
+
+                                    <div className={styles.txnRight}>
+                                      <span
+                                        className={`${styles.txnStatus} ${getTxnStatusClass(
+                                          txn?.status,
+                                          styles,
+                                        )}`}
+                                      >
+                                        {formatTxnStatus(txn?.status)}
+                                      </span>
+                                      <strong className={styles.txnPrice}>
+                                        {formatTxnAmount(txn?.price)}
+                                      </strong>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+
+                              {txnTotal > TXN_ITEM_PER_PAGE && (
+                                <div className="mt-3">
+                                  <Pagination
+                                    data={allTransactions}
+                                    currentPage={txnPage}
+                                    setCurrentPage={setTxnPage}
+                                    itemPerPage={TXN_ITEM_PER_PAGE}
+                                  />
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            <p className="text-center m-0 text-secondary py-3">
+                              No transactions found
+                            </p>
+                          )
+                        ) : allInvoices?.length > 0 ? (
+                          <>
+                            <div className={styles.invToolbar}>
+                              <label
+                                className={styles.invCheckAll}
                                 style={{
-                                  pointerEvents:
+                                  cursor:
                                     selectableInvoiceIds.length === 0 ||
                                     allInvoices?.some(
                                       (invoice) =>
                                         invoice?.payment_retry
                                           ?.payment_link_expired,
                                     )
-                                      ? "none"
-                                      : undefined,
+                                      ? "not-allowed"
+                                      : "pointer",
                                 }}
-                              />
-                              <span>Check All</span>
-                            </label>
-
-                            <div className="d-flex align-items-center gap-2">
-                              <span
-                                className={
-                                  selectedInvoiceIds?.length === 0
-                                    ? styles.disabledCursorWrap
-                                    : undefined
-                                }
-                                style={
-                                  selectedInvoiceIds?.length === 0
-                                    ? undefined
-                                    : { display: "inline-flex", cursor: "pointer" }
-                                }
                               >
-                                <button
-                                  className="btnDefault btn small"
-                                  disabled={selectedInvoiceIds?.length === 0}
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  checked={allInvoicesSelected}
+                                  onChange={toggleSelectAllInvoices}
+                                  disabled={
+                                    selectableInvoiceIds.length === 0 ||
+                                    allInvoices?.some(
+                                      (invoice) =>
+                                        invoice?.payment_retry
+                                          ?.payment_link_expired,
+                                    )
+                                  }
                                   style={{
-                                    opacity:
-                                      selectedInvoiceIds?.length === 0
-                                        ? 0.5
-                                        : 1,
                                     pointerEvents:
-                                      selectedInvoiceIds?.length === 0
+                                      selectableInvoiceIds.length === 0 ||
+                                      allInvoices?.some(
+                                        (invoice) =>
+                                          invoice?.payment_retry
+                                            ?.payment_link_expired,
+                                      )
                                         ? "none"
                                         : undefined,
                                   }}
-                                  onClick={() =>
-                                    handleInvoicePayNow(
-                                      selectedInvoiceIds,
-                                      "multiple",
-                                    )
+                                />
+                                <span>Check All</span>
+                              </label>
+
+                              <div className="d-flex align-items-center gap-2">
+                                <span
+                                  className={
+                                    selectedInvoiceIds?.length === 0
+                                      ? styles.disabledCursorWrap
+                                      : undefined
+                                  }
+                                  style={
+                                    selectedInvoiceIds?.length === 0
+                                      ? undefined
+                                      : {
+                                          display: "inline-flex",
+                                          cursor: "pointer",
+                                        }
                                   }
                                 >
-                                  Pay Selected
-                                </button>
-                              </span>
-                              <DownloadExcel
-                                data={allInvoices}
-                                columns={invoiceDownloadColumns}
-                                fileName="customer-invoices"
-                                className={styles.txnDownloadBtn}
-                                buttonText="Download List"
-                              />
-                            </div>
-                          </div>
-
-                          <div className={styles.txnList}>
-                            {allInvoices?.map((invoice, i) => {
-                              const invoiceId = getInvoiceId(invoice);
-                              const canSelect = isInvoiceSelectable(invoice);
-                              const canPay = showInvoicePayNow(invoice?.status);
-                              const pdfUrl = invoice?.invoice_pdf_url;
-
-                              return (
-                                <div
-                                  className={styles.invCard}
-                                  key={invoiceId || i}
-                                >
-                                  <div
-                                    className={styles.invCheckCol}
+                                  <button
+                                    className="btnDefault btn small"
+                                    disabled={selectedInvoiceIds?.length === 0}
                                     style={{
-                                      cursor:
-                                        canSelect &&
-                                        !invoice?.payment_retry
-                                          ?.payment_link_expired
-                                          ? "pointer"
-                                          : "not-allowed",
+                                      opacity:
+                                        selectedInvoiceIds?.length === 0
+                                          ? 0.5
+                                          : 1,
+                                      pointerEvents:
+                                        selectedInvoiceIds?.length === 0
+                                          ? "none"
+                                          : undefined,
                                     }}
+                                    onClick={() =>
+                                      handleInvoicePayNow(
+                                        selectedInvoiceIds,
+                                        "multiple",
+                                      )
+                                    }
                                   >
-                                    <input
-                                      type="checkbox"
-                                      className="form-check-input"
-                                      checked={selectedInvoiceIds.includes(
-                                        invoiceId,
-                                      )}
-                                      onChange={() =>
-                                        toggleSelectInvoice(invoiceId)
-                                      }
-                                      disabled={
-                                        !canSelect ||
-                                        invoice?.payment_retry
-                                          ?.payment_link_expired
-                                      }
+                                    Pay Selected
+                                  </button>
+                                </span>
+                                <DownloadExcel
+                                  data={allInvoices}
+                                  columns={invoiceDownloadColumns}
+                                  fileName="customer-invoices"
+                                  className={styles.txnDownloadBtn}
+                                  buttonText="Download List"
+                                />
+                              </div>
+                            </div>
+
+                            <div className={styles.txnList}>
+                              {allInvoices?.map((invoice, i) => {
+                                const invoiceId = getInvoiceId(invoice);
+                                const canSelect = isInvoiceSelectable(invoice);
+                                const canPay = showInvoicePayNow(
+                                  invoice?.status,
+                                );
+                                const pdfUrl = invoice?.invoice_pdf_url;
+
+                                return (
+                                  <div
+                                    className={styles.invCard}
+                                    key={invoiceId || i}
+                                  >
+                                    <div
+                                      className={styles.invCheckCol}
                                       style={{
-                                        pointerEvents:
+                                        cursor:
+                                          canSelect &&
+                                          !invoice?.payment_retry
+                                            ?.payment_link_expired
+                                            ? "pointer"
+                                            : "not-allowed",
+                                      }}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        className="form-check-input"
+                                        checked={selectedInvoiceIds.includes(
+                                          invoiceId,
+                                        )}
+                                        onChange={() =>
+                                          toggleSelectInvoice(invoiceId)
+                                        }
+                                        disabled={
                                           !canSelect ||
                                           invoice?.payment_retry
                                             ?.payment_link_expired
-                                            ? "none"
-                                            : undefined,
-                                      }}
-                                    />
-                                  </div>
-
-                                  <div className={styles.invCardBody}>
-                                    <div className={styles.txnMeta}>
-                                      <div className={styles.txnDate}>
-                                        {invoice?.date ||
-                                          invoice?.created_at ||
-                                          "-"}
-                                      </div>
-                                      <div className={styles.txnId}>
-                                        {invoice?.invoice_no ||
-                                          invoice?.order_no ||
-                                          "-"}
-                                      </div>
-                                    </div>
-
-                                    <div className={styles.txnInfo}>
-                                      <div className={styles.txnPlanName}>
-                                        {invoice?.plan_name ||
-                                          invoice?.order_name ||
-                                          invoice?.plan ||
-                                          invoice?.domain_name ||
-                                          "-"}
-                                      </div>
-                                      <div className={styles.invCategory}>
-                                        {invoice?.order_category ||
-                                          invoice?.domain_name ||
-                                          "-"}
-                                      </div>
-                                    </div>
-
-                                    <div className={styles.invRight}>
-                                      <span
-                                        className={`${styles.txnStatus} ${getTxnStatusClass(
-                                          invoice?.status,
-                                          styles,
-                                        )}`}
-                                      >
-                                        {formatTxnStatus(invoice?.status)}
-                                      </span>
-
-                                      <strong className={styles.txnPrice}>
-                                        {invoice?.formatted_amount ||
-                                          formatTxnAmount(
-                                            invoice?.amount ?? invoice?.price,
-                                          )}
-                                      </strong>
-
-                                      <div className={styles.invActions}>
-                                        <span
-                                          className={
-                                            !canPay ||
+                                        }
+                                        style={{
+                                          pointerEvents:
+                                            !canSelect ||
                                             invoice?.payment_retry
                                               ?.payment_link_expired
-                                              ? styles.disabledCursorWrap
-                                              : undefined
-                                          }
-                                          style={
-                                            canPay &&
-                                            !invoice?.payment_retry
-                                              ?.payment_link_expired
-                                              ? {
-                                                  display: "inline-flex",
-                                                  cursor: "pointer",
-                                                }
-                                              : undefined
-                                          }
+                                              ? "none"
+                                              : undefined,
+                                        }}
+                                      />
+                                    </div>
+
+                                    <div className={styles.invCardBody}>
+                                      <div className={styles.txnMeta}>
+                                        <div className={styles.txnDate}>
+                                          {invoice?.date ||
+                                            invoice?.created_at ||
+                                            "-"}
+                                        </div>
+                                        <div className={styles.txnId}>
+                                          {invoice?.invoice_no ||
+                                            invoice?.order_no ||
+                                            "-"}
+                                        </div>
+                                      </div>
+
+                                      <div className={styles.txnInfo}>
+                                        <div className={styles.txnPlanName}>
+                                          {invoice?.plan_name ||
+                                            invoice?.order_name ||
+                                            invoice?.plan ||
+                                            invoice?.domain_name ||
+                                            "-"}
+                                        </div>
+                                        <div className={styles.invCategory}>
+                                          {invoice?.order_category ||
+                                            invoice?.domain_name ||
+                                            "-"}
+                                        </div>
+                                      </div>
+
+                                      <div className={styles.invRight}>
+                                        <span
+                                          className={`${styles.txnStatus} ${getTxnStatusClass(
+                                            invoice?.status,
+                                            styles,
+                                          )}`}
                                         >
-                                          <button
-                                            type="button"
-                                            className={styles.invPayNowBtn}
-                                            disabled={
+                                          {formatTxnStatus(invoice?.status)}
+                                        </span>
+
+                                        <strong className={styles.txnPrice}>
+                                          {invoice?.formatted_amount ||
+                                            formatTxnAmount(
+                                              invoice?.amount ?? invoice?.price,
+                                            )}
+                                        </strong>
+
+                                        <div className={styles.invActions}>
+                                          <span
+                                            className={
                                               !canPay ||
                                               invoice?.payment_retry
                                                 ?.payment_link_expired
+                                                ? styles.disabledCursorWrap
+                                                : undefined
                                             }
-                                            onClick={() =>
-                                              handleInvoicePayNow(
-                                                invoiceId,
-                                                "single",
-                                              )
+                                            style={
+                                              canPay &&
+                                              !invoice?.payment_retry
+                                                ?.payment_link_expired
+                                                ? {
+                                                    display: "inline-flex",
+                                                    cursor: "pointer",
+                                                  }
+                                                : undefined
                                             }
                                           >
-                                            Pay Now
-                                          </button>
-                                        </span>
-                                        {pdfUrl ? (
-                                          <Link
-                                            href={pdfUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className={styles.invDownloadBtn}
-                                            aria-label="Download invoice"
-                                          >
-                                            <MdOutlineFileDownload size={18} />
-                                          </Link>
-                                        ) : (
-                                          <span
-                                            className={styles.invDownloadBtn}
-                                            aria-disabled="true"
-                                            style={{
-                                              opacity: 0.45,
-                                              cursor: "not-allowed",
-                                            }}
-                                          >
-                                            <MdOutlineFileDownload size={18} />
+                                            <button
+                                              type="button"
+                                              className={styles.invPayNowBtn}
+                                              disabled={
+                                                !canPay ||
+                                                invoice?.payment_retry
+                                                  ?.payment_link_expired
+                                              }
+                                              onClick={() =>
+                                                handleInvoicePayNow(
+                                                  invoiceId,
+                                                  "single",
+                                                )
+                                              }
+                                            >
+                                              Pay Now
+                                            </button>
                                           </span>
-                                        )}
+                                          {pdfUrl ? (
+                                            <Link
+                                              href={pdfUrl}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className={styles.invDownloadBtn}
+                                              aria-label="Download invoice"
+                                            >
+                                              <MdOutlineFileDownload
+                                                size={18}
+                                              />
+                                            </Link>
+                                          ) : (
+                                            <span
+                                              className={styles.invDownloadBtn}
+                                              aria-disabled="true"
+                                              style={{
+                                                opacity: 0.45,
+                                                cursor: "not-allowed",
+                                              }}
+                                            >
+                                              <MdOutlineFileDownload
+                                                size={18}
+                                              />
+                                            </span>
+                                          )}
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </>
-                      ) : (
-                        <p className="text-center m-0 text-secondary py-3">
-                          No invoices found
-                        </p>
-                      )}
+                                );
+                              })}
+                            </div>
+                          </>
+                        ) : (
+                          <p className="text-center m-0 text-secondary py-3">
+                            No invoices found
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* <div className="col">
+                    {/* <div className="col">
                     <div className={`${styles.card} py-4`}>
                       <div className="d-flex px-sm-4 px-3 mb-3 align-items-center">
                         <div className="col">
@@ -1704,12 +1748,13 @@ export default function CustomerDetail() {
                       </div>
                     </div>
                   </div> */}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </Layout>
   );
 }

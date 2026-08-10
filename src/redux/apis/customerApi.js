@@ -29,13 +29,14 @@ const customerApi = apiSlice.injectEndpoints({
           method: "GET",
         };
       },
-      providesTags: ["customer", "customer"],
+      providesTags: ["customer"],
     }),
     getSpecificCustomerDetails: builder.query({
       query: ({ customer_id, partner_id }) => {
         return {
           url: `/getCustomerDetail?customer_id=${customer_id}&partner_id=${partner_id}`,
           method: "GET",
+          cache: "no-store",
         };
       },
       providesTags: ["customer"],

@@ -8,7 +8,7 @@ const getStatusClass = (status) => {
   if (["pending", "expiring"].includes(key)) return styles.expiring;
   if (["overdue", "expired", "cancelled", "rejected"].includes(key))
     return styles.expired;
-  if (["completed", "success", "unpaid", "active"].includes(key))
+  if (["completed", "success", "unpaid", "active", "paid"].includes(key))
     return styles.active;
   if (["upgraded", "downgraded", "renewed"].includes(key))
     return styles.upgradePending;
