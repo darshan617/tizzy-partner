@@ -122,6 +122,26 @@
   height: fit-content;
 }
 
+.expiringBadge {
+  background: rgba(255, 243, 205, 1);
+  color: rgba(180, 120, 0, 1);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 4px;
+  height: fit-content;
+}
+
+.expiredBadge {
+  background: rgba(254, 226, 226, 1);
+  color: rgba(185, 28, 28, 1);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 4px;
+  height: fit-content;
+}
+
 .subHeaderRow {
   display: flex;
   justify-content: space-between;

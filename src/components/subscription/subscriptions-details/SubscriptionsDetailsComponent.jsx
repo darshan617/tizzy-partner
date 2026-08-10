@@ -13,7 +13,7 @@ import Cookies from "js-cookie";
 import { FaPen } from "react-icons/fa";
 import { MdAutorenew } from "react-icons/md";
 import Loader from "@/common-components/loader/Loader";
-import { BiDownload } from "react-icons/bi";
+import { BiChevronRight, BiDownload } from "react-icons/bi";
 import { Calendar, Globe, User, Users } from "lucide-react";
 import { FiLayers } from "react-icons/fi";
 import { usePartialUpgradeAddToCartMutation } from "@/redux/apis/addToCartApi";
@@ -508,13 +508,30 @@ const SubscriptionsDetailsComponent = () => {
                           </div>
                         </div>
 
-                        <span
-                          className={`${styles.statusBadge} 
+                        <div className="d-flex align-items-center gap-3">
+                          <span
+                            className={`${styles.statusBadge} 
                         ${getPlanStatusClass(plan?.status)} 
                         ${(plan?.status?.toLowerCase() === "upgrade pending" || plan?.status?.toLowerCase() === "downgrade pending" || plan?.status?.toLowerCase() === "renewal pending") && styles.upgradePending} ${styles.subPlanStatus}`}
-                        >
-                          {formatPlanStatus(plan?.status)}
-                        </span>
+                          >
+                            {formatPlanStatus(plan?.status)}
+                          </span>
+                          <button
+                            onClick={() =>
+                              router?.push({
+                                pathname: "/plan-details",
+                                query: {
+                                  planId: plan?.plan_id,
+                                  orderId: router?.query?.orderId,
+                                },
+                              })
+                            }
+                            className="btn small btnWhite p-2"
+                            style={{ height: "fit-content" }}
+                          >
+                            <BiChevronRight size={14} />
+                          </button>
+                        </div>
                       </div>
 
                       <div className={`${styles.subBottom}`}>
