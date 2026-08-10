@@ -1156,6 +1156,16 @@
   transition: all 0.15s ease;
 }
 
+.cancelOrderBtn {
+  background: var(--dangerSubtleColor);
+  color: var(--dangerColor);
+  border: 1px solid var(--dangerColor);
+  padding: 0 10px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
 .txnArrowBtn:hover {
   border-color: var(--primaryColor);
   color: var(--primaryColor);
@@ -1414,6 +1424,38 @@
   color: var(--whiteColor);
   transition: .2s;
 }
+
+.cancelCancelOrderBtn {
+  padding: 5px 20px;
+  border-radius: 30px;
+  background-color: #ebebeb;
+  color: #666666;
+  border: 1px solid #666666;
+}
+
+.confirmCancelOrderBtn {
+  padding: 5px 20px;
+  border-radius: 30px;
+  background: var(--dangerSubtleColor);
+  color: var(--dangerColor);
+  border: 1px solid var(--dangerColor);
+}
+
+.confirmCancelOrderBtn:hover {
+  background: #c62727;
+  color: #fff;
+  transition: 0.2s;
+  border: 1px solid #c62727;
+}
+
+.cancelCancelOrderBtn:hover {
+  background: #c9c9c9;
+  color: #4a4a4a;
+  transition: 0.2s;
+  border: 1px solid #c9c9c9;
+}
+
+
 
 @media (max-width: 991px) {
   .subActions {
