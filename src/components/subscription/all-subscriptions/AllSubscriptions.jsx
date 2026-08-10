@@ -240,87 +240,91 @@ const AllSubscriptions = ({
                           key={idx}
                           className={`${styles.contentRow} ${styles.btnDisplay}`}
                         >
-                          <Link href={{
-                                  pathname:
-                                    "/subscriptions/subscriptions-details",
-                                }}>
-                          <div className={styles.rowInner}>
-                            
-                            <div className={styles.txnCol}>
-                              <div className={styles.txnDate}>
-                                {subscription?.due_date || "-"}
-                              </div>
-                              <div className={styles.txnId}>
-                                {subscription?.order_no || "-"}
-                              </div>
-                            </div>
-
-                            <div className={styles.companyCol}>
-                              <div
-                                className={`${styles.avatarBg} ${
-                                  avatarColorClasses[
-                                    idx % avatarColorClasses.length
-                                  ]
-                                }`}
-                              >
-                                {companyInitial}
-                              </div>
-                              <div className={styles.companyInfo}>
-                                <div className={styles.companyName}>
-                                  {subscription?.company_name || "-"}
+                          <Link
+                            href={{
+                              pathname: "/subscriptions/subscriptions-details",
+                              query: {
+                                customerId: subscription?.customer_id,
+                                orderId: subscription?.order_id,
+                              },
+                            }}
+                          >
+                            <div className={styles.rowInner}>
+                              <div className={styles.txnCol}>
+                                <div className={styles.txnDate}>
+                                  {subscription?.due_date || "-"}
                                 </div>
-                                {/* <div className={styles.companyDomain}>
+                                <div className={styles.txnId}>
+                                  {subscription?.order_no || "-"}
+                                </div>
+                              </div>
+
+                              <div className={styles.companyCol}>
+                                <div
+                                  className={`${styles.avatarBg} ${
+                                    avatarColorClasses[
+                                      idx % avatarColorClasses.length
+                                    ]
+                                  }`}
+                                >
+                                  {companyInitial}
+                                </div>
+                                <div className={styles.companyInfo}>
+                                  <div className={styles.companyName}>
+                                    {subscription?.company_name || "-"}
+                                  </div>
+                                  {/* <div className={styles.companyDomain}>
                                   <FiGlobe className={styles.globeIcon} />
                                   <span>{subscription?.domain || "-"}</span>
                                 </div> */}
-                                <div className={styles.companyDomain}>
-                                  <BiUser className={styles.globeIcon} />
-                                  <span>{subscription?.customer_name}</span>
+                                  <div className={styles.companyDomain}>
+                                    <BiUser className={styles.globeIcon} />
+                                    <span>{subscription?.customer_name}</span>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
 
-                            <div className={styles.planCol}>
-                              <div className={styles.crName}>
-                                <span className={styles.crNameText}>
-                                  {subscription?.currentPlan}
+                              <div className={styles.planCol}>
+                                <div className={styles.crName}>
+                                  <span className={styles.crNameText}>
+                                    {subscription?.currentPlan}
+                                  </span>
+                                  <span className={styles.plansCount}>
+                                    {subscription?.plans_count &&
+                                    subscription?.plans_count > 1
+                                      ? ` (+${subscription?.plans_count - 1} more)`
+                                      : ""}
+                                  </span>
+                                </div>
+
+                                <div className={styles.companyDomain}>
+                                  <FiGlobe className={styles.globeIcon} />
+                                  <span>{subscription?.domain || "-"}</span>
+                                </div>
+                              </div>
+
+                              <div className={styles.licenseLine}>
+                                <span className={styles.licenseLabel}>
+                                  License
                                 </span>
-                                <span className={styles.plansCount}>
-                                  {subscription?.plans_count &&
-                                  subscription?.plans_count > 1
-                                    ? ` (+${subscription?.plans_count - 1} more)`
-                                    : ""}
+                                <span className={styles.licenseValue}>
+                                  {subscription?.licenses ?? "-"}
                                 </span>
                               </div>
 
-                              <div className={styles.companyDomain}>
-                                <FiGlobe className={styles.globeIcon} />
-                                <span>{subscription?.domain || "-"}</span>
+                              <div className={styles.enrollmentCol}>
+                                <div className={styles.metaHead}>
+                                  Enrollment Type
+                                </div>
+                                <div className={styles.enrollmentValue}>
+                                  {subscription?.enrollment_type || "-"}
+                                </div>
                               </div>
-                            </div>
 
-                            <div className={styles.licenseLine}>
-                              <span className={styles.licenseLabel}>
-                                License
-                              </span>
-                              <span className={styles.licenseValue}>
-                                {subscription?.licenses ?? "-"}
-                              </span>
-                            </div>
-
-                            <div className={styles.enrollmentCol}>
-                              <div className={styles.metaHead}>
-                                Enrollment Type
-                              </div>
-                              <div className={styles.enrollmentValue}>
-                                {subscription?.enrollment_type || "-"}
-                              </div>
-                            </div>
-
-                            <div className={styles.statusCol}>
-                              <div className={styles.statusBadgeGroup}>
-                                <span
-                                  className={`${styles.statusBadge} ${subscription?.status?.toLowerCase() === "active" ? styles.activeBadge : ""} 
+                              <div className={styles.statusCol}>
+                                <div className={styles.statusBadgeGroup}>
+                                  <span
+                                    className={`${styles.statusBadge} ${subscription?.status?.toLowerCase() === "active" ? styles.activeBadge : ""} 
                                         ${subscription?.status?.toLowerCase() === "expiring" ? styles.expiringBadge : ""}  
                                         ${subscription?.status?.toLowerCase() === "expired" ? styles.expired : ""} 
                                         ${subscription?.status === "inactive" ? styles.inactiveBadge : ""} 
@@ -335,45 +339,45 @@ const AllSubscriptions = ({
                                         ${subscription?.status?.toLowerCase() === "renewal pending" ? styles.renewalPending : ""}
                                         ${subscription?.status?.toLowerCase() === "processing" ? styles.processing : ""}
                                         `}
-                                >
-                                  {subscription?.status}
-                                </span>
-                                {subscription?.subtext ? (
-                                  <div className={styles.statusSubtext}>
-                                    {subscription?.subtext}
-                                  </div>
-                                ) : null}
+                                  >
+                                    {subscription?.status}
+                                  </span>
+                                  {subscription?.subtext ? (
+                                    <div className={styles.statusSubtext}>
+                                      {subscription?.subtext}
+                                    </div>
+                                  ) : null}
+                                </div>
                               </div>
-                            </div>
 
-                            <div className={styles.arrowCol}>
-                              <Link
-                                className={styles.crBtn}
-                                href={{
-                                  pathname:
-                                    "/subscriptions/subscriptions-details",
-                                  query: {
-                                    customerId: subscription?.customer_id,
-                                    orderId: subscription?.order_id,
-                                  },
-                                }}
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="16"
-                                  height="16"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  className={styles.icon}
+                              <div className={styles.arrowCol}>
+                                <Link
+                                  className={styles.crBtn}
+                                  href={{
+                                    pathname:
+                                      "/subscriptions/subscriptions-details",
+                                    query: {
+                                      customerId: subscription?.customer_id,
+                                      orderId: subscription?.order_id,
+                                    },
+                                  }}
                                 >
-                                  <path d="m9 18 6-6-6-6" />
-                                </svg>
-                              </Link>
-                            </div>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className={styles.icon}
+                                  >
+                                    <path d="m9 18 6-6-6-6" />
+                                  </svg>
+                                </Link>
+                              </div>
                             </div>
                           </Link>
                         </div>
@@ -396,7 +400,6 @@ const AllSubscriptions = ({
           className={styles.paginationButton}
           onClick={() => setCurrentPage((prev) => prev - 1)}
           disabled={currentPage === 1}
-        
         >
           <BiChevronLeft size={16} />
         </button>

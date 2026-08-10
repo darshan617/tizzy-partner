@@ -57,10 +57,8 @@ const OrderComplete = () => {
   const [userData, setUserData] = useState({});
   const [orderData, setOrderData] = useState(null);
 
-  const [
-    orderPlaceWithoutAadhaar,
-    { isLoading: isOrderPlaceLoading },
-  ] = useOrderPlaceWithoutAadhaarMutation();
+  const [orderPlaceWithoutAadhaar, { isLoading: isOrderPlaceLoading }] =
+    useOrderPlaceWithoutAadhaarMutation();
 
   useEffect(() => {
     const parsedUser = Cookies?.get("userData")
@@ -148,8 +146,7 @@ const OrderComplete = () => {
   const firstPlan = plans[0] || {};
   const poDetails = orderData?.po_details || {};
   const orderNo = orderData?.order_no || firstPlan?.order_no || "-";
-  const poNumber =
-    poDetails?.po_number || orderData?.po_number || "-";
+  const poNumber = poDetails?.po_number || orderData?.po_number || "-";
   const poLink =
     poDetails?.final_po_link ||
     poDetails?.po_link ||
@@ -297,9 +294,17 @@ const OrderComplete = () => {
               <div className={styles.kvRow}>
                 <span className={styles.kvLabel}>Enrollment Type</span>
                 <span className={styles.kvValue}>
-                  {formatEnrollmentType(orderData?.order_type)}
+                  {formatEnrollmentType(orderData?.enrollment_type)}
                 </span>
               </div>
+              {firstPlan?.remaining_value && (
+                <div className={styles.kvRow}>
+                  <span className={styles.kvLabel}>Remaining Value</span>
+                  <span className={styles.kvValue}>
+                    {formatCurrency(firstPlan?.remaining_value || 0)}
+                  </span>
+                </div>
+              )}
               <div className={`${styles.kvRow} ${styles.totalKvRow}`}>
                 <span className={styles.kvLabel}>Total Amount</span>
                 <span className={styles.totalAmount}>

@@ -57,6 +57,7 @@ const OrderDetailsComponent = () => {
   const isPopupVisible = useSelector(selectIsPopupVisible);
   const [orderData, setOrderData] = useState(null);
   const [isPurchaseConfirmed, setIsPurchaseConfirmed] = useState(false);
+  console.log("orderData", orderData);
 
   const userData = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
@@ -354,6 +355,16 @@ const OrderDetailsComponent = () => {
                     {formatCurrency(orderData?.discount_amount)}
                   </span>
                 </div>
+                {orderData?.plans?.[0]?.remaining_value && (
+                  <div className={styles.kvRow}>
+                    <span className={styles.kvLabel}>Remaining Value</span>
+                    <span className={styles.kvValue}>
+                      {formatCurrency(
+                        orderData?.plans?.[0]?.remaining_value || 0,
+                      )}
+                    </span>
+                  </div>
+                )}
                 <div className={styles.divider} />
                 <div className={styles.totalRow}>
                   <span>Total Amount</span>
