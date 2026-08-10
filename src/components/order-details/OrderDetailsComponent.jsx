@@ -113,12 +113,8 @@ const OrderDetailsComponent = () => {
   const poLink = poDetails?.final_po_link || orderData?.final_po_link || "";
 
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/dashboard" },
-    { label: "Tizzy", href: "/services/tizzy" },
-    { label: "Buy New Plan" },
-    { label: "PO Generated" },
-    { label: "Aadhar Verification" },
-    { label: "DigiLocker Verification" },
+    { label: "Order Summary", href: "/order-summary" },
+    { label: "Draft Po", back: true },
   ];
 
   if (isLoading && !orderData) {
@@ -136,6 +132,14 @@ const OrderDetailsComponent = () => {
                   {index > 0 && " / "}
                   {item.href ? (
                     <Link href={item.href}>{item.label}</Link>
+                  ) : item.back ? (
+                    <button
+                      type="button"
+                      className={styles.routerbackBtn}
+                      onClick={() => router.back()}
+                    >
+                      <span>{item.label}</span>
+                    </button>
                   ) : (
                     <span>{item.label}</span>
                   )}
@@ -355,16 +359,15 @@ const OrderDetailsComponent = () => {
                     {formatCurrency(orderData?.discount_amount)}
                   </span>
                 </div>
-                {orderData?.plans?.[0]?.remaining_value && (
-                  <div className={styles.kvRow}>
-                    <span className={styles.kvLabel}>Remaining Value</span>
-                    <span className={styles.kvValue}>
-                      {formatCurrency(
-                        orderData?.plans?.[0]?.remaining_value || 0,
-                      )}
-                    </span>
-                  </div>
-                )}
+                {Number(firstPlan?.remaining_value) > 0 &&
+                  firstPlan?.remaining_value !== undefined && (
+                    <div className={styles.kvRow}>
+                      <span className={styles.kvLabel}>Remaining Value</span>
+                      <span className={styles.kvValue}>
+                        {formatCurrency(firstPlan?.remaining_value)}
+                      </span>
+                    </div>
+                  )}
                 <div className={styles.divider} />
                 <div className={styles.totalRow}>
                   <span>Total Amount</span>
