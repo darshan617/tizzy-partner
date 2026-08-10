@@ -554,6 +554,17 @@
     flex-wrap: wrap;
 }
 
+.routerbackBtn {
+    background: none;
+    border: none;
+    outline: none;
+    color: #9aa3b2;
+}
+
+.routerbackBtn:hover {
+    color: var(--primaryColor);
+}
+
 @media (max-width: 991px) {
     .split {
         flex-direction: column;

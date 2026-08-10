@@ -42,6 +42,16 @@ const subscriptionsApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["subscriptions"],
     }),
+    planDetails: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: "/plan-details",
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -50,4 +60,5 @@ export const {
   useGetSubscriptionDetailsMutation,
   useGetDomainHistoryMutation,
   useOrderCancelMutation,
+  usePlanDetailsMutation,
 } = subscriptionsApi;
