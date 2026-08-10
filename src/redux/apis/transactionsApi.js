@@ -12,7 +12,20 @@ const transactionsApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["transactions"],
     }),
+    getTransactionDetails: builder?.mutation({
+      query: ({ body }) => {
+        return {
+          url: "/transaction-details",
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["transactionDetails"],
+    }),
   }),
 });
 
-export const { useGetTransactionHistoryMutation } = transactionsApi;
+export const {
+  useGetTransactionHistoryMutation,
+  useGetTransactionDetailsMutation,
+} = transactionsApi;

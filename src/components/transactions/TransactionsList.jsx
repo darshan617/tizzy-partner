@@ -533,6 +533,9 @@ const TransactionsList = ({ variant = "default", limit }) => {
                               onClick={() =>
                                 router.push({
                                   pathname: "/transactions/transaction-details",
+                                  query: {
+                                    order_id: tx?.order_id,
+                                  },
                                 })
                               }
                             >
