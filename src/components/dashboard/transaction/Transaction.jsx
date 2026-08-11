@@ -79,6 +79,7 @@ export default function TransactionSection({ data, isDataLoading }) {
       <Link
         href={{
           pathname: "/transactions/transaction-details",
+          query: { order_id: item?.order_id },
         }}
       >
         <div className="row align-items-center g-2 justify-content-between">
@@ -134,6 +135,7 @@ export default function TransactionSection({ data, isDataLoading }) {
             <Link
               href={{
                 pathname: "/transactions/transaction-details",
+                query: { order_id: item?.order_id },
               }}
               className={styles.arrowBtn}
               aria-label="View renewal details"

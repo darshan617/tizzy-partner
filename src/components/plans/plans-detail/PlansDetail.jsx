@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import Loader from "@/common-components/loader/Loader";
+import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarConstant";
+import Link from "next/link";
 
 const getStatusBadgeClass = (status) => {
   const normalized = status?.toLowerCase();
@@ -57,6 +59,12 @@ export default function PlansDetail() {
       console.log(error);
     }
   };
+  const getServicePath = (provider_id) => {
+    if (provider_id === 1) return "tizzy";
+    if (provider_id === 2) return "microsoft-365";
+    if (provider_id === 3) return "google-workspace";
+    return "google-workspace";
+  };
 
   useEffect(() => {
     fetchPlanDetails();
@@ -79,6 +87,7 @@ export default function PlansDetail() {
   const contactName =
     customer?.primary_contact || customer?.contact_name || "-";
   const status = subscription?.status || plan?.status || "-";
+  console.log("status", status);
   const domainName =
     plan?.domain || plan?.domain_name || planDetails?.domain_name || "-";
   const priceAmount = Number(
@@ -154,18 +163,11 @@ export default function PlansDetail() {
           <div className={styles.subHeaderRow}>
             <div className="d-flex">
               <div className={styles.subIcon}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="400"
-                  height="400"
-                  viewBox="0 0 400 400"
-                  className="icon"
-                >
-                  <path
-                    fill="#34a853"
-                    d="M49,59s86.637-1.833,172,99L282,21,350,9V20s-36.234-2.265-53,43L144,391l-14-39,80-172S164.162,106.238,49,69V59Z"
-                  ></path>
-                </svg>
+                {
+                  SIDEBAR_SERVICES_CONSTANTS.find(
+                    (s) => s.id === Number(plan?.provider_id),
+                  )?.image
+                }
               </div>
               <div className="ms-2">
                 <div className={styles.subName}>
@@ -198,15 +200,32 @@ export default function PlansDetail() {
                   {plan?.license_label ||
                     (plan?.licenses ? `${plan.licenses} Users` : "-")}
                 </span>
-                {planActions?.can_add_license && (
-                  <button className={styles.addBtn} type="button">
-                    <IoMdAdd size={14} className={styles.addIcon} />
-                    {(planActions?.add_license_label || "+ Add").replace(
-                      /^\+\s*/,
-                      "",
-                    )}
-                  </button>
-                )}
+
+                <button
+                  className={styles.addBtn}
+                  type="button"
+                  onClick={() =>
+                    router?.push({
+                      pathname: "/order-summary",
+                      query: {
+                        type: "partial-upgrade",
+                        order_id: router?.query?.orderId,
+                        order_sub_id: plan?.order_sub_id,
+                        licenses: plan?.license,
+                        customer_id: customer?.cust_id,
+                        main_cart_id: plan?.main_cart_id,
+                      },
+                    })
+                  }
+                  disabled={status?.toLowerCase() === "processing"}
+                  style={{
+                    opacity: status === "processing" ? 0.5 : 1,
+                    cursor: status === "processing" ? "not-allowed" : "pointer",
+                  }}
+                >
+                  <IoMdAdd size={14} className={styles.addIcon} />
+                  Add
+                </button>
               </div>
             </div>
 
@@ -237,20 +256,43 @@ export default function PlansDetail() {
             </div>
           </div>
 
-          {(planActions?.can_upgrade || planActions?.can_renew) && (
-            <div className="d-flex justify-content-end gap-2 mt-3">
-              {planActions?.can_upgrade && (
-                <button className={styles.upgradeBtn} type="button">
-                  {planActions?.upgrade_label || "Upgrade"}
-                </button>
-              )}
-              {planActions?.can_renew && (
-                <button className={styles.renewBtn} type="button">
-                  {planActions?.renew_label || "Renew"}
-                </button>
-              )}
-            </div>
-          )}
+          <div className="d-flex justify-content-end gap-2 mt-3">
+            {status?.toLowerCase() !== "processing" && (
+              <Link
+                href={{
+                  pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                  query: {
+                    type: "upgrade",
+                    order_id: router?.query?.orderId,
+                    customer_id: customer?.cust_id,
+                    order_sub_id: plan?.order_sub_id,
+                    plan_id: router?.query?.planId,
+                  },
+                }}
+                className={styles.upgradeBtn}
+                type="button"
+              >
+                Upgrade
+              </Link>
+            )}
+            {status?.toLowerCase() === "expiring" && (
+              <Link
+                href={{
+                  pathname: `order-summary`,
+                  query: {
+                    type: "renew-plan",
+                    order_id: router?.query?.orderId,
+                    order_sub_id: plan?.order_sub_id,
+                    planId: router?.query?.planId,
+                  },
+                }}
+                className={styles.renewBtn}
+                type="button"
+              >
+                Renew
+              </Link>
+            )}
+          </div>
         </div>
 
         <div className={styles.card}>
