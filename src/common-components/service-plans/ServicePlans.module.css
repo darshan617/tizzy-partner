@@ -88,7 +88,7 @@
   color: var(--darkColor);
   background: var(--whiteColor);
   border-color: var(--borderColor);
-  box-shadow: 0 2px 6px rgba(0, 12, 180, 0.452);
+  box-shadow: 0 2px 6px #0057b35a;
 }
 
 .searchWrap {
@@ -183,7 +183,7 @@
 }
 
 .pillActive {
-  border-color: #0056b3 ;
+  border-color: #0056b3;
   color: var(--darkColor);
   background: var(--whiteColor);
 }
@@ -211,12 +211,13 @@
   font-size: var(--fs14);
 }
 
-@media (max-width: 425px){
-  .tab{
+@media (max-width: 425px) {
+  .tab {
     font-size: 13px;
     padding: 3px 8px;
   }
-  .tabs{
+
+  .tabs {
     display: block;
   }
 }
