@@ -17,7 +17,11 @@ const getStatusBadgeClass = (status) => {
   if (normalized === "active" || normalized === "completed") {
     return styles.activeBadge;
   }
-  if (normalized === "expiring" || normalized === "expiring_soon") {
+  if (
+    normalized === "expiring" ||
+    normalized === "expiring_soon" ||
+    normalized === "processing"
+  ) {
     return styles.expiringBadge;
   }
   if (normalized === "expired" || normalized === "cancelled") {
@@ -101,12 +105,11 @@ export default function PlansDetail() {
   return (
     <div className={styles.page}>
       <div className="container px-0">
-        {/* Breadcrumb + Header */}
         <div className="d-flex justify-content-between align-items-start mb-3">
           <div>
             <div className={styles.breadcrumb}>
-              Dashboard / Customers / Customer Id : {customerId} / Subscription
-              Order Detail -{subscriptionNo}
+              / Customer Id : {customerId} / Subscription Order Detail -
+              {subscriptionNo}
             </div>
             <h5 className={styles.pageTitle}>Plan Detail {subscriptionNo}</h5>
           </div>
@@ -217,10 +220,21 @@ export default function PlansDetail() {
                       },
                     })
                   }
-                  disabled={status?.toLowerCase() === "processing"}
+                  disabled={
+                    status?.toLowerCase() === "processing" ||
+                    status?.toLowerCase() === "cancelled"
+                  }
                   style={{
-                    opacity: status === "processing" ? 0.5 : 1,
-                    cursor: status === "processing" ? "not-allowed" : "pointer",
+                    opacity:
+                      status?.toLowerCase() === "processing" ||
+                      status?.toLowerCase() === "cancelled"
+                        ? 0.5
+                        : 1,
+                    cursor:
+                      status?.toLowerCase() === "processing" ||
+                      status?.toLowerCase() === "cancelled"
+                        ? "not-allowed"
+                        : "pointer",
                   }}
                 >
                   <IoMdAdd size={14} className={styles.addIcon} />
@@ -276,21 +290,39 @@ export default function PlansDetail() {
               </Link>
             )}
             {status?.toLowerCase() === "expiring" && (
-              <Link
-                href={{
-                  pathname: `order-summary`,
-                  query: {
-                    type: "renew-plan",
-                    order_id: router?.query?.orderId,
-                    order_sub_id: plan?.order_sub_id,
-                    planId: router?.query?.planId,
-                  },
-                }}
-                className={styles.renewBtn}
-                type="button"
-              >
-                Renew
-              </Link>
+              <>
+                <Link
+                  href={{
+                    pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                    query: {
+                      type: "downgrade",
+                      order_id: router?.query?.orderId,
+                      customer_id: customer?.cust_id,
+                      order_sub_id: plan?.order_sub_id,
+                      plan_id: router?.query?.planId,
+                    },
+                  }}
+                  className={styles.upgradeBtn}
+                  type="button"
+                >
+                  Downgrade
+                </Link>
+                <Link
+                  href={{
+                    pathname: `order-summary`,
+                    query: {
+                      type: "renew-plan",
+                      order_id: router?.query?.orderId,
+                      order_sub_id: plan?.order_sub_id,
+                      planId: router?.query?.planId,
+                    },
+                  }}
+                  className={styles.renewBtn}
+                  type="button"
+                >
+                  Renew
+                </Link>
+              </>
             )}
           </div>
         </div>
@@ -300,11 +332,11 @@ export default function PlansDetail() {
             <span className={styles.cardHeaderTitle}>
               <MdOutlineAccessTime /> Timeline
             </span>
-            {timelineMeta?.view_all && (
+            {/* {timelineMeta?.view_all && (
               <a href="#" className={styles.viewAllLink}>
                 View All
               </a>
-            )}
+            )} */}
           </div>
 
           <div className={styles.divider} />

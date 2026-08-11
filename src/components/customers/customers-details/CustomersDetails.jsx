@@ -654,23 +654,23 @@ export default function CustomerDetail() {
                       </div>
                     </div>
 
-                  <div className="col">
-                    <div className={`${styles.pageWrap}`}>
-                      <div className={`${styles.card} p-sm-4 p-3`}>
-                        <div className="d-flex align-items-center justify-content-between mb-3">
-                          <h2 className={`${styles.cardHead}`}>
-                            Current Subscription{" "}
-                            <span>({allInnerPlans?.length || 0})</span>
-                          </h2>
-                          {allInnerPlans?.length > 0 && (
-                          <Link
-                            href={`/subscriptions/all-subscriptions`}
-                            className={`${styles.viewAll} text-decoration-underline`}
-                          >
-                            View All
-                          </Link>
-                          )}
-                        </div>
+                    <div className="col">
+                      <div className={`${styles.pageWrap}`}>
+                        <div className={`${styles.card} p-sm-4 p-3`}>
+                          <div className="d-flex align-items-center justify-content-between mb-3">
+                            <h2 className={`${styles.cardHead}`}>
+                              Current Subscription{" "}
+                              <span>({allInnerPlans?.length || 0})</span>
+                            </h2>
+                            {allInnerPlans?.length > 0 && (
+                              <Link
+                                href={`/subscriptions/all-subscriptions`}
+                                className={`${styles.viewAll} text-decoration-underline`}
+                              >
+                                View All
+                              </Link>
+                            )}
+                          </div>
 
                           {allInnerPlans?.length === 0 ? (
                             <div className="text-center d-flex flex-column align-items-center justify-content-center gap-2 py-3">
@@ -1028,7 +1028,7 @@ export default function CustomerDetail() {
                                         {formatTxnStatus(txn?.status)}
                                       </span>
                                       <strong className={styles.txnPrice}>
-                                        {formatTxnAmount(txn?.price)}
+                                        {formatTxnAmount(txn?.amount)}
                                       </strong>
                                     </div>
                                   </div>

@@ -299,6 +299,14 @@ const TransactionsList = ({ variant = "default", limit }) => {
                           type="button"
                           className={styles.billingArrowBtn}
                           aria-label="View transaction details"
+                          onClick={() =>
+                            router.push({
+                              pathname: "/transactions/transaction-details",
+                              query: {
+                                order_id: tx?.order_id || tx?.order_no,
+                              },
+                            })
+                          }
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -529,7 +537,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                           </div>
                           <div className="col-12 col-md-2 col-lg-1 text-end">
                             <button
-                              className="crBtn"
+                              className={styles.viewDetailsBtn}
                               onClick={() =>
                                 router.push({
                                   pathname: "/transactions/transaction-details",

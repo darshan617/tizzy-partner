@@ -14,6 +14,7 @@ const balanceAndCartApi = apiSlice.injectEndpoints({
         "addToCart",
         "orderDetails",
         "orderPlaceWithoutAadhaar",
+        "invoice",
       ],
     }),
   }),
