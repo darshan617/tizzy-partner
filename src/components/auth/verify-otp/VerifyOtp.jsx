@@ -317,7 +317,7 @@ const VerifyOtp = () => {
       {router?.query?.type === "order" ? (
         <h2 className={styles.title}>Verify Your Aadhar</h2>
       ) : (
-        <h2 className={styles.title}>Verify Your Email</h2>
+        <h2 className={styles.title}>Verify Your Email & Mobile Number</h2>
       )}
 
       {router?.query?.type === "order" ? (
@@ -330,7 +330,7 @@ const VerifyOtp = () => {
         <p className={styles.subtitle}>
           We've emailed you a 6-digit verification code.
           <br />
-          Please enter it below to confirm your email.
+          Please enter it below to confirm your email & mobile number.
         </p>
       )}
       {!router?.query?.type === "order" && (
