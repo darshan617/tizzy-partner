@@ -6,6 +6,7 @@ import styles from "./UserManagement.module.css";
 import { useGetPartnerUsersMutation, usePartnerUserAddMutation } from "@/redux/apis/userManagement";
 import Cookies from "js-cookie";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
+import router from "next/router";
 const MOCK_USERS = [
   {
     id: "EMP-1042",
@@ -221,6 +222,12 @@ const UserManagement = () => {
                         type="button"
                         className={styles.actionBtn}
                         aria-label={`Edit ${user?.name}`}
+                        onClick={() => router.push({
+                          pathname: "/user-detail",
+                          query: {
+                            partner_user_id: user?.partner_user_id,
+                          },
+                        })}
                       >
                         <Pencil size={14} strokeWidth={2} />
                       </button>

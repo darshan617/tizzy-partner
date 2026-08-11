@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaCheck, FaPen } from "react-icons/fa";
 import { MdInfoOutline } from "react-icons/md";
@@ -7,6 +7,9 @@ import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
 import { FiSmartphone } from "react-icons/fi";
 import { RiMacbookLine } from "react-icons/ri";
 import Image from "next/image";
+import { useGetPartnerUserDetailMutation } from "@/redux/apis/userDetail";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 const devices = [
   {
@@ -73,11 +76,20 @@ const permissions = [
   },
 ];
 
+
+
+
 const actionColumns = ["View", "Add", "Edit", "Edit"];
 
 const UserDetail = () => {
+  const userData = Cookies.get("userData")
+    ? JSON.parse(Cookies.get("userData"))
+    : null;
+  const { partner_user_id } = useRouter().query;
+  const [partnerUserDetail, setPartnerUserDetail] = useState(null);
   const [permissionGroups, setPermissionGroups] = useState(permissions);
-
+  const [getPartnerUserDetail, { isLoading }] =
+    useGetPartnerUserDetailMutation();
   const togglePermission = (groupCategory, itemLabel, accessIndex) => {
     setPermissionGroups((currentGroups) =>
       currentGroups.map((group) => {
@@ -103,6 +115,33 @@ const UserDetail = () => {
       }),
     );
   };
+
+  const getPartnerUserDetailData = async () => {
+    try {
+      const response = await getPartnerUserDetail({
+        body: {
+          partner_id: userData?.id,
+          partner_user_id: partner_user_id,
+        },
+      }).unwrap();
+      if (response?.data) {
+        setPartnerUserDetail(response?.data);
+      } else {
+        showToast(
+          response?.error?.data?.message || "Failed to get partner user detail",
+          "error",
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (partner_user_id) {
+      getPartnerUserDetailData();
+    }
+  }, [partner_user_id]);
 
   const togglePermissionRow = (groupCategory, itemLabel) => {
     setPermissionGroups((currentGroups) =>
@@ -159,13 +198,19 @@ const UserDetail = () => {
         <div className="col-lg-6">
           <section className={styles.profileCard}>
             <div className={styles.creditPatternRight}>
-                <Image src={createBtnBg} alt="" aria-hidden width={100} height={100} />
+              <Image
+                src={createBtnBg}
+                alt=""
+                aria-hidden
+                width={100}
+                height={100}
+              />
             </div>
             <div className={styles.profileHeader}>
               <div className={styles.avatar}>J</div>
               <div className={styles.profileMeta}>
                 <div className={styles.nameRow}>
-                  <h2 className={styles.profileName}>Priya Sharma</h2>
+                  <h2 className={styles.profileName}>{partnerUserDetail?.name}</h2>
                   <span className={styles.employeeTag}>EMP-1042</span>
                 </div>
                 <p className={styles.profileRole}>
@@ -185,17 +230,17 @@ const UserDetail = () => {
                 </div>
                 <div className={styles.infoBox}>
                   <span className={styles.infoLabel}>Mobile No.</span>
-                  <span className={styles.infoValue}>+91 98123 46780</span>
+                  <span className={styles.infoValue}>{partnerUserDetail?.mobile}</span>
                 </div>
                 <div className={styles.infoBox}>
                   <span className={styles.infoLabel}>Email</span>
                   <span className={styles.infoValue}>
-                    janak@goyalinfotech.com
+                    {partnerUserDetail?.email}
                   </span>
                 </div>
                 <div className={styles.infoBox}>
                   <span className={styles.infoLabel}>Last Login</span>
-                  <span className={styles.infoValue}>Today, 10:32AM</span>
+                  <span className={styles.infoValue}>{partnerUserDetail?.last_login_at || "-"}</span>
                 </div>
               </div>
             </div>
@@ -209,8 +254,8 @@ const UserDetail = () => {
                 Device &amp; Login Information
               </h2>
               <button type="button" className={styles.deactivateBtn}>
-            Deactivate
-          </button>
+                Deactivate
+              </button>
             </div>
 
             <div className={styles.deviceList}>
@@ -220,7 +265,11 @@ const UserDetail = () => {
                   className={styles.deviceItem}
                 >
                   <div className={styles.deviceIcon}>
-                    {device.name === "iPhone 15 Pro" ? <FiSmartphone size={24} /> : <RiMacbookLine size={24} />}
+                    {device.name === "iPhone 15 Pro" ? (
+                      <FiSmartphone size={24} />
+                    ) : (
+                      <RiMacbookLine size={24} />
+                    )}
                   </div>
                   <div className={styles.deviceContent}>
                     <p className={styles.deviceName}>{device.name}</p>
