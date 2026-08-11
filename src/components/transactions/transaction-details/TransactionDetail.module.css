@@ -1,353 +1,365 @@
 .page {
-    min-height: 100vh;
-    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
-    max-width: 1200px;
-    margin: auto;
-  }
-  
-  .pageTitle {
-    font-weight: 700;
-    color: #1f2430;
-    margin: 0;
-  }
-  
-  .backBtn {
-    background: #ffffff;
-    border: 1px solid #e3e6ee;
-    border-radius: 20px;
-    padding: 6px 16px;
-    font-size: 13px;
-    color: #333;
-    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-  }
-  
-  .backArrow {
-    margin-right: 4px;
-  }
-  
-  /* Generic card */
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.pageTitle {
+  font-weight: 700;
+  color: #1f2430;
+  margin: 0;
+}
+
+.backBtn {
+  background: #ffffff;
+  border: 1px solid #e3e6ee;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 13px;
+  color: #333;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+}
+
+.backArrow {
+  margin-right: 4px;
+}
+
+/* Generic card */
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px 22px;
+  box-shadow: 0 2px 10px rgba(16, 24, 40, 0.06);
+}
+
+.cardHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardHeaderTitle {
+  font-weight: 600;
+  font-size: 15px;
+  color: #1f2430;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.divider {
+  height: 1px;
+  background: #eef0f5;
+  margin: 14px 0;
+}
+
+/* Customer card */
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #7e2e8e;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.companyName {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1f2430;
+}
+
+.customerIdBadge {
+  background: rgba(49, 58, 70, 0.1);
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 14px;
+  color: #55596b;
+  font-weight: 500;
+}
+
+.contactPerson {
+  font-size: 14px;
+  color: #8a8fa3;
+}
+
+.infoBlock {
+  min-width: 170px;
+  margin-top: 12px;
+}
+
+.infoLabel {
+  font-size: 12px;
+  color: #9a9eb0;
+  margin-bottom: 4px;
+}
+
+.infoValue {
+  font-size: 14px;
+  color: #1f2430;
+  font-weight: 600;
+}
+
+.paidStatus {
+  color: #1f2430;
+}
+
+.invoiceLink {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(3, 85, 172, 1);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.invoiceLink:hover {
+  color: #3846c9;
+}
+
+.poLink {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8a8fa3;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Subscription cards */
+.subCard {
+  border: 1px solid #eef0f5;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+.subCard:last-child {
+  margin-bottom: 0;
+}
+
+.subIcon {
+  background: var(--whiteColor);
+  width: 35px;
+  height: 35px;
+  color: var(--textBody);
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  display: flex;
+  border: 1px solid #eef0f5;
+}
+
+.subName {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1f2430;
+}
+
+.subPrice {
+  font-size: 13px;
+  color: #1f2430;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.subUnit {
+  color: #9a9eb0;
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.activeBadge {
+  background: rgba(217, 245, 240, 1);
+  color: rgba(2, 188, 156, 1);
+  font-size: 12px;
+  font-weight: 400;
+  padding: 4px 8px;
+  border-radius: 4px;
+  height: fit-content;
+}
+
+.cancelled {
+  background: var(--dangerSubtleColor);
+  color: var(--dangerColor);
+}
+
+.subMetaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 12px;
+}
+
+.subMetaItem {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b6f80;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.subMetaIcon {
+  color: rgba(3, 85, 172, 1);
+}
+
+/* Summary rows (right column) */
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  font-size: 13px;
+}
+
+.summaryLabel {
+  font-size: 14px;
+  color: rgba(155, 166, 183, 1);
+  font-weight: 500;
+}
+
+.summaryValue {
+  color: #1f2430;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.summaryBold {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.amountHighlight {
+  font-weight: 600;
+  color: rgba(3, 85, 172, 1);
+}
+
+/* Tabs */
+.tabGroup {
+  display: flex;
+  background: rgba(230, 241, 253, 1);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 4px;
+}
+
+.qrCodeLink {
+  color: rgba(3, 85, 172, 1);
+  cursor: pointer;
+}
+
+.tabBtn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #8a8fa3;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.tabBtnActive {
+  background: var(--whiteColor);
+  color: var(--primaryColor);
+  border-bottom: 2px solid var(--primaryColor);
+  box-shadow: 0 1px 4px #0355ac1f;
+}
+
+.emptyState {
+  font-size: 13px;
+  color: #9a9eb0;
+  text-align: center;
+  margin: 12px 0 4px;
+}
+
+.domainCard {
+  display: flex;
+  justify-content: space-between;
+  background: rgba(245, 248, 252, 1);
+  border: 1px solid rgba(188, 218, 249, 1);
+  border-radius: 8px;
+  padding: 13px 18px;
+  margin-bottom: 12px;
+}
+
+.domainIdLabel {
+  font-size: 12px;
+  font-weight: 400;
+  padding: 4px 8px;
+  color: rgba(107, 107, 128, 1);
+}
+
+.domainIdValue {
+  background: #E7E9EB;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2430;
+}
+
+.domainIcon {
+  color: rgba(3, 85, 172, 1);
+}
+
+.domainNameText {
+  font-size: 14px;
+  line-clamp: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 991px) {
   .card {
-    background: #ffffff;
-    border-radius: 14px;
-    padding: 20px 22px;
-    box-shadow: 0 2px 10px rgba(16, 24, 40, 0.06);
+    margin-top: 12px;
   }
-  
-  .cardHeaderRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .cardHeaderTitle {
-    font-weight: 600;
-    font-size: 15px;
-    color: #1f2430;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .divider {
-    height: 1px;
-    background: #eef0f5;
-    margin: 14px 0;
-  }
-  
-  /* Customer card */
-  .avatar {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: #7e2e8e;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-  
-  .companyName {
-    font-weight: 600;
-    font-size: 14px;
-    color: #1f2430;
-  }
-  
-  .customerIdBadge {
-    background: rgba(49, 58, 70, 0.1);
-    border-radius: 6px;
-    padding: 2px 10px;
-    font-size: 14px;
-    color: #55596b;
-    font-weight: 500;
-  }
-  
-  .contactPerson {
-    font-size: 14px;
-    color: #8a8fa3;
-  }
-  
+}
+
+@media (max-width: 767px) {
+
   .infoBlock {
-    min-width: 170px;
-    margin-top: 12px;
+    min-width: 100%;
   }
-  
-  .infoLabel {
-    font-size: 12px;
-    color: #9a9eb0;
-    margin-bottom: 4px;
-  }
-  
-  .infoValue {
-    font-size: 14px;
-    color: #1f2430;
-    font-weight: 600;
-  }
-  
-  .paidStatus {
-    color: #1f2430;
-  }
-  
-  .invoiceLink {
-    font-size: 13px;
-    font-weight: 600;
-    color: rgba(3, 85, 172, 1);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  
-  .invoiceLink:hover {
-    color: #3846c9;
-  }
-  
-  .poLink {
-    font-size: 12px;
-    font-weight: 600;
-    color: #8a8fa3;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  
-  /* Subscription cards */
-  .subCard {
-    border: 1px solid #eef0f5;
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 12px;
-  }
-  
-  .subCard:last-child {
-    margin-bottom: 0;
-  }
-  
-  .subIcon {
-    background: var(--whiteColor);
-    width: 35px;
-    height: 35px;
-    color: var(--textBody);
-    border-radius: 50%;
-    justify-content: center;
-    align-items: center;
-    padding: 8px;
-    display: flex;
-    border: 1px solid #eef0f5;
-  }
-  
-  .subName {
-    font-weight: 600;
-    font-size: 14px;
-    color: #1f2430;
-  }
-  
-  .subPrice {
-    font-size: 13px;
-    color: #1f2430;
-    font-weight: 600;
-    margin-top: 2px;
-  }
-  
-  .subUnit {
-    color: #9a9eb0;
-    font-weight: 400;
-    font-size: 12px;
-  }
-  
-  .activeBadge {
-    background: rgba(217, 245, 240, 1);
-    color: rgba(2, 188, 156, 1);
-    font-size: 12px;
-    font-weight: 400;
-    padding: 4px 8px;
-    border-radius: 4px;
-    height: fit-content;
-  }
-  
+
   .subMetaRow {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 18px;
-    margin-top: 12px;
+    gap: 10px;
   }
-  
+
+}
+
+@media (max-width: 575px) {
+  .domainCard {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .subCard {
+    padding: 10px;
+  }
+
+  .subIcon {
+    padding: 2px;
+  }
+
   .subMetaItem {
     font-size: 12px;
-    font-weight: 500;
-    color: #6b6f80;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    gap: 4px;
   }
 
   .subMetaIcon {
-    color: rgba(3, 85, 172, 1);
-  }
-  /* Summary rows (right column) */
-  .summaryRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 7px 0;
-    font-size: 13px;
-  }
-  
-  .summaryLabel {
-    font-size: 14px;
-    color: rgba(155, 166, 183, 1);
-    font-weight: 500;
-  }
-  
-  .summaryValue {
-    color: #1f2430;
-    font-weight: 500;
-    font-size: 14px;
-  }
-  
-  .summaryBold {
-    font-weight: 700;
-    font-size: 14px;
-  }
-  
-  .amountHighlight {
-    font-weight: 600;
-    color: rgba(3, 85, 172, 1);
-  }
-  
-  /* Tabs */
-  .tabGroup {
-    display: flex;
-    background: rgba(230, 241, 253, 1);
-    border-radius: 8px;
-    padding: 3px;
-    gap: 4px;
-  }
-  .qrCodeLink{
-    color: rgba(3, 85, 172, 1);
-    cursor: pointer;
-  }
-  
-  .tabBtn {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: 8px 0;
-    font-size: 13px;
-    font-weight: 600;
-    color: #8a8fa3;
-    border-radius: 6px;
-    transition: all 0.15s ease;
-  }
-  
-  .tabBtnActive {
-    background: var(--whiteColor);
-    color: var(--primaryColor);
-    border-bottom: 2px solid var(--primaryColor);
-    box-shadow: 0 1px 4px #0355ac1f;
-  }
-  
-  .emptyState {
-    font-size: 13px;
-    color: #9a9eb0;
-    text-align: center;
-    margin: 12px 0 4px;
-  }
-
-  .domainCard{
-    display: flex;
-    justify-content: space-between;
-    background: rgba(245, 248, 252, 1);
-    border: 1px solid rgba(188, 218, 249, 1);
-    border-radius: 8px;
-    padding: 13px 18px;
-    margin-bottom: 12px;
-  }
-
-  .domainIdLabel{
     font-size: 12px;
-    font-weight: 400;
-    padding: 4px 8px;
-    color: rgba(107, 107, 128, 1);
   }
 
-  .domainIdValue{
-    background: #E7E9EB;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #1f2430;
-  }
-  .domainIcon{
-    color: rgba(3, 85, 172, 1) ;
-  }
-
-  .domainNameText{
-    font-size: 14px;
-    line-clamp: 1;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  @media (max-width: 991px) {
-    .card{
-      margin-top: 12px;
-    }
-  }
-  
-  @media (max-width: 767px) {
-  
-    .infoBlock {
-      min-width: 100%;
-    }
-  
-    .subMetaRow {
-      gap: 10px;
-    }
-
-  }
-
-  @media (max-width: 575px) {
-    .domainCard{
-        flex-direction: column;
-        gap: 10px;
-    }
-    .subCard {
-      padding: 10px;
-    }
-    .subIcon{
-      padding: 2px;
-    }
-    .subMetaItem{
-      font-size: 12px;
-      gap: 4px;
-    }
-    .subMetaIcon {
-      font-size: 12px;
-    }
-  
-  }
+}

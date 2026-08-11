@@ -323,7 +323,8 @@
 
 .successBadge,
 .success,
-.completed {
+.completed,
+.paid {
   color: var(--successColor);
   background: var(--successSubtleColor);
 }
@@ -380,7 +381,8 @@
   .txMeta {
     min-width: auto;
   }
-  .downloadListBtn{
+
+  .downloadListBtn {
     font-size: 20px;
   }
 }
@@ -450,7 +452,7 @@
 .billingTransactionRowInner {
   display: grid;
   grid-template-columns:
-    minmax(110px, 12%) minmax(180px, 1fr) minmax(90px, auto) minmax(100px, auto);
+    minmax(110px, 12%) minmax(180px, 1fr) minmax(90px, auto) minmax(100px, auto) minmax(40px, auto);
   align-items: center;
   gap: 12px 16px;
   width: 100%;
@@ -630,6 +632,30 @@
   padding: 2rem 1rem;
   font-size: var(--fs14);
   color: var(--textBodySecondary);
+}
+
+.viewDetailsBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  color: var(--darkColor);
+  background: var(--grayColor);
+  border: 1px solid var(--borderColor);
+  overflow: hidden;
+  transition: all 0.2s ease-in;
+}
+
+.viewDetailsBtn svg {
+  width: 14px;
+}
+
+.viewDetailsBtn:hover {
+  background: var(--primaryColor);
+  color: var(--whiteColor);
 }
 
 @media (max-width: 767.98px) {

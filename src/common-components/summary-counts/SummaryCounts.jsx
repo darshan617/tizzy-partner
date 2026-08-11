@@ -8,6 +8,7 @@ import Image from "next/image";
 import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
 import { HiOutlineDocumentCurrencyRupee } from "react-icons/hi2";
 import { TbCoinRupeeFilled } from "react-icons/tb";
+import Loader from "../loader/Loader";
 
 const TotalRevenue = () => (
   <svg
@@ -477,102 +478,110 @@ export default function SummaryCounts({
             ) : null}
           </div>
 
-          <div className="row row-cols-md-4 row-cols-sm-2 row-cols-2 g-sm-4 g-3">
-            {infoBtn && (
-              <div className="col pt-4 m-0">
-                <div
-                  className={`boxLink primaryBg ${styles.creditBalanceCard} border-0 outline-0`}
-                >
-                  <p className={styles.creditBalanceTitle}>{infoBtn?.title}</p>
-                  <p className={`${styles.creditBalanceAmount} fs-3`}>
-                    {infoBtn?.amount}
-                  </p>
-                  <div className={styles.creditBalanceInfo}>
-                    <span
-                      className={styles.creditBalanceInfoIcon}
-                      aria-hidden="true"
-                    >
-                      <Info size={14} strokeWidth={2.5} color="#fff" />
-                    </span>
-                    <p className={styles.creditBalanceInfoText}>
-                      {infoBtn?.info}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {countData?.map((card, index) => {
-              const normalizedKey = card?.key?.trim().toLowerCase();
-              const config = summaryCardConfig[normalizedKey];
-
-              console.log(normalizedKey, "normalizedKey");
-
-              if (!config) return null;
-
-              return (
-                <div key={index} className="col pt-4 m-0">
+          {isFetchingCountData ? (
+            <div className="row row-cols-md-12 row-cols-12 g-sm-4 g-3">
+              <Loader />
+            </div>
+          ) : (
+            <div className="row row-cols-md-4 row-cols-sm-2 row-cols-2 g-sm-4 g-3">
+              {infoBtn && (
+                <div className="col pt-4 m-0">
                   <div
-                    className={`${styles.statBox} ${styles[config.boxClass]}`}
+                    className={`boxLink primaryBg ${styles.creditBalanceCard} border-0 outline-0`}
                   >
-                    <div
-                      className={`${styles.statIcon} ${styles[config.iconClass]}`}
-                    >
-                      {config.icon}
-                    </div>
-
-                    <p className="m-0 mt-2">{card.key}</p>
-
-                    <div className="d-flex align-items-center gap-2">
-                      <p className="fs-3 fw-bold m-0">{card.value}</p>
-                      <p className={`m-0 ${styles[config.badgeClass]}`}>
-                        {card?.growth}
+                    <p className={styles.creditBalanceTitle}>
+                      {infoBtn?.title}
+                    </p>
+                    <p className={`${styles.creditBalanceAmount} fs-3`}>
+                      {infoBtn?.amount}
+                    </p>
+                    <div className={styles.creditBalanceInfo}>
+                      <span
+                        className={styles.creditBalanceInfoIcon}
+                        aria-hidden="true"
+                      >
+                        <Info size={14} strokeWidth={2.5} color="#fff" />
+                      </span>
+                      <p className={styles.creditBalanceInfoText}>
+                        {infoBtn?.info}
                       </p>
                     </div>
-
-                    {router?.pathname === "/dashboard" &&
-                      config.redirectUrl && (
-                        <button
-                          type="button"
-                          className={styles.statAnchor}
-                          onClick={() => router.push(config.redirectUrl)}
-                          aria-label={`Add ${card.key}`}
-                        >
-                          <Plus className={styles.statAnchorIcon} />
-                        </button>
-                      )}
                   </div>
                 </div>
-              );
-            })}
-            {additionalBtns?.length > 0 &&
-              additionalBtns?.map((btn, index) => (
-                <div className="col pt-4 m-0">
-                  <button
-                    className={`${styles.boxLink} primaryBg d-flex flex-column align-items-center justify-content-center border-0 outline-0`}
-                    onClick={() => router.push(`${btn?.href}`)}
-                  >
-                    <Image
-                      src={createBtnBg}
-                      alt={btn?.label}
-                      width={500}
-                      height={500}
-                      className={styles.createBtnBg}
-                    />
-                    <div className={`${styles.iconBx} mb-2`}>{btn?.icon}</div>
-                    <div className={styles.boxLinkLabel}>{btn?.label}</div>
-                    <div className={styles.boxLinkDesc}>{btn?.desc}</div>
-                    <Image
-                      src={createBtnBg}
-                      alt={btn?.label}
-                      width={500}
-                      height={500}
-                      className={styles.createBtnBg2}
-                    />
-                  </button>
-                </div>
-              ))}
-          </div>
+              )}
+
+              {countData?.map((card, index) => {
+                const normalizedKey = card?.key?.trim().toLowerCase();
+                const config = summaryCardConfig[normalizedKey];
+
+                console.log(normalizedKey, "normalizedKey");
+
+                if (!config) return null;
+
+                return (
+                  <div key={index} className="col pt-4 m-0">
+                    <div
+                      className={`${styles.statBox} ${styles[config.boxClass]}`}
+                    >
+                      <div
+                        className={`${styles.statIcon} ${styles[config.iconClass]}`}
+                      >
+                        {config.icon}
+                      </div>
+
+                      <p className="m-0 mt-2">{card.key}</p>
+
+                      <div className="d-flex align-items-center gap-2">
+                        <p className="fs-3 fw-bold m-0">{card.value}</p>
+                        <p className={`m-0 ${styles[config.badgeClass]}`}>
+                          {card?.growth}
+                        </p>
+                      </div>
+
+                      {router?.pathname === "/dashboard" &&
+                        config.redirectUrl && (
+                          <button
+                            type="button"
+                            className={styles.statAnchor}
+                            onClick={() => router.push(config.redirectUrl)}
+                            aria-label={`Add ${card.key}`}
+                          >
+                            <Plus className={styles.statAnchorIcon} />
+                          </button>
+                        )}
+                    </div>
+                  </div>
+                );
+              })}
+              {additionalBtns?.length > 0 &&
+                additionalBtns?.map((btn, index) => (
+                  <div className="col pt-4 m-0">
+                    <button
+                      className={`${styles.boxLink} primaryBg d-flex flex-column align-items-center justify-content-center border-0 outline-0`}
+                      onClick={() => router.push(`${btn?.href}`)}
+                    >
+                      <Image
+                        src={createBtnBg}
+                        alt={btn?.label}
+                        width={500}
+                        height={500}
+                        className={styles.createBtnBg}
+                      />
+                      <div className={`${styles.iconBx} mb-2`}>{btn?.icon}</div>
+                      <div className={styles.boxLinkLabel}>{btn?.label}</div>
+                      <div className={styles.boxLinkDesc}>{btn?.desc}</div>
+                      <Image
+                        src={createBtnBg}
+                        alt={btn?.label}
+                        width={500}
+                        height={500}
+                        className={styles.createBtnBg2}
+                      />
+                    </button>
+                  </div>
+                ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
