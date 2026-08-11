@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Eye, Pencil, Trash2, Plus } from "lucide-react";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import styles from "./UserManagement.module.css";
-import { useGetPartnerUsersMutation } from "@/redux/apis/userManagement";
+import { useGetPartnerUsersMutation, usePartnerUserAddMutation } from "@/redux/apis/userManagement";
 import Cookies from "js-cookie";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
 const MOCK_USERS = [
   {
     id: "EMP-1042",
@@ -51,8 +52,12 @@ const UserManagement = () => {
   const userData = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
     : null;
-  const [getPartnerUsers, { isLoading }] = useGetPartnerUsersMutation();
+    
+  const [getPartnerUsers, { isLoading, }] = useGetPartnerUsersMutation();
+  const { showToast } = useToast();
+  const [partnerUserAdd, { isLoading: isAddingUser }] = usePartnerUserAddMutation();
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+  const [partnerUserList, setPartnerUserList] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     mobile: "",
@@ -65,23 +70,81 @@ const UserManagement = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const handleCloseAddUser = () => setIsAddUserOpen(false);
-
-  const handleAddUser = async (e) => {
+  const getPartnerUsersList = async () => {
     try {
-      const response = await partnerUserAdd({
-        name: formData.name,
-        mobile: formData.mobile,
-        email: formData.email,
-        employee_id: formData.employee_id,
-        designation: formData.designation,
-        permissions: formData.permissions,
-        partner_id: userData.id,
-      });
-      console.log(response);
+      const response = await getPartnerUsers({
+        body: {
+          partner_id: userData?.id,
+        },
+      }).unwrap();
+
+      if (response?.data) {
+        setPartnerUserList(response?.data);
+      } else {
+        showToast(response?.error?.data?.message || "Failed to get partner users", "error");
+      }
     } catch (error) {
-      console.log(error);
+      showToast(
+        error?.data?.message || "Failed to get partner users",
+        "error"
+      );
     }
   };
+  const handleAddUser = async () => {
+    try {
+      const response = await partnerUserAdd({
+        body: {
+          name: formData.name,
+          mobile: formData.mobile,
+          email: formData.email,
+          employee_id: formData.employee_id,
+          designation: formData.designation,
+          permissions: formData.permissions,
+          partner_id: userData?.id,
+        },
+      }).unwrap();
+  
+      console.log("SUCCESS:", response);
+  
+      if(response?.success) {
+        showToast(
+          response?.message || "User added successfully",
+          "success"
+        );
+    
+        setIsAddUserOpen(false);
+    
+        setFormData({
+          name: "",
+          mobile: "",
+          email: "",
+          employee_id: "",
+          designation: "",
+          permissions: [],
+        });
+        getPartnerUsersList();
+      }else{
+        showToast(
+          response?.error?.data?.message || "Failed to add user",
+          "error"
+        );
+      }
+  
+    } catch (error) {
+      console.log("API ERROR:", error);
+  
+      showToast(
+        error?.data?.message || "Failed to add user",
+        "error"
+      );
+    }
+  };
+
+
+
+  useEffect(() => {
+    getPartnerUsersList();
+  }, []);
 
   return (
     <div className={styles.userManagementPage}>
@@ -120,29 +183,29 @@ const UserManagement = () => {
               </tr>
             </thead>
             <tbody>
-              {MOCK_USERS.map((user, index) => (
-                <tr key={user.id}>
+              {partnerUserList?.map((user, index) => (
+                <tr key={user.employee_id}>
                   <td className={styles.colSrNo}>
-                    <span className={styles.srNoBadge}>{user.id}</span>
+                    <span className={styles.srNoBadge}>{user.employee_id}</span>
                   </td>
                   <td className={styles.colUserName}>
                     <div className={styles.userInfo}>
                       <div
                         className={`${styles.avatar} ${
                           avatarColorClasses[index % avatarColorClasses.length]
-                        }`}
+                        } text-capitalize`}
                       >
-                        {user.name.charAt(0)}
+                        {user?.name?.charAt(0)}
                       </div>
                       <div className={styles.userMeta}>
-                        <p className={styles.userName}>{user.name}</p>
-                        <p className={styles.userRole}>{user.role}</p>
+                        <p className={styles.userName}>{user?.name}</p>
+                        <p className={styles.userRole}>{user?.designation}</p>
                       </div>
                     </div>
                   </td>
                   <td className={styles.colStatus}>
                     <span className="statusBadge subtleSuccess">
-                      {user.status}
+                      {user?.status}
                     </span>
                   </td>
                   <td className={styles.colAction}>
@@ -150,21 +213,21 @@ const UserManagement = () => {
                       <button
                         type="button"
                         className={styles.actionBtn}
-                        aria-label={`View ${user.name}`}
+                        aria-label={`View ${user?.name}`}
                       >
                         <Eye size={15} strokeWidth={2} />
                       </button>
                       <button
                         type="button"
                         className={styles.actionBtn}
-                        aria-label={`Edit ${user.name}`}
+                        aria-label={`Edit ${user?.name}`}
                       >
                         <Pencil size={14} strokeWidth={2} />
                       </button>
                       <button
                         type="button"
                         className={styles.actionBtn}
-                        aria-label={`Delete ${user.name}`}
+                        aria-label={`Delete ${user?.name}`}
                       >
                         <Trash2 size={14} strokeWidth={2} />
                       </button>

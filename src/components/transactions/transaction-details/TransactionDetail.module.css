@@ -70,8 +70,8 @@
   }
   
   .companyName {
-    font-weight: 500;
-    font-size: 16px;
+    font-weight: 600;
+    font-size: 14px;
     color: #1f2430;
   }
   
@@ -85,7 +85,7 @@
   }
   
   .contactPerson {
-    font-size: 12px;
+    font-size: 14px;
     color: #8a8fa3;
   }
   
@@ -196,7 +196,7 @@
   }
   
   .subMetaItem {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
     color: #6b6f80;
     display: flex;
@@ -225,7 +225,7 @@
   .summaryValue {
     color: #1f2430;
     font-weight: 500;
-    font-size: 15px;
+    font-size: 14px;
   }
   
   .summaryBold {
@@ -312,6 +312,12 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  @media (max-width: 991px) {
+    .card{
+      margin-top: 12px;
+    }
+  }
   
   @media (max-width: 767px) {
   
@@ -343,4 +349,5 @@
     .subMetaIcon {
       font-size: 12px;
     }
+  
   }
