@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import styles from "./ReportsComponent.module.css";
 import { IoChevronForward, IoDocumentTextOutline } from "react-icons/io5";
@@ -19,183 +19,41 @@ import { FiShoppingCart, FiUsers, FiMoreHorizontal } from "react-icons/fi";
 import { BsPatchCheck } from "react-icons/bs";
 import { FaArrowsRotate } from "react-icons/fa6";
 import Link from "next/link";
-
+import { useGetReportsMutation } from "@/redux/apis/reportsApi";
+import Cookies from "js-cookie";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
+const formatRevenue = (value) =>
+  `₹${Number(value || 0).toLocaleString("en-IN", {
+    maximumFractionDigits: 0,
+  })}`;
 
-const REVENUE_DATA = [
-  118, 125, 138, 148, 162, 172, 182, 192, 205, 214, 228, 236,
-];
-
-const GROWTH_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-
-const revenueChartOptions = {
-  chart: {
-    toolbar: { show: false },
-    zoom: { enabled: false },
-    fontFamily: "inherit",
-  },
-  colors: ["#0355ac"],
-  stroke: { curve: "smooth", width: 3 },
-  markers: {
-    size: 5,
-    colors: ["#0355ac"],
-    strokeColors: "#fff",
-    strokeWidth: 2,
-    hover: { size: 6 },
-  },
-  grid: {
-    borderColor: "#eef2f7",
-    strokeDashArray: 4,
-    xaxis: { lines: { show: false } },
-  },
-  xaxis: {
-    categories: MONTHS,
-    axisBorder: { show: false },
-    axisTicks: { show: false },
-    labels: { style: { colors: "#9ca3af", fontSize: "12px" } },
-  },
-  yaxis: {
-    min: 0,
-    max: 240,
-    tickAmount: 4,
-    labels: {
-      style: { colors: "#9ca3af", fontSize: "12px" },
-      formatter: (value) => `₹${value}k`,
-    },
-  },
-  tooltip: {
-    y: { formatter: (value) => `₹${value}k` },
-  },
-  dataLabels: { enabled: false },
-};
-
-const revenueChartSeries = [{ name: "Revenue", data: REVENUE_DATA }];
-
-const salesByServiceOptions = {
-  chart: {
-    toolbar: { show: false },
-    fontFamily: "inherit",
-  },
-  colors: ["#0355ac", "#02bc9c", "#d4a24c"],
-  labels: ["Google Workspace", "Microsoft 365", "Tizzy Mail"],
-  legend: {
-    position: "bottom",
-    horizontalAlign: "center",
-    fontSize: "13px",
-    markers: { size: 6, offsetX: -2 },
-    itemMargin: { horizontal: 10, vertical: 4 },
-  },
-  plotOptions: {
-    pie: {
-      donut: {
-        size: "68%",
-      },
-    },
-  },
-  dataLabels: { enabled: false },
-  stroke: { width: 0 },
-};
-
-const salesByServiceSeries = [42, 35, 23];
-
-const growthChartOptions = {
-  chart: {
-    toolbar: { show: false },
-    fontFamily: "inherit",
-  },
-  colors: ["#0355ac", "#02bc9c", "#d4a24c"],
-  plotOptions: {
-    bar: {
-      borderRadius: 6,
-      columnWidth: "48%",
-    },
-  },
-  grid: {
-    borderColor: "#eef2f7",
-    strokeDashArray: 4,
-    xaxis: { lines: { show: false } },
-  },
-  xaxis: {
-    categories: GROWTH_MONTHS,
-    axisBorder: { show: false },
-    axisTicks: { show: false },
-    labels: { style: { colors: "#9ca3af", fontSize: "12px" } },
-  },
-  yaxis: {
-    min: 0,
-    max: 180,
-    tickAmount: 4,
-    labels: { style: { colors: "#9ca3af", fontSize: "12px" } },
-  },
-  legend: {
-    position: "bottom",
-    horizontalAlign: "center",
-    fontSize: "13px",
-    markers: { size: 6, offsetX: -2 },
-    itemMargin: { horizontal: 10, vertical: 4 },
-  },
-  dataLabels: { enabled: false },
-};
-
-const growthChartSeries = [
-  { name: "Revenue (₹k)", data: [92, 98, 108, 118, 128, 142] },
-  { name: "Orders", data: [48, 52, 58, 62, 68, 74] },
-  { name: "Renewals", data: [118, 124, 132, 142, 152, 168] },
-];
-
-const quickInsights = [
-  {
-    label: "Highest Revenue Month",
-    value: "December",
+const QUICK_INSIGHT_META = {
+  highest_revenue_month: {
     icon: LuTrendingUp,
     iconTheme: "insightBlue",
   },
-  {
-    label: "Best Selling Service",
-    value: "Google Workspace",
+  best_selling_service: {
     icon: LuAward,
     iconTheme: "insightTeal",
   },
-  {
-    label: "Most Renewed Plan",
-    value: "Microsoft 365 Std.",
+  most_renewed_plan: {
     icon: LuPackage,
     iconTheme: "insightPurple",
   },
-  {
-    label: "Top Customer",
-    value: "Nexon Retail",
+  top_customer: {
     icon: LuCrown,
     iconTheme: "insightGold",
   },
-  {
-    label: "Pending Renewals",
-    value: "12",
+  pending_renewals: {
     icon: LuClock,
     iconTheme: "insightOrange",
   },
-  {
-    label: "Open Support Tickets",
-    value: "7",
+  open_support_tickets: {
     icon: LuTicket,
     iconTheme: "insightPink",
   },
-];
+};
 
 const recentReports = [
   {
@@ -239,63 +97,6 @@ const FormatBadge = ({ format }) => {
   );
 };
 
-const cards = [
-  {
-    title: "Total Revenue",
-    value: "₹18,42,560",
-    meta: "+12%",
-    metaTheme: "green",
-    valueTheme: "black",
-    icon: "wallet",
-    iconTheme: "blueIcon",
-  },
-  {
-    title: "Active Customers",
-    value: "248",
-    meta: "+18",
-    metaTheme: "green",
-    valueTheme: "black",
-    icon: "users",
-    iconTheme: "greenIcon",
-  },
-  {
-    title: "Active Subscriptions",
-    value: "186",
-    meta: "92% Active",
-    metaTheme: "green",
-    valueTheme: "black",
-    icon: "subscription",
-    iconTheme: "purpleIcon",
-  },
-  {
-    title: "Monthly Orders",
-    value: "74",
-    meta: "+19%",
-    metaTheme: "green",
-    valueTheme: "black",
-    icon: "cart",
-    iconTheme: "greenIcon",
-  },
-  {
-    title: "Renewals Completed",
-    value: "48",
-    meta: "80% Success Rate",
-    metaTheme: "green",
-    valueTheme: "black",
-    icon: "refresh",
-    iconTheme: "orangeIcon",
-  },
-  {
-    title: "Pending Invoices",
-    value: "₹2,14,800",
-    meta: "12 Pending",
-    metaTheme: "pink",
-    valueTheme: "black",
-    icon: "invoice",
-    iconTheme: "pink",
-  },
-];
-
 const Icon = ({ name }) => {
   switch (name) {
     case "wallet":
@@ -316,6 +117,252 @@ const Icon = ({ name }) => {
 };
 
 const ReportsComponent = () => {
+  const userData = Cookies.get("userData")
+    ? JSON.parse(Cookies.get("userData"))
+    : null;
+  const [getReports, { data, isLoading, isError, error }] =
+    useGetReportsMutation();
+  const [reportData, setReportData] = useState(null);
+  const handleGetReports = async () => {
+    try {
+      const response = await getReports({
+        fromDate: "",
+        toDate: "",
+        partner_id: userData?.id,
+      });
+
+      if (response?.data?.status) {
+        setReportData(response?.data);
+      }
+    } catch (error) {
+      console.log(error, "reports error");
+    }
+  };
+
+  const summaryCards = reportData?.summary_cards;
+  const revenueOverview = reportData?.revenue_overview;
+  const revenueDataset = revenueOverview?.y_axis?.datasets?.[0];
+  const salesByService = reportData?.sales_by_service;
+  const salesByServiceKeys = Object.keys(salesByService?.datasets || {});
+  const monthlyBusinessGrowth = reportData?.monthly_business_growth;
+  const quickInsightsData = reportData?.quick_insights;
+
+  const quickInsights = Object.values(quickInsightsData || {}).map((item) => {
+    const meta = QUICK_INSIGHT_META[item?.key] || {
+      icon: LuTrendingUp,
+      iconTheme: "insightBlue",
+    };
+
+    return {
+      key: item?.key,
+      label: item?.label,
+      value: item?.value ?? "—",
+      icon: meta.icon,
+      iconTheme: meta.iconTheme,
+    };
+  });
+
+  const revenueChartSeries = [
+    {
+      name: revenueDataset?.label || "Revenue",
+      data: revenueDataset?.data || [],
+    },
+  ];
+
+  const revenueChartOptions = {
+    chart: {
+      toolbar: { show: false },
+      zoom: { enabled: false },
+      fontFamily: "inherit",
+    },
+    colors: ["#0355ac"],
+    stroke: { curve: "smooth", width: 3 },
+    markers: {
+      size: 5,
+      colors: ["#0355ac"],
+      strokeColors: "#fff",
+      strokeWidth: 2,
+      hover: { size: 6 },
+    },
+    grid: {
+      borderColor: "#eef2f7",
+      strokeDashArray: 4,
+      xaxis: { lines: { show: false } },
+    },
+    xaxis: {
+      categories: revenueOverview?.x_axis?.values || [],
+      title: {
+        text: revenueOverview?.x_axis?.label || "",
+        style: { color: "#9ca3af", fontSize: "12px", fontWeight: 400 },
+      },
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+      labels: { style: { colors: "#9ca3af", fontSize: "12px" } },
+    },
+    yaxis: {
+      min: 0,
+      tickAmount: 4,
+      title: {
+        text: revenueOverview?.y_axis?.label || "",
+        style: { color: "#9ca3af", fontSize: "12px", fontWeight: 400 },
+      },
+      labels: {
+        style: { colors: "#9ca3af", fontSize: "12px" },
+        formatter: formatRevenue,
+      },
+    },
+    tooltip: {
+      y: { formatter: formatRevenue },
+    },
+    dataLabels: { enabled: false },
+  };
+
+  const salesByServiceSeries = salesByServiceKeys.map(
+    (key) => salesByService?.datasets?.[key] || 0
+  );
+
+  const salesByServiceOptions = {
+    chart: {
+      toolbar: { show: false },
+      fontFamily: "inherit",
+    },
+    colors: ["#0355ac", "#02bc9c", "#d4a24c"],
+    labels: salesByServiceKeys.map(
+      (key) => salesByService?.labels?.[key] || key
+    ),
+    legend: {
+      position: "bottom",
+      horizontalAlign: "center",
+      fontSize: "13px",
+      markers: { size: 6, offsetX: -2 },
+      itemMargin: { horizontal: 10, vertical: 4 },
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          size: "68%",
+        },
+      },
+    },
+    tooltip: {
+      y: { formatter: formatRevenue },
+    },
+    dataLabels: { enabled: false },
+    stroke: { width: 0 },
+  };
+
+  const growthChartSeries = (monthlyBusinessGrowth?.y_axis?.datasets || []).map(
+    (dataset) => ({
+      name: dataset?.label || dataset?.key || "",
+      data: dataset?.data || [],
+    })
+  );
+
+  const growthChartOptions = {
+    chart: {
+      toolbar: { show: false },
+      fontFamily: "inherit",
+    },
+    colors: ["#0355ac", "#02bc9c", "#d4a24c"],
+    plotOptions: {
+      bar: {
+        borderRadius: 6,
+        columnWidth: "48%",
+      },
+    },
+    grid: {
+      borderColor: "#eef2f7",
+      strokeDashArray: 4,
+      xaxis: { lines: { show: false } },
+    },
+    xaxis: {
+      categories: monthlyBusinessGrowth?.x_axis?.values || [],
+      title: {
+        text: monthlyBusinessGrowth?.x_axis?.label || "",
+        style: { color: "#9ca3af", fontSize: "12px", fontWeight: 400 },
+      },
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+      labels: { style: { colors: "#9ca3af", fontSize: "12px" } },
+    },
+    yaxis: {
+      min: 0,
+      tickAmount: 4,
+      labels: { style: { colors: "#9ca3af", fontSize: "12px" } },
+    },
+    legend: {
+      position: "bottom",
+      horizontalAlign: "center",
+      fontSize: "13px",
+      markers: { size: 6, offsetX: -2 },
+      itemMargin: { horizontal: 10, vertical: 4 },
+    },
+    dataLabels: { enabled: false },
+  };
+
+  const cards = [
+    {
+      title: "Total Revenue",
+      value: summaryCards?.total_revenue?.display,
+      meta: summaryCards?.total_revenue?.trend,
+      metaTheme: "green",
+      valueTheme: "black",
+      icon: "wallet",
+      iconTheme: "blueIcon",
+    },
+    {
+      title: "Active Customers",
+      value: summaryCards?.active_customers?.display,
+      meta: summaryCards?.active_customers?.trend,
+      metaTheme: "green",
+      valueTheme: "black",
+      icon: "users",
+      iconTheme: "greenIcon",
+    },
+    {
+      title: "Active Subscriptions",
+      value: summaryCards?.active_subscriptions?.display,
+      meta: summaryCards?.active_subscriptions?.trend,
+      metaTheme: "green",
+      valueTheme: "black",
+      icon: "subscription",
+      iconTheme: "purpleIcon",
+    },
+    {
+      title: "Monthly Orders",
+      value: summaryCards?.monthly_orders?.display,
+      meta: summaryCards?.monthly_orders?.trend,
+      metaTheme: "green",
+      valueTheme: "black",
+      icon: "cart",
+      iconTheme: "greenIcon",
+    },
+    {
+      title: "Renewals Completed",
+      value: summaryCards?.renewals_completed?.display,
+      meta: summaryCards?.renewals_completed?.trend,
+      metaTheme: "green",
+      valueTheme: "black",
+      icon: "refresh",
+      iconTheme: "orangeIcon",
+    },
+    {
+      title: "Pending Invoices",
+      value: summaryCards?.pending_invoices?.display,
+      meta: summaryCards?.pending_invoices?.trend,
+      metaTheme: "pink",
+      valueTheme: "black",
+      icon: "invoice",
+      iconTheme: "pink",
+    },
+  ];
+
+  useEffect(() => {
+    handleGetReports();
+  }, []);
+
+  console.log(reportData, "reportData");
+
   return (
     <section className={styles.container}>
       <div className={styles.toolbar}>
@@ -549,9 +596,12 @@ const ReportsComponent = () => {
         <div className={styles.chartsGrid}>
           <div className={styles.chartCard}>
             <div className={styles.chartHeader}>
-              <h3 className={styles.chartTitle}>Revenue Overview</h3>
+              <h3 className={styles.chartTitle}>
+                {revenueOverview?.title || "Revenue Overview"}
+              </h3>
               <p className={styles.chartSubtitle}>
-                Monthly revenue performance across the selected period.
+                {revenueOverview?.subtitle ||
+                  "Monthly revenue performance across the selected period."}
               </p>
             </div>
             <div className={styles.chartBody}>
@@ -566,9 +616,12 @@ const ReportsComponent = () => {
 
           <div className={styles.chartCard}>
             <div className={styles.chartHeader}>
-              <h3 className={styles.chartTitle}>Sales by Service</h3>
+              <h3 className={styles.chartTitle}>
+                {salesByService?.title || "Sales by Service"}
+              </h3>
               <p className={styles.chartSubtitle}>
-                Order distribution across services.
+                {salesByService?.subtitle ||
+                  "Order distribution across services."}
               </p>
             </div>
             <div className={styles.chartBody}>
@@ -583,9 +636,12 @@ const ReportsComponent = () => {
 
           <div className={styles.chartCard}>
             <div className={styles.chartHeader}>
-              <h3 className={styles.chartTitle}>Monthly Business Growth</h3>
+              <h3 className={styles.chartTitle}>
+                {monthlyBusinessGrowth?.title || "Monthly Business Growth"}
+              </h3>
               <p className={styles.chartSubtitle}>
-                Compare revenue, orders, and renewals each month.
+                {monthlyBusinessGrowth?.subtitle ||
+                  "Compare revenue, orders, and renewals each month."}
               </p>
             </div>
             <div className={styles.chartBody}>
@@ -609,7 +665,7 @@ const ReportsComponent = () => {
               {quickInsights.map((item) => {
                 const InsightIcon = item.icon;
                 return (
-                  <li key={item.label} className={styles.insightItem}>
+                  <li key={item.key || item.label} className={styles.insightItem}>
                     <div
                       className={`${styles.insightIcon} ${styles[item.iconTheme]}`}
                     >

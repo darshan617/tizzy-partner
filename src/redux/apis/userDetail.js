@@ -8,8 +8,18 @@ const userDetailApi = apiSlice.injectEndpoints({
         method: "POST",
         body: body,
       }),
+      invalidatesTags: ["UserDetail"],
+    }),
+
+    updatePartnerUser: builder.mutation({
+      query: ({ body }) => ({
+        url: "/partner-user-update",
+        method: "POST",
+        body: body,
+      }),
+      invalidatesTags: ["UserDetail"],
     }),
   }),
 });
 
-export const { useGetPartnerUserDetailMutation } = userDetailApi;
+export const { useGetPartnerUserDetailMutation, useUpdatePartnerUserMutation } = userDetailApi;
