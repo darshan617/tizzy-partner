@@ -497,6 +497,63 @@
   transform: translateY(-1px);
 }
 
+
+.addUserForm {
+  width: 100%;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.halfWidth {
+  grid-column: 1 / 2;
+}
+
+.label {
+  font-size: var(--fs12);
+  font-weight: 600;
+  color: var(--darkColor);
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.required {
+  color: #ff3b30;
+  margin-left: 2px;
+}
+
+.submitWrap {
+  display: flex;
+  justify-content: center;
+}
+
+.saveBtn {
+  width: 100%;
+  max-width: 220px;
+  border: none;
+  border-radius: 999px;
+  background: var(--primaryColor);
+  color: var(--whiteColor);
+  font-size: var(--fs14);
+  font-weight: 600;
+  padding: 0.65rem 2rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.saveBtn:hover {
+  background: #024a96;
+}
+
 @media (max-width: 991px) {
   .headerRow,
   .permissionFooter {
