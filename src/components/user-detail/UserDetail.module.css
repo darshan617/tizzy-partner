@@ -7,7 +7,7 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
-  font-size: 12px;
+  font-size: var(--fs12);
   color: #8c97a8;
 }
 
@@ -36,7 +36,7 @@
 
 .pageTitle {
   margin: 0;
-  font-size: 28px;
+  font-size: var(--fs20);
   font-weight: 600;
   color: #16233b;
   text-transform: capitalize;
@@ -66,7 +66,7 @@
   border-radius: 999px;
   background: #1767c5;
   color: #fff;
-  font-size: 13px;
+  font-size: var(--fs14);
   font-weight: 600;
 }
 
@@ -75,7 +75,7 @@
   border-radius: 999px;
   background: linear-gradient(135deg, #ff5f93, #ff6aa6);
   color: #fff;
-  font-size: 13px;
+  font-size: var(--fs14);
   font-weight: 600;
 }
 
@@ -127,7 +127,7 @@
   background: rgba(255, 255, 255, 0.96);
   color: #2357ad;
   border: 1px solid rgba(255, 255, 255, 0.55);
-  font-size: 20px;
+  font-size: var(--fs18);
   font-weight: 700;
   flex-shrink: 0;
   box-shadow: 0 8px 18px rgba(18, 58, 119, 0.18);
@@ -148,7 +148,7 @@
 
 .profileName {
   margin: 0;
-  font-size: 20px;
+  font-size: var(--fs16);
   font-weight: 500;
   line-height: 1.1;
 }
@@ -159,15 +159,16 @@
   padding: 4px 10px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.18);
-  font-size: 14px;
+  font-size: var(--fs12);
   font-weight: 500;
   letter-spacing: 0.02em;
 }
 
 .profileRole {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--fs12);
   color: rgba(255, 255, 255, 0.82);
+  text-transform: capitalize;
 }
 
 .profileEditBtn {
@@ -209,12 +210,12 @@
 }
 
 .infoLabel {
-  font-size: 13px;
+  font-size: var(--fs12);
   color: #a2acbb;
 }
 
 .infoValue {
-  font-size: 18px;
+  font-size: var(--fs14);
   font-weight: 500;
   color: #434a5d;
   word-break: break-word;
@@ -234,7 +235,7 @@
 
 .cardTitle {
   margin: 0;
-  font-size: 18px;
+  font-size: var(--fs16);
   font-weight: 600;
   color: #1a2b49;
 }
@@ -302,14 +303,14 @@
 
 .deviceName {
   margin: 0 0 3px;
-  font-size: 16px;
+  font-size: var(--fs14);
   font-weight: 500;
   color: #1a2b49;
 }
 
 .deviceMeta {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--fs12);
   font-weight: 400;
   color: #a0acbc;
 }
@@ -321,7 +322,7 @@
   min-width: 62px;
   padding: 6px 10px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: var(--fs12);
   font-weight: 400;
 }
 
@@ -354,17 +355,17 @@
 .tableHead {
   padding: 10px 0 16px;
   color: #63748b;
-  font-size: 12px;
+  font-size: var(--fs12);
   border-bottom: 1px solid #edf2f8;
 }
 
 .moduleHead {
-  font-size: 20px;
+  font-size: var(--fs16);
   font-weight: 600;
 }
 
 .actionHead {
-  font-size: 16px;
+  font-size: var(--fs14);
   text-align: center;
 }
 
@@ -379,7 +380,7 @@
   border-radius: 6px;
   background: #edf4ff;
   color: #326db5;
-  font-size: 18px;
+  font-size: var(--fs14);
   font-weight: 600;
 }
 
@@ -392,7 +393,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 14px;
+  font-size: var(--fs14);
   font-weight: 500;
   color: #4f6076;
 }
@@ -470,12 +471,12 @@
   align-items: center;
   gap: 8px;
   color: #8d9aad;
-  font-size: 12px;
+  font-size: var(--fs12);
 }
 
 .note svg {
   flex-shrink: 0;
-  font-size: 15px;
+  font-size: var(--fs14);
   color: #7fa0cf;
 }
 
@@ -485,7 +486,7 @@
   border-radius: 999px;
   background: #1767c5;
   color: #fff;
-  font-size: 14px;
+  font-size: var(--fs14);
   font-weight: 600;
 }
 
@@ -555,6 +556,7 @@
 }
 
 @media (max-width: 991px) {
+
   .headerRow,
   .permissionFooter {
     flex-direction: column;
@@ -569,7 +571,7 @@
 
 @media (max-width: 767px) {
   .pageTitle {
-    font-size: 24px;
+    font-size: var(--fs18);
   }
 
   .profileHeader {
@@ -582,11 +584,11 @@
   }
 
   .profileName {
-    font-size: 22px;
+    font-size: var(--fs16);
   }
 
   .profileRole {
-    font-size: 15px;
+    font-size: var(--fs12);
   }
 
   .profileInfoPanel {
