@@ -12,8 +12,10 @@ import Loader from "@/common-components/loader/Loader";
 import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarConstant";
 import Link from "next/link";
 
+const normalizeStatus = (status) => String(status ?? "").toLowerCase();
+
 const getStatusBadgeClass = (status) => {
-  const normalized = status?.toLowerCase();
+  const normalized = normalizeStatus(status);
   if (normalized === "active" || normalized === "completed") {
     return styles.activeBadge;
   }
@@ -90,8 +92,10 @@ export default function PlansDetail() {
   const customerId = customer?.customer_id || "-";
   const contactName =
     customer?.primary_contact || customer?.contact_name || "-";
-  const status = subscription?.status || plan?.status || "-";
-  console.log("status", status);
+  const status = subscription?.status ?? plan?.status ?? "-";
+  const statusKey = normalizeStatus(status);
+  const isProcessingOrCancelled =
+    statusKey === "processing" || statusKey === "cancelled";
   const domainName =
     plan?.domain || plan?.domain_name || planDetails?.domain_name || "-";
   const priceAmount = Number(
@@ -220,21 +224,12 @@ export default function PlansDetail() {
                       },
                     })
                   }
-                  disabled={
-                    status?.toLowerCase() === "processing" ||
-                    status?.toLowerCase() === "cancelled"
-                  }
+                  disabled={isProcessingOrCancelled}
                   style={{
-                    opacity:
-                      status?.toLowerCase() === "processing" ||
-                      status?.toLowerCase() === "cancelled"
-                        ? 0.5
-                        : 1,
-                    cursor:
-                      status?.toLowerCase() === "processing" ||
-                      status?.toLowerCase() === "cancelled"
-                        ? "not-allowed"
-                        : "pointer",
+                    opacity: isProcessingOrCancelled ? 0.5 : 1,
+                    cursor: isProcessingOrCancelled
+                      ? "not-allowed"
+                      : "pointer",
                   }}
                 >
                   <IoMdAdd size={14} className={styles.addIcon} />
@@ -271,7 +266,7 @@ export default function PlansDetail() {
           </div>
 
           <div className="d-flex justify-content-end gap-2 mt-3">
-            {status?.toLowerCase() !== "processing" && (
+            {statusKey !== "processing" && (
               <Link
                 href={{
                   pathname: `/services/${getServicePath(plan?.provider_id)}`,
@@ -289,7 +284,7 @@ export default function PlansDetail() {
                 Upgrade
               </Link>
             )}
-            {status?.toLowerCase() === "expiring" && (
+            {statusKey === "expiring" && (
               <>
                 <Link
                   href={{

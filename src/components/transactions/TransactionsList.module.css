@@ -606,6 +606,11 @@
   color: var(--textBodySecondary);
 }
 
+.billingProcessing {
+  background: var(--primarySubtleColor);
+  color: var(--primaryColor);
+}
+
 .billingArrowBtn {
   display: inline-flex;
   align-items: center;

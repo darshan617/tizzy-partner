@@ -48,6 +48,9 @@ const getBillingStatusClass = (status) => {
   if (["overdue", "expired", "cancelled", "failed", "rejected"].includes(key)) {
     return styles.billingOverdue;
   }
+  if (["processing"].includes(key)) {
+    return styles.billingProcessing;
+  }
   if (["completed", "success", "active", "paid"].includes(key)) {
     return styles.billingSuccess;
   }
