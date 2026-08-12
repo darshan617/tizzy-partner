@@ -213,13 +213,13 @@ const UserManagement = () => {
                     </td>
                     <td className={styles.colAction}>
                       <div className={styles.actionGroup}>
-                        <button
+                        {/* <button
                           type="button"
                           className={styles.actionBtn}
                           aria-label={`View ${user?.name}`}
                         >
                           <Eye size={15} strokeWidth={2} />
-                        </button>
+                        </button> */}
                         <button
                           type="button"
                           className={styles.actionBtn}
