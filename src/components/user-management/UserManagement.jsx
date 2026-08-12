@@ -3,7 +3,10 @@ import Link from "next/link";
 import { Eye, Pencil, Trash2, Plus } from "lucide-react";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import styles from "./UserManagement.module.css";
-import { useGetPartnerUsersMutation, usePartnerUserAddMutation } from "@/redux/apis/userManagement";
+import {
+  useGetPartnerUsersMutation,
+  usePartnerUserAddMutation,
+} from "@/redux/apis/userManagement";
 import Cookies from "js-cookie";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import router from "next/router";
@@ -53,10 +56,11 @@ const UserManagement = () => {
   const userData = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
     : null;
-    
-  const [getPartnerUsers, { isLoading, }] = useGetPartnerUsersMutation();
+
+  const [getPartnerUsers, { isLoading }] = useGetPartnerUsersMutation();
   const { showToast } = useToast();
-  const [partnerUserAdd, { isLoading: isAddingUser }] = usePartnerUserAddMutation();
+  const [partnerUserAdd, { isLoading: isAddingUser }] =
+    usePartnerUserAddMutation();
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [partnerUserList, setPartnerUserList] = useState([]);
   const [formData, setFormData] = useState({
@@ -82,13 +86,13 @@ const UserManagement = () => {
       if (response?.data) {
         setPartnerUserList(response?.data);
       } else {
-        showToast(response?.error?.data?.message || "Failed to get partner users", "error");
+        showToast(
+          response?.error?.data?.message || "Failed to get partner users",
+          "error",
+        );
       }
     } catch (error) {
-      showToast(
-        error?.data?.message || "Failed to get partner users",
-        "error"
-      );
+      showToast(error?.data?.message || "Failed to get partner users", "error");
     }
   };
   const handleAddUser = async () => {
@@ -104,17 +108,14 @@ const UserManagement = () => {
           partner_id: userData?.id,
         },
       }).unwrap();
-  
+
       console.log("SUCCESS:", response);
-  
-      if(response?.success) {
-        showToast(
-          response?.message || "User added successfully",
-          "success"
-        );
-    
+
+      if (response?.success) {
+        showToast(response?.message || "User added successfully", "success");
+
         setIsAddUserOpen(false);
-    
+
         setFormData({
           name: "",
           mobile: "",
@@ -124,24 +125,18 @@ const UserManagement = () => {
           permissions: [],
         });
         getPartnerUsersList();
-      }else{
+      } else {
         showToast(
           response?.error?.data?.message || "Failed to add user",
-          "error"
+          "error",
         );
       }
-  
     } catch (error) {
       console.log("API ERROR:", error);
-  
-      showToast(
-        error?.data?.message || "Failed to add user",
-        "error"
-      );
+
+      showToast(error?.data?.message || "Failed to add user", "error");
     }
   };
-
-
 
   useEffect(() => {
     getPartnerUsersList();
@@ -162,7 +157,9 @@ const UserManagement = () => {
 
       <section className={`sectionCard ${styles.userListCard}`}>
         <div className={styles.cardHeader}>
-          <h2 className={styles.cardTitle}>User List ({MOCK_USERS.length})</h2>
+          <h2 className={styles.cardTitle}>
+            User List ({partnerUserList?.length ?? 0})
+          </h2>
           <button
             type="button"
             className={styles.addUserBtn}
@@ -183,66 +180,82 @@ const UserManagement = () => {
                 <th className={styles.colAction}>Action</th>
               </tr>
             </thead>
-            <tbody>
-              {partnerUserList?.map((user, index) => (
-                <tr key={user.employee_id}>
-                  <td className={styles.colSrNo}>
-                    <span className={styles.srNoBadge}>{user.employee_id}</span>
-                  </td>
-                  <td className={styles.colUserName}>
-                    <div className={styles.userInfo}>
-                      <div
-                        className={`${styles.avatar} ${
-                          avatarColorClasses[index % avatarColorClasses.length]
-                        } text-capitalize`}
-                      >
-                        {user?.name?.charAt(0)}
+            {partnerUserList?.length > 0 ? (
+              <tbody>
+                {partnerUserList?.map((user, index) => (
+                  <tr key={user.employee_id}>
+                    <td className={styles.colSrNo}>
+                      <span className={styles.srNoBadge}>
+                        {user.employee_id}
+                      </span>
+                    </td>
+                    <td className={styles.colUserName}>
+                      <div className={styles.userInfo}>
+                        <div
+                          className={`${styles.avatar} ${
+                            avatarColorClasses[
+                              index % avatarColorClasses.length
+                            ]
+                          } text-capitalize`}
+                        >
+                          {user?.name?.charAt(0)}
+                        </div>
+                        <div className={styles.userMeta}>
+                          <p className={styles.userName}>{user?.name}</p>
+                          <p className={styles.userRole}>{user?.designation}</p>
+                        </div>
                       </div>
-                      <div className={styles.userMeta}>
-                        <p className={styles.userName}>{user?.name}</p>
-                        <p className={styles.userRole}>{user?.designation}</p>
+                    </td>
+                    <td className={styles.colStatus}>
+                      <span className="statusBadge subtleSuccess">
+                        {user?.status}
+                      </span>
+                    </td>
+                    <td className={styles.colAction}>
+                      <div className={styles.actionGroup}>
+                        <button
+                          type="button"
+                          className={styles.actionBtn}
+                          aria-label={`View ${user?.name}`}
+                        >
+                          <Eye size={15} strokeWidth={2} />
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.actionBtn}
+                          aria-label={`Edit ${user?.name}`}
+                          onClick={() =>
+                            router.push({
+                              pathname: "/user-detail",
+                              query: {
+                                partner_user_id: user?.partner_user_id,
+                              },
+                            })
+                          }
+                        >
+                          <Pencil size={14} strokeWidth={2} />
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.actionBtn}
+                          aria-label={`Delete ${user?.name}`}
+                        >
+                          <Trash2 size={14} strokeWidth={2} />
+                        </button>
                       </div>
-                    </div>
-                  </td>
-                  <td className={styles.colStatus}>
-                    <span className="statusBadge subtleSuccess">
-                      {user?.status}
-                    </span>
-                  </td>
-                  <td className={styles.colAction}>
-                    <div className={styles.actionGroup}>
-                      <button
-                        type="button"
-                        className={styles.actionBtn}
-                        aria-label={`View ${user?.name}`}
-                      >
-                        <Eye size={15} strokeWidth={2} />
-                      </button>
-                      <button
-                        type="button"
-                        className={styles.actionBtn}
-                        aria-label={`Edit ${user?.name}`}
-                        onClick={() => router.push({
-                          pathname: "/user-detail",
-                          query: {
-                            partner_user_id: user?.partner_user_id,
-                          },
-                        })}
-                      >
-                        <Pencil size={14} strokeWidth={2} />
-                      </button>
-                      <button
-                        type="button"
-                        className={styles.actionBtn}
-                        aria-label={`Delete ${user?.name}`}
-                      >
-                        <Trash2 size={14} strokeWidth={2} />
-                      </button>
-                    </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            ) : (
+              <tbody>
+                <tr>
+                  <td colSpan={4} className="text-center">
+                    No data found
                   </td>
                 </tr>
-              ))}
-            </tbody>
+              </tbody>
+            )}
           </table>
         </div>
       </section>
