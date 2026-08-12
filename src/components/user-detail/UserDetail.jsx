@@ -7,9 +7,11 @@ import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
 import { FiSmartphone } from "react-icons/fi";
 import { RiMacbookLine } from "react-icons/ri";
 import Image from "next/image";
-import { useGetPartnerUserDetailMutation } from "@/redux/apis/userDetail";
+import { useGetPartnerUserDetailMutation, useUpdatePartnerUserMutation } from "@/redux/apis/userDetail";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
+import CustomPopup from "@/common-components/custom-popup/CustomPopup";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
 
 const devices = [
   {
@@ -32,54 +34,33 @@ const devices = [
   },
 ];
 
-const permissions = [
-  {
-    category: "Catalog Management",
-    items: [
-      { label: "Provider", access: [true, true, true, true] },
-      { label: "Plan", access: [true, true, true, true] },
-      { label: "Variant", access: [true, true, true, true] },
-    ],
-  },
-  {
-    category: "User Management",
-    items: [
-      { label: "Users", access: [true, true, true, true] },
-      { label: "Role", access: [true, true, true, true] },
-      { label: "Variants", access: [true, true, true, true] },
-    ],
-  },
-  {
-    category: "Master Data Management",
-    items: [
-      { label: "Popular Apps", access: [true, true, true, true] },
-      { label: "Plan Categories", access: [true, true, true, true] },
-      { label: "Subscriptions", access: [true, true, true, true] },
-      { label: "Partner Approvals", access: [true, true, true, true] },
-      { label: "Renewals", access: [true, true, true, true] },
-      { label: "Transfer Order", access: [true, true, true, true] },
-      { label: "Ticket List", access: [true, true, true, true] },
-    ],
-  },
-  {
-    category: "System Settings",
-    items: [{ label: "General Settings", access: [true, true, true, true] }],
-  },
-  {
-    category: "Transaction",
-    items: [
-      { label: "Orders", access: [true, false, true, true] },
-      { label: "Billing & Invoices", access: [true, false, true, true] },
-      { label: "Promocode", access: [true, false, true, true] },
-      { label: "Credit Request", access: [true, false, true, true] },
-    ],
-  },
-];
-
-
-
-
 const actionColumns = ["View", "Add", "Edit", "Edit"];
+
+// Transforms the flat `permissions` array from the API response
+// (module_id, module_key, module_name, group_name, can_view, can_add, can_edit, can_delete)
+// into the grouped { category, items: [{ label, access: [bool,bool,bool,bool] }] } shape
+// that the permission table below already renders.
+const mapPermissionsToGroups = (apiPermissions = []) => {
+  const groupMap = new Map();
+
+  apiPermissions.forEach((perm) => {
+    if (!groupMap.has(perm.group_name)) {
+      groupMap.set(perm.group_name, {
+        category: perm.group_name,
+        items: [],
+      });
+    }
+
+    groupMap.get(perm.group_name).items.push({
+      label: perm.module_name,
+      module_id: perm.module_id,
+      module_key: perm.module_key,
+      access: [perm.can_view, perm.can_add, perm.can_edit, perm.can_delete],
+    });
+  });
+
+  return Array.from(groupMap.values());
+};
 
 const UserDetail = () => {
   const userData = Cookies.get("userData")
@@ -87,9 +68,13 @@ const UserDetail = () => {
     : null;
   const { partner_user_id } = useRouter().query;
   const [partnerUserDetail, setPartnerUserDetail] = useState(null);
-  const [permissionGroups, setPermissionGroups] = useState(permissions);
+  const { showToast } = useToast();
+  const [permissionGroups, setPermissionGroups] = useState([]);
+  const [showEditUserPopup, setShowEditUserPopup] = useState(false);
   const [getPartnerUserDetail, { isLoading }] =
     useGetPartnerUserDetailMutation();
+  const [updatePartnerUser, { isLoading: isUpdating }] =
+    useUpdatePartnerUserMutation();
   const togglePermission = (groupCategory, itemLabel, accessIndex) => {
     setPermissionGroups((currentGroups) =>
       currentGroups.map((group) => {
@@ -116,6 +101,14 @@ const UserDetail = () => {
     );
   };
 
+  const [formData, setFormData] = useState({
+    name: partnerUserDetail?.name || "",
+    mobile: partnerUserDetail?.mobile || "",
+    email: partnerUserDetail?.email || "",
+    employee_id: partnerUserDetail?.employee_id || "",
+    designation: partnerUserDetail?.designation || "",
+  });
+
   const getPartnerUserDetailData = async () => {
     try {
       const response = await getPartnerUserDetail({
@@ -126,6 +119,7 @@ const UserDetail = () => {
       }).unwrap();
       if (response?.data) {
         setPartnerUserDetail(response?.data);
+        setPermissionGroups(mapPermissionsToGroups(response?.data?.permissions));
       } else {
         showToast(
           response?.error?.data?.message || "Failed to get partner user detail",
@@ -142,6 +136,42 @@ const UserDetail = () => {
       getPartnerUserDetailData();
     }
   }, [partner_user_id]);
+
+  const handleChange = (e) => {
+    if (e.target.name === "mobile") {
+      const value = e.target.value.replace(/\D/g, "");
+      setFormData({ ...formData, [e.target.name]: value });
+    } else {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
+  };
+
+  const handleUpdatePartnerUser = async () => {
+    try {
+      const response = await updatePartnerUser({
+        body: {
+          partner_id: userData?.id,
+          partner_user_id: partner_user_id,
+          name: formData.name,
+          mobile: formData.mobile,
+          email: formData.email,
+          employee_id: formData.employee_id,
+          designation: formData.designation,
+        },
+      }).unwrap();
+      if (response?.data) {
+        showToast("User updated successfully", "success");
+        setShowEditUserPopup(false);
+      } else {
+        showToast(
+          response?.error?.data?.message || "Failed to update user",
+          "error",
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const togglePermissionRow = (groupCategory, itemLabel) => {
     setPermissionGroups((currentGroups) =>
@@ -210,15 +240,140 @@ const UserDetail = () => {
               <div className={styles.avatar}>J</div>
               <div className={styles.profileMeta}>
                 <div className={styles.nameRow}>
-                  <h2 className={styles.profileName}>{partnerUserDetail?.name}</h2>
-                  <span className={styles.employeeTag}>EMP-1042</span>
+                  <h2 className={styles.profileName}>
+                    {partnerUserDetail?.name}
+                  </h2>
+                  {/* <span className={styles.employeeTag}>EMP-1042</span> */}
                 </div>
                 <p className={styles.profileRole}>
                   Senior Sales Executive - B2B Portal
                 </p>
               </div>
               <button type="button" className={styles.profileEditBtn}>
-                <FaPen />
+                <FaPen
+                  onClick={() => {
+                    setShowEditUserPopup(true);
+                    setFormData({
+                      name: partnerUserDetail?.name || "",
+                      mobile: partnerUserDetail?.mobile || "",
+                      email: partnerUserDetail?.email || "",
+                      employee_id: partnerUserDetail?.employee_id || "",
+                      designation: partnerUserDetail?.designation || "",
+                    });
+                  }}
+                />
+                {showEditUserPopup && (
+                  <CustomPopup
+                    title="Update User"
+                    onClose={() => {
+                      setShowEditUserPopup(false);
+                    }}
+                  >
+                    <div className={styles.addUserForm}>
+                      <div className={styles.formGrid}>
+                        <div className={styles.formGroup}>
+                          <label className={styles.label} htmlFor="name">
+                            Name
+                            <span className={styles.required}>*</span>
+                          </label>
+                          <input
+                            id="name"
+                            type="text"
+                            name="name"
+                            className="form-control"
+                            required
+                            value={formData.name}
+                            onChange={handleChange}
+                          />
+                        </div>
+
+                        <div className={styles.formGroup}>
+                          <label className={styles.label} htmlFor="mobile">
+                            Mobile
+                            <span className={styles.required}>*</span>
+                          </label>
+                          <input
+                            id="mobile"
+                            type="tel"
+                            name="mobile"
+                            className="form-control"
+                            maxLength={10}
+                            
+                            required
+                            value={formData.mobile}
+                            onChange={handleChange}
+
+                          />
+                        </div>
+
+                        <div className={styles.formGroup}>
+                          <label className={styles.label} htmlFor="email">
+                            Email
+                            <span className={styles.required}>*</span>
+                          </label>
+                          <input
+                            id="email"
+                            type="email"
+                            name="email"
+                            className="form-control"
+                            required
+                            value={formData.email}
+                            onChange={handleChange}
+                          />
+                        </div>
+
+                        <div className={styles.formGroup}>
+                          <label className={styles.label} htmlFor="employee_id">
+                            Employee ID
+                            <span className={styles.required}>*</span>
+                          </label>
+                          <input
+                            id="employee_id"
+                            type="text"
+                            name="employee_id"
+                            placeholder="eg. EMP-0112"
+                            className="form-control"
+                            required
+                            value={formData.employee_id}
+                            onChange={handleChange}
+                          />
+                        </div>
+
+                        <div
+                          className={`${styles.formGroup} ${styles.halfWidth}`}
+                        >
+                          <label className={styles.label} htmlFor="designation">
+                            Designation
+                            <span className={styles.required}>*</span>
+                          </label>
+                          <input
+                            id="designation"
+                            type="text"
+                            name="designation"
+                            className="form-control"
+                            required
+                            value={formData.designation}
+                            onChange={handleChange}
+                            placeholder="EMP-0112"
+                          />
+                        </div>
+                      </div>
+
+                      <div className={styles.submitWrap}>
+                        <button
+                          type="button"
+                          className={styles.saveBtn}
+                          onClick={()=>{
+                            handleUpdatePartnerUser();
+                            setShowEditUserPopup(false);
+                          }}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                  </CustomPopup>
+                )}
               </button>
             </div>
 
@@ -226,11 +381,13 @@ const UserDetail = () => {
               <div className={styles.profileInfoGrid}>
                 <div className={styles.infoBox}>
                   <span className={styles.infoLabel}>User ID</span>
-                  <span className={styles.infoValue}>EMP-0112</span>
+                  <span className={styles.infoValue}>{partnerUserDetail?.employee_id}</span>
                 </div>
                 <div className={styles.infoBox}>
                   <span className={styles.infoLabel}>Mobile No.</span>
-                  <span className={styles.infoValue}>{partnerUserDetail?.mobile}</span>
+                  <span className={styles.infoValue}>
+                    {partnerUserDetail?.mobile}
+                  </span>
                 </div>
                 <div className={styles.infoBox}>
                   <span className={styles.infoLabel}>Email</span>
@@ -240,7 +397,9 @@ const UserDetail = () => {
                 </div>
                 <div className={styles.infoBox}>
                   <span className={styles.infoLabel}>Last Login</span>
-                  <span className={styles.infoValue}>{partnerUserDetail?.last_login_at || "-"}</span>
+                  <span className={styles.infoValue}>
+                    {partnerUserDetail?.last_login_at || "-"}
+                  </span>
                 </div>
               </div>
             </div>

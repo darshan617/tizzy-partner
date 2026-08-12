@@ -28,6 +28,7 @@ export const apiSlice = createApi({
     "transactionDetails",
     "orderPlaceWithoutAadhaar",
     "orderDetails",
+    "userDetail",
   ],
   endpoints: (builder) => ({}),
 });
