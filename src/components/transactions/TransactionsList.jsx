@@ -19,6 +19,7 @@ const statusLabelMap = {
   draft: "Draft",
   rejected: "Rejected",
   failed: "Failed",
+  upgraded: "Upgraded",
 };
 
 const statusOrder = [
@@ -28,6 +29,7 @@ const statusOrder = [
   "failed",
   "draft",
   "rejected",
+  "upgraded",
 ];
 
 const avatarBgClasses = [
@@ -474,8 +476,8 @@ const TransactionsList = ({ variant = "default", limit }) => {
                         key={tx?.order_id || idx}
                         className={`${styles.contentRow} btnDisplay`}
                       >
-                        <div className="row align-items-center py-3 px-sm-4 px-3 g-2">
-                          <div className="col-12 col-md-2 col-lg-2">
+                        <div className="row align-items-center py-3 px-md-2 px-3 g-2">
+                          <div className="col-12 col-md-2 col-lg-2 d-flex align-items-center">
                             <div className={styles.txMeta}>
                               <div className={styles.txDate}>{tx?.date}</div>
                               <div className={styles.txNumber}>
@@ -484,7 +486,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </div>
                           </div>
 
-                          <div className="col-12 col-md-2 col-lg-3">
+                          <div className="col-12 col-md-3 col-lg-3">
                             <div className="d-flex align-items-center">
                               <div
                                 className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
@@ -514,7 +516,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </div>
                           </div>
 
-                          <div className="col-12 col-md-2 col-lg-2">
+                          <div className="col-12 col-md-3 col-lg-4">
                             <div className={styles.txMeta}>
                               <div className={styles.txPlanName}>
                                 {tx?.plan}
@@ -525,7 +527,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </div>
                           </div>
 
-                          <div className="col-6 col-md-2 col-lg-2 text-md-center">
+                          <div className="col-6 col-md-2 col-lg-1 text-md-center">
                             <span
                               className={`${styles.statusBadge} ${styles[tx?.status?.toLowerCase()]}`}
                             >
@@ -533,12 +535,12 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </span>
                           </div>
 
-                          <div className="col-6 col-md-2 col-lg-2 text-end">
+                          <div className="col-6 col-md-1 col-lg-1 text-end">
                             <span className={styles.amountValue}>
                               {formatAmount(tx?.amount)}
                             </span>
                           </div>
-                          <div className="col-12 col-md-2 col-lg-1 text-end">
+                          <div className="col-12 col-md-1 col-lg-1 text-end">
                             <button
                               className={styles.viewDetailsBtn}
                               onClick={() =>
