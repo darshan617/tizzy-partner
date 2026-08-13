@@ -1066,15 +1066,16 @@
   font-weight: 600;
   color: var(--darkColor);
   background: #e7e9eb;
-  border-radius: 50rem;
+  border-radius: 4px;
   padding: 0.2rem 0.55rem;
   line-height: 1.2;
 }
 
 .txnInfo {
-  flex: 1 1 160px;
+  /* flex: 1 1 160px;
   min-width: 160px;
-  max-width: 100%;
+  max-width: 100%; */
+  width: 300px;
 }
 
 .txnPlanName {
@@ -1108,7 +1109,7 @@
   font-size: var(--fs11);
   font-weight: 600;
   padding: 0.25rem 0.65rem;
-  border-radius: 50rem;
+  border-radius: 4px;
   line-height: 1.2;
   white-space: nowrap;
   flex-shrink: 0;

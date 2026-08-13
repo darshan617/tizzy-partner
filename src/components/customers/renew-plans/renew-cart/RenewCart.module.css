@@ -121,7 +121,7 @@
 .colLabel {
     font-size: 12px;
     font-weight: 500;
-    color: #CCCCCC;
+    color: rgba(155, 166, 183, 1);
     letter-spacing: 0.05em;
     margin-bottom: 6px;
 }
@@ -601,9 +601,9 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #e0f5f0;
-    color: #0d6e5f;
-    border-radius: 8px;
+    background: rgba(2, 188, 156, 0.1);
+    color: rgba(2, 188, 156, 1);
+    border-radius: 4px;
     padding: 6px 12px;
     font-size: 12px;
     font-weight: 500;
@@ -665,7 +665,7 @@
     border-radius: 6px;
     padding: 6px 12px;
     font-size: 14px;
-    font-weight: 400;
+    font-weight: 500;
     color: #444444;
     min-width: 110px;
     text-align: center;

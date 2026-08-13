@@ -23,7 +23,7 @@ export default function PlanCategoryPills({
       ) : (
         <>
           <div
-            className={styles.pillsRow}
+            className={styles.pillsRowTop}
             role="tablist"
             aria-label="Plan categories"
           >
@@ -35,7 +35,7 @@ export default function PlanCategoryPills({
                   type="button"
                   role="tab"
                   aria-selected={active}
-                  className={`${styles.pill} ${active ? styles.pillActive : ""}`}
+                  className={`${styles.pillTop} ${active ? styles.pillTopActive : ""}`}
                   onClick={() => onSelectCategory(cat)}
                 >
                   {cat?.name}
@@ -60,6 +60,7 @@ export default function PlanCategoryPills({
                     className={`${styles.pill} ${active ? styles.pillActive : ""}`}
                     onClick={() => onSelectSubCategory(subCat)}
                   >
+                    <span className={styles.radioDot} />
                     {subCat?.name}
                   </button>
                 );

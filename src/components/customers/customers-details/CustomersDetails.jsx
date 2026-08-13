@@ -1017,9 +1017,7 @@ export default function CustomerDetail() {
                                           "-"}
                                       </div>
                                     </div>
-
-                                    <div className={styles.txnRight}>
-                                      <span
+                                    <span
                                         className={`${styles.txnStatus} ${getTxnStatusClass(
                                           txn?.status,
                                           styles,
@@ -1027,6 +1025,9 @@ export default function CustomerDetail() {
                                       >
                                         {formatTxnStatus(txn?.status)}
                                       </span>
+
+                                    <div className={styles.txnRight}>
+                                      
                                       <strong className={styles.txnPrice}>
                                         {formatTxnAmount(txn?.amount)}
                                       </strong>

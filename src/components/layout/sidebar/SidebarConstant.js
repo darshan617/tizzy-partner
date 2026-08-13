@@ -7,6 +7,8 @@ import {
   LuReceiptIndianRupee,
   LuUsers,
 } from "react-icons/lu";
+
+
 import { RiNoCreditCardFill, RiUserSettingsLine } from "react-icons/ri";
 import { MdAutorenew } from "react-icons/md";
 import { PiHandCoinsLight } from "react-icons/pi";
@@ -91,13 +93,13 @@ export const SIDEBAR_MENU_CONSTANTS = [
   {
     id: 4,
     title: "Invoices",
-    icon: LuReceiptIndianRupee,
+    icon: LuReceiptIndianRupee  ,
     href: "/invoice",
   },
   {
     id: 5,
     title: "Transactions",
-    icon: PiHandCoinsLight,
+    icon: LuWallet,
     href: "/transactions",
   },
   {
