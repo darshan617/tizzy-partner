@@ -1003,7 +1003,6 @@ export default function CustomerDetail() {
                                         {txn?.order_no || "-"}
                                       </div>
                                     </div>
-
                                     <div className={styles.txnInfo}>
                                       <div className={styles.txnPlanName}>
                                         {txn?.order_name ||
@@ -1017,7 +1016,8 @@ export default function CustomerDetail() {
                                           "-"}
                                       </div>
                                     </div>
-                                    <span
+                                    <div className={styles.txnRight}>
+                                      <span
                                         className={`${styles.txnStatus} ${getTxnStatusClass(
                                           txn?.status,
                                           styles,
@@ -1026,12 +1026,26 @@ export default function CustomerDetail() {
                                         {formatTxnStatus(txn?.status)}
                                       </span>
 
-                                    <div className={styles.txnRight}>
+                                    
                                       
                                       <strong className={styles.txnPrice}>
                                         {formatTxnAmount(txn?.amount)}
                                       </strong>
                                     </div>
+                                    <button
+                                      onClick={() =>
+                                        router.push({
+                                          pathname:
+                                            "/transactions/transaction-details",
+                                          query: {
+                                            order_id: txn?.order_id,
+                                          },
+                                        })
+                                      }
+                                      className={styles.subActionBtnViewMore}
+                                    >
+                                      <BiChevronRight size={16} />
+                                    </button>
                                   </div>
                                 ))}
                               </div>

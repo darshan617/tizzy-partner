@@ -1,6 +1,6 @@
 import React from "react";
 import Layout from "@/components/layout/Layout";
-import ReportsComponent from "@/components/reports/ReportsComponent";
+import ReportsComponent from "@/components/reports/reports-list/ReportsComponent";
 
 const index = () => {
   return (

@@ -55,32 +55,29 @@ const QUICK_INSIGHT_META = {
   },
 };
 
-const recentReports = [
-  {
-    name: "Monthly Sales Report",
-    category: "Sales",
-    generatedBy: "Admin",
-    generatedDate: "15 Jul 2026",
-    format: "pdf",
+const CATALOG_GROUP_META = {
+  general: {
+    icon: IoDocumentTextOutline,
+    iconTheme: "blueIcon",
   },
-  {
-    name: "Customer Growth Report",
-    category: "Customers",
-    generatedBy: "Admin",
-    generatedDate: "12 Jul 2026",
-    format: "excel",
+  customers: {
+    icon: FiUsers,
+    iconTheme: "greenIcon",
   },
-  {
-    name: "Renewal Summary",
-    category: "Subscriptions",
-    generatedBy: "Admin",
-    generatedDate: "10 Jul 2026",
-    format: "pdf",
+  billing: {
+    icon: LuReceiptIndianRupee,
+    iconTheme: "orangeIcon",
   },
-];
+  support: {
+    icon: LuReceiptText,
+    iconTheme: "purpleIcon",
+  },
+};
 
 const FormatBadge = ({ format }) => {
-  if (format === "excel") {
+  const normalizedFormat = String(format || "").toLowerCase();
+
+  if (normalizedFormat === "excel") {
     return (
       <span className={`${styles.formatBadge} ${styles.formatExcel}`}>
         <RiFileExcel2Line size={14} />
@@ -120,14 +117,26 @@ const ReportsComponent = () => {
   const userData = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
     : null;
-  const [getReports, { data, isLoading, isError, error }] =
-    useGetReportsMutation();
   const [reportData, setReportData] = useState(null);
+  const [dateRange, setDateRange] = useState({
+    fromDate: "",
+    toDate: "",
+  });
+  console.log(dateRange, "dateRange");
+  const [getReports, { isLoading, isError, error }] = useGetReportsMutation();
+  const formatDate = (date) => {
+    if (!date) return "";
+
+    const [year, month, day] = date.split("-");
+
+    return `${day}-${month}-${year}`;
+  };
   const handleGetReports = async () => {
+    console.log("Selected date:", dateRange);
     try {
       const response = await getReports({
-        fromDate: "",
-        toDate: "",
+        fromDate: formatDate(dateRange?.fromDate) || "",
+        toDate: formatDate(dateRange?.toDate) || "",
         partner_id: userData?.id,
       });
 
@@ -140,12 +149,15 @@ const ReportsComponent = () => {
   };
 
   const summaryCards = reportData?.summary_cards;
+  const catalogGroups = reportData?.catalog_groups || [];
   const revenueOverview = reportData?.revenue_overview;
   const revenueDataset = revenueOverview?.y_axis?.datasets?.[0];
   const salesByService = reportData?.sales_by_service;
   const salesByServiceKeys = Object.keys(salesByService?.datasets || {});
   const monthlyBusinessGrowth = reportData?.monthly_business_growth;
   const quickInsightsData = reportData?.quick_insights;
+  const recentReportsData = reportData?.recent_reports;
+  const recentReports = recentReportsData?.items || [];
 
   const quickInsights = Object.values(quickInsightsData || {}).map((item) => {
     const meta = QUICK_INSIGHT_META[item?.key] || {
@@ -218,7 +230,7 @@ const ReportsComponent = () => {
   };
 
   const salesByServiceSeries = salesByServiceKeys.map(
-    (key) => salesByService?.datasets?.[key] || 0
+    (key) => salesByService?.datasets?.[key] || 0,
   );
 
   const salesByServiceOptions = {
@@ -228,7 +240,7 @@ const ReportsComponent = () => {
     },
     colors: ["#0355ac", "#02bc9c", "#d4a24c"],
     labels: salesByServiceKeys.map(
-      (key) => salesByService?.labels?.[key] || key
+      (key) => salesByService?.labels?.[key] || key,
     ),
     legend: {
       position: "bottom",
@@ -255,7 +267,7 @@ const ReportsComponent = () => {
     (dataset) => ({
       name: dataset?.label || dataset?.key || "",
       data: dataset?.data || [],
-    })
+    }),
   );
 
   const growthChartOptions = {
@@ -378,14 +390,30 @@ const ReportsComponent = () => {
             <div className={styles.dateGroup}>
               <label className={styles.dateLabel}>
                 From Date
-                <input type="date" className={styles.dateInput} />
+                <input
+                  type="date"
+                  className={styles.dateInput}
+                  value={dateRange.fromDate}
+                  onChange={(e) =>
+                    setDateRange({ ...dateRange, fromDate: e.target.value })
+                  }
+                />
               </label>
               <label className={styles.dateLabel}>
                 To Date
-                <input type="date" className={styles.dateInput} />
+                <input
+                  type="date"
+                  className={styles.dateInput}
+                  value={dateRange.toDate}
+                  onChange={(e) =>
+                    setDateRange({ ...dateRange, toDate: e.target.value })
+                  }
+                />
               </label>
             </div>
-            <button className={styles.btnApply}>Apply</button>
+            <button className={styles.btnApply} onClick={handleGetReports}>
+              Apply
+            </button>
           </div>
 
           <div className={styles.actions}>
@@ -423,172 +451,43 @@ const ReportsComponent = () => {
 
       <section className={styles.summarySection}>
         <div className={styles.summaryGrid}>
-          <div className={styles.summaryCard}>
-            <div className={styles.summaryHeader}>
-              <div className={styles.summaryLabel}>
-                <IoDocumentTextOutline
-                  className={`${styles.summaryLabelIcon} ${styles.blueIcon}`}
-                />
-                General Reports
-              </div>
-            </div>
-            <Link href={"/ss"} className={styles.summaryItem}>
-              <div className={styles.summaryItemHeading}>
-                <div className={styles.summaryItemTitle}>Daily Performance</div>
-                <IoChevronForward className={styles.summaryItemArrow} />
-              </div>
-              <div className={styles.summaryItemText}>
-                Monitor daily sales, orders, renewals, and business activity.
-              </div>
-            </Link>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryItemHeading}>
-                <div className={styles.summaryItemTitle}>
-                  Monthly Subscriptions
-                </div>
-                <IoChevronForward className={styles.summaryItemArrow} />
-              </div>
-              <div className={styles.summaryItemText}>
-                Track active, renewed, and expired subscriptions.
-              </div>
-            </div>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryItemHeading}>
-                <div className={styles.summaryItemTitle}>
-                  Last 3 Months Sales
-                </div>
-                <IoChevronForward className={styles.summaryItemArrow} />
-              </div>
-              <div className={styles.summaryItemText}>
-                Compare recent sales performance.
-              </div>
-            </div>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryItemHeading}>
-                <div className={styles.summaryItemTitle}>Annual Sales</div>
-                <IoChevronForward className={styles.summaryItemArrow} />
-              </div>
-              <div className={styles.summaryItemText}>
-                Analyze yearly revenue and growth.
-              </div>
-            </div>
-          </div>
+          {catalogGroups.map((group) => {
+            const meta = CATALOG_GROUP_META[group?.group] || {
+              icon: IoDocumentTextOutline,
+              iconTheme: "blueIcon",
+            };
+            const GroupIcon = meta.icon;
 
-          <div className={styles.summaryCard}>
-            <div className={styles.summaryHeader}>
-              <div className={styles.summaryLabel}>
-                <FiUsers
-                  className={`${styles.summaryLabelIcon} ${styles.greenIcon}`}
-                />
-                Customers
-              </div>
-            </div>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryItemHeading}>
-                <div className={styles.summaryItemTitle}>New Customers</div>
-                <IoChevronForward className={styles.summaryItemArrow} />
-              </div>
-              <div className={styles.summaryItemText}>
-                Recently registered customers.
-              </div>
-            </div>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryItemHeading}>
-                <div className={styles.summaryItemTitle}>Subscriptions</div>
-                <IoChevronForward className={styles.summaryItemArrow} />
-              </div>
-              <div className={styles.summaryItemText}>
-                Customer subscription overview.
-              </div>
-            </div>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryItemHeading}>
-                <div className={styles.summaryItemTitle}>Plan Renewals</div>
-                <IoChevronForward className={styles.summaryItemArrow} />
-              </div>
-              <div className={styles.summaryItemText}>
-                Upcoming and completed renewals.
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.summaryCard}>
-            <div className={styles.summaryHeader}>
-              <div className={styles.summaryLabel}>
-                <LuReceiptIndianRupee
-                  className={`${styles.summaryLabelIcon} ${styles.orangeIcon}`}
-                />
-                Billing & Income
-              </div>
-            </div>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryItemHeading}>
-                <div className={styles.summaryItemTitle}>Annual Revenue</div>
-                <IoChevronForward className={styles.summaryItemArrow} />
-              </div>
-              <div className={styles.summaryItemText}>
-                Yearly earnings summary.
-              </div>
-            </div>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryItemHeading}>
-                <div className={styles.summaryItemTitle}>
-                  Monthly Transactions
+            return (
+              <div key={group?.group || group?.group_label} className={styles.summaryCard}>
+                <div className={styles.summaryHeader}>
+                  <div className={styles.summaryLabel}>
+                    <GroupIcon
+                      className={`${styles.summaryLabelIcon} ${styles[meta.iconTheme]}`}
+                    />
+                    {group?.group_label}
+                  </div>
                 </div>
-                <IoChevronForward className={styles.summaryItemArrow} />
+                {(group?.items || []).map((item) => (
+                  <Link
+                    key={item?.slug || item?.title}
+                    href={`/reports/${item?.slug}`}
+                    className={styles.summaryItem}
+                  >
+                    <div className={styles.summaryItemHeading}>
+                      <div className={styles.summaryItemTitle}>
+                        {item?.title}
+                      </div>
+                      <IoChevronForward className={styles.summaryItemArrow} />
+                    </div>
+                    <div className={styles.summaryItemText}>
+                      {item?.subtitle}
+                    </div>
+                  </Link>
+                ))}
               </div>
-              <div className={styles.summaryItemText}>
-                Payment and transaction history.
-              </div>
-            </div>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryItemHeading}>
-                <div className={styles.summaryItemTitle}>Invoices</div>
-                <IoChevronForward className={styles.summaryItemArrow} />
-              </div>
-              <div className={styles.summaryItemText}>
-                Paid, pending and overdue invoices.
-              </div>
-            </div>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryItemHeading}>
-                <div className={styles.summaryItemTitle}>Income Forecast</div>
-                <IoChevronForward className={styles.summaryItemArrow} />
-              </div>
-              <div className={styles.summaryItemText}>
-                Projected business revenue.
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.summaryCard}>
-            <div className={styles.summaryHeader}>
-              <div className={styles.summaryLabel}>
-                <LuReceiptText
-                  className={`${styles.summaryLabelIcon} ${styles.purpleIcon}`}
-                />
-                Support
-              </div>
-            </div>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryItemHeading}>
-                <div className={styles.summaryItemTitle}>Open Tickets</div>
-                <IoChevronForward className={styles.summaryItemArrow} />
-              </div>
-              <div className={styles.summaryItemText}>
-                Active support requests.
-              </div>
-            </div>
-            <div className={styles.summaryItem}>
-              <div className={styles.summaryItemHeading}>
-                <div className={styles.summaryItemTitle}>Resolved Tickets</div>
-                <IoChevronForward className={styles.summaryItemArrow} />
-              </div>
-              <div className={styles.summaryItemText}>
-                Successfully closed tickets.
-              </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </section>
 
@@ -665,7 +564,10 @@ const ReportsComponent = () => {
               {quickInsights.map((item) => {
                 const InsightIcon = item.icon;
                 return (
-                  <li key={item.key || item.label} className={styles.insightItem}>
+                  <li
+                    key={item.key || item.label}
+                    className={styles.insightItem}
+                  >
                     <div
                       className={`${styles.insightIcon} ${styles[item.iconTheme]}`}
                     >
@@ -683,13 +585,16 @@ const ReportsComponent = () => {
         </div>
       </section>
 
-      <section className={styles.recentReportsSection}>
+      {/* <section className={styles.recentReportsSection}>
         <div className={styles.recentReportsCard}>
           <div className={styles.recentReportsHeader}>
             <div>
-              <h3 className={styles.chartTitle}>Recent Reports</h3>
+              <h3 className={styles.chartTitle}>
+                {recentReportsData?.title || "Recent Reports"}
+              </h3>
               <p className={styles.chartSubtitle}>
-                Recently generated business reports.
+                {recentReportsData?.subtitle ||
+                  "Recently generated business reports."}
               </p>
             </div>
             <button type="button" className={styles.viewAllBtn}>
@@ -713,36 +618,33 @@ const ReportsComponent = () => {
               </thead>
               <tbody>
                 {recentReports.map((report) => (
-                  <tr key={report.name}>
-                    <td className={styles.reportNameCell}>{report.name}</td>
+                  <tr key={report.id || report.report_key}>
+                    <td className={styles.reportNameCell}>
+                      {report.report_name}
+                    </td>
                     <td>{report.category}</td>
-                    <td>{report.generatedBy}</td>
-                    <td>{report.generatedDate}</td>
+                    <td>{report.generated_by}</td>
+                    <td>{report.generated_date}</td>
                     <td>
                       <FormatBadge format={report.format} />
                     </td>
                     <td>
                       <span className={styles.statusBadge}>
                         <BsPatchCheck size={14} />
-                        Generated
+                        {report.status || "Generated"}
                       </span>
                     </td>
                     <td>
                       <div className={styles.actionGroup}>
-                        <button
-                          type="button"
+                        <a
+                          href={report.download_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className={styles.actionBtn}
-                          aria-label={`Download ${report.name}`}
+                          aria-label={`Download ${report.report_name}`}
                         >
                           <LuDownload size={16} />
-                        </button>
-                        {/* <button
-                          type="button"
-                          className={styles.actionBtn}
-                          aria-label={`More options for ${report.name}`}
-                        >
-                          <FiMoreHorizontal size={16} />
-                        </button> */}
+                        </a>
                       </div>
                     </td>
                   </tr>
@@ -751,7 +653,7 @@ const ReportsComponent = () => {
             </table>
           </div>
         </div>
-      </section>
+      </section> */}
     </section>
   );
 };
