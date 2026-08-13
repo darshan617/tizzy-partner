@@ -321,6 +321,25 @@
   white-space: nowrap;
 }
 
+.subActionBtnViewMore {
+  background: var(--whiteColor);
+  border: 1px solid var(--borderColor);
+  color: #000;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.subActionBtnViewMore:hover {
+  background-color: var(--primaryColor);
+  color: var(--whiteColor);
+  transition: .2s;
+}
+
+
 @media (max-width: 991px) {
   .card {
     margin-top: 12px;

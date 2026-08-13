@@ -1003,7 +1003,6 @@ export default function CustomerDetail() {
                                         {txn?.order_no || "-"}
                                       </div>
                                     </div>
-
                                     <div className={styles.txnInfo}>
                                       <div className={styles.txnPlanName}>
                                         {txn?.order_name ||
@@ -1017,7 +1016,6 @@ export default function CustomerDetail() {
                                           "-"}
                                       </div>
                                     </div>
-
                                     <div className={styles.txnRight}>
                                       <span
                                         className={`${styles.txnStatus} ${getTxnStatusClass(
@@ -1027,10 +1025,27 @@ export default function CustomerDetail() {
                                       >
                                         {formatTxnStatus(txn?.status)}
                                       </span>
+
+                                    
+                                      
                                       <strong className={styles.txnPrice}>
                                         {formatTxnAmount(txn?.amount)}
                                       </strong>
                                     </div>
+                                    <button
+                                      onClick={() =>
+                                        router.push({
+                                          pathname:
+                                            "/transactions/transaction-details",
+                                          query: {
+                                            order_id: txn?.order_id,
+                                          },
+                                        })
+                                      }
+                                      className={styles.subActionBtnViewMore}
+                                    >
+                                      <BiChevronRight size={16} />
+                                    </button>
                                   </div>
                                 ))}
                               </div>
