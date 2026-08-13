@@ -17,6 +17,7 @@ import { useGetTransactionDetailsMutation } from "@/redux/apis/transactionsApi";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import Loader from "@/common-components/loader/Loader";
+import { BiChevronRight } from "react-icons/bi";
 
 export default function TransactionDetails() {
   const [activeTab, setActiveTab] = useState("po");
@@ -240,26 +241,45 @@ export default function TransactionDetails() {
                         </span>
                       </div>
 
-                      <div className={styles.subMetaRow}>
-                        <span className={styles.subMetaItem}>
-                          <LuLayers size={20} className={styles.subMetaIcon} />{" "}
-                          {sub?.subscription_no}
-                        </span>
-                        {/* <span className={styles.subMetaItem}>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className={styles.subMetaRow}>
+                          <span className={styles.subMetaItem}>
+                            <LuLayers
+                              size={20}
+                              className={styles.subMetaIcon}
+                            />{" "}
+                            {sub?.subscription_no}
+                          </span>
+                          {/* <span className={styles.subMetaItem}>
                 <RiGlobalLine size={20} className={styles.subMetaIcon} />{" "}
                 {sub?.domain}
               </span> */}
-                        <span className={styles.subMetaItem}>
-                          <FiUsers size={20} className={styles.subMetaIcon} />{" "}
-                          {sub?.users}
-                        </span>
-                        <span className={styles.subMetaItem}>
-                          <GrPowerCycle
-                            size={20}
-                            className={styles.subMetaIcon}
-                          />{" "}
-                          {sub?.renewal_date}
-                        </span>
+                          <span className={styles.subMetaItem}>
+                            <FiUsers size={20} className={styles.subMetaIcon} />{" "}
+                            {sub?.users}
+                          </span>
+                          <span className={styles.subMetaItem}>
+                            <GrPowerCycle
+                              size={20}
+                              className={styles.subMetaIcon}
+                            />{" "}
+                            {sub?.renewal_date}
+                          </span>
+                        </div>
+                        <div>
+                          <Link
+                            href={{
+                              pathname: `/plan-details`,
+                              query: {
+                                orderId: router?.query?.order_id,
+                                planId: sub?.plan_id,
+                              },
+                            }}
+                            className={styles.subActionBtnViewMore}
+                          >
+                            <BiChevronRight size={16} />
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   ),

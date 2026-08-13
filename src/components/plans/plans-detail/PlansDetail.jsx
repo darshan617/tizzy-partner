@@ -22,7 +22,10 @@ const getStatusBadgeClass = (status) => {
   if (
     normalized === "expiring" ||
     normalized === "expiring_soon" ||
-    normalized === "processing"
+    normalized === "processing" ||
+    normalized === "upgrade pending" ||
+    normalized === "downgrade pending" ||
+    normalized === "renewal pending"
   ) {
     return styles.expiringBadge;
   }
@@ -95,7 +98,11 @@ export default function PlansDetail() {
   const status = subscription?.status ?? plan?.status ?? "-";
   const statusKey = normalizeStatus(status);
   const isProcessingOrCancelled =
-    statusKey === "processing" || statusKey === "cancelled";
+    statusKey === "processing" ||
+    statusKey === "cancelled" ||
+    statusKey === "upgrade pending" ||
+    statusKey === "downgrade pending" ||
+    statusKey === "renewal pending";
   const domainName =
     plan?.domain || plan?.domain_name || planDetails?.domain_name || "-";
   const priceAmount = Number(
@@ -227,9 +234,7 @@ export default function PlansDetail() {
                   disabled={isProcessingOrCancelled}
                   style={{
                     opacity: isProcessingOrCancelled ? 0.5 : 1,
-                    cursor: isProcessingOrCancelled
-                      ? "not-allowed"
-                      : "pointer",
+                    cursor: isProcessingOrCancelled ? "not-allowed" : "pointer",
                   }}
                 >
                   <IoMdAdd size={14} className={styles.addIcon} />
@@ -266,24 +271,27 @@ export default function PlansDetail() {
           </div>
 
           <div className="d-flex justify-content-end gap-2 mt-3">
-            {statusKey !== "processing" && (
-              <Link
-                href={{
-                  pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                  query: {
-                    type: "upgrade",
-                    order_id: router?.query?.orderId,
-                    customer_id: customer?.cust_id,
-                    order_sub_id: plan?.order_sub_id,
-                    plan_id: router?.query?.planId,
-                  },
-                }}
-                className={styles.upgradeBtn}
-                type="button"
-              >
-                Upgrade
-              </Link>
-            )}
+            {statusKey !== "processing" &&
+              statusKey !== "upgrade pending" &&
+              statusKey !== "downgrade pending" &&
+              statusKey !== "renewal pending" && (
+                <Link
+                  href={{
+                    pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                    query: {
+                      type: "upgrade",
+                      order_id: router?.query?.orderId,
+                      customer_id: customer?.cust_id,
+                      order_sub_id: plan?.order_sub_id,
+                      plan_id: router?.query?.planId,
+                    },
+                  }}
+                  className={styles.upgradeBtn}
+                  type="button"
+                >
+                  Upgrade
+                </Link>
+              )}
             {statusKey === "expiring" && (
               <>
                 <Link
