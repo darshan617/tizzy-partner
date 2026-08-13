@@ -157,24 +157,75 @@
   margin-right: auto;
 }
 
+.pillsRowTop {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0.25rem 0 1rem;
+}
+
 .pillsRow {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 1.5rem;
   padding: 0.25rem 0 1rem;
 }
 
-.pill {
-  border: 1px solid var(--borderColor);
-  background: var(--whiteColor);
-  color: var(--textBodySecondary);
-  font-size: var(--fs12);
+.pillTop {
+  font-size: var(--fs14);
   font-weight: 500;
-  padding: 0.4rem 0.75rem;
-  border-radius: 50rem;
+  padding: 10px;
+  border-radius: 99px;
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+  color: var(--textBodySecondary);
+  background: #fff;
+  border: 1px solid var(--borderColor);
+}
+.pillTopActive {
+  color: var(--darkColor);
+  font-weight: 600;
+  box-shadow: 0 2px 6px #0057b35a;
+}
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--textBodySecondary);
+  font-size: var(--fs14);
+  font-weight: 500;
+  padding: 0.25rem 0;
+  cursor: pointer;
+}
+.radioDot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #d0d3d9;
+  background: #e8eaed;
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.pillActive .radioDot {
+  border: none;
+  background: #0056b3;
+}
+
+.pillActive .radioDot::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translate(-50%, -50%);
 }
 
 .pill:hover {
@@ -183,9 +234,8 @@
 }
 
 .pillActive {
-  border-color: #0056b3;
-  color: var(--darkColor);
-  background: var(--whiteColor);
+  color: #1a1a1a;
+  font-weight: 600;
 }
 
 .grid {

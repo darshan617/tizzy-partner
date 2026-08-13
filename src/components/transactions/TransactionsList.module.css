@@ -230,6 +230,7 @@
 
 .txMeta {
   min-width: 110px;
+  /* margin-left: 15px; */
 }
 
 .txDate {
@@ -259,7 +260,7 @@
 }
 
 .txPlanName {
-  font-size: var(--fs14);
+  font-size:  16px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;

@@ -1025,6 +1025,9 @@ export default function CustomerDetail() {
                                       >
                                         {formatTxnStatus(txn?.status)}
                                       </span>
+
+                                    
+                                      
                                       <strong className={styles.txnPrice}>
                                         {formatTxnAmount(txn?.amount)}
                                       </strong>

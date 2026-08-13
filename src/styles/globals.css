@@ -344,6 +344,7 @@ strong {
 .btn.small {
   height: 35px;
   font-size: var(--fs13);
+  padding: 0 10px;
 }
 
 .btn.small .icon {
