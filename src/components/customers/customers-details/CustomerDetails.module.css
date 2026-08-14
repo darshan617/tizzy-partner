@@ -519,6 +519,89 @@
   color: var(--textLight);
 }
 
+.domainBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  background: #f0f5fb;
+  border: 1px solid #d6e4f5;
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.domainLeft {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: var(--fs12);
+  font-weight: 500;
+  color: var(--darkColor);
+  min-width: 0;
+}
+
+.domainLeft svg {
+  color: var(--textBodySecondary);
+  flex-shrink: 0;
+}
+
+.domainName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.domainBarRight {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.orderIdWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.orderIdLabel {
+  font-size: var(--fs12);
+  color: var(--textBodySecondary);
+}
+
+.orderIdBadge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  font-size: var(--fs11);
+  font-weight: 500;
+  color: var(--textBodySecondary);
+  background: #ebeced;
+  border-radius: 5px;
+  line-height: 1.2;
+}
+
+.viewPoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--fs12);
+  font-weight: 500;
+  color: var(--primaryColor);
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.viewPoLink:hover {
+  text-decoration: underline;
+  color: var(--primaryColor);
+}
+
 .updwngradeBtn,
 .downgradeBtn {
   background: #E6F1FD;
@@ -1158,13 +1241,17 @@
 }
 
 .cancelOrderBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   background: var(--dangerSubtleColor);
   color: var(--dangerColor);
   border: 1px solid var(--dangerColor);
-  padding: 0 10px;
+  padding: 0.2rem 10px;
   border-radius: 30px;
   font-size: 12px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .txnArrowBtn:hover {
@@ -1418,6 +1505,7 @@
   border-radius: 50%;
   width: 30px;
   height: 30px;
+  min-width: 30px;
 }
 
 .subActionBtnViewMore:hover {

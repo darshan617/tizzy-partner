@@ -50,6 +50,15 @@ const customerApi = apiSlice.injectEndpoints({
       },
       providesTags: ["customer"],
     }),
+    allCustomersDetails: builder.query({
+      query: ({ partner_id }) => {
+        return {
+          url: `/all-customers-details?partner_id=${partner_id}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["customer"],
+    }),
   }),
 });
 
@@ -59,4 +68,5 @@ export const {
   useGetAllCustomersQuery,
   useGetSpecificCustomerDetailsQuery,
   useLazyUpgradeDowngradePlanQuery,
+  useAllCustomersDetailsQuery,
 } = customerApi;

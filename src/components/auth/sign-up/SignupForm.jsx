@@ -126,7 +126,13 @@ const SignupForm = () => {
       if (res?.data?.success) {
         // Cookies.set("userData", JSON.stringify(userDetails));
         dispatch(setUserData(userDetails));
-        router?.push("/auth/otp-verification?type=signup");
+        router?.push({
+          pathname: "/auth/otp-verification",
+          query: {
+            type: "signup",
+            email: userDetails?.email,
+          },
+        });
 
         setUserDetails({
           name: "",

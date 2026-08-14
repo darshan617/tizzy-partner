@@ -629,7 +629,8 @@ const RenewCart = ({
                                     ? lineLicenses <= 1
                                     : lisceneCounter === 1) ||
                                   router?.query?.variant === "upgrade" ||
-                                  router?.query?.variant === "downgrade"
+                                  router?.query?.variant === "downgrade" ||
+                                  router?.query?.type === "partial-upgrade"
                                 }
                                 onClick={() => {
                                   if (router?.query?.type === "renew-plan") {
@@ -725,20 +726,21 @@ const RenewCart = ({
                             </div>
                           </div>
 
-                          {router?.query?.type !== "renew-plan" && (
-                            <button
-                              className={styles.removeBtn}
-                              onClick={() => {
-                                setIsPopupOpen("delete-cart");
-                                setCartToDelete({
-                                  cart_id: item?.cart_id,
-                                  main_cart_id: item?.main_cart_id,
-                                });
-                              }}
-                            >
-                              ×
-                            </button>
-                          )}
+                          {router?.query?.type !== "renew-plan" &&
+                            router?.query?.type !== "partial-upgrade" && (
+                              <button
+                                className={styles.removeBtn}
+                                onClick={() => {
+                                  setIsPopupOpen("delete-cart");
+                                  setCartToDelete({
+                                    cart_id: item?.cart_id,
+                                    main_cart_id: item?.main_cart_id,
+                                  });
+                                }}
+                              >
+                                ×
+                              </button>
+                            )}
                         </div>
                       </div>
                     );

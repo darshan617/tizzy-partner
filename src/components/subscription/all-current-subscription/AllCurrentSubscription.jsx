@@ -1,49 +1,115 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import styles from "@/components/subscription/all-current-subscription/AllCurrentSubscription.module.css";
 import { FiFilter, FiLayers } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { FiUsers } from "react-icons/fi";
-import { Calendar } from "lucide-react";
 import { BiChevronRight, BiGlobe } from "react-icons/bi";
 import { TbRefresh } from "react-icons/tb";
 import { IoMdArrowBack } from "react-icons/io";
 import { useRouter } from "next/router";
+import Cookies from "js-cookie";
+import { useAllCustomersDetailsQuery } from "@/redux/apis/customerApi";
+import Loader from "@/common-components/loader/Loader";
+import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarConstant";
+
+const statusOrder = [
+  "active",
+  "processing",
+  // "pending",
+  "draft",
+  "expiring",
+  "upgraded",
+  "downgraded",
+  "renewed",
+  "cancelled",
+  "upgrade pending",
+  "downgrade pending",
+  "renewal pending",
+];
+
+const statusLabelMap = {
+  active: "Active",
+  expiring: "Expiring",
+  pending: "Pending",
+  downgraded: "Downgraded",
+  draft: "Draft",
+  cancelled: "Cancelled",
+  upgraded: "Upgraded",
+  renewed: "Renewed",
+  "upgrade pending": "Upgrade Pending",
+  "downgrade pending": "Downgrade Pending",
+  "renewal pending": "Renewal Pending",
+  processing: "Processing",
+};
 
 const AllCurrentSubscription = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState("all");
+  const [hasMounted, setHasMounted] = useState(false);
   const router = useRouter();
-  const statusOrder = [
-    "active",
-    "processing",
-    // "pending",
-    "draft",
-    "expiring",
-    "upgraded",
-    "downgraded",
-    "renewed",
-    "cancelled",
-    "upgrade pending",
-    "downgrade pending",
-    "renewal pending",
-  ];
 
-  const statusLabelMap = {
-    active: "Active",
-    expiring: "Expiring",
-    pending: "Pending",
-    downgraded: "Downgraded",
-    draft: "Draft",
-    cancelled: "Cancelled",
-    upgraded: "Upgraded",
-    renewed: "Renewed",
-    "upgrade pending": "Upgrade Pending",
-    "downgrade pending": "Downgrade Pending",
-    "renewal pending": "Renewal Pending",
-    processing: "Processing",
-  };
+  // js-cookie is browser-only; wait until mount so SSR and first client paint match
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  const userData = hasMounted
+    ? Cookies.get("userData")
+      ? JSON.parse(Cookies.get("userData"))
+      : {}
+    : {};
+
+  const { data: allCustomersDetails, isLoading } = useAllCustomersDetailsQuery(
+    {
+      partner_id: userData?.id,
+    },
+    { skip: !hasMounted || !userData?.id },
+  );
+
+  const customers = allCustomersDetails?.data?.customers || [];
+
+  const allSubscriptions = useMemo(
+    () =>
+      customers.flatMap((customer) =>
+        (customer?.subscriptions || []).map((subscription) => ({
+          ...subscription,
+          customer_id: customer?.customer_id,
+          customer_name: customer?.customer_name,
+          customer_no: customer?.customer_no,
+        })),
+      ),
+    [customers],
+  );
+
+  const filteredSubscriptions = useMemo(() => {
+    return allSubscriptions.filter((subscription) => {
+      const matchesCustomer =
+        !router?.query?.customerId ||
+        Number(subscription?.customer_id) === Number(router?.query?.customerId);
+
+      const matchesStatus =
+        selectedStatuses === "all"
+          ? true
+          : subscription?.status?.toLowerCase() === selectedStatuses;
+
+      return matchesCustomer && matchesStatus;
+    });
+  }, [allSubscriptions, router?.query?.customerId, selectedStatuses]);
+
+  const selectedCustomer = customers.find(
+    (customer) =>
+      Number(customer?.customer_id) === Number(router?.query?.customerId),
+  );
+
+  const breadcrumbCustomerLabel =
+    selectedCustomer?.customer_no ||
+    selectedCustomer?.customer_name ||
+    router?.query?.customerId ||
+    "All";
+
+  const totalCount = filteredSubscriptions.length;
+
   return (
     <div
       className={styles.container}
@@ -61,19 +127,13 @@ const AllCurrentSubscription = () => {
             Dashboard
           </Link>
           <span className={styles.separator}>/</span>
-          <Link
-            href="/customers/customers-details"
-            className={styles.breadcrumbLink}
-          >
+          <Link href="/customers" className={styles.breadcrumbLink}>
             Customers
           </Link>
           <span className={styles.separator}>/</span>
-          <Link
-            href="/customers/customers-details"
-            className={styles.breadcrumbLink}
-          >
-            Customer - 00024
-          </Link>
+          <span className={styles.crumbCurrent}>
+            Customer - {breadcrumbCustomerLabel}
+          </span>
         </span>
         <div className="col-auto">
           <button
@@ -95,19 +155,23 @@ const AllCurrentSubscription = () => {
         <div className="py-3 px-sm-4 px-3 border-bottom">
           <div className="row align-items-center justify-content-between">
             <div className="col-sm-auto order-sm-2">
-              <Link
+              {/* <Link
                 href="/subscriptions/all-subscriptions"
                 className={styles.viewAllLink}
               >
                 <span>View All</span>
-              </Link>
+              </Link> */}
             </div>
             <h2 className={styles.subTitle}>Current Subscriptions</h2>
             <div
               className={`${styles.searchCount} col-sm-auto order-sm-1 text-center my-2 my-sm-0`}
             >
-              Showing <span className="fw-medium darkColor">1 - 10</span> from{" "}
-              <span className="fw-medium darkColor">10</span> Subscriptions
+              Showing{" "}
+              <span className="fw-medium darkColor">
+                {totalCount > 0 ? `1 - ${totalCount}` : "0"}
+              </span>{" "}
+              from <span className="fw-medium darkColor">{totalCount}</span>{" "}
+              Subscriptions
             </div>
           </div>
         </div>
@@ -125,7 +189,6 @@ const AllCurrentSubscription = () => {
                     {statusOrder.map((status) => (
                       <li key={status}>
                         <button
-                          key={status}
                           className={`${styles.filterItem} rounded-pill`}
                           onClick={() =>
                             selectedStatuses === status
@@ -176,76 +239,113 @@ const AllCurrentSubscription = () => {
 
       <div className="col">
         <div className={`${styles.pageWrap} py-4`}>
-          <div className={`${styles.card} p-sm-4 p-3`}>
-            <div className={`${styles.subRow}`}>
-              <div className={`${styles.subTop}`}>
-                <div className={`${styles.subPlan}`}>
-                  <p className={`${styles.subPlanIcon} m-0 flex-shrink-0`}>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="400"
-                      height="400"
-                      viewBox="0 0 400 400"
-                      class="icon"
-                    >
-                      <path
-                        fill="#34a853"
-                        d="M49,59s86.637-1.833,172,99L282,21,350,9V20s-36.234-2.265-53,43L144,391l-14-39,80-172S164.162,106.238,49,69V59Z"
-                      ></path>
-                    </svg>
-                  </p>
-                  <div className="ms-2">
-                    <div className={`${styles.subPlanName}`}>
-                      Tizzy® Mail Enterprise 100 GB
-                    </div>
-                    <small className={`${styles.subPlanPrice}`}>
-                      ₹2850 <span>Per User / Per Year</span>
-                    </small>
-                  </div>
-                </div>
-
-                <span className={`${styles.statusBadge} ${styles?.["active"]}`}>
-                  Pending
-                </span>
-              </div>
-
-              <div className={`${styles.subBottom}`}>
-                <div className={`${styles.subMeta} ps-1`}>
-                  <div className={`${styles.subMetaItem}`}>
-                    <FiLayers className={`${styles.subMetaIcon}`} />
-                    <div className={`${styles.subMetaValue}`}>SUB-00097</div>
-                  </div>
-                  <div className={`${styles.subMetaItem}`}>
-                    <BiGlobe className={`${styles.subMetaIcon}`} />
-                    <div>
-                      <div className={`${styles.subMetaValue}`}>
-                        kbkenterprise.com
-                      </div>
-                    </div>
-                  </div>
-                  <div className={`${styles.subMetaItem}`}>
-                    <FiUsers className={`${styles.subMetaIcon}`} />
-                    <div>
-                      <div className={`${styles.subMetaValue}`}>50 Users</div>
-                    </div>
-                  </div>
-                  <div className={`${styles.subMetaItem}`}>
-                    <TbRefresh className={`${styles.subMetaIcon}`} />
-                    <div>
-                      <div className={`${styles.subMetaValue}`}>
-                        31 Oct 2025
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className={`${styles.subActions}`}>
-                  <button className={styles.subActionBtnViewMore}>
-                    <BiChevronRight size={16} />
-                  </button>
-                </div>
-              </div>
+          {!hasMounted || isLoading ? (
+            <Loader />
+          ) : totalCount === 0 ? (
+            <div className={`${styles.card} p-sm-2 p-1 text-center`}>
+              <p className="m-0">No Subscriptions</p>
             </div>
-          </div>
+          ) : (
+            filteredSubscriptions.map((subscription, idx) => {
+              const statusKey =
+                subscription?.status?.toLowerCase()?.replaceAll(" ", "_") || "";
+
+              return (
+                <div
+                  className={`${styles.card} p-sm-2 p-1 mb-1`}
+                  key={
+                    subscription?.subscription_no ||
+                    subscription?.subscription_id ||
+                    idx
+                  }
+                >
+                  <div className={`${styles.subRow}`}>
+                    <div className={`${styles.subTop}`}>
+                      <div className={`${styles.subPlan}`}>
+                        <p
+                          className={`${styles.subPlanIcon} m-0 flex-shrink-0`}
+                        >
+                          {SIDEBAR_SERVICES_CONSTANTS.find(
+                            (service) =>
+                              service?.id === subscription?.provider_id,
+                          )?.image || "-"}
+                        </p>
+                        <div className="ms-2">
+                          <div className={`${styles.subPlanName}`}>
+                            {subscription?.plan_name || "-"}
+                          </div>
+                          <small className={`${styles.subPlanPrice}`}>
+                            ₹{subscription?.price ?? "-"}{" "}
+                            <span>Per User / Per Year</span>
+                          </small>
+                        </div>
+                      </div>
+
+                      <span
+                        className={`${styles.statusBadge} ${styles?.[statusKey] || ""}`}
+                      >
+                        {subscription?.status || "-"}
+                      </span>
+                    </div>
+
+                    <div className={`${styles.subBottom}`}>
+                      <div className={`${styles.subMeta} ps-1`}>
+                        <div className={`${styles.subMetaItem}`}>
+                          <FiLayers className={`${styles.subMetaIcon}`} />
+                          <div className={`${styles.subMetaValue}`}>
+                            {subscription?.subscription_no || "-"}
+                          </div>
+                        </div>
+                        <div className={`${styles.subMetaItem}`}>
+                          <BiGlobe className={`${styles.subMetaIcon}`} />
+                          <div>
+                            <div className={`${styles.subMetaValue}`}>
+                              {subscription?.domain_name || "-"}
+                            </div>
+                          </div>
+                        </div>
+                        <div className={`${styles.subMetaItem}`}>
+                          <FiUsers className={`${styles.subMetaIcon}`} />
+                          <div>
+                            <div className={`${styles.subMetaValue}`}>
+                              {subscription?.license_count ??
+                                subscription?.quantity ??
+                                "-"}{" "}
+                              Users
+                            </div>
+                          </div>
+                        </div>
+                        <div className={`${styles.subMetaItem}`}>
+                          <TbRefresh className={`${styles.subMetaIcon}`} />
+                          <div>
+                            <div className={`${styles.subMetaValue}`}>
+                              {subscription?.end_date || "-"}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className={`${styles.subActions}`}>
+                        <button
+                          className={styles.subActionBtnViewMore}
+                          onClick={() => {
+                            router?.push({
+                              pathname: `/plan-details`,
+                              query: {
+                                planId: subscription?.plan_id,
+                                orderId: subscription?.order_id,
+                              },
+                            });
+                          }}
+                        >
+                          <BiChevronRight size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </div>
