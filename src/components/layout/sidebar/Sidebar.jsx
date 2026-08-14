@@ -211,7 +211,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
           </div>
         ) : (
           <>
-            <div className="d-flex flex-column gap-4 p-3">
+            <div className={`${styles.sideTop} d-flex flex-column gap-4 p-3`}>
               <div>
                 <div className={`${styles.sideMenuHead} mb-2`}>MENU</div>
 
@@ -254,51 +254,46 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                   })}
                 </ul>
               </div>
+              <div className={`${styles.sideMenuHead} mb-2`}>SERVICES</div>
 
-              <div>
-                <div className={`${styles.sideMenuHead} mb-2`}>SERVICES</div>
-
-                <ul
-                  className={`${styles.sideMenuList} d-flex flex-column gap-1`}
-                >
-                  {SIDEBAR_SERVICES_CONSTANTS?.map((menu, idx) => {
-                    const isActive =
-                      `/services/${router?.query?.slug}` === menu?.href;
-                    return (
-                      <Link
-                        href={menu?.href}
-                        className={`${styles.sideMenuItem} ${isActive ? styles.active : ""}`}
-                        key={idx}
-                        style={{
-                          background: isActive
-                            ? "var(--primaryColor)"
-                            : "transparent",
-                        }}
+              <ul className={`${styles.sideMenuList} d-flex flex-column gap-1`}>
+                {SIDEBAR_SERVICES_CONSTANTS?.map((menu, idx) => {
+                  const isActive =
+                    `/services/${router?.query?.slug}` === menu?.href;
+                  return (
+                    <Link
+                      href={menu?.href}
+                      className={`${styles.sideMenuItem} ${isActive ? styles.active : ""}`}
+                      key={idx}
+                      style={{
+                        background: isActive
+                          ? "var(--primaryColor)"
+                          : "transparent",
+                      }}
+                    >
+                      <button
+                        className={`${styles.menuLink} d-flex align-items-center gap-3`}
                       >
-                        <button
-                          className={`${styles.menuLink} d-flex align-items-center gap-3`}
+                        <span
+                          className={`${styles.iconCircle} ${isActive ? styles.active : ""}`}
                         >
-                          <span
-                            className={`${styles.iconCircle} ${isActive ? styles.active : ""}`}
-                          >
-                            {menu?.image}
-                          </span>
-                          <span
-                            className={`${styles.menuLabel}`}
-                            style={{
-                              color: isActive
-                                ? "var(--whiteColor)"
-                                : "var(--textBody)",
-                            }}
-                          >
-                            {menu?.title}
-                          </span>
-                        </button>
-                      </Link>
-                    );
-                  })}
-                </ul>
-              </div>
+                          {menu?.image}
+                        </span>
+                        <span
+                          className={`${styles.menuLabel}`}
+                          style={{
+                            color: isActive
+                              ? "var(--whiteColor)"
+                              : "var(--textBody)",
+                          }}
+                        >
+                          {menu?.title}
+                        </span>
+                      </button>
+                    </Link>
+                  );
+                })}
+              </ul>
             </div>
 
             <div
