@@ -55,10 +55,10 @@ body {
   line-height: 1.5;
   background: #f5f8fc;
 
-  user-select: none;
+  /* user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none;
+  -ms-user-select: none; */
 }
 
 * {

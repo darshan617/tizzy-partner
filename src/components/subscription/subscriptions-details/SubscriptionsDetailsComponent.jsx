@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { CiGlobe } from "react-icons/ci";
 import { IoMdArrowBack } from "react-icons/io";
 import Link from "next/link";
 import styles from "@/components/customers/customers-details/CustomerDetails.module.css";
@@ -13,8 +12,8 @@ import Cookies from "js-cookie";
 import { FaPen } from "react-icons/fa";
 import { MdAutorenew } from "react-icons/md";
 import Loader from "@/common-components/loader/Loader";
-import { BiChevronRight, BiDownload } from "react-icons/bi";
-import { Calendar, Globe, User, Users } from "lucide-react";
+import { BiChevronRight } from "react-icons/bi";
+import { Calendar, ExternalLink, Globe, User, Users } from "lucide-react";
 import { FiLayers } from "react-icons/fi";
 import { usePartialUpgradeAddToCartMutation } from "@/redux/apis/addToCartApi";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
@@ -376,28 +375,20 @@ const SubscriptionsDetailsComponent = () => {
 
           <div className="col">
             <div className={`sectionCard px-sm-4 px-3 py-1`}>
-              <div className="border-bottom py-sm-2 py-3">
-                <div className="row align-items-center position-relative">
-                  <div className="col-md-3 d-none d-md-block" />
-                  <div className="col-md-6 col text-center d-flex align-items-center justify-content-md-center flex-column">
-                    <div className="d-inline-flex align-items-center domainSection">
-                      <CiGlobe />
-                      <h3 className="mb-0 ms-2 fw-semibold primaryColor">
-                        {domainName || ""}
-                      </h3>
-                    </div>
-                    <p className="m-0 text-center small mt-1">
-                      Order Id:{" "}
-                      <span className="fw-bold">
-                        {subscriptionDetails?.order_no}
-                      </span>
-                    </p>
+              <div className=" py-sm-2 py-3">
+                <div className={styles.domainBar}>
+                  <div className={styles.domainLeft}>
+                    <Globe size={16} />
+                    <span className={styles.domainName}>
+                      {domainName || ""}
+                    </span>
                   </div>
-                  <div className="position-absolute top-1 end-0 w-auto d-flex gap-2">
+                  <div className={styles.domainBarRight}>
                     {subscriptionDetails?.status?.toLowerCase() !==
                       "cancelled" &&
                       subscriptionDetails?.plans?.[0]?.provider_id !== 3 && (
                         <button
+                          type="button"
                           className={styles.cancelOrderBtn}
                           onClick={() =>
                             dispatch(setIsPopupVisible("cancelOrder"))
@@ -406,58 +397,41 @@ const SubscriptionsDetailsComponent = () => {
                           Cancel Order <GiCancel size={14} />
                         </button>
                       )}
+                    <div className={styles.orderIdWrap}>
+                      <span className={styles.orderIdLabel}>Order ID</span>
+                      <span className={styles.orderIdBadge}>
+                        {subscriptionDetails?.order_no || "-"}
+                      </span>
+                    </div>
                     {subscriptionDetails?.credit_note_link ? (
                       <Link
                         href={subscriptionDetails?.credit_note_link || "#"}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn small btnWhite d-flex align-items-center gap-2"
+                        className={styles.viewPoLink}
                       >
-                        View Credit Note <BiDownload size={14} />
+                        View Credit Note <ExternalLink size={14} />
                       </Link>
                     ) : plans?.[0]?.status?.toLowerCase() === "draft" ? (
                       <button
-                        className="btn small btnWhite d-flex align-items-center gap-2"
-                        style={{ cursor: "not-allowed" }}
+                        type="button"
+                        className={styles.viewPoLink}
+                        style={{ cursor: "not-allowed", opacity: 0.6 }}
+                        disabled
                       >
-                        View PO <BiDownload size={14} />
+                        View PO <ExternalLink size={14} />
                       </button>
                     ) : (
                       <Link
                         href={subscriptionDetails?.po_link || "#"}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn small btnWhite d-flex align-items-center gap-2"
+                        className={styles.viewPoLink}
                       >
-                        View PO <BiDownload size={14} />
+                        View PO <ExternalLink size={14} />
                       </Link>
                     )}
                   </div>
-                  {/* {(plans?.[0]?.status?.toLowerCase() === "expiring" ||
-                  plans?.[0]?.status?.toLowerCase() === "expired") && (
-                  <div className="col-md-3 col-auto d-flex gap-2 justify-content-end">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        router?.push({
-                          pathname: "/order-summary",
-                          query: {
-                            type: "renew-plan",
-                            order_id: subscriptionDetails?.order_id,
-                          },
-                        })
-                      }
-                      className={`${styles.crRenew} btn small btnWhite`}
-                    >
-                      <MdAutorenew
-                        className="me-2"
-                        size={14}
-                        style={{ minWidth: "14px" }}
-                      />
-                      <span>Renew</span>
-                    </button>
-                  </div>
-                )} */}
                 </div>
               </div>
 
@@ -516,21 +490,6 @@ const SubscriptionsDetailsComponent = () => {
                           >
                             {formatPlanStatus(plan?.status)}
                           </span>
-                          <button
-                            onClick={() =>
-                              router?.push({
-                                pathname: "/plan-details",
-                                query: {
-                                  planId: plan?.plan_id,
-                                  orderId: router?.query?.orderId,
-                                },
-                              })
-                            }
-                            className="btn small btnWhite p-2"
-                            style={{ height: "fit-content" }}
-                          >
-                            <BiChevronRight size={14} />
-                          </button>
                         </div>
                       </div>
 
@@ -562,17 +521,15 @@ const SubscriptionsDetailsComponent = () => {
                             </div>
                           </div>
 
-                          <div className={`${styles.subMetaItem}`}>
+                          {/* <div className={`${styles.subMetaItem}`}>
                             <Globe className={`${styles.subMetaIcon}`} />
                             <div>
-                              {/* <small className={`${styles.infoLabel}`}>
-                              Domain
-                            </small> */}
+                         
                               <div className={`${styles.subMetaValue}`}>
                                 {domainName || "-"}
                               </div>
                             </div>
-                          </div>
+                          </div> */}
 
                           <div className={`${styles.subMetaItem}`}>
                             <Users className={`${styles.subMetaIcon}`} />
@@ -726,6 +683,21 @@ const SubscriptionsDetailsComponent = () => {
                               </Link>
                             </>
                           )}
+                          <button
+                            onClick={() =>
+                              router?.push({
+                                pathname: "/plan-details",
+                                query: {
+                                  planId: plan?.plan_id,
+                                  orderId: router?.query?.orderId,
+                                },
+                              })
+                            }
+                            className="btn small btnWhite p-2"
+                            style={{ height: "fit-content" }}
+                          >
+                            <BiChevronRight size={14} />
+                          </button>
                         </div>
                       </div>
                     </div>

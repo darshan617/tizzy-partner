@@ -394,38 +394,41 @@ const AllSubscriptions = ({
         </div>
       </div>
       {/* Pagination */}
-
-      <div className={styles.paginationContainer}>
-        <button
-          className={styles.paginationButton}
-          onClick={() => setCurrentPage((prev) => prev - 1)}
-          disabled={currentPage === 1}
-        >
-          <BiChevronLeft size={16} />
-        </button>
-        {pageNumbersArray?.map((page) => (
+      {pageNumbersArray?.length > 10 && (
+        <div className={styles.paginationContainer}>
           <button
             className={styles.paginationButton}
-            key={page}
-            onClick={() => setCurrentPage(page)}
-            style={{
-              backgroundColor:
-                currentPage === page ? "var(--primaryColor)" : "",
-              color:
-                currentPage === page ? "var(--whiteColor)" : "var(--darkColor)",
-            }}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            disabled={currentPage === 1}
           >
-            {page}
+            <BiChevronLeft size={16} />
           </button>
-        ))}
-        <button
-          className={styles.paginationButton}
-          onClick={() => setCurrentPage((prev) => prev + 1)}
-          disabled={currentPage === pageNumbersArray?.length}
-        >
-          <BiChevronRight size={16} />
-        </button>
-      </div>
+          {pageNumbersArray?.map((page) => (
+            <button
+              className={styles.paginationButton}
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              style={{
+                backgroundColor:
+                  currentPage === page ? "var(--primaryColor)" : "",
+                color:
+                  currentPage === page
+                    ? "var(--whiteColor)"
+                    : "var(--darkColor)",
+              }}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            className={styles.paginationButton}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            disabled={currentPage === pageNumbersArray?.length}
+          >
+            <BiChevronRight size={16} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

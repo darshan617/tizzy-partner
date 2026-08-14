@@ -24,11 +24,16 @@ import {
 } from "@/redux/slices/popupSlice";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 
-const formatCurrency = (value) =>
-  `₹ ${Number(value || 0).toLocaleString("en-IN", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
+const formatCurrency = (value, wantToShowRupee = true) =>
+  wantToShowRupee
+    ? `₹ ${Number(value || 0).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`
+    : Number(value || 0).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
 
 const formatDate = (value) => {
   if (!value) return "-";
@@ -243,7 +248,7 @@ const OrderDetailsComponent = () => {
                             size={12}
                             color="var(--primaryColor)"
                           />
-                          {formatCurrency(item?.plan_amount)}
+                          {formatCurrency(item?.plan_amount, false)}
                         </span>
                       </div>
                     </div>

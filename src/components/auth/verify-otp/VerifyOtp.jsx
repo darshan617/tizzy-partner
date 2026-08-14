@@ -413,13 +413,13 @@ const VerifyOtp = () => {
       email:
         router?.query?.inputType === "email"
           ? router?.query?.inp
-          : userData?.email,
+          : userData?.email || router?.query?.email,
       mobile:
         router?.query?.inputType === "mobile"
           ? router?.query?.inp
           : userData?.mobile,
     }));
-  }, [userData, router?.query?.inp]);
+  }, [userData, router?.query?.inp, router?.query?.email]);
 
   return router?.query?.type === "order" ? (
     <Layout>{otpContent}</Layout>

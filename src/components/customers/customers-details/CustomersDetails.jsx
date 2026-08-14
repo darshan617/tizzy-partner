@@ -387,8 +387,8 @@ export default function CustomerDetail() {
       iconTheme: "metricIconBlue",
     },
     {
-      title: "Renewals Due",
-      value: summary?.renewals_due || 0,
+      title: "Renewals",
+      value: summary?.renewal_count || 0,
       badge: "This Month",
       icon: <FileCheck size={18} />,
       iconTheme: "metricIconOrange",
@@ -1026,10 +1026,8 @@ export default function CustomerDetail() {
                                         {formatTxnStatus(txn?.status)}
                                       </span>
 
-                                    
-                                      
                                       <strong className={styles.txnPrice}>
-                                        {formatTxnAmount(txn?.amount)}
+                                        {formatTxnAmount(txn?.price)}
                                       </strong>
                                     </div>
                                     <button

@@ -377,7 +377,7 @@ export default function TransactionDetails() {
                     }`}
                     onClick={() => setActiveTab("po")}
                   >
-                    {transactionData?.invoice_and_einvoice?.active_tab}
+                    {transactionData?.invoice_and_einvoice?.active_tab?.toUpperCase()}
                   </button>
                   <button
                     type="button"
