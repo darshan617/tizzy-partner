@@ -20,6 +20,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const walletBalance = Number(balanceAndCartData?.wallet_balance || 0);
   const usedAmount = Math.max(creditLimit - walletBalance, 0);
   const creditUsed = Number(balanceAndCartData?.credit_used || 0);
+  console.log(creditUsed, "creditUsed");
 
   const usedPercentage = creditLimit > 0 ? (creditUsed / creditLimit) * 100 : 0;
   const isAccountPage = ACCOUNT_PATHS.includes(router?.pathname);
@@ -33,7 +34,8 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
 
   const formatAmount = (value) =>
     Number(value || 0).toLocaleString("en-IN", {
-      maximumFractionDigits: 0,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     });
 
   const creditsCard = (

@@ -97,6 +97,14 @@
   border: 1px solid #e6e9ef;
   border-radius: 8px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btnGhost:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .metricsGrid {
