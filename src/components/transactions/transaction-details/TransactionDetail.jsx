@@ -335,6 +335,10 @@ export default function TransactionDetails() {
                   value={`₹ ${Number(transactionData?.payment_breakdown?.sgst || 0).toFixed(2) || "-"}`}
                 />
                 <SummaryRow
+                  label="IGST (18%)"
+                  value={`₹ ${Number(transactionData?.payment_breakdown?.igst || 0).toFixed(2) || "-"}`}
+                />
+                <SummaryRow
                   label="Discount:"
                   value={`₹ ${Number(transactionData?.payment_breakdown?.discount || 0).toFixed(2) || "-"}`}
                 />
