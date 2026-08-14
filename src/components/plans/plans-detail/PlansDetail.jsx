@@ -11,6 +11,7 @@ import Cookies from "js-cookie";
 import Loader from "@/common-components/loader/Loader";
 import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarConstant";
 import Link from "next/link";
+import { usePartialUpgradeAddToCartMutation } from "@/redux/apis/addToCartApi";
 
 const normalizeStatus = (status) => String(status ?? "").toLowerCase();
 
@@ -40,6 +41,11 @@ export default function PlansDetail() {
   const [planDetails, setPlanDetails] = useState(null);
   const [getPlanDetails, { isLoading: isGetPlanDetailsLoading }] =
     usePlanDetailsMutation();
+
+  const [
+    partialUpgradeAddToCart,
+    { isLoading: isPartialUpgradeAddToCartLoading },
+  ] = usePartialUpgradeAddToCartMutation();
   const userData = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
     : {};
@@ -108,6 +114,33 @@ export default function PlansDetail() {
   const priceAmount = Number(
     plan?.unit_price || plan?.price_per_license_per_year || 0,
   ).toLocaleString("en-IN");
+
+  const handlePartialUpgrade = async (plan) => {
+    try {
+      const res = await partialUpgradeAddToCart({
+        body: {
+          partner_id: userData?.id,
+          order_id: router?.query?.orderId,
+          order_sub_id: plan?.order_sub_id,
+          licenses: plan?.licenses,
+          customer_id: customer?.cust_id,
+        },
+      });
+      router?.push({
+        pathname: "/order-summary",
+        query: {
+          type: "partial-upgrade",
+          order_id: router?.query?.orderId,
+          order_sub_id: plan?.order_sub_id,
+          licenses: plan?.license,
+          customer_id: customer?.cust_id,
+          main_cart_id: res?.data?.data?.main_cart_id,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   if (isGetPlanDetailsLoading && !planDetails) {
     return <Loader />;
@@ -218,19 +251,7 @@ export default function PlansDetail() {
                 <button
                   className={styles.addBtn}
                   type="button"
-                  onClick={() =>
-                    router?.push({
-                      pathname: "/order-summary",
-                      query: {
-                        type: "partial-upgrade",
-                        order_id: router?.query?.orderId,
-                        order_sub_id: plan?.order_sub_id,
-                        licenses: plan?.license,
-                        customer_id: customer?.cust_id,
-                        main_cart_id: plan?.main_cart_id,
-                      },
-                    })
-                  }
+                  onClick={() => handlePartialUpgrade(plan)}
                   disabled={isProcessingOrCancelled}
                   style={{
                     opacity: isProcessingOrCancelled ? 0.5 : 1,
