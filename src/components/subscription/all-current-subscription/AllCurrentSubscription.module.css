@@ -69,6 +69,7 @@
   padding-right: 40px;
   padding-left: 15px;
 }
+
 .filtersMain {
   flex-shrink: 0;
   background: var(--whiteColor);
@@ -147,6 +148,7 @@
   right: 1px;
   margin: auto;
 }
+
 .pageWrap {
   max-width: 1100px;
   margin: auto;
@@ -170,32 +172,35 @@
   display: block;
 }
 
-.viewAllLink{
-    font-size: 16px;
-    font-weight: 600;
-    color: #0355AC;
-    text-decoration: underline;
-    text-transform: capitalize;
-    transition: all 0.2s ease;
-    &:hover {
-        color: var(--primaryColor);
-    }
+.viewAllLink {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0355AC;
+  text-decoration: underline;
+  text-transform: capitalize;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--primaryColor);
+  }
 }
 
-.searchCount{
-    font-size: 16px;
-    color: var(--darkColor);
-    text-transform: capitalize;
-    transition: all 0.2s ease;
-    &:hover {
-        color: var(--primaryColor);
-    }
+.searchCount {
+  font-size: 16px;
+  color: var(--darkColor);
+  text-transform: capitalize;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--primaryColor);
+  }
 }
-.subTitle{
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--darkColor);
-    text-transform: capitalize;
+
+.subTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--darkColor);
+  text-transform: capitalize;
 }
 
 .filterBtn {
@@ -222,7 +227,7 @@
   overflow: hidden;
 }
 
-.btn > * {
+.btn>* {
   position: relative;
   z-index: 1;
 }
@@ -276,14 +281,14 @@
 }
 
 .filterGroup {
-    display: flex;
-    align-items: center;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-    flex-wrap: wrap;
-  }
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  flex-wrap: wrap;
+}
 
 .filterItem {
   border: 1px solid var(--borderColor);
@@ -303,7 +308,7 @@
   background: var(--whiteColor);
 }
 
-.btn-check:checked + .filterItem {
+.btn-check:checked+.filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -329,11 +334,12 @@
   display: inline-block;
 }
 
-.statusBadge.active,
+
+/* .statusBadge.active,
 .completed {
   background: rgba(254, 245, 230, 1);
   color: rgba(249, 191, 89, 1);
-}
+} */
 
 .statusBadge.expiring_soon,
 .statusBadge.expiring,
@@ -350,6 +356,12 @@
   background: var(--dangerSubtleColor);
   color: var(--dangerColor);
 }
+
+.active {
+  background: var(--successSubtleColor);
+  color: var(--successColor);
+}
+
 
 .upgraded,
 .downgraded {

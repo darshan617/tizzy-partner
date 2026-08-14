@@ -21,12 +21,25 @@ import { FaArrowsRotate } from "react-icons/fa6";
 import Link from "next/link";
 import { useGetReportsMutation } from "@/redux/apis/reportsApi";
 import Cookies from "js-cookie";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const formatRevenue = (value) =>
   `₹${Number(value || 0).toLocaleString("en-IN", {
     maximumFractionDigits: 0,
   })}`;
+
+/** Helvetica can't render ₹ and similar glyphs — normalize for PDF text */
+const toPdfText = (value) =>
+  String(value ?? "-")
+    .replace(/₹/g, "Rs.")
+    .replace(/[^\x20-\x7E]/g, (char) => {
+      if (char === "—") return "-";
+      return "";
+    });
 
 const QUICK_INSIGHT_META = {
   highest_revenue_month: {
@@ -122,8 +135,11 @@ const ReportsComponent = () => {
     fromDate: "",
     toDate: "",
   });
-  console.log(dateRange, "dateRange");
+  const today = new Date().toISOString().split("T")[0];
+
   const [getReports, { isLoading, isError, error }] = useGetReportsMutation();
+  const [isExporting, setIsExporting] = useState(false);
+
   const formatDate = (date) => {
     if (!date) return "";
 
@@ -132,7 +148,6 @@ const ReportsComponent = () => {
     return `${day}-${month}-${year}`;
   };
   const handleGetReports = async () => {
-    console.log("Selected date:", dateRange);
     try {
       const response = await getReports({
         fromDate: formatDate(dateRange?.fromDate) || "",
@@ -159,6 +174,12 @@ const ReportsComponent = () => {
   const recentReportsData = reportData?.recent_reports;
   const recentReports = recentReportsData?.items || [];
 
+  const dateRangeLabel =
+    dateRange.fromDate && dateRange.toDate
+      ? `${formatDate(dateRange.fromDate)} to ${formatDate(dateRange.toDate)}`
+      : "All time";
+  const fileBaseName = `business-reports-${dateRange.fromDate && dateRange.toDate ? `${dateRange.fromDate}_to_${dateRange.toDate}` : "all-time"}`;
+
   const quickInsights = Object.values(quickInsightsData || {}).map((item) => {
     const meta = QUICK_INSIGHT_META[item?.key] || {
       icon: LuTrendingUp,
@@ -173,6 +194,357 @@ const ReportsComponent = () => {
       iconTheme: meta.iconTheme,
     };
   });
+
+  const summaryRows = [
+    {
+      label: "Total Revenue",
+      value: summaryCards?.total_revenue?.display ?? "-",
+      trend: summaryCards?.total_revenue?.trend ?? "-",
+    },
+    {
+      label: "Active Customers",
+      value: summaryCards?.active_customers?.display ?? "-",
+      trend: summaryCards?.active_customers?.trend ?? "-",
+    },
+    {
+      label: "Active Subscriptions",
+      value: summaryCards?.active_subscriptions?.display ?? "-",
+      trend: summaryCards?.active_subscriptions?.trend ?? "-",
+    },
+    {
+      label: "Monthly Orders",
+      value: summaryCards?.monthly_orders?.display ?? "-",
+      trend: summaryCards?.monthly_orders?.trend ?? "-",
+    },
+    {
+      label: "Renewals Completed",
+      value: summaryCards?.renewals_completed?.display ?? "-",
+      trend: summaryCards?.renewals_completed?.trend ?? "-",
+    },
+    {
+      label: "Pending Invoices",
+      value: summaryCards?.pending_invoices?.display ?? "-",
+      trend: summaryCards?.pending_invoices?.trend ?? "-",
+    },
+  ];
+
+  const styleExcelHeader = (row) => {
+    row.eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: "FFFFFFFF" }, size: 11 };
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "0355AC" },
+      };
+      cell.alignment = { horizontal: "center", vertical: "middle" };
+      cell.border = {
+        top: { style: "thin" },
+        bottom: { style: "thin" },
+        left: { style: "thin" },
+        right: { style: "thin" },
+      };
+    });
+  };
+
+  const styleExcelDataRow = (row) => {
+    row.eachCell((cell, colNumber) => {
+      cell.alignment = {
+        vertical: "middle",
+        horizontal: colNumber === 1 ? "left" : "center",
+      };
+      cell.border = {
+        top: { style: "thin" },
+        bottom: { style: "thin" },
+        left: { style: "thin" },
+        right: { style: "thin" },
+      };
+    });
+  };
+
+  const autoFitColumns = (worksheet) => {
+    worksheet.columns.forEach((column) => {
+      let maxLength = 12;
+      column.eachCell?.({ includeEmpty: true }, (cell) => {
+        const length = cell.value ? String(cell.value).length : 10;
+        if (length > maxLength) maxLength = length;
+      });
+      column.width = Math.min(maxLength + 4, 40);
+    });
+  };
+
+  const downloadExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Business Reports");
+
+    worksheet.mergeCells(1, 1, 1, 3);
+    const titleCell = worksheet.getCell(1, 1);
+    titleCell.value = "Business Reports Overview";
+    titleCell.font = { bold: true, size: 14, color: { argb: "FF1B2430" } };
+
+    worksheet.mergeCells(2, 1, 2, 3);
+    worksheet.getCell(2, 1).value = `Period: ${dateRangeLabel}`;
+    worksheet.getCell(2, 1).font = { size: 10, color: { argb: "FF8B93A1" } };
+
+    worksheet.addRow([]);
+
+    const summaryHeader = worksheet.addRow(["Metric", "Value", "Trend"]);
+    styleExcelHeader(summaryHeader);
+    summaryRows.forEach((row) => {
+      styleExcelDataRow(worksheet.addRow([row.label, row.value, row.trend]));
+    });
+
+    worksheet.addRow([]);
+    worksheet.addRow(["Quick Insights"]).font = { bold: true, size: 12 };
+    const insightHeader = worksheet.addRow(["Insight", "Value"]);
+    styleExcelHeader(insightHeader);
+    quickInsights.forEach((item) => {
+      styleExcelDataRow(worksheet.addRow([item.label, item.value]));
+    });
+
+    const revenueCategories = revenueOverview?.x_axis?.values || [];
+    const revenueValues = revenueDataset?.data || [];
+    if (revenueCategories.length > 0) {
+      worksheet.addRow([]);
+      worksheet.addRow([revenueOverview?.title || "Revenue Overview"]).font = {
+        bold: true,
+        size: 12,
+      };
+      const revenueHeader = worksheet.addRow([
+        revenueOverview?.x_axis?.label || "Period",
+        revenueDataset?.label || "Revenue",
+      ]);
+      styleExcelHeader(revenueHeader);
+      revenueCategories.forEach((category, idx) => {
+        styleExcelDataRow(
+          worksheet.addRow([category, revenueValues[idx] ?? 0]),
+        );
+      });
+    }
+
+    if (salesByServiceKeys.length > 0) {
+      worksheet.addRow([]);
+      worksheet.addRow([salesByService?.title || "Sales by Service"]).font = {
+        bold: true,
+        size: 12,
+      };
+      const salesHeader = worksheet.addRow(["Service", "Amount"]);
+      styleExcelHeader(salesHeader);
+      salesByServiceKeys.forEach((key) => {
+        styleExcelDataRow(
+          worksheet.addRow([
+            salesByService?.labels?.[key] || key,
+            salesByService?.datasets?.[key] ?? 0,
+          ]),
+        );
+      });
+    }
+
+    const growthCategories = monthlyBusinessGrowth?.x_axis?.values || [];
+    const growthDatasets = monthlyBusinessGrowth?.y_axis?.datasets || [];
+    if (growthCategories.length > 0 && growthDatasets.length > 0) {
+      worksheet.addRow([]);
+      worksheet.addRow([
+        monthlyBusinessGrowth?.title || "Monthly Business Growth",
+      ]).font = { bold: true, size: 12 };
+      const growthHeader = worksheet.addRow([
+        monthlyBusinessGrowth?.x_axis?.label || "Period",
+        ...growthDatasets.map(
+          (dataset) => dataset?.label || dataset?.key || "",
+        ),
+      ]);
+      styleExcelHeader(growthHeader);
+      growthCategories.forEach((category, idx) => {
+        styleExcelDataRow(
+          worksheet.addRow([
+            category,
+            ...growthDatasets.map((dataset) => dataset?.data?.[idx] ?? 0),
+          ]),
+        );
+      });
+    }
+
+    autoFitColumns(worksheet);
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(
+      new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }),
+      `${fileBaseName}.xlsx`,
+    );
+  };
+
+  const downloadPdf = async () => {
+    const pdf = new jsPDF({
+      orientation: "landscape",
+      unit: "mm",
+      format: "a4",
+    });
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const margin = 12;
+    let y = margin;
+
+    const tableOptions = {
+      theme: "grid",
+      styles: {
+        font: "helvetica",
+        fontSize: 8,
+        cellPadding: 2,
+        overflow: "ellipsize",
+        valign: "middle",
+        halign: "center",
+        textColor: [27, 36, 48],
+        lineColor: [238, 241, 244],
+        lineWidth: 0.2,
+      },
+      headStyles: {
+        fillColor: [3, 85, 172],
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+        halign: "center",
+      },
+      alternateRowStyles: {
+        fillColor: [250, 251, 252],
+      },
+      columnStyles: {
+        0: { halign: "left", fontStyle: "bold" },
+      },
+      margin: { left: margin, right: margin, bottom: margin },
+    };
+
+    const addSectionTitle = (title) => {
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      if (y > pageHeight - 40) {
+        pdf.addPage();
+        y = margin;
+      }
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(12);
+      pdf.setTextColor(27, 36, 48);
+      pdf.text(toPdfText(title), margin, y);
+      y += 6;
+    };
+
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(16);
+    pdf.setTextColor(27, 36, 48);
+    pdf.text("Business Reports Overview", margin, y);
+    y += 7;
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(10);
+    pdf.setTextColor(139, 147, 161);
+    pdf.text(toPdfText(`Period: ${dateRangeLabel}`), margin, y);
+    y += 8;
+
+    addSectionTitle("Summary Metrics");
+    autoTable(pdf, {
+      ...tableOptions,
+      startY: y,
+      head: [["Metric", "Value", "Trend"]],
+      body: summaryRows.map((row) => [
+        toPdfText(row.label),
+        toPdfText(row.value),
+        toPdfText(row.trend),
+      ]),
+    });
+    y = (pdf.lastAutoTable?.finalY || y) + 10;
+
+    if (quickInsights.length > 0) {
+      addSectionTitle("Quick Insights");
+      autoTable(pdf, {
+        ...tableOptions,
+        startY: y,
+        head: [["Insight", "Value"]],
+        body: quickInsights.map((item) => [
+          toPdfText(item.label),
+          toPdfText(item.value),
+        ]),
+      });
+      y = (pdf.lastAutoTable?.finalY || y) + 10;
+    }
+
+    const revenueCategories = revenueOverview?.x_axis?.values || [];
+    const revenueValues = revenueDataset?.data || [];
+    if (revenueCategories.length > 0) {
+      addSectionTitle(revenueOverview?.title || "Revenue Overview");
+      autoTable(pdf, {
+        ...tableOptions,
+        startY: y,
+        head: [
+          [
+            toPdfText(revenueOverview?.x_axis?.label || "Period"),
+            toPdfText(revenueDataset?.label || "Revenue"),
+          ],
+        ],
+        body: revenueCategories.map((category, idx) => [
+          toPdfText(category),
+          toPdfText(formatRevenue(revenueValues[idx])),
+        ]),
+      });
+      y = (pdf.lastAutoTable?.finalY || y) + 10;
+    }
+
+    if (salesByServiceKeys.length > 0) {
+      addSectionTitle(salesByService?.title || "Sales by Service");
+      autoTable(pdf, {
+        ...tableOptions,
+        startY: y,
+        head: [["Service", "Amount"]],
+        body: salesByServiceKeys.map((key) => [
+          toPdfText(salesByService?.labels?.[key] || key),
+          toPdfText(formatRevenue(salesByService?.datasets?.[key])),
+        ]),
+      });
+      y = (pdf.lastAutoTable?.finalY || y) + 10;
+    }
+
+    const growthCategories = monthlyBusinessGrowth?.x_axis?.values || [];
+    const growthDatasets = monthlyBusinessGrowth?.y_axis?.datasets || [];
+    if (growthCategories.length > 0 && growthDatasets.length > 0) {
+      addSectionTitle(
+        monthlyBusinessGrowth?.title || "Monthly Business Growth",
+      );
+      autoTable(pdf, {
+        ...tableOptions,
+        startY: y,
+        head: [
+          [
+            toPdfText(monthlyBusinessGrowth?.x_axis?.label || "Period"),
+            ...growthDatasets.map((dataset) =>
+              toPdfText(dataset?.label || dataset?.key || ""),
+            ),
+          ],
+        ],
+        body: growthCategories.map((category, idx) => [
+          toPdfText(category),
+          ...growthDatasets.map((dataset) =>
+            toPdfText(dataset?.data?.[idx] ?? 0),
+          ),
+        ]),
+      });
+    }
+
+    pdf.save(`${fileBaseName}.pdf`);
+  };
+
+  const handleExport = async (format) => {
+    if (!reportData || isExporting) return;
+
+    setIsExporting(true);
+    try {
+      if (format === "excel") {
+        await downloadExcel();
+      } else {
+        await downloadPdf();
+      }
+    } catch (error) {
+      console.error("Failed to export report:", error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const revenueChartSeries = [
     {
@@ -394,6 +766,7 @@ const ReportsComponent = () => {
                   type="date"
                   className={styles.dateInput}
                   value={dateRange.fromDate}
+                  max={today}
                   onChange={(e) =>
                     setDateRange({ ...dateRange, fromDate: e.target.value })
                   }
@@ -405,6 +778,7 @@ const ReportsComponent = () => {
                   type="date"
                   className={styles.dateInput}
                   value={dateRange.toDate}
+                  max={today}
                   onChange={(e) =>
                     setDateRange({ ...dateRange, toDate: e.target.value })
                   }
@@ -418,11 +792,23 @@ const ReportsComponent = () => {
 
           <div className={styles.actions}>
             {/* <button className={styles.btnPrimary}>Generate Report</button> */}
-            <button className={styles.btnGhost}>
-              <IoDocumentTextOutline /> Export PDF
+            <button
+              type="button"
+              className={styles.btnGhost}
+              onClick={() => handleExport("pdf")}
+              disabled={!reportData || isLoading || isExporting}
+            >
+              <IoDocumentTextOutline />
+              {isExporting ? "Exporting..." : "Export PDF"}
             </button>
-            <button className={styles.btnGhost}>
-              <RiFileExcel2Line /> Export Excel
+            <button
+              type="button"
+              className={styles.btnGhost}
+              onClick={() => handleExport("excel")}
+              disabled={!reportData || isLoading || isExporting}
+            >
+              <RiFileExcel2Line />
+              {isExporting ? "Exporting..." : "Export Excel"}
             </button>
           </div>
         </div>
@@ -459,7 +845,10 @@ const ReportsComponent = () => {
             const GroupIcon = meta.icon;
 
             return (
-              <div key={group?.group || group?.group_label} className={styles.summaryCard}>
+              <div
+                key={group?.group || group?.group_label}
+                className={styles.summaryCard}
+              >
                 <div className={styles.summaryHeader}>
                   <div className={styles.summaryLabel}>
                     <GroupIcon

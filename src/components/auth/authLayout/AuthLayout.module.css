@@ -23,7 +23,7 @@
   align-items: center;
   justify-content: center;
   overflow-y: auto;
-  gap: 20px;
+  gap: 50px;
   position: relative;
 }
 
@@ -66,6 +66,7 @@
   flex: 0.75;
   position: relative;
 }
+
 .mascotBody {
   position: absolute;
   left: 0%;
@@ -75,6 +76,7 @@
   z-index: 5;
   top: 140px;
 }
+
 .mascotHand {
   position: absolute;
   width: 100%;
