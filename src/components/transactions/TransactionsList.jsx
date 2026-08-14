@@ -508,7 +508,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                                 </div>
                                 {tx?.status?.toLowerCase() !== "pending" && (
                                   <div className={styles.txDesc}>
-                                    Received payment for invoice no. INV
+                                    Received payment for invoice no.
                                     {tx?.invoice_no?.bill_no_full}
                                   </div>
                                 )}
