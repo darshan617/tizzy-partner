@@ -39,7 +39,7 @@
 }
 
 .title h1 {
-  font-size: var(--fs22);
+  font-size: var(--fs20);
   font-weight: 600;
   color: var(--darkColor);
   text-transform: capitalize;
@@ -173,7 +173,7 @@
 }
 
 .viewAllLink {
-  font-size: 16px;
+  font-size: var(--fs14);
   font-weight: 600;
   color: #0355AC;
   text-decoration: underline;
@@ -186,7 +186,7 @@
 }
 
 .searchCount {
-  font-size: 16px;
+  font-size: var(--fs14);
   color: var(--darkColor);
   text-transform: capitalize;
   transition: all 0.2s ease;
@@ -197,7 +197,7 @@
 }
 
 .subTitle {
-  font-size: 14px;
+  font-size: var(--fs14);
   font-weight: 600;
   color: var(--darkColor);
   text-transform: capitalize;
@@ -444,14 +444,14 @@
 }
 
 .subPlanName {
-  font-size: 18px;
-  font-weight: 500;
+  font-size: var(--fs15, 1.07rem);
+  font-weight: 600;
   color: var(--darkColor);
 }
 
 .subPlanPrice {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--fs12);
+  font-weight: 600;
   color: var(--darkColor);
 }
 
@@ -474,14 +474,14 @@
 }
 
 .subMetaIcon {
-  width: 22px;
-  height: 22px;
+  width: 16px;
+  height: 16px;
   color: var(--primaryColor);
   flex-shrink: 0;
 }
 
 .subMetaValue {
-  font-size: 14px;
+  font-size: var(--fs12);
   font-weight: 500;
   color: var(--textBodySecondary);
 }
@@ -498,7 +498,7 @@
 .subUpgradeBtn {
   padding: 5px 1rem;
   border-radius: 50rem;
-  font-size: 14px;
+  font-size: var(--fs12);
   font-weight: 600;
   display: inline-flex;
   align-items: center;
