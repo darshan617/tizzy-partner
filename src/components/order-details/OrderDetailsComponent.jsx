@@ -330,7 +330,7 @@ const OrderDetailsComponent = () => {
                 <div className={styles.kvRow}>
                   <span className={styles.kvLabel}>Enrollment Type</span>
                   <span className={styles.kvValue}>
-                    {formatOrderType(orderData?.order_type)}
+                    {formatOrderType(orderData?.enrollment_type)}
                   </span>
                 </div>
               </div>
