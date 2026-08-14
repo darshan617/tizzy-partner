@@ -7,11 +7,16 @@
   border-radius: 5px 0 0 5px;
   z-index: 1039;
   height: calc(100vh - 75px);
-  overflow-y: auto;
+  /* overflow-y: auto; */
   position: fixed;
   top: 75px;
   left: 0;
   background: var(--whiteColor);
+}
+
+.sideTop {
+  overflow-y: auto;
+  height: calc(100vh - 150px);
 }
 
 .accountMode {
@@ -367,6 +372,9 @@
 }
 
 .sideBottom {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
   margin-top: auto;
 }
 
