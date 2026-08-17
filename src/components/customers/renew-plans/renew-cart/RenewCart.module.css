@@ -724,6 +724,10 @@
     color: #ffffff;
 }
 
+.addMorePlansBtn{
+    margin-top: 1.25rem;
+}
+
 @media (max-width: 1024px) {
 
     .card,

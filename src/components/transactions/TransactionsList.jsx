@@ -76,78 +76,24 @@ const getBillingDescription = (transaction) => {
 };
 
 const transactionColumns = [
-  {
-    label: "Date",
-    key: "date",
-  },
-  {
-    label: "Order No",
-    key: "order_no",
-  },
-  {
-    label: "Company Name",
-    key: "company_name",
-  },
-  {
-    label: "Domain",
-    key: "domain_name",
-  },
-  {
-    label: "Status",
-    key: "status",
-  },
-  {
-    label: "Plan",
-    key: "plan",
-  },
-  {
-    label: "Order Category",
-    key: "order_category",
-  },
-  {
-    label: "Subtotal",
-    key: "subtotal",
-  },
-  {
-    label: "GST Amount",
-    key: "gst_amount",
-  },
-  {
-    label: "GST Rate",
-    key: "gst_rate",
-  },
-  {
-    label: "Coupon",
-    getValue: (tx) => tx?.coupon || "-",
-  },
-  {
-    label: "Discount Amount",
-    key: "discount_amount",
-  },
-  {
-    label: "Remaining Value",
-    key: "remaining_value",
-  },
-  {
-    label: "Pro Rata Adjustment",
-    key: "pro_rata_adjustment",
-  },
-  {
-    label: "Credit Used",
-    key: "credit_used",
-  },
-  {
-    label: "Amount",
-    key: "amount",
-  },
-  {
-    label: "Cancelled Reason",
-    getValue: (tx) => tx?.cancelled_reason || "-",
-  },
-  {
-    label: "Invoice No",
-    getValue: (tx) => tx?.invoice_no?.bill_no_full || "-",
-  },
+  { label: "Date", key: "date" },
+  { label: "Order No", key: "order_no" },
+  { label: "Company Name", key: "company_name" },
+  { label: "Domain", key: "domain_name" },
+  { label: "Status", key: "status" },
+  { label: "Plan", key: "plan" },
+  { label: "Order Category", key: "order_category" },
+  { label: "Subtotal", key: "subtotal" },
+  { label: "GST Amount", key: "gst_amount" },
+  { label: "GST Rate", key: "gst_rate" },
+  { label: "Coupon", getValue: (tx) => tx?.coupon || "-" },
+  { label: "Discount Amount", key: "discount_amount" },
+  { label: "Remaining Value", key: "remaining_value" },
+  { label: "Pro Rata Adjustment", key: "pro_rata_adjustment" },
+  { label: "Credit Used", key: "credit_used" },
+  { label: "Amount", key: "amount" },
+  { label: "Cancelled Reason", getValue: (tx) => tx?.cancelled_reason || "-" },
+  { label: "Invoice No", getValue: (tx) => tx?.invoice_no?.bill_no_full || "-" },
 ];
 
 const TransactionsList = ({ variant = "default", limit }) => {
@@ -476,8 +422,8 @@ const TransactionsList = ({ variant = "default", limit }) => {
                         key={tx?.order_id || idx}
                         className={`${styles.contentRow} btnDisplay`}
                       >
-                        <div className="row align-items-center py-3 px-md-2 px-3 g-2">
-                          <div className="col-12 col-md-2 col-lg-2 d-flex align-items-center">
+                        <div className={`${styles.txRowGrid} py-3 px-md-2 px-3`}>
+                          <div className={styles.txColDate}>
                             <div className={styles.txMeta}>
                               <div className={styles.txDate}>{tx?.date}</div>
                               <div className={styles.txNumber}>
@@ -486,7 +432,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </div>
                           </div>
 
-                          <div className="col-12 col-md-3 col-lg-3">
+                          <div className={styles.txColDomain}>
                             <div className="d-flex align-items-center">
                               <div
                                 className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
@@ -516,7 +462,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </div>
                           </div>
 
-                          <div className="col-12 col-md-3 col-lg-4">
+                          <div className={styles.txColPlan}>
                             <div className={styles.txMeta}>
                               <div className={styles.txPlanName}>
                                 {tx?.plan}
@@ -527,7 +473,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </div>
                           </div>
 
-                          <div className="col-6 col-md-2 col-lg-1 text-md-center">
+                          <div className={styles.txColStatus}>
                             <span
                               className={`${styles.statusBadge} ${styles[tx?.status?.toLowerCase()]}`}
                             >
@@ -535,12 +481,13 @@ const TransactionsList = ({ variant = "default", limit }) => {
                             </span>
                           </div>
 
-                          <div className="col-6 col-md-1 col-lg-1 text-end">
+                          <div className={styles.txColAmount}>
                             <span className={styles.amountValue}>
                               {formatAmount(tx?.amount)}
                             </span>
                           </div>
-                          <div className="col-12 col-md-1 col-lg-1 text-end">
+
+                          <div className={styles.txColArrow}>
                             <button
                               className={styles.viewDetailsBtn}
                               onClick={() =>

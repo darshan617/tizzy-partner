@@ -88,6 +88,7 @@
   border: 1px solid var(--borderColor);
   position: relative;
   overflow: hidden;
+  white-space: nowrap;
 }
 
 .btn .icon {
@@ -145,6 +146,7 @@
   left: 0;
   right: 0;
   transform: translateY(50%);
+  z-index: 3;
 }
 
 .filterHead {
@@ -155,12 +157,18 @@
 .filterGroup {
   display: flex;
   align-items: center;
-  overflow: scroll;
+  overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
   list-style: none;
   padding: 0;
   margin: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.filterGroup::-webkit-scrollbar {
+  display: none;
 }
 
 .filterItem {
@@ -174,13 +182,15 @@
   padding: 0.45rem 0.65rem 0.35rem;
   display: inline-flex;
   align-content: center;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .filterItem:hover {
   background: var(--whiteColor);
 }
 
-.btn-check:checked+.filterItem {
+.btn-check:checked + .filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -188,6 +198,8 @@
 
 .toolbar {
   border-bottom: 1px solid transparent;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .downloadListBtn {
@@ -202,6 +214,7 @@
   padding: 0;
   cursor: pointer;
   margin-left: auto;
+  white-space: nowrap;
 }
 
 .downloadListBtn:disabled {
@@ -212,6 +225,7 @@
 .downloadListIcon {
   width: 16px;
   height: 16px;
+  flex-shrink: 0;
 }
 
 .contentRow {
@@ -228,9 +242,51 @@
   box-shadow: 0 4px 12px rgba(17, 24, 39, 0.08);
 }
 
+/* ===== Transaction row grid (replaces Bootstrap col-* row) ===== */
+
+.txRowGrid {
+  display: grid;
+  grid-template-columns:
+    minmax(100px, 120px)
+    minmax(180px, 1.4fr)
+    minmax(140px, 1fr)
+    minmax(100px, auto)
+    minmax(90px, auto)
+    36px;
+  align-items: center;
+  gap: 10px 16px;
+  width: 100%;
+}
+
+.txColDate {
+  min-width: 0;
+}
+
+.txColDomain {
+  min-width: 0;
+}
+
+.txColPlan {
+  min-width: 0;
+}
+
+.txColStatus {
+  display: flex;
+  justify-content: center;
+}
+
+.txColAmount {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.txColArrow {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .txMeta {
   min-width: 110px;
-  /* margin-left: 15px; */
 }
 
 .txDate {
@@ -256,11 +312,10 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
   line-clamp: 1;
-  overflow: hidden;
 }
 
 .txPlanName {
-  font-size:  16px;
+  font-size: 16px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
@@ -274,9 +329,8 @@
   color: #000;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  /* -webkit-line-clamp: 1; */
-  /* line-clamp: 1; */
   overflow: hidden;
+  overflow-wrap: anywhere;
 }
 
 .categoryName {
@@ -303,6 +357,7 @@
 
 .txDomainNameIcon {
   margin-right: 4px;
+  flex-shrink: 0;
 }
 
 .txDesc {
@@ -318,13 +373,14 @@
 }
 
 .statusBadge {
-  display: inline-block;
+  display: inline-flex;
   border-radius: 4px;
   padding: 0.25rem 0.6rem;
   font-size: var(--fs10);
   font-weight: 500;
   text-transform: capitalize;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .successBadge,
@@ -370,6 +426,135 @@
   font-weight: 600;
   color: var(--darkColor);
   white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 1200px) {
+  .txRowGrid {
+    grid-template-columns:
+      minmax(90px, 110px)
+      minmax(160px, 1.3fr)
+      minmax(120px, 1fr)
+      minmax(90px, auto)
+      minmax(80px, auto)
+      32px;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .sectionCard {
+    max-height: none;
+  }
+
+  .filterBtn {
+    width: 90px;
+  }
+
+  .txRowGrid {
+    grid-template-columns:
+      minmax(90px, 110px)
+      minmax(150px, 1fr)
+      minmax(90px, auto)
+      32px;
+    grid-template-areas:
+      "date   domain status arrow"
+      "date   domain plan   arrow"
+      "date   domain amount arrow";
+  }
+
+  .txColDate {
+    grid-area: date;
+  }
+
+  .txColDomain {
+    grid-area: domain;
+  }
+
+  .txColPlan {
+    grid-area: plan;
+    justify-content: flex-start;
+  }
+
+  .txColStatus {
+    grid-area: status;
+    justify-content: flex-end;
+  }
+
+  .txColAmount {
+    grid-area: amount;
+    justify-content: flex-end;
+  }
+
+  .txColArrow {
+    grid-area: arrow;
+  }
+
+  .txMeta {
+    min-width: 90px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .txMeta {
+    min-width: auto;
+  }
+
+  .txPlanName {
+    font-size: var(--fs14);
+  }
+
+  .toolbar {
+    justify-content: flex-start !important;
+  }
+
+  .downloadListBtn {
+    margin-left: 0;
+    font-size: var(--fs13);
+  }
+
+  .filterHead {
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .txRowGrid {
+    grid-template-columns: 1fr 32px;
+    grid-template-areas:
+      "date    arrow"
+      "domain  arrow"
+      "status  amount"
+      "plan    plan";
+    row-gap: 8px;
+  }
+
+  .txColDate {
+    grid-area: date;
+  }
+
+  .txColDomain {
+    grid-area: domain;
+  }
+
+  .txColPlan {
+    grid-area: plan;
+    justify-content: flex-start;
+  }
+
+  .txColStatus {
+    grid-area: status;
+    justify-content: flex-start;
+  }
+
+  .txColAmount {
+    grid-area: amount;
+    justify-content: flex-end;
+  }
+
+  .txColArrow {
+    grid-area: arrow;
+  }
 }
 
 @media (max-width: 575.98px) {
@@ -388,8 +573,17 @@
     min-width: auto;
   }
 
-  .downloadListBtn {
-    font-size: 20px;
+  .txDomainName {
+    font-size: var(--fs13);
+  }
+
+  .amountValue {
+    font-size: var(--fs13);
+  }
+
+  .filterBtn {
+    width: 80px;
+    font-size: var(--fs12);
   }
 }
 
@@ -398,6 +592,8 @@
     width: 300px;
   }
 }
+
+/* ===== Billing card ===== */
 
 .billingCard {
   width: 100%;
@@ -457,8 +653,10 @@
 
 .billingTransactionRowInner {
   display: grid;
-  grid-template-columns:
-    minmax(110px, 12%) minmax(180px, 1fr) minmax(90px, auto) minmax(100px, auto) minmax(40px, auto);
+  grid-template-columns: minmax(110px, 12%) minmax(180px, 1fr) minmax(
+      90px,
+      auto
+    ) minmax(100px, auto) minmax(40px, auto);
   align-items: center;
   gap: 12px 16px;
   width: 100%;
@@ -521,19 +719,15 @@
 .billingAvatar0 {
   background: #c0392b;
 }
-
 .billingAvatar1 {
   background: #c9a227;
 }
-
 .billingAvatar2 {
   background: #4a90c4;
 }
-
 .billingAvatar3 {
   background: #7b70ef;
 }
-
 .billingAvatar4 {
   background: #d63384;
 }
@@ -701,23 +895,19 @@
   .billingDateMeta {
     grid-area: date;
   }
-
   .billingDomainBlock {
     grid-area: domain;
   }
-
   .billingColStatus {
     grid-area: status;
     justify-content: flex-start;
     justify-self: start;
   }
-
   .billingColAmount {
     grid-area: amount;
     justify-self: end;
     text-align: right;
   }
-
   .billingColArrow {
     grid-area: arrow;
     justify-self: end;
