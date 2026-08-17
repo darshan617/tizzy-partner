@@ -9,7 +9,7 @@
   font-size: 20px;
   font-weight: 500;
   color: #4c4c5c;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
 }
 
 .subtitle {
@@ -121,11 +121,13 @@
 .registerBtn:hover {
   text-decoration: underline;
 }
+
 .otpBtn:disabled {
   background: #9ba6b7;
   cursor: not-allowed;
   text-decoration: none;
 }
+
 .errorMsg {
   color: red;
   font-size: 12px;

@@ -479,6 +479,14 @@ const SubscriptionsDetailsComponent = () => {
                               ₹ {plan?.subtotal ?? "-"}{" "}
                               {/* <span>Per User / Per Year</span> */}
                             </small>
+                            {plan?.hide_upgrade && (
+                              <p
+                                className=" mb-0"
+                                style={{ fontSize: "12px", color: "#ff9800" }}
+                              >
+                                (Upgrade Initiated)
+                              </p>
+                            )}
                           </div>
                         </div>
 
@@ -601,7 +609,8 @@ const SubscriptionsDetailsComponent = () => {
                           // plan?.status?.toLowerCase() !== "expiring" &&
                           // plan?.status?.toLowerCase() !== "expired" &&
                           plan?.status?.toLowerCase() !== "cancelled" &&
-                          plan?.status?.toLowerCase() !== "processing" ? (
+                          plan?.status?.toLowerCase() !== "processing" &&
+                          !plan?.hide_upgrade ? (
                             <>
                               <Link
                                 href={{
