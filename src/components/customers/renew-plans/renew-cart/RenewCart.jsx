@@ -142,6 +142,15 @@ const RenewCart = ({
     }
   };
 
+  const minLicenses = router?.query?.licenses
+    ? Number(router.query.licenses)
+    : 1;
+
+  const maxLicenses =
+    cartDetails?.[0]?.customerLimit == null
+      ? Infinity
+      : Number(cartDetails?.[0]?.customerLimit);
+
   useEffect(() => {
     if (cartItemList?.length > 0) {
       setTempDomainNames(toDomainArray(cartItemList[0]?.domain_name));
@@ -630,7 +639,8 @@ const RenewCart = ({
                                     : lisceneCounter === 1) ||
                                   router?.query?.variant === "upgrade" ||
                                   router?.query?.variant === "downgrade" ||
-                                  router?.query?.type === "partial-upgrade"
+                                  (router?.query?.type === "partial-upgrade" &&
+                                    router?.query?.licenses >= item?.licenses)
                                 }
                                 onClick={() => {
                                   if (router?.query?.type === "renew-plan") {
@@ -652,7 +662,7 @@ const RenewCart = ({
                               >
                                 −
                               </button>
-                              <input
+                              {/* <input
                                 type="text"
                                 value={
                                   listMode ? lineLicenses || 1 : lisceneCounter
@@ -674,11 +684,49 @@ const RenewCart = ({
                                   }
                                 }}
                                 className={styles.qtyInput}
-                                min={1}
+                                min={
+                                  router?.query?.licenses
+                                    ? Number(router?.query?.licenses)
+                                    : 1
+                                }
                                 max={customerLimit}
                                 disabled={
                                   router?.query?.variant === "upgrade" ||
-                                  router?.query?.variant === "downgrade"
+                                  router?.query?.variant === "downgrade" ||
+                                  (router?.query?.type === "partial-upgrade" &&
+                                    router?.query?.licenses >= item?.licenses)
+                                }
+                              /> */}
+                              <input
+                                type="number"
+                                value={
+                                  listMode ? lineLicenses || 1 : lisceneCounter
+                                }
+                                onChange={(e) => {
+                                  const value = Number(e.target.value);
+
+                                  if (!Number.isFinite(value)) return;
+
+                                  if (
+                                    value >= minLicenses &&
+                                    value <= maxLicenses
+                                  ) {
+                                    if (listMode) {
+                                      onLineLicensesChange?.(lineKey, value);
+                                    } else {
+                                      setLisceneCounter(value);
+                                    }
+                                  }
+                                }}
+                                className={styles.qtyInput}
+                                min={minLicenses}
+                                max={customerLimit}
+                                disabled={
+                                  router?.query?.variant === "upgrade" ||
+                                  router?.query?.variant === "downgrade" ||
+                                  (router?.query?.type === "partial-upgrade" &&
+                                    Number(router?.query?.licenses || 0) >=
+                                      Number(item?.licenses || 0))
                                 }
                               />
                               <button

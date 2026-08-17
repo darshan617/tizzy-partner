@@ -350,14 +350,26 @@ const OrderDetailsComponent = () => {
                     {formatCurrency(orderData?.subtotal)}
                   </span>
                 </div>
-                <div className={styles.kvRow}>
-                  <span className={styles.kvLabel}>
-                    Tax {orderData?.gst ?? 0}% (GST)
-                  </span>
-                  <span className={styles.kvValue}>
-                    {formatCurrency(orderData?.gst_amount)}
-                  </span>
-                </div>
+                {orderData?.igst
+                  ? Number(orderData?.igst) > 0 && (
+                      <div className={styles.kvRow}>
+                        <span className={styles.kvLabel}>IGST (18%)</span>
+                        <span className={styles.kvValue}>
+                          {formatCurrency(orderData?.igst)}
+                        </span>
+                      </div>
+                    )
+                  : Number(orderData?.gst) > 0 && (
+                      <div className={styles.kvRow}>
+                        <span className={styles.kvLabel}>
+                          Tax {orderData?.gst ?? 0}% (GST)
+                        </span>
+                        <span className={styles.kvValue}>
+                          {formatCurrency(orderData?.gst_amount)}
+                        </span>
+                      </div>
+                    )}
+
                 <div className={styles.kvRow}>
                   <span className={styles.kvLabel}>Discount</span>
                   <span className={styles.kvValue}>
