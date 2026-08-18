@@ -279,7 +279,76 @@ const OrderDetailsComponent = () => {
               <button
                 type="button"
                 className={styles.btnSecondary}
-                onClick={() => router.push("/order-summary")}
+                onClick={() => {
+                  if (
+                    orderData?.enrollment_type?.toLowerCase() === "upgraded"
+                  ) {
+                    router.push({
+                      pathname: "/order-summary",
+                      query: {
+                        type: "upgrade",
+                        ordId: router?.query?.ordId,
+                        customer_id: orderData?.customer?.customer_id,
+                        order_sub_id: orderData?.plans?.[0]?.order_sub_id,
+                      },
+                    });
+                  } else if (
+                    orderData?.enrollment_type?.toLowerCase() === "downgraded"
+                  ) {
+                    router.push({
+                      pathname: "/order-summary",
+                      query: {
+                        type: "downgrade",
+                        ordId: router?.query?.ordId,
+                        customer_id: orderData?.customer?.customer_id,
+                        order_sub_id: orderData?.plans?.[0]?.order_sub_id,
+                      },
+                    });
+                  } else if (
+                    orderData?.enrollment_type
+                      ?.toLowerCase()
+                      ?.includes("partial")
+                  ) {
+                    router.push({
+                      pathname: "/order-summary",
+                      query: {
+                        type: "partial-upgrade",
+                        order_id: router?.query?.ordId,
+                        customer_id: orderData?.customer?.customer_id,
+                        order_sub_id: orderData?.plans?.[0]?.order_sub_id,
+                        licenses: orderData?.plans?.[0]?.licenses,
+                        // main_cart_id:
+                      },
+                    });
+                  } else if (
+                    orderData?.enrollment_type?.toLowerCase() === "renewed"
+                  ) {
+                    router.push({
+                      pathname: "/order-summary",
+                      query: {
+                        type: "renew-plan",
+                        order_id: router?.query?.ordId,
+                        planId: orderData?.plans?.[0]?.plan_id,
+                        order_sub_id: orderData?.plans?.[0]?.order_sub_id,
+                      },
+                    });
+                  } else if (
+                    orderData?.enrollment_type?.toLowerCase() === "downgraded"
+                  ) {
+                    router.push({
+                      pathname: "/order-summary",
+                      query: {
+                        type: "downgrade",
+                        customer_id: orderData?.customer?.customer_id,
+                        order_id: router?.query?.ordId,
+
+                        order_sub_id: orderData?.plans?.[0]?.order_sub_id,
+                      },
+                    });
+                  } else {
+                    router.push("/order-summary");
+                  }
+                }}
               >
                 Edit Order
               </button>
@@ -350,14 +419,26 @@ const OrderDetailsComponent = () => {
                     {formatCurrency(orderData?.subtotal)}
                   </span>
                 </div>
-                <div className={styles.kvRow}>
-                  <span className={styles.kvLabel}>
-                    Tax {orderData?.gst ?? 0}% (GST)
-                  </span>
-                  <span className={styles.kvValue}>
-                    {formatCurrency(orderData?.gst_amount)}
-                  </span>
-                </div>
+                {orderData?.igst
+                  ? Number(orderData?.igst) > 0 && (
+                      <div className={styles.kvRow}>
+                        <span className={styles.kvLabel}>IGST (18%)</span>
+                        <span className={styles.kvValue}>
+                          {formatCurrency(orderData?.igst)}
+                        </span>
+                      </div>
+                    )
+                  : Number(orderData?.gst) > 0 && (
+                      <div className={styles.kvRow}>
+                        <span className={styles.kvLabel}>
+                          Tax {orderData?.gst ?? 0}% (GST)
+                        </span>
+                        <span className={styles.kvValue}>
+                          {formatCurrency(orderData?.gst_amount)}
+                        </span>
+                      </div>
+                    )}
+
                 <div className={styles.kvRow}>
                   <span className={styles.kvLabel}>Discount</span>
                   <span className={styles.kvValue}>

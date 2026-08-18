@@ -326,18 +326,26 @@ export default function TransactionDetails() {
                   label="Service Amount"
                   value={`₹ ${Number(transactionData?.payment_breakdown?.service_amount || 0).toFixed(2) || "-"}`}
                 />
-                <SummaryRow
-                  label="CGST (9%)"
-                  value={`₹ ${Number(transactionData?.payment_breakdown?.cgst || 0).toFixed(2) || "-"}`}
-                />
-                <SummaryRow
-                  label="SGST (9%)"
-                  value={`₹ ${Number(transactionData?.payment_breakdown?.sgst || 0).toFixed(2) || "-"}`}
-                />
-                <SummaryRow
-                  label="IGST (18%)"
-                  value={`₹ ${Number(transactionData?.payment_breakdown?.igst || 0).toFixed(2) || "-"}`}
-                />
+                {transactionData?.payment_breakdown?.cgst > 0 &&
+                  transactionData?.payment_breakdown?.sgst > 0 && (
+                    <>
+                      <SummaryRow
+                        label="CGST (9%)"
+                        value={`₹ ${Number(transactionData?.payment_breakdown?.cgst || 0).toFixed(2) || "-"}`}
+                      />
+                      <SummaryRow
+                        label="SGST (9%)"
+                        value={`₹ ${Number(transactionData?.payment_breakdown?.sgst || 0).toFixed(2) || "-"}`}
+                      />
+                    </>
+                  )}
+                {Number(transactionData?.payment_breakdown?.igst) > 0 && (
+                  <SummaryRow
+                    label="IGST (18%)"
+                    value={`₹ ${Number(transactionData?.payment_breakdown?.igst || 0).toFixed(2) || "-"}`}
+                  />
+                )}
+
                 <SummaryRow
                   label="Discount:"
                   value={`₹ ${Number(transactionData?.payment_breakdown?.discount || 0).toFixed(2) || "-"}`}

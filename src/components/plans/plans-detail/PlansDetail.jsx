@@ -177,7 +177,7 @@ export default function PlansDetail() {
                     Customer Id : {customerId}
                   </span>
                   <span className={styles.contactPerson}>
-                    <CiUser size={14} /> {contactName}
+                    <CiUser size={16} /> {contactName}
                   </span>
                 </div>
               </div>
@@ -252,10 +252,14 @@ export default function PlansDetail() {
                   className={styles.addBtn}
                   type="button"
                   onClick={() => handlePartialUpgrade(plan)}
-                  disabled={isProcessingOrCancelled}
+                  disabled={isProcessingOrCancelled || plan?.hide_upgrade}
                   style={{
-                    opacity: isProcessingOrCancelled ? 0.5 : 1,
-                    cursor: isProcessingOrCancelled ? "not-allowed" : "pointer",
+                    opacity:
+                      isProcessingOrCancelled || plan?.hide_upgrade ? 0.5 : 1,
+                    cursor:
+                      isProcessingOrCancelled || plan?.hide_upgrade
+                        ? "not-allowed"
+                        : "pointer",
                   }}
                 >
                   <IoMdAdd size={14} className={styles.addIcon} />
@@ -292,10 +296,20 @@ export default function PlansDetail() {
           </div>
 
           <div className="d-flex justify-content-end gap-2 mt-3">
+            {plan?.hide_upgrade && (
+              <p
+                className="mb-0"
+                style={{ fontSize: "14px", color: "#ff9800" }}
+              >
+                (Upgrade Initiated)
+              </p>
+            )}
             {statusKey !== "processing" &&
               statusKey !== "upgrade pending" &&
               statusKey !== "downgrade pending" &&
-              statusKey !== "renewal pending" && (
+              statusKey !== "cancelled" &&
+              statusKey !== "renewal pending" &&
+              !plan?.hide_upgrade && (
                 <Link
                   href={{
                     pathname: `/services/${getServicePath(plan?.provider_id)}`,

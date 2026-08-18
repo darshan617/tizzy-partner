@@ -184,6 +184,8 @@ const OrderSummaryCard = ({
   const restrictedDomains = [
     "onmicrosoft.com",
     "onmicrosoftcom",
+    "microsoft",
+    "onmicrosoft",
     ".com",
     ".in",
     ".net",
@@ -971,7 +973,7 @@ const OrderSummaryCard = ({
                     </button>
                   </div>
                 </div>
-                <div className={styles.transferServiceSection}>
+                <div className={styles.transferServiceSection + " mb-0"}>
                   <label
                     htmlFor="transferDomainInput"
                     className={styles.transferServiceLabel}
@@ -985,7 +987,10 @@ const OrderSummaryCard = ({
                       className={styles.domainFieldInput}
                       placeholder="Choose domain"
                       value={transferDomainInput}
-                      onChange={(e) => setTransferDomainInput(e.target.value)}
+                      onChange={(e) => {
+                        setTransferDomainInput(e.target.value);
+                        setDomainInput(e.target.value);
+                      }}
                       aria-label="Domain prefix"
                     />
                     {skipDomainVerification && (
@@ -1017,6 +1022,11 @@ const OrderSummaryCard = ({
                       </span>
                     )}
                 </div>
+                {skipDomainVerification && isRestrictedDomain && (
+                  <p style={{ color: "red", margin: "10px 0" }}>
+                    Domain is restricted
+                  </p>
+                )}
                 <div className="d-flex align-center gap-2 mb-2">
                   <input
                     type="checkbox"
@@ -1048,15 +1058,21 @@ const OrderSummaryCard = ({
                   type="button"
                   className={styles.proceedPopupActionBtn}
                   disabled={
-                    !canConfirmTransferDomain || !isTermsAndConditionsChecked
+                    !canConfirmTransferDomain ||
+                    !isTermsAndConditionsChecked ||
+                    isRestrictedDomain
                   }
                   style={{
                     opacity:
-                      !canConfirmTransferDomain || !isTermsAndConditionsChecked
+                      !canConfirmTransferDomain ||
+                      !isTermsAndConditionsChecked ||
+                      isRestrictedDomain
                         ? 0.5
                         : 1,
                     cursor:
-                      !canConfirmTransferDomain || !isTermsAndConditionsChecked
+                      !canConfirmTransferDomain ||
+                      !isTermsAndConditionsChecked ||
+                      isRestrictedDomain
                         ? "not-allowed"
                         : "pointer",
                   }}
