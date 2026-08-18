@@ -1552,3 +1552,99 @@
     text-align: left;
   }
 }
+
+
+.filtersMain {
+  flex-shrink: 0;
+  background: var(--whiteColor);
+  border-radius: 10px 10px 0 0;
+  z-index: 2;
+}
+
+.filterWrapper {
+  position: relative;
+  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 0 0 10px 10px;
+  margin-bottom: 20px;
+}
+
+.pageSearchBox {
+  width: 100%;
+  height: 40px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 50rem;
+}
+
+.pageSearch {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--borderColor);
+  background-color: #f9f9f9;
+  border-radius: 50rem;
+  padding-right: 40px;
+  padding-left: 15px;
+}
+
+.searchBtn {
+  width: 30px;
+  height: 30px;
+  background: #f9f9f9;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 5px;
+  margin: auto;
+  border: 0;
+  border-radius: 50%;
+  padding: 7px;
+}
+
+.filterBtn {
+  width: 100px;
+  position: absolute;
+  bottom: 0;
+  margin: auto;
+  left: 0;
+  right: 0;
+  transform: translateY(50%);
+}
+
+.filterHead {
+  font-size: var(--fs12);
+  font-weight: 600;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  overflow: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.filterItem {
+  border: 1px solid var(--borderColor);
+  background: var(--subtleBg);
+  font-size: var(--fs14);
+  line-height: 1;
+  color: var(--textBodySecondary);
+  cursor: pointer;
+  text-align: center;
+  padding: 0.45rem 0.65rem 0.35rem;
+  display: inline-flex;
+  align-content: center;
+}
+
+.filterItem:hover {
+  background: var(--whiteColor);
+}
+
+.btn-check:checked+.filterItem {
+  background: var(--whiteColor);
+  border: 1px solid var(--darkColor);
+  color: var(--darkColor);
+}

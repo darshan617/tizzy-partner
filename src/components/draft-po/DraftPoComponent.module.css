@@ -1,13 +1,12 @@
 .draftPoContainer {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 /* .draftPoIframeContainer {
@@ -25,89 +24,133 @@
 
 } */
 .draftPoIframeContainer {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .draftPoIframeContainer iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .commonButton {
-    width: auto;
-    background-color: var(--primaryColor);
-    color: var(--whiteColor);
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    /* padding: 10px 50px; */
-    margin-top: 20px;
-    padding: 10px;
+  width: auto;
+  background-color: var(--primaryColor);
+  color: var(--whiteColor);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  /* padding: 10px 50px; */
+  margin-top: 20px;
+  padding: 10px;
 }
 
 .downloadButton {
-    width: auto;
-    background-color: var(--primaryColor);
-    color: var(--whiteColor);
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    position: absolute;
-    top: -20px;
-    right: -20px;
-    z-index: 10;
+  width: auto;
+  background-color: var(--primaryColor);
+  color: var(--whiteColor);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  z-index: 10;
 }
 
 .previewButton {
-    width: auto;
-    background-color: var(--primaryColor);
-    color: var(--whiteColor);
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    position: absolute;
-    top: 30px;
-    right: -20px;
-    z-index: 10;
+  width: auto;
+  background-color: var(--primaryColor);
+  color: var(--whiteColor);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: absolute;
+  top: 30px;
+  right: -20px;
+  z-index: 10;
 }
 
 .draftPoSuccessText {
-    font-size: 20px;
-    font-weight: 600;
-    text-align: center;
-    color: var(--primaryColor);
-    margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--primaryColor);
+  margin-bottom: 10px;
 }
 
 .draftPoLockText {
+  font-size: 14px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--darkColor);
+  font-weight: 600;
+  text-align: center;
+  width: 90%;
+}
+
+.draftPoBackButtonContainer {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  right: 0;
+  top: -60px;
+}
+.backButton {
+  position: absolute;
+  top: 18px;
+  right: 0;
+  background-color: var(--primaryColor);
+  color: var(--whiteColor);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+}
+
+@media (max-width: 575px) {
+  .draftPoBackButtonContainer {
+    top: -95px;
+  }
+  .draftPoSuccessText {
+    margin: 40px 0 0 0;
+  }
+  .backButton {
     font-size: 14px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: var(--darkColor);
-    font-weight: 600;
-    text-align: center;
-    width: 90%;
+  }
+}
+
+@media (max-width: 375px) {
+  .draftPoSuccessText {
+    font-size: 18px;
+    margin-left: -4px;
+  }
 }

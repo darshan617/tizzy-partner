@@ -281,7 +281,7 @@ const OrderDetailsComponent = () => {
                 className={styles.btnSecondary}
                 onClick={() => {
                   if (
-                    orderData?.enrollment_type?.toLowerCase() === "upgraded"
+                    orderData?.enrollment_category?.toLowerCase() === "upgraded"
                   ) {
                     router.push({
                       pathname: "/order-summary",
@@ -293,7 +293,8 @@ const OrderDetailsComponent = () => {
                       },
                     });
                   } else if (
-                    orderData?.enrollment_type?.toLowerCase() === "downgraded"
+                    orderData?.enrollment_category?.toLowerCase() ===
+                    "downgraded"
                   ) {
                     router.push({
                       pathname: "/order-summary",
@@ -305,7 +306,7 @@ const OrderDetailsComponent = () => {
                       },
                     });
                   } else if (
-                    orderData?.enrollment_type
+                    orderData?.enrollment_category
                       ?.toLowerCase()
                       ?.includes("partial")
                   ) {
@@ -313,7 +314,8 @@ const OrderDetailsComponent = () => {
                       pathname: "/order-summary",
                       query: {
                         type: "partial-upgrade",
-                        order_id: router?.query?.ordId,
+                        // order_id: router?.query?.ordId,
+                        order_id: router?.query?.pod,
                         customer_id: orderData?.customer?.customer_id,
                         order_sub_id: orderData?.plans?.[0]?.order_sub_id,
                         licenses: orderData?.plans?.[0]?.licenses,
@@ -321,7 +323,7 @@ const OrderDetailsComponent = () => {
                       },
                     });
                   } else if (
-                    orderData?.enrollment_type?.toLowerCase() === "renewed"
+                    orderData?.enrollment_category?.toLowerCase() === "renewed"
                   ) {
                     router.push({
                       pathname: "/order-summary",
@@ -333,7 +335,8 @@ const OrderDetailsComponent = () => {
                       },
                     });
                   } else if (
-                    orderData?.enrollment_type?.toLowerCase() === "downgraded"
+                    orderData?.enrollment_category?.toLowerCase() ===
+                    "downgraded"
                   ) {
                     router.push({
                       pathname: "/order-summary",
