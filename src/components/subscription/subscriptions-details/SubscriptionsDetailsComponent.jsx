@@ -98,6 +98,8 @@ const getPlanStatusClass = (status) => {
   if (normalized === "downgraded") return styles.downgraded;
   if (normalized === "renewed") return styles.renewed;
   if (normalized === "processing") return styles.processing;
+  if (normalized === "Upgrade Pending") return styles.UpgradePending;
+  if (normalized === "Downgrade Pending") return styles.DowngradePending;
   return "";
 };
 
@@ -118,6 +120,8 @@ const statusLabelMap = {
   draft: "Draft",
   renewed: "Renewed",
   processing: "Processing",
+  "upgrade pending": "Upgrade Pending",
+  "downgrade pending": "Downgrade Pending",
 };
 
 const statusOrder = [
@@ -127,6 +131,8 @@ const statusOrder = [
   "cancelled",
   "draft",
   "renewed",
+  "upgrade pending",
+  "downgrade pending",
   "processing",
 ];
 
