@@ -3,7 +3,7 @@
   max-width: 1160px;
   margin: 0 auto;
   border-radius: 16px;
-  min-height: calc(100vh - 220px);
+  /* min-height: calc(100vh); */
   box-sizing: border-box;
 }
 
@@ -16,7 +16,7 @@
 .leftScroll {
   flex: 1 1 68%;
   min-width: 0;
-  max-height: calc(100vh - 200px);
+  max-height: calc(100vh - 125px);
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 4px;
