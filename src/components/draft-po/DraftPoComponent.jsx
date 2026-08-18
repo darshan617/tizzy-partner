@@ -3,7 +3,7 @@ import styles from "@/components/draft-po/DraftPoComponent.module.css";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { ArrowDownToLine } from "lucide-react";
+import { ArrowDownToLine, ArrowLeft } from "lucide-react";
 import { BiCheckCircle } from "react-icons/bi";
 import { FaLock } from "react-icons/fa";
 import { BsEye } from "react-icons/bs";
@@ -51,18 +51,28 @@ const DraftPoComponent = () => {
   return (
     <>
       <div className={styles.draftPoContainer}>
-        <div
-          className={styles.draftPoSuccessText}
-          data-aos="fade-up"
-          data-aos-delay="100"
-        >
-          <BiCheckCircle /> Draft PO Generated Successfully{" "}
+        <div className={styles.draftPoHeader}>
+          <div
+            className={styles.draftPoSuccessText}
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
+            <BiCheckCircle /> Draft PO Generated Successfully{" "}
+          </div>
+          
+        </div>
+        <div className={styles.draftPoBackButtonContainer}>
+          <button className={styles.backButton} onClick={() => router.back()}>
+            <ArrowLeft size={16} /> Back
+          </button>
         </div>
         <div className={`${styles.draftPoIframeContainer} sectionCard mb-0`}>
+       
           <iframe
             src={`${router.query.pl}#toolbar=0&view=FitH`}
             allowFullScreen
           />
+           
           {/* <Image
             src={`${router?.query?.pl}`}
             alt="draft po"
