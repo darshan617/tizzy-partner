@@ -376,6 +376,7 @@ const OrderSummaryCard = ({
             pl: res?.data?.data?.po_link,
             sr: res?.data?.data?.sign_required === "yes" ? true : false,
             ordId: res?.data?.data?.order_id,
+            pod: router?.query?.order_id,
           },
         });
       } else {

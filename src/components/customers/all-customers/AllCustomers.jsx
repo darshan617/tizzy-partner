@@ -362,12 +362,14 @@ export default function CustomerList({
           </div>
         </div>
       </div>
-      <Pagination
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        data={filteredCustomers}
-        itemPerPage={itemPerPage}
-      />
+      {filteredCustomers?.length > itemPerPage && (
+        <Pagination
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          data={filteredCustomers}
+          itemPerPage={itemPerPage}
+        />
+      )}
     </div>
   );
 }
