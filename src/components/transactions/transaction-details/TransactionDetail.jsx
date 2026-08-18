@@ -345,6 +345,13 @@ export default function TransactionDetails() {
                     value={`₹ ${Number(transactionData?.payment_breakdown?.igst || 0).toFixed(2) || "-"}`}
                   />
                 )}
+                {Number(transactionData?.payment_breakdown?.remaining_value) >
+                  0 && (
+                  <SummaryRow
+                    label="Remaining Value:"
+                    value={`₹ ${Number(transactionData?.payment_breakdown?.remaining_value || 0).toFixed(2) || "-"}`}
+                  />
+                )}
 
                 <SummaryRow
                   label="Discount:"

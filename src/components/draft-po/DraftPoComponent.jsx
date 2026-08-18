@@ -124,6 +124,7 @@ const DraftPoComponent = () => {
               pathname: "/order-details",
               query: {
                 ordId: router?.query?.ordId,
+                pod: router?.query?.pod,
               },
             })
           }
