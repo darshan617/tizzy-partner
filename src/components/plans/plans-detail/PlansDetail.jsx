@@ -307,6 +307,7 @@ export default function PlansDetail() {
             {statusKey !== "processing" &&
               statusKey !== "upgrade pending" &&
               statusKey !== "downgrade pending" &&
+              statusKey !== "cancelled" &&
               statusKey !== "renewal pending" &&
               !plan?.hide_upgrade && (
                 <Link
