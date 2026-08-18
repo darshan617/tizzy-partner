@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { IoMdArrowBack } from "react-icons/io";
-import { FiFilter, FiLayers } from "react-icons/fi";
+import { FiFilter, FiLayers, FiPlus } from "react-icons/fi";
 import Link from "next/link";
 import styles from "@/components/customers/customers-details/CustomerDetails.module.css";
 import Layout from "@/components/layout/Layout";
@@ -84,20 +84,18 @@ const formatPlanStatus = (status) => {
 
 const getPlanStatusClass = (status) => {
   const normalized = status?.toLowerCase();
-  if (normalized === "completed")
-    return styles.active;
-  if (
-    normalized === "expiring" 
-  ) {
-    return styles.expiring;
-  }
-  if (normalized === "expired")
-    return styles.expired;
+
+  if (normalized === "completed") return styles.active;
+  if (normalized === "expiring") return styles.expiring;
+  if (normalized === "expired") return styles.expired;
   if (normalized === "draft") return styles.draft;
   if (normalized === "upgraded") return styles.upgraded;
   if (normalized === "downgraded") return styles.downgraded;
   if (normalized === "renewed") return styles.renewed;
   if (normalized === "processing") return styles.processing;
+  if (normalized === "upgrade pending") return styles.UpgradePending;
+  if (normalized === "downgrade pending") return styles.DowngradePending;
+
   return "";
 };
 
@@ -118,20 +116,23 @@ const statusLabelMap = {
   draft: "Draft",
   renewed: "Renewed",
   processing: "Processing",
+  "upgrade pending": "Upgrade Pending",
+  "downgrade pending": "Downgrade Pending",
 };
 
 const statusOrder = [
-  "completed",
+  "active",
   "expiring",
   "pending",
   "cancelled",
   "draft",
   "renewed",
+  "upgrade pending",
+  "downgrade pending",
   "processing",
 ];
 
-const getStatusKey = (status) =>
-  (status || "").toString().trim().toLowerCase();
+const getStatusKey = (status) => (status || "").toString().trim().toLowerCase();
 
 const SubscriptionsDetailsComponent = () => {
   const router = useRouter();
@@ -354,7 +355,7 @@ const SubscriptionsDetailsComponent = () => {
 
           <div className="col">
             <div
-              className={`sectionCard py-4 py-sm-4 px-sm-4 px-3`}
+              className={`sectionCard py-4 py-sm-4 px-sm-4 px-3 mb-0`}
               style={{ minHeight: "0px" }}
             >
               <div className="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3 gap-lg-4">
@@ -526,7 +527,7 @@ const SubscriptionsDetailsComponent = () => {
               <div className=" py-sm-2 py-3">
                 <div className={styles.domainBar}>
                   <div className={styles.domainLeft}>
-                    <Globe size={16} />
+                    <Globe size={16} style={{ color: "#0355ac" }} />
                     <span className={styles.domainName}>
                       {domainName || ""}
                     </span>
@@ -587,7 +588,8 @@ const SubscriptionsDetailsComponent = () => {
                 <div className="d-flex align-items-center justify-content-between mb-2">
                   <div>
                     <h2 className={styles.sectionCardHead}>
-                      CURRENT SUBSCRIPTION <span>({filteredPlans?.length || 0})</span>
+                      CURRENT SUBSCRIPTION{" "}
+                      <span>({filteredPlans?.length || 0})</span>
                     </h2>
                   </div>
                   <div>
