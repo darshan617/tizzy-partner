@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { IoMdArrowBack } from "react-icons/io";
+import { FiFilter, FiLayers } from "react-icons/fi";
 import Link from "next/link";
 import styles from "@/components/customers/customers-details/CustomerDetails.module.css";
 import Layout from "@/components/layout/Layout";
@@ -14,7 +15,6 @@ import { MdAutorenew } from "react-icons/md";
 import Loader from "@/common-components/loader/Loader";
 import { BiChevronRight } from "react-icons/bi";
 import { Calendar, ExternalLink, Globe, User, Users } from "lucide-react";
-import { FiLayers } from "react-icons/fi";
 import { usePartialUpgradeAddToCartMutation } from "@/redux/apis/addToCartApi";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import { GiCancel } from "react-icons/gi";
@@ -24,6 +24,7 @@ import {
 } from "@/redux/slices/popupSlice";
 import { useDispatch, useSelector } from "react-redux";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
+import { IoClose } from "react-icons/io5";
 
 const planProviderIcons = [
   <svg
@@ -83,16 +84,14 @@ const formatPlanStatus = (status) => {
 
 const getPlanStatusClass = (status) => {
   const normalized = status?.toLowerCase();
-  if (normalized === "completed" || normalized === "active")
+  if (normalized === "completed")
     return styles.active;
   if (
-    normalized === "expiring_soon" ||
-    normalized === "expiring" ||
-    normalized === "pending"
+    normalized === "expiring" 
   ) {
-    return styles.expiring_soon;
+    return styles.expiring;
   }
-  if (normalized === "expired" || normalized === "cancelled")
+  if (normalized === "expired")
     return styles.expired;
   if (normalized === "draft") return styles.draft;
   if (normalized === "upgraded") return styles.upgraded;
@@ -109,6 +108,31 @@ const getServicePath = (provider_id) => {
   return "google-workspace";
 };
 
+const statusLabelMap = {
+  completed: "Active",
+  active: "Active",
+  expiring: "Expiring",
+  pending: "Pending",
+  expired: "Expired",
+  cancelled: "Cancelled",
+  draft: "Draft",
+  renewed: "Renewed",
+  processing: "Processing",
+};
+
+const statusOrder = [
+  "completed",
+  "expiring",
+  "pending",
+  "cancelled",
+  "draft",
+  "renewed",
+  "processing",
+];
+
+const getStatusKey = (status) =>
+  (status || "").toString().trim().toLowerCase();
+
 const SubscriptionsDetailsComponent = () => {
   const router = useRouter();
   const { showToast } = useToast();
@@ -118,8 +142,11 @@ const SubscriptionsDetailsComponent = () => {
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
   const [subscriptionDetails, setSubscriptionDetails] = useState(null);
-  console.log("subscriptionDetails", subscriptionDetails);
   const [reason, setReason] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [selectedStatuses, setSelectedStatuses] = useState("all");
+
   const [orderCancel, { isLoading: isOrderCancelLoading }] =
     useOrderCancelMutation();
   const [getSubscriptionDetails, { isLoading: isSubscriptionDetailsLoading }] =
@@ -128,6 +155,10 @@ const SubscriptionsDetailsComponent = () => {
     partialUpgradeAddToCart,
     { isLoading: isPartialUpgradeAddToCartLoading },
   ] = usePartialUpgradeAddToCartMutation();
+
+  const toggleStatus = (statusKey) => {
+    setSelectedStatuses((prev) => (prev === statusKey ? "all" : statusKey));
+  };
 
   const fetchSubscriptionDetails = async () => {
     if (!router?.query?.orderId) return;
@@ -146,7 +177,6 @@ const SubscriptionsDetailsComponent = () => {
   };
 
   const handlePartialUpgrade = async (plan) => {
-    console.log("Plan", plan);
     try {
       const res = await partialUpgradeAddToCart({
         body: {
@@ -159,7 +189,6 @@ const SubscriptionsDetailsComponent = () => {
       });
 
       if (res?.data?.success) {
-        console.log("Res", res?.data?.data);
         router?.push({
           pathname: "/order-summary",
           query: {
@@ -202,21 +231,6 @@ const SubscriptionsDetailsComponent = () => {
     }
   };
 
-  const status = [
-    "completed",
-    "active",
-    "expiring_soon",
-    "expiring",
-    "pending",
-    "expired",
-    "cancelled",
-    "draft",
-    "upgraded",
-    "downgraded",
-    "renewed",
-    "processing",
-  ];
-
   useEffect(() => {
     if (router?.isReady) {
       fetchSubscriptionDetails();
@@ -232,6 +246,34 @@ const SubscriptionsDetailsComponent = () => {
   const periodEnd =
     subscriptionDetails?.subscription_end_date ||
     plans?.[0]?.subscription_end_date;
+
+  // Search + status filtering over the current subscription's plans.
+  const filteredPlans = useMemo(() => {
+    const q = searchQuery?.trim()?.toLowerCase() || "";
+
+    return plans.filter((plan) => {
+      const matchesSearch =
+        q === "" ||
+        plan?.plan_name?.toLowerCase()?.includes(q) ||
+        String(plan?.subscription_no || "")
+          .toLowerCase()
+          .includes(q) ||
+        String(plan?.order_sub_id || "")
+          .toLowerCase()
+          .includes(q) ||
+        domainName?.toLowerCase()?.includes(q);
+
+      const statusKey = getStatusKey(plan?.status);
+      const matchesStatus =
+        selectedStatuses === "all" || selectedStatuses === statusKey;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [plans, searchQuery, selectedStatuses, domainName]);
+
+  const resultTotal = filteredPlans?.length || 0;
+  const itemPerPage = resultTotal;
+  const startIndex = resultTotal > 0 ? 0 : -1;
 
   if (isSubscriptionDetailsLoading) {
     return (
@@ -375,6 +417,112 @@ const SubscriptionsDetailsComponent = () => {
 
           <div className="col">
             <div className={`sectionCard px-sm-4 px-3 py-1`}>
+              <div className={styles.filtersMain}>
+                <div className="py-3 px-sm-4 px-3 border-bottom">
+                  <div className="row align-items-center justify-content-between">
+                    <div className="col-sm-auto order-sm-2">
+                      <search className={styles.pageSearchBox}>
+                        <input
+                          type="text"
+                          className={`${styles.pageSearch} form-control`}
+                          placeholder="Search Plan"
+                          value={searchQuery}
+                          onChange={(event) =>
+                            setSearchQuery(event.target.value)
+                          }
+                        />
+                        <button className={styles.searchBtn} type="button">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className={styles.icon}
+                          >
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.3-4.3" />
+                          </svg>
+                        </button>
+                      </search>
+                    </div>
+                    <div
+                      className={`${styles.searchCount} col-sm-auto order-sm-1 text-center my-2 my-sm-0`}
+                    >
+                      Showing{" "}
+                      <span className="fw-medium darkColor">
+                        {startIndex + 1}-{itemPerPage}
+                      </span>{" "}
+                      from{" "}
+                      <span className="fw-medium darkColor">{resultTotal}</span>{" "}
+                      {resultTotal === 1 ? "result" : "results"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.filterWrapper}>
+                  <div
+                    className={`collapse${filterOpen ? " show" : ""}`}
+                    id="transactionFilterSection"
+                  >
+                    <div className="p-sm-4 p-3">
+                      <div className="row g-4 mb-4">
+                        <div className="col-auto">
+                          <span className={styles.filterHead}>Status :</span>
+                          <ul
+                            className={`${styles.filterGroup} gap-2`}
+                            role="group"
+                          >
+                            {statusOrder.map((statusKey) => (
+                              <li key={statusKey}>
+                                <button
+                                  className={`${styles.filterItem} rounded-pill`}
+                                  onClick={() => toggleStatus(statusKey)}
+                                  style={{
+                                    backgroundColor:
+                                      selectedStatuses === statusKey
+                                        ? "var(--primaryColor)"
+                                        : "",
+                                    color:
+                                      selectedStatuses === statusKey
+                                        ? "var(--whiteColor)"
+                                        : "var(--darkColor)",
+                                  }}
+                                >
+                                  {statusLabelMap[statusKey]}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    className={`${styles.btn} ${styles.small} ${styles.btnDefault} ${styles.filterBtn}`}
+                    onClick={() => setFilterOpen((prev) => !prev)}
+                    aria-expanded={filterOpen}
+                  >
+                    {filterOpen ? (
+                      <>
+                        <IoClose className={`${styles.icon} me-2`} />
+                        <span>Close</span>
+                      </>
+                    ) : (
+                      <>
+                        <FiFilter className={`${styles.icon} me-2`} />
+                        <span>Filters</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
               <div className=" py-sm-2 py-3">
                 <div className={styles.domainBar}>
                   <div className={styles.domainLeft}>
@@ -439,7 +587,7 @@ const SubscriptionsDetailsComponent = () => {
                 <div className="d-flex align-items-center justify-content-between mb-2">
                   <div>
                     <h2 className={styles.sectionCardHead}>
-                      CURRENT SUBSCRIPTION <span>({plans?.length || 0})</span>
+                      CURRENT SUBSCRIPTION <span>({filteredPlans?.length || 0})</span>
                     </h2>
                   </div>
                   <div>
@@ -458,8 +606,8 @@ const SubscriptionsDetailsComponent = () => {
                   </div>
                 </div>
 
-                {plans?.length > 0 ? (
-                  plans?.map((plan) => (
+                {filteredPlans?.length > 0 ? (
+                  filteredPlans?.map((plan) => (
                     <div
                       key={plan?.order_sub_id}
                       className={`${styles.subRow} noHover`}
@@ -569,6 +717,7 @@ const SubscriptionsDetailsComponent = () => {
 
                         {/* {plan?.status?.toLowerCase() === "expiring" ||
                       plan?.status?.toLowerCase() === "expired" ? ( */}
+
                         <div className={`${styles.subActions}`}>
                           {(plan?.status?.toLowerCase() === "expiring" ||
                             plan?.status?.toLowerCase() === "expired") && (
@@ -606,8 +755,6 @@ const SubscriptionsDetailsComponent = () => {
                           plan?.status?.toLowerCase() !== "downgrade pending" &&
                           plan?.status?.toLowerCase() !== "downgraded" &&
                           plan?.status?.toLowerCase() !== "renewal pending" &&
-                          // plan?.status?.toLowerCase() !== "expiring" &&
-                          // plan?.status?.toLowerCase() !== "expired" &&
                           plan?.status?.toLowerCase() !== "cancelled" &&
                           plan?.status?.toLowerCase() !== "processing" &&
                           !plan?.hide_upgrade ? (
