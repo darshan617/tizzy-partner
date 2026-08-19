@@ -156,6 +156,17 @@ const RenewCart = ({
       setTempDomainNames(toDomainArray(cartItemList[0]?.domain_name));
     }
   }, [cartItemList?.[0]?.cart_id]);
+  useEffect(() => {
+    if (
+      router?.isReady &&
+      router?.query?.type === "upgrade" &&
+      currentPlanDetails?.quantity != null
+    ) {
+      const quantity = Number(currentPlanDetails.quantity);
+
+      setLisceneCounter(quantity);
+    }
+  }, [router?.isReady, router?.query?.type, currentPlanDetails?.quantity]);
 
   return (
     <>
@@ -478,7 +489,8 @@ const RenewCart = ({
                           className={`${styles.qtyCtrl} ${styles.planDetailQtyCtrl}`}
                         >
                           <button
-                            disabled={lineLicenses <= 1}
+                            // disabled={lineLicenses <= 1}
+                            disabled={true}
                             onClick={() => {
                               const next = lineLicenses - 1;
                               onLineLicensesChange?.(lineKey, next);
@@ -488,7 +500,7 @@ const RenewCart = ({
                           >
                             −
                           </button>
-                          <input
+                          {/* <input
                             type="text"
                             value={lineLicenses}
                             onChange={(e) => {
@@ -502,6 +514,18 @@ const RenewCart = ({
                                 setLisceneCounter(next);
                               }
                             }}
+                            className={styles.qtyInput}
+                            min={1}
+                            max={customerLimit}
+                          /> */}
+                          <input
+                            type="text"
+                            value={
+                              router?.query?.type === "upgrade"
+                                ? Number(currentPlanDetails?.quantity || 1)
+                                : Number(lineLicenses || 1)
+                            }
+                            disabled={router?.query?.type === "upgrade"}
                             className={styles.qtyInput}
                             min={1}
                             max={customerLimit}
@@ -521,10 +545,11 @@ const RenewCart = ({
                               }
                             }}
                             className={styles.qtyBtn}
-                            disabled={
-                              customerLimit != null &&
-                              lineLicenses === customerLimit
-                            }
+                            // disabled={
+                            //   customerLimit != null &&
+                            //   lineLicenses === customerLimit
+                            // }
+                            disabled={true}
                           >
                             +
                           </button>

@@ -92,7 +92,7 @@ const getTxnStatusClass = (status, stylesMap) => {
 const formatTxnStatus = (status) => {
   const key = getTxnStatusKey(status);
   if (!key) return "-";
-  if (key === "completed") return "Success";
+  if (key === "completed") return "Completed";
   return key.charAt(0).toUpperCase() + key.slice(1);
 };
 
