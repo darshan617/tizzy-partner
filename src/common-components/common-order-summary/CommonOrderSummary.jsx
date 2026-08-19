@@ -194,14 +194,31 @@ const CommonOrderSummary = () => {
     });
   };
 
+  // const total = isListCart
+  //   ? cartDetails.reduce((sum, item) => {
+  //       const u = getCartLineUnitPrice(item);
+  //       const l = Math.max(1, Number(item?.licenses) || 1);
+  //       return sum + u * l;
+  //     }, 0)
+  //   : (Number(pricePerUser) || 0) * (Number(lisceneCounter) || 0);
   const isListCart = Array.isArray(cartDetails);
+
+  const isUpgrade = router?.query?.type === "upgrade";
+
   const total = isListCart
     ? cartDetails.reduce((sum, item) => {
         const u = getCartLineUnitPrice(item);
-        const l = Math.max(1, Number(item?.licenses) || 1);
+
+        const l = isUpgrade
+          ? Number(currentPlanDetails?.quantity) || 1
+          : Math.max(1, Number(item?.licenses) || 1);
+
         return sum + u * l;
       }, 0)
-    : (Number(pricePerUser) || 0) * (Number(lisceneCounter) || 0);
+    : (Number(pricePerUser) || 0) *
+      (isUpgrade
+        ? Number(currentPlanDetails?.quantity) || 1
+        : Number(lisceneCounter) || 0);
 
   const [addToCart, { isLoading: isGettingCartDetails }] =
     useAddToCartMutation();
@@ -705,7 +722,11 @@ const CommonOrderSummary = () => {
     : "";
 
   useEffect(() => {
-    // if (router?.query?.type === "upgrade") return undefined;
+    if (
+      router?.query?.type === "upgrade" ||
+      router?.query?.type === "downgrade"
+    )
+      return undefined;
     if (!Array.isArray(cartDetails) || cartDetails.length === 0)
       return undefined;
 

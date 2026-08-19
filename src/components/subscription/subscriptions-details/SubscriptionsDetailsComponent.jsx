@@ -85,7 +85,8 @@ const formatPlanStatus = (status) => {
 const getPlanStatusClass = (status) => {
   const normalized = status?.toLowerCase();
 
-  if (normalized === "completed") return styles.active;
+  if (normalized === "completed" || normalized === "active")
+    return styles.active;
   if (normalized === "expiring") return styles.expiring;
   if (normalized === "expired") return styles.expired;
   if (normalized === "draft") return styles.draft;
@@ -95,7 +96,6 @@ const getPlanStatusClass = (status) => {
   if (normalized === "processing") return styles.processing;
   if (normalized === "upgrade pending") return styles.UpgradePending;
   if (normalized === "downgrade pending") return styles.DowngradePending;
-
   return "";
 };
 
