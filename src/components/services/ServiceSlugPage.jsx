@@ -35,6 +35,7 @@ import {
   useAddToCartMutation,
   useDowngradeCartMutation,
   useGetCartDetailsMutation,
+  usePartialUpgradeAddToCartMutation,
   useUpgradeAddToCartMutation,
 } from "@/redux/apis/addToCartApi";
 import { setCartData } from "@/redux/slices/cartSlice";
@@ -95,6 +96,10 @@ export default function ServiceSlugPage({
 
   const [downgradeCart, { isLoading: isDowngradingToCart }] =
     useDowngradeCartMutation();
+  const [
+    partialUpgradeAddToCart,
+    { isLoading: isPartialUpgradeAddToCartLoading },
+  ] = usePartialUpgradeAddToCartMutation();
 
   const applyCategoryFromVariant = useCallback(
     (cat) => {
@@ -197,12 +202,16 @@ export default function ServiceSlugPage({
         let res;
         const isPlanChangeRequest =
           router?.query?.type === "upgrade" ||
-          router?.query?.type === "downgrade";
+          router?.query?.type === "downgrade" ||
+          router?.query?.type === "partial-upgrade";
         const hasOrderId = Boolean(router?.query?.order_id);
 
         if (isPlanChangeRequest && hasOrderId) {
           res = await triggerUpgradeDowngradePlan({
-            type: router?.query?.type,
+            type:
+              router?.query?.type === "partial-upgrade"
+                ? "upgrade"
+                : router?.query?.type,
             plan_id: router?.query?.plan_id,
             order_sub_id: router?.query?.order_sub_id,
           });
@@ -325,6 +334,8 @@ export default function ServiceSlugPage({
           order_id: router?.query?.order_id,
           order_sub_id: router?.query?.order_sub_id,
           license_count: lisceneCounter,
+          from_plan_id: router?.query?.plan_id,
+          upgrade_mode: router?.query?.type === "upgrade" ? "" : "partial",
         },
       });
       if (res?.data?.success) {
@@ -351,7 +362,7 @@ export default function ServiceSlugPage({
       console.log(error, "error upgrading to cart");
     }
   };
-  const handleDowngradeAddToCart = async (planId, lisceneCounter = 1) => {
+  const handleDowngradeAddToCart = async (planId, licenses = 1) => {
     try {
       const res = await downgradeCart({
         body: {
@@ -360,7 +371,7 @@ export default function ServiceSlugPage({
           customer_id: router?.query?.customer_id,
           order_id: router?.query?.order_id,
           order_sub_id: router?.query?.order_sub_id,
-          license_count: lisceneCounter,
+          license_count: licenses,
         },
       });
       if (res?.data?.success) {
@@ -385,6 +396,42 @@ export default function ServiceSlugPage({
       }
     } catch (error) {
       console.log(error, "error downgrading to cart");
+    }
+  };
+
+  const handlePartialUpgrade = async (plan, licenses) => {
+    console.log(plan);
+
+    try {
+      const res = await partialUpgradeAddToCart({
+        body: {
+          partner_id: userData?.id,
+          order_id: router?.query?.order_id,
+          order_sub_id: router?.query?.order_sub_id,
+          licenses: licenses,
+          customer_id: router?.query?.customer_id,
+          plan_id: plan?.plan_id,
+        },
+      });
+
+      if (res?.data?.success) {
+        router?.push({
+          pathname: "/order-summary",
+          query: {
+            type: "partial-upgrade",
+            order_id: router?.query?.order_id,
+            order_sub_id: router?.query?.order_sub_id,
+            licenses: licenses,
+            customer_id: router?.query?.customer_id,
+            main_cart_id: res?.data?.data?.main_cart_id,
+          },
+        });
+      } else {
+        showToast(res?.error?.data?.message, "error");
+      }
+    } catch (error) {
+      console.log("partialUpgradeAddToCart Error", error);
+      showToast("Something went wrong", "error");
     }
   };
 
@@ -513,6 +560,8 @@ export default function ServiceSlugPage({
                   handleUpgradeAddToCart(planKey, licenses);
                 } else if (router?.query?.type === "downgrade") {
                   handleDowngradeAddToCart(planKey, licenses);
+                } else if (router?.query?.type === "partial-upgrade") {
+                  handlePartialUpgrade(plan, licenses);
                 } else {
                   handleAddToCart(planKey, licenses);
                   // router.push({
@@ -547,7 +596,8 @@ export default function ServiceSlugPage({
               //             : "Buy Plan"
               // }
               ctaLabel={
-                router?.query?.type === "upgrade"
+                router?.query?.type === "upgrade" ||
+                router?.query?.type === "partial-upgrade"
                   ? "Upgrade Plan"
                   : router?.query?.type === "downgrade"
                     ? "Downgrade Plan"

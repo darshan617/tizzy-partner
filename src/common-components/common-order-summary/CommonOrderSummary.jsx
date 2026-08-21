@@ -7,6 +7,7 @@ import {
   useGetCartDetailsMutation,
   useGetUpdateCartDetailsQuery,
   useGetUpgradeAddToCartDetailsMutation,
+  useLicenseAddToCartMutation,
   useRenewCartDetailsMutation,
   useRenewCustomerDetailsMutation,
   useUpdateCartMutation,
@@ -194,14 +195,31 @@ const CommonOrderSummary = () => {
     });
   };
 
+  // const total = isListCart
+  //   ? cartDetails.reduce((sum, item) => {
+  //       const u = getCartLineUnitPrice(item);
+  //       const l = Math.max(1, Number(item?.licenses) || 1);
+  //       return sum + u * l;
+  //     }, 0)
+  //   : (Number(pricePerUser) || 0) * (Number(lisceneCounter) || 0);
   const isListCart = Array.isArray(cartDetails);
+
+  const isUpgrade = router?.query?.type === "upgrade";
+
   const total = isListCart
     ? cartDetails.reduce((sum, item) => {
         const u = getCartLineUnitPrice(item);
-        const l = Math.max(1, Number(item?.licenses) || 1);
+
+        const l = isUpgrade
+          ? Number(currentPlanDetails?.quantity) || 1
+          : Math.max(1, Number(item?.licenses) || 1);
+
         return sum + u * l;
       }, 0)
-    : (Number(pricePerUser) || 0) * (Number(lisceneCounter) || 0);
+    : (Number(pricePerUser) || 0) *
+      (isUpgrade
+        ? Number(currentPlanDetails?.quantity) || 1
+        : Number(lisceneCounter) || 0);
 
   const [addToCart, { isLoading: isGettingCartDetails }] =
     useAddToCartMutation();
@@ -219,6 +237,9 @@ const CommonOrderSummary = () => {
     getUpgradeCartDetailsApi,
     { isLoading: isGettingUpgradeCartDetailsApi },
   ] = useGetUpgradeAddToCartDetailsMutation();
+
+  const [licensesAddToCart, { isLoading: isLicensesAddToCartLoading }] =
+    useLicenseAddToCartMutation();
 
   const { data: getAllCustomers } = useGetAllCustomersQuery(
     {
@@ -267,6 +288,27 @@ const CommonOrderSummary = () => {
       }
     } catch (error) {
       console.log("error", error);
+    }
+  };
+
+  const handleLicenseAdd = async (plan) => {
+    try {
+      const res = await licensesAddToCart({
+        body: {
+          partner_id: userData?.id,
+          customer_id: router?.query?.customer_id,
+          order_id: router?.query?.order_id,
+          order_sub_id: router?.query?.order_sub_id,
+          licenses: router?.query?.licenses,
+        },
+      });
+      if (res?.data?.success) {
+        setCartDetails(res?.data?.data);
+      }
+      console.log(res, "res");
+      console.log(res?.data?.success, "res?.data?.success");
+    } catch (error) {
+      console.log(error, "error in handleLicenseAdd");
     }
   };
 
@@ -705,7 +747,11 @@ const CommonOrderSummary = () => {
     : "";
 
   useEffect(() => {
-    // if (router?.query?.type === "upgrade") return undefined;
+    if (
+      router?.query?.type === "upgrade" ||
+      router?.query?.type === "downgrade"
+    )
+      return undefined;
     if (!Array.isArray(cartDetails) || cartDetails.length === 0)
       return undefined;
 
@@ -787,6 +833,7 @@ const CommonOrderSummary = () => {
     if (router?.query?.type === "upgrade") return;
     if (router?.query?.type === "downgrade") return;
     if (router?.query?.type === "partial-upgrade") return;
+    if (router?.query?.type === "add-license") return;
     handleGetCartDetails();
   }, [userData?.id, router?.isReady, router?.query?.type]);
 
@@ -827,6 +874,12 @@ const CommonOrderSummary = () => {
     router?.query?.order_sub_id,
     customerData?.customer_id,
   ]);
+
+  useEffect(() => {
+    if (router?.query?.type === "add-license") {
+      handleLicenseAdd();
+    }
+  }, [router?.query?.type === "add-license"]);
 
   const updateLineLicenses = (lineKey, nextLicenses) => {
     setCartDetails((prev) => {
