@@ -13,6 +13,7 @@ const CustomPopup = ({
   onPrimary,
   showFooter = false,
   maxWidth = "600px",
+  bodyPadding = "20px",
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -58,7 +59,7 @@ const CustomPopup = ({
             </div>
           )}
           {(description || children) && (
-            <div className={styles.body}>
+            <div className={styles.body} style={{ padding: bodyPadding }}>
               {description && (
                 <p className={styles.description}>{description}</p>
               )}

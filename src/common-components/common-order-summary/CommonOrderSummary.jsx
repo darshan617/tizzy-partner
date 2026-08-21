@@ -7,6 +7,7 @@ import {
   useGetCartDetailsMutation,
   useGetUpdateCartDetailsQuery,
   useGetUpgradeAddToCartDetailsMutation,
+  useLicenseAddToCartMutation,
   useRenewCartDetailsMutation,
   useRenewCustomerDetailsMutation,
   useUpdateCartMutation,
@@ -237,6 +238,9 @@ const CommonOrderSummary = () => {
     { isLoading: isGettingUpgradeCartDetailsApi },
   ] = useGetUpgradeAddToCartDetailsMutation();
 
+  const [licensesAddToCart, { isLoading: isLicensesAddToCartLoading }] =
+    useLicenseAddToCartMutation();
+
   const { data: getAllCustomers } = useGetAllCustomersQuery(
     {
       partner_id: userData?.id,
@@ -284,6 +288,27 @@ const CommonOrderSummary = () => {
       }
     } catch (error) {
       console.log("error", error);
+    }
+  };
+
+  const handleLicenseAdd = async (plan) => {
+    try {
+      const res = await licensesAddToCart({
+        body: {
+          partner_id: userData?.id,
+          customer_id: router?.query?.customer_id,
+          order_id: router?.query?.order_id,
+          order_sub_id: router?.query?.order_sub_id,
+          licenses: router?.query?.licenses,
+        },
+      });
+      if (res?.data?.success) {
+        setCartDetails(res?.data?.data);
+      }
+      console.log(res, "res");
+      console.log(res?.data?.success, "res?.data?.success");
+    } catch (error) {
+      console.log(error, "error in handleLicenseAdd");
     }
   };
 
@@ -808,6 +833,7 @@ const CommonOrderSummary = () => {
     if (router?.query?.type === "upgrade") return;
     if (router?.query?.type === "downgrade") return;
     if (router?.query?.type === "partial-upgrade") return;
+    if (router?.query?.type === "add-license") return;
     handleGetCartDetails();
   }, [userData?.id, router?.isReady, router?.query?.type]);
 
@@ -848,6 +874,12 @@ const CommonOrderSummary = () => {
     router?.query?.order_sub_id,
     customerData?.customer_id,
   ]);
+
+  useEffect(() => {
+    if (router?.query?.type === "add-license") {
+      handleLicenseAdd();
+    }
+  }, [router?.query?.type === "add-license"]);
 
   const updateLineLicenses = (lineKey, nextLicenses) => {
     setCartDetails((prev) => {

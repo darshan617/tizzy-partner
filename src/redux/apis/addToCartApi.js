@@ -220,6 +220,26 @@ const addToCartApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["addToCart"],
     }),
+    licenseAddToCart: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/license-add-to-cart`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
+    sendPurchaseRequest: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: `/send-purchase-request`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["addToCart"],
+    }),
   }),
 });
 
@@ -247,4 +267,6 @@ export const {
   useGenerateRenewOrderMutation,
   usePartialUpgradeAddToCartMutation,
   useLicenseDecreaseRequestMutation,
+  useLicenseAddToCartMutation,
+  useSendPurchaseRequestMutation,
 } = addToCartApi;
