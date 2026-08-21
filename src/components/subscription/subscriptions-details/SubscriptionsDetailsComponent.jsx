@@ -15,7 +15,10 @@ import { MdAutorenew } from "react-icons/md";
 import Loader from "@/common-components/loader/Loader";
 import { BiChevronRight } from "react-icons/bi";
 import { Calendar, ExternalLink, Globe, User, Users } from "lucide-react";
-import { usePartialUpgradeAddToCartMutation } from "@/redux/apis/addToCartApi";
+import {
+  useLicenseAddToCartMutation,
+  usePartialUpgradeAddToCartMutation,
+} from "@/redux/apis/addToCartApi";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import { GiCancel } from "react-icons/gi";
 import {
@@ -715,6 +718,23 @@ const SubscriptionsDetailsComponent = () => {
                               </div>
                             </div>
                           </div>
+                          <button
+                            className={`btn small btnDefault`}
+                            onClick={() => {
+                              router?.push({
+                                pathname: "/order-summary",
+                                query: {
+                                  type: "add-license",
+                                  customer_id: router?.query?.customerId,
+                                  order_id: router?.query?.orderId,
+                                  order_sub_id: plan?.order_sub_id,
+                                  licenses: plan?.licenses,
+                                },
+                              });
+                            }}
+                          >
+                            Add
+                          </button>
                         </div>
 
                         {/* {plan?.status?.toLowerCase() === "expiring" ||
@@ -789,12 +809,40 @@ const SubscriptionsDetailsComponent = () => {
                               >
                                 Upgrade
                               </Link>
-                              <button
+                              <Link
+                                href={{
+                                  pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                                  query: {
+                                    type: "partial-upgrade",
+                                    order_id: subscriptionDetails?.order_id,
+                                    customer_id:
+                                      router?.query?.customerId ||
+                                      plan?.customer_id,
+                                    plan_id: plan?.plan_id,
+                                    order_sub_id: plan?.order_sub_id,
+                                  },
+                                }}
+                                className={styles.subUpgradeTextLink}
+                                onClick={() => {
+                                  Cookies.remove("customerData");
+                                  Cookies.set(
+                                    "customerData",
+                                    JSON.stringify({
+                                      partner_id: userData?.id,
+                                      customer_id: router?.query?.customerId,
+                                      domain_name: domainName,
+                                    }),
+                                  );
+                                }}
+                              >
+                                Partial Upgrade
+                              </Link>
+                              {/* <button
                                 onClick={() => handlePartialUpgrade(plan)}
                                 className={styles.subUpgradeTextLink}
                               >
                                 Partial Upgrade
-                              </button>
+                              </button> */}
                             </>
                           ) : (
                             <button

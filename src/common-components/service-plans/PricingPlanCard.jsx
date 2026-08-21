@@ -56,7 +56,9 @@ export default function PricingPlanCard({
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const isPlanChangeFlow =
-    router?.query?.type === "upgrade" || router?.query?.type === "downgrade";
+    router?.query?.type === "upgrade" ||
+    router?.query?.type === "downgrade" ||
+    router?.query?.type === "partial-upgrade";
   const hasGooglePlanConflict =
     Number(provider_id) === 3 && Boolean(hasgoogleplans) && !plan_is_in_cart;
 
@@ -143,66 +145,69 @@ export default function PricingPlanCard({
           {gstNote ? <div className={styles.gstNote}>{gstNote}</div> : null}
         </div>
 
-        <div className={styles.lisceneCounter}>
-          <div className={styles.licenseSide}>
-            <span className={styles.counterLabel}>Licenses</span>
-            <div className={styles.counterControl}>
-              <button
-                type="button"
-                className={styles.btnMinus}
-                aria-label="Decrease licenses"
-                disabled={licenseCount <= 1}
-                onClick={() =>
-                  setLisceneCounterForPlan(clampLicenses(licenseCount - 1))
-                }
-              >
-                −
-              </button>
-              <input
-                type="number"
-                min={1}
-                max={maxLicenses}
-                className={styles.licenseCount}
-                value={licenseCount}
-                onChange={(e) => {
-                  const next = Number(e.target.value);
-                  setLisceneCounterForPlan(
-                    Number.isFinite(next) ? clampLicenses(next) : 1,
-                  );
-                }}
-              />
-              <button
-                type="button"
-                className={styles.btnPlus}
-                aria-label="Increase licenses"
-                disabled={licenseCount >= maxLicenses}
-                onClick={() =>
-                  setLisceneCounterForPlan(clampLicenses(licenseCount + 1))
-                }
-              >
-                +
-              </button>
+        {router?.query?.type !== "upgrade" &&
+          router?.query?.type !== "downgrade" && (
+            <div className={styles.lisceneCounter}>
+              <div className={styles.licenseSide}>
+                <span className={styles.counterLabel}>Licenses</span>
+                <div className={styles.counterControl}>
+                  <button
+                    type="button"
+                    className={styles.btnMinus}
+                    aria-label="Decrease licenses"
+                    disabled={licenseCount <= 1}
+                    onClick={() =>
+                      setLisceneCounterForPlan(clampLicenses(licenseCount - 1))
+                    }
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    min={1}
+                    max={maxLicenses}
+                    className={styles.licenseCount}
+                    value={licenseCount}
+                    onChange={(e) => {
+                      const next = Number(e.target.value);
+                      setLisceneCounterForPlan(
+                        Number.isFinite(next) ? clampLicenses(next) : 1,
+                      );
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className={styles.btnPlus}
+                    aria-label="Increase licenses"
+                    disabled={licenseCount >= maxLicenses}
+                    onClick={() =>
+                      setLisceneCounterForPlan(clampLicenses(licenseCount + 1))
+                    }
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <div className={styles.counterDivider} aria-hidden />
+
+              <div className={styles.totalSide}>
+                <span className={styles.counterLabel}>Total Amount</span>
+                <span className={styles.totalAmount}>
+                  ₹
+                  {(Number(
+                    price_type === "market_value"
+                      ? market_price
+                      : distributor_price,
+                  ) || 0) * licenseCount}
+                </span>
+                <span className={styles.totalMeta}>
+                  Excl. GST
+                  {showPeriodSuffix ? ` · ${periodSuffix}` : ""}
+                </span>
+              </div>
             </div>
-          </div>
-
-          <div className={styles.counterDivider} aria-hidden />
-
-          <div className={styles.totalSide}>
-            <span className={styles.counterLabel}>Total Amount</span>
-            <span className={styles.totalAmount}>
-              ₹
-              {(Number(
-                price_type === "market_value"
-                  ? market_price
-                  : distributor_price,
-              ) || 0) * licenseCount}
-            </span>
-            <span className={styles.totalMeta}>
-              Excl. GST
-              {showPeriodSuffix ? ` · ${periodSuffix}` : ""}
-            </span>
-          </div>
-        </div>
+          )}
 
         <button
           type="button"
