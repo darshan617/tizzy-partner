@@ -820,6 +820,7 @@ const SubscriptionsDetailsComponent = () => {
                                       plan?.customer_id,
                                     plan_id: plan?.plan_id,
                                     order_sub_id: plan?.order_sub_id,
+                                    licenses: plan?.licenses,
                                   },
                                 }}
                                 className={styles.subUpgradeTextLink}
