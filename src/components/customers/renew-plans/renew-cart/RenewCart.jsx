@@ -1151,9 +1151,7 @@ const RenewCart = ({
                                     ? lineLicenses <= 1
                                     : lisceneCounter === 1) ||
                                   router?.query?.variant === "upgrade" ||
-                                  router?.query?.variant === "downgrade" ||
-                                  (router?.query?.type === "partial-upgrade" &&
-                                    router?.query?.licenses >= item?.licenses)
+                                  router?.query?.variant === "downgrade"
                                 }
                                 onClick={() => {
                                   if (router?.query?.type === "renew-plan") {
@@ -1175,41 +1173,7 @@ const RenewCart = ({
                               >
                                 −
                               </button>
-                              {/* <input
-                                type="text"
-                                value={
-                                  listMode ? lineLicenses || 1 : lisceneCounter
-                                }
-                                onChange={(e) => {
-                                  const value = Number(e.target.value);
-                                  if (
-                                    customerLimit == null ||
-                                    value <= customerLimit
-                                  ) {
-                                    if (listMode) {
-                                      onLineLicensesChange?.(
-                                        lineKey,
-                                        Number.isFinite(value) ? value : 1,
-                                      );
-                                    } else {
-                                      setLisceneCounter(value);
-                                    }
-                                  }
-                                }}
-                                className={styles.qtyInput}
-                                min={
-                                  router?.query?.licenses
-                                    ? Number(router?.query?.licenses)
-                                    : 1
-                                }
-                                max={customerLimit}
-                                disabled={
-                                  router?.query?.variant === "upgrade" ||
-                                  router?.query?.variant === "downgrade" ||
-                                  (router?.query?.type === "partial-upgrade" &&
-                                    router?.query?.licenses >= item?.licenses)
-                                }
-                              /> */}
+
                               <input
                                 type="number"
                                 value={
@@ -1238,8 +1202,8 @@ const RenewCart = ({
                                   router?.query?.variant === "upgrade" ||
                                   router?.query?.variant === "downgrade" ||
                                   (router?.query?.type === "partial-upgrade" &&
-                                    Number(router?.query?.licenses || 0) >=
-                                      Number(item?.licenses || 0))
+                                    Number(item?.licenses) >=
+                                      Number(router?.query?.licenses))
                                 }
                               />
                               <button
@@ -1272,7 +1236,10 @@ const RenewCart = ({
                                     ? lineLicenses === customerLimit
                                     : lisceneCounter === customerLimit) ||
                                   router?.query?.variant === "upgrade" ||
-                                  router?.query?.variant === "downgrade"
+                                  router?.query?.variant === "downgrade" ||
+                                  (router?.query?.type === "partial-upgrade" &&
+                                    Number(item?.licenses) >=
+                                      Number(router?.query?.licenses))
                                 }
                               >
                                 +

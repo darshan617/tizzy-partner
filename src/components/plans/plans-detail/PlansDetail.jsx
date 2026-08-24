@@ -115,33 +115,6 @@ export default function PlansDetail() {
     plan?.unit_price || plan?.price_per_license_per_year || 0,
   ).toLocaleString("en-IN");
 
-  const handlePartialUpgrade = async (plan) => {
-    try {
-      const res = await partialUpgradeAddToCart({
-        body: {
-          partner_id: userData?.id,
-          order_id: router?.query?.orderId,
-          order_sub_id: plan?.order_sub_id,
-          licenses: plan?.licenses,
-          customer_id: customer?.cust_id,
-        },
-      });
-      router?.push({
-        pathname: "/order-summary",
-        query: {
-          type: "partial-upgrade",
-          order_id: router?.query?.orderId,
-          order_sub_id: plan?.order_sub_id,
-          licenses: plan?.license,
-          customer_id: customer?.cust_id,
-          main_cart_id: res?.data?.data?.main_cart_id,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   if (isGetPlanDetailsLoading && !planDetails) {
     return <Loader />;
   }
@@ -251,7 +224,18 @@ export default function PlansDetail() {
                 <button
                   className={styles.addBtn}
                   type="button"
-                  onClick={() => handlePartialUpgrade(plan)}
+                  onClick={() => {
+                    router?.push({
+                      pathname: "/order-summary",
+                      query: {
+                        type: "add-license",
+                        order_id: router?.query?.orderId,
+                        customer_id: customer?.cust_id,
+                        order_sub_id: plan?.order_sub_id,
+                        licenses: plan?.licenses,
+                      },
+                    });
+                  }}
                   disabled={isProcessingOrCancelled || plan?.hide_upgrade}
                   style={{
                     opacity:
@@ -310,22 +294,41 @@ export default function PlansDetail() {
               statusKey !== "cancelled" &&
               statusKey !== "renewal pending" &&
               !plan?.hide_upgrade && (
-                <Link
-                  href={{
-                    pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                    query: {
-                      type: "upgrade",
-                      order_id: router?.query?.orderId,
-                      customer_id: customer?.cust_id,
-                      order_sub_id: plan?.order_sub_id,
-                      plan_id: router?.query?.planId,
-                    },
-                  }}
-                  className={styles.upgradeBtn}
-                  type="button"
-                >
-                  Upgrade
-                </Link>
+                <>
+                  <Link
+                    href={{
+                      pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                      query: {
+                        type: "upgrade",
+                        order_id: router?.query?.orderId,
+                        customer_id: customer?.cust_id,
+                        order_sub_id: plan?.order_sub_id,
+                        plan_id: router?.query?.planId,
+                      },
+                    }}
+                    className={styles.upgradeBtn}
+                    type="button"
+                  >
+                    Upgrade
+                  </Link>
+                  <Link
+                    href={{
+                      pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                      query: {
+                        type: "partial-upgrade",
+                        order_id: router?.query?.orderId,
+                        customer_id: customer?.cust_id,
+                        order_sub_id: plan?.order_sub_id,
+                        plan_id: router?.query?.planId,
+                        licenses: plan?.licenses,
+                      },
+                    }}
+                    className={styles.upgradeBtn}
+                    type="button"
+                  >
+                    Partial Upgrade
+                  </Link>
+                </>
               )}
             {statusKey === "expiring" && (
               <>

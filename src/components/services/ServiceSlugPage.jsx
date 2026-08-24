@@ -464,6 +464,13 @@ export default function ServiceSlugPage({
       </div>
     );
   }
+  const partialUpgradeLicenses = Number(router?.query?.licenses);
+  const defaultLicenseCountForPlan =
+    router?.query?.type === "partial-upgrade" &&
+    Number.isFinite(partialUpgradeLicenses) &&
+    partialUpgradeLicenses > 1
+      ? partialUpgradeLicenses - 1
+      : 1;
 
   const header = (
     <>
@@ -540,8 +547,12 @@ export default function ServiceSlugPage({
                 plan?.customerLimit ??
                 plan?.max_licenses
               }
+              // lisceneCounterForPlan={
+              //   lisceneCounterForPlan[plan?.plan_id || plan?.id] ?? 1
+              // }
               lisceneCounterForPlan={
-                lisceneCounterForPlan[plan?.plan_id || plan?.id] ?? 1
+                lisceneCounterForPlan[plan?.plan_id || plan?.id] ??
+                defaultLicenseCountForPlan
               }
               setLisceneCounterForPlan={(value) => {
                 const planKey = plan?.plan_id || plan?.id;
@@ -553,9 +564,23 @@ export default function ServiceSlugPage({
               price_type={plan?.price_type || ""}
               market_price={plan?.market_price || "0"}
               distributor_price={plan?.distributor_price || "0"}
+              // onCtaClick={() => {
+              //   const planKey = plan?.plan_id || plan?.id;
+              //   const licenses = lisceneCounterForPlan[planKey] ?? 1;
+              //   if (router?.query?.type === "upgrade") {
+              //     handleUpgradeAddToCart(planKey, licenses);
+              //   } else if (router?.query?.type === "downgrade") {
+              //     handleDowngradeAddToCart(planKey, licenses);
+              //   } else if (router?.query?.type === "partial-upgrade") {
+              //     handlePartialUpgrade(plan, licenses);
+              //   } else {
+              //     handleAddToCart(planKey, licenses);
+              //   }
+              // }}
               onCtaClick={() => {
                 const planKey = plan?.plan_id || plan?.id;
-                const licenses = lisceneCounterForPlan[planKey] ?? 1;
+                const licenses =
+                  lisceneCounterForPlan[planKey] ?? defaultLicenseCountForPlan;
                 if (router?.query?.type === "upgrade") {
                   handleUpgradeAddToCart(planKey, licenses);
                 } else if (router?.query?.type === "downgrade") {
@@ -564,37 +589,8 @@ export default function ServiceSlugPage({
                   handlePartialUpgrade(plan, licenses);
                 } else {
                   handleAddToCart(planKey, licenses);
-                  // router.push({
-                  //   pathname: `/order-summary`,
-                  //   query: {
-                  //     plan_id: plan?.plan_id || plan?.id,
-                  //     ...(!router?.query?.type && { variant: "new-plan" }),
-                  //     ...(router?.query?.type === "upgrade" && {
-                  //       variant: "upgrade",
-                  //     }),
-                  //     ...(router?.query?.type === "downgrade" && {
-                  //       variant: "downgrade",
-                  //     }),
-                  //   },
-                  // });
                 }
               }}
-              // ctaLabel={
-              //   router?.query?.type === "upgrade"
-              //     ? "Upgrade Plan"
-              //     : router?.query?.type === "downgrade"
-              //       ? "Downgrade Plan"
-              //       : router?.query?.slug === "tizzy" ||
-              //           router?.query?.slug === "microsoft-365"
-              //         ? plan?.plan_is_in_cart
-              //           ? "View Cart"
-              //           : "Add to Cart"
-              //         : plan?.plan_is_in_cart
-              //           ? "View Cart"
-              //           : plan?.enquiry
-              //             ? "Enquire Now"
-              //             : "Buy Plan"
-              // }
               ctaLabel={
                 router?.query?.type === "upgrade" ||
                 router?.query?.type === "partial-upgrade"
