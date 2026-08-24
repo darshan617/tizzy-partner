@@ -32,6 +32,21 @@ const statusOrder = [
   "upgraded",
 ];
 
+const statusProvider = [
+  {
+    id: 3,
+    name: "Google Workspace",
+  },
+  {
+    id: 2,
+    name: "Microsoft 365",
+  },
+  {
+    id: 1,
+    name: "Tizzy",
+  },
+];
+
 const avatarBgClasses = [
   "warningBg",
   "secondaryBg",
@@ -93,7 +108,10 @@ const transactionColumns = [
   { label: "Credit Used", key: "credit_used" },
   { label: "Amount", key: "amount" },
   { label: "Cancelled Reason", getValue: (tx) => tx?.cancelled_reason || "-" },
-  { label: "Invoice No", getValue: (tx) => tx?.invoice_no?.bill_no_full || "-" },
+  {
+    label: "Invoice No",
+    getValue: (tx) => tx?.invoice_no?.bill_no_full || "-",
+  },
 ];
 
 const TransactionsList = ({ variant = "default", limit }) => {
@@ -107,6 +125,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState("all");
+  const [selectedProviderId, setSelectedProviderId] = useState(null);
 
   const [getTransactionsList, { isLoading }] =
     useGetTransactionHistoryMutation();
@@ -140,6 +159,10 @@ const TransactionsList = ({ variant = "default", limit }) => {
     setSelectedStatuses((prev) => (prev === status ? "all" : status));
   };
 
+  const toogleProviderStatus = (id) => {
+    setSelectedProviderId((prev) => (prev === id ? "all" : id));
+  };
+
   const filteredTransactions = useMemo(() => {
     const q = searchQuery?.trim()?.toLowerCase();
 
@@ -154,16 +177,22 @@ const TransactionsList = ({ variant = "default", limit }) => {
         tx?.plan?.toLowerCase()?.includes(q);
 
       const statusKey = getStatusKey(tx?.status);
+
       const matchesStatus =
         selectedStatuses === "all" || selectedStatuses === statusKey;
+      const matchesProvider =
+        selectedProviderId === "all" ||
+        selectedProviderId == null ||
+        tx?.provider_id === selectedProviderId;
 
-      return matchesSearch && matchesStatus;
+      return matchesSearch && matchesStatus && matchesProvider;
     });
   }, [
     transactionsList,
     searchQuery,
     selectedStatuses,
     router?.query?.customerId,
+    selectedProviderId,
   ]);
 
   const finalTransactionsList = filteredTransactions?.filter((tx) => {
@@ -345,28 +374,58 @@ const TransactionsList = ({ variant = "default", limit }) => {
                 <div className="row g-4 mb-4">
                   <div className="col-auto">
                     <span className={styles.filterHead}>Status :</span>
-                    <ul className={`${styles.filterGroup} gap-2`} role="group">
-                      {statusOrder.map((status) => (
-                        <li key={status}>
-                          <button
-                            className={`${styles.filterItem} rounded-pill`}
-                            onClick={() => toggleStatus(status)}
-                            style={{
-                              backgroundColor:
-                                selectedStatuses === status
-                                  ? "var(--primaryColor)"
-                                  : "",
-                              color:
-                                selectedStatuses === status
-                                  ? "var(--whiteColor)"
-                                  : "var(--darkColor)",
-                            }}
-                          >
-                            {statusLabelMap[status]}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="d-flex align-items-start">
+                      <ul
+                        className={`${styles.filterGroup} gap-2`}
+                        role="group"
+                      >
+                        {statusOrder.map((status) => (
+                          <li key={status}>
+                            <button
+                              className={`${styles.filterItem} rounded-pill`}
+                              onClick={() => toggleStatus(status)}
+                              style={{
+                                backgroundColor:
+                                  selectedStatuses === status
+                                    ? "var(--primaryColor)"
+                                    : "",
+                                color:
+                                  selectedStatuses === status
+                                    ? "var(--whiteColor)"
+                                    : "var(--darkColor)",
+                              }}
+                            >
+                              {statusLabelMap[status]}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                      <ul
+                        className={`${styles.filterGroup} gap-2`}
+                        role="group"
+                      >
+                        {statusProvider.map((status) => (
+                          <li key={status}>
+                            <button
+                              className={`${styles.filterItem} rounded-pill`}
+                              onClick={() => toogleProviderStatus(status?.id)}
+                              style={{
+                                backgroundColor:
+                                  selectedProviderId === status?.id
+                                    ? "var(--primaryColor)"
+                                    : "",
+                                color:
+                                  selectedProviderId === status?.id
+                                    ? "var(--whiteColor)"
+                                    : "var(--darkColor)",
+                              }}
+                            >
+                              {status?.name}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -422,7 +481,9 @@ const TransactionsList = ({ variant = "default", limit }) => {
                         key={tx?.order_id || idx}
                         className={`${styles.contentRow} btnDisplay`}
                       >
-                        <div className={`${styles.txRowGrid} py-3 px-md-2 px-3`}>
+                        <div
+                          className={`${styles.txRowGrid} py-3 px-md-2 px-3`}
+                        >
                           <div className={styles.txColDate}>
                             <div className={styles.txMeta}>
                               <div className={styles.txDate}>{tx?.date}</div>

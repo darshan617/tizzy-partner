@@ -187,6 +187,7 @@ export default function TransactionDetails() {
                 <div className={styles.divider} />
 
                 <div className={styles.domainContainer}>
+                  ``
                   <div className={styles.domainCard}>
                     <div className={styles.domainName}>
                       <RiGlobalLine className={styles.domainIcon} />{" "}
