@@ -28,6 +28,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import { IoClose } from "react-icons/io5";
+import { GoPlus } from "react-icons/go";
 
 const planProviderIcons = [
   <svg
@@ -719,7 +720,7 @@ const SubscriptionsDetailsComponent = () => {
                             </div>
                           </div>
                           <button
-                            className={`btn small btnDefault`}
+                            className={styles.addLicenseBtn}
                             onClick={() => {
                               router?.push({
                                 pathname: "/order-summary",
@@ -733,7 +734,7 @@ const SubscriptionsDetailsComponent = () => {
                               });
                             }}
                           >
-                            Add
+                            <GoPlus size={14} /> Add
                           </button>
                         </div>
 
