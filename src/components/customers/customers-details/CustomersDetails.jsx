@@ -664,7 +664,12 @@ export default function CustomerDetail() {
                             </h2>
                             {allInnerPlans?.length > 0 && (
                               <Link
-                                href={`/subscriptions/all-subscriptions`}
+                                href={{
+                                  pathname: "/subscriptions/all-subscription",
+                                  query: {
+                                    customer_id: router?.query?.customerId,
+                                  },
+                                }}
                                 className={`${styles.viewAll} text-decoration-underline`}
                               >
                                 View All
