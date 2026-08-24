@@ -175,7 +175,7 @@
 .viewAllLink {
   font-size: var(--fs14);
   font-weight: 600;
-  color: #0355AC;
+  color: #0355ac;
   text-decoration: underline;
   text-transform: capitalize;
   transition: all 0.2s ease;
@@ -227,7 +227,7 @@
   overflow: hidden;
 }
 
-.btn>* {
+.btn > * {
   position: relative;
   z-index: 1;
 }
@@ -288,6 +288,7 @@
   margin: 0;
   overflow: hidden;
   flex-wrap: wrap;
+  flex: 1;
 }
 
 .filterItem {
@@ -308,7 +309,7 @@
   background: var(--whiteColor);
 }
 
-.btn-check:checked+.filterItem {
+.btn-check:checked + .filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -333,7 +334,6 @@
   stroke-width: 2;
   display: inline-block;
 }
-
 
 /* .statusBadge.active,
 .completed {
@@ -361,7 +361,6 @@
   background: var(--successSubtleColor);
   color: var(--successColor);
 }
-
 
 .upgraded,
 .downgraded {

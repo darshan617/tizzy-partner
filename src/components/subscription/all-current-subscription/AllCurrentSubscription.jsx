@@ -43,10 +43,26 @@ const statusLabelMap = {
   processing: "Processing",
 };
 
+const statusProvider = [
+  {
+    id: 3,
+    name: "Google Workspace",
+  },
+  {
+    id: 2,
+    name: "Microsoft 365",
+  },
+  {
+    id: 1,
+    name: "Tizzy",
+  },
+];
+
 const AllCurrentSubscription = () => {
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState("all");
   const [hasMounted, setHasMounted] = useState(false);
+  const [selectedProviderId, setSelectedProviderId] = useState(null);
   const router = useRouter();
 
   // js-cookie is browser-only; wait until mount so SSR and first client paint match
@@ -63,8 +79,9 @@ const AllCurrentSubscription = () => {
   const { data: allCustomersDetails, isLoading } = useAllCustomersDetailsQuery(
     {
       partner_id: userData?.id,
+      customer_id: router?.query?.customer_id,
     },
-    { skip: !hasMounted || !userData?.id },
+    { skip: !hasMounted || !userData?.id || !router?.query?.customer_id },
   );
 
   const customers = allCustomersDetails?.data?.customers || [];
@@ -93,9 +110,18 @@ const AllCurrentSubscription = () => {
           ? true
           : subscription?.status?.toLowerCase() === selectedStatuses;
 
-      return matchesCustomer && matchesStatus;
+      const matchesProvider =
+        selectedProviderId == null ||
+        subscription?.provider_id === selectedProviderId;
+
+      return matchesCustomer && matchesStatus && matchesProvider;
     });
-  }, [allSubscriptions, router?.query?.customerId, selectedStatuses]);
+  }, [
+    allSubscriptions,
+    router?.query?.customerId,
+    selectedStatuses,
+    selectedProviderId,
+  ]);
 
   const selectedCustomer = customers.find(
     (customer) =>
@@ -185,32 +211,60 @@ const AllCurrentSubscription = () => {
               <div className="row g-4 mb-4">
                 <div className={`${styles.filterPart} col-auto`}>
                   <span className={styles.filterHead}>Status :</span>
-                  <ul className={`${styles.filterGroup} gap-2`} role="group">
-                    {statusOrder.map((status) => (
-                      <li key={status}>
-                        <button
-                          className={`${styles.filterItem} rounded-pill`}
-                          onClick={() =>
-                            selectedStatuses === status
-                              ? setSelectedStatuses("all")
-                              : setSelectedStatuses(status)
-                          }
-                          style={{
-                            backgroundColor:
+                  <div className="d-flex align-items-start">
+                    <ul className={`${styles.filterGroup} gap-2`} role="group">
+                      {statusOrder.map((status) => (
+                        <li key={status}>
+                          <button
+                            className={`${styles.filterItem} rounded-pill`}
+                            onClick={() =>
                               selectedStatuses === status
-                                ? "var(--primaryColor)"
-                                : "",
-                            color:
-                              selectedStatuses === status
-                                ? "var(--whiteColor)"
-                                : "var(--darkColor)",
-                          }}
-                        >
-                          {statusLabelMap[status]}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
+                                ? setSelectedStatuses("all")
+                                : setSelectedStatuses(status)
+                            }
+                            style={{
+                              backgroundColor:
+                                selectedStatuses === status
+                                  ? "var(--primaryColor)"
+                                  : "",
+                              color:
+                                selectedStatuses === status
+                                  ? "var(--whiteColor)"
+                                  : "var(--darkColor)",
+                            }}
+                          >
+                            {statusLabelMap[status]}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    <ul className={`${styles.filterGroup} gap-2`} role="group">
+                      {statusProvider.map((status) => (
+                        <li key={status}>
+                          <button
+                            className={`${styles.filterItem} rounded-pill`}
+                            onClick={() =>
+                              selectedProviderId === status?.id
+                                ? setSelectedProviderId(null)
+                                : setSelectedProviderId(status?.id)
+                            }
+                            style={{
+                              backgroundColor:
+                                selectedProviderId === status?.id
+                                  ? "var(--primaryColor)"
+                                  : "",
+                              color:
+                                selectedProviderId === status?.id
+                                  ? "var(--whiteColor)"
+                                  : "var(--darkColor)",
+                            }}
+                          >
+                            {status?.name}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>

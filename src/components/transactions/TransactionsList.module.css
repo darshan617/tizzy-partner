@@ -165,6 +165,8 @@
   padding: 0;
   margin: 0;
   -webkit-overflow-scrolling: touch;
+  flex-wrap: wrap;
+  flex: 1;
 }
 
 .filterGroup::-webkit-scrollbar {
@@ -653,10 +655,9 @@
 
 .billingTransactionRowInner {
   display: grid;
-  grid-template-columns: minmax(110px, 12%) minmax(180px, 1fr) minmax(
-      90px,
-      auto
-    ) minmax(100px, auto) minmax(40px, auto);
+  grid-template-columns:
+    minmax(110px, 12%) minmax(180px, 1fr) minmax(90px, auto)
+    minmax(100px, auto) minmax(40px, auto);
   align-items: center;
   gap: 12px 16px;
   width: 100%;

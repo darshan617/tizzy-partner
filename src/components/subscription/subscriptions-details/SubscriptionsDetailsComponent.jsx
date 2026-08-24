@@ -719,23 +719,36 @@ const SubscriptionsDetailsComponent = () => {
                               </div>
                             </div>
                           </div>
-                          <button
-                            className={styles.addLicenseBtn}
-                            onClick={() => {
-                              router?.push({
-                                pathname: "/order-summary",
-                                query: {
-                                  type: "add-license",
-                                  customer_id: router?.query?.customerId,
-                                  order_id: router?.query?.orderId,
-                                  order_sub_id: plan?.order_sub_id,
-                                  licenses: plan?.licenses,
-                                },
-                              });
-                            }}
-                          >
-                            <GoPlus size={14} /> Add
-                          </button>
+                          {plan?.status?.toLowerCase() !== "draft" &&
+                            plan?.status?.toLowerCase() !== "pending" &&
+                            plan?.status?.toLowerCase() !== "cancelled" &&
+                            plan?.status?.toLowerCase() !== "upgrade pending" &&
+                            plan?.status?.toLowerCase() !== "upgraded" &&
+                            plan?.status?.toLowerCase() !==
+                              "downgrade pending" &&
+                            plan?.status?.toLowerCase() !== "downgraded" &&
+                            plan?.status?.toLowerCase() !== "renewal pending" &&
+                            plan?.status?.toLowerCase() !== "cancelled" &&
+                            plan?.status?.toLowerCase() !== "processing" &&
+                            !plan?.hide_upgrade && (
+                              <button
+                                className={styles.addLicenseBtn}
+                                onClick={() => {
+                                  router?.push({
+                                    pathname: "/order-summary",
+                                    query: {
+                                      type: "add-license",
+                                      customer_id: router?.query?.customerId,
+                                      order_id: router?.query?.orderId,
+                                      order_sub_id: plan?.order_sub_id,
+                                      licenses: plan?.licenses,
+                                    },
+                                  });
+                                }}
+                              >
+                                <GoPlus size={14} /> Add
+                              </button>
+                            )}
                         </div>
 
                         {/* {plan?.status?.toLowerCase() === "expiring" ||
