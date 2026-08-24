@@ -255,7 +255,7 @@
 
 .addBtn:hover {
   transition: all 0.3s ease;
-  background: #0028b8;
+  background: #024a96;
 }
 
 .upgradeBtn {
@@ -266,11 +266,12 @@
   padding: 9px 22px;
   font-size: 13px;
   font-weight: 600;
+  border: 1px solid var(--whiteColor);
 }
 
 .upgradeBtn:hover {
-  transition: all 0.3s ease;
-  background: #e2e5f0;
+  border: 1px solid var(--primaryColor);
+  transition: 0.2s;
 }
 
 .renewBtn {
@@ -285,7 +286,7 @@
 
 .renewBtn:hover {
   transition: all 0.3s ease;
-  background: #0028b8;
+  background: #024a96;
 }
 
 .viewAllLink {
@@ -368,7 +369,6 @@
 
 /* Responsive */
 @media (max-width: 767px) {
-
   .infoBlock {
     min-width: 100%;
   }

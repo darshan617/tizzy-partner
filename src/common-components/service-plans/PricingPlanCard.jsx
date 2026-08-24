@@ -62,11 +62,26 @@ export default function PricingPlanCard({
   const hasGooglePlanConflict =
     Number(provider_id) === 3 && Boolean(hasgoogleplans) && !plan_is_in_cart;
 
+  // const parsedLimit = Number(customer_limit);
+  // const maxLicenses =
+  //   Number.isFinite(parsedLimit) && parsedLimit > 0
+  //     ? parsedLimit
+  //     : Number.MAX_SAFE_INTEGER;
   const parsedLimit = Number(customer_limit);
-  const maxLicenses =
+  let maxLicenses =
     Number.isFinite(parsedLimit) && parsedLimit > 0
       ? parsedLimit
       : Number.MAX_SAFE_INTEGER;
+
+  const routerLicenses = Number(router?.query?.licenses);
+
+  if (
+    router?.query?.type === "partial-upgrade" &&
+    Number.isFinite(routerLicenses) &&
+    routerLicenses > 0
+  ) {
+    maxLicenses = Math.min(maxLicenses, Math.max(1, routerLicenses - 1));
+  }
   const parsedCount = Number(lisceneCounterForPlan);
   const licenseCount =
     Number.isFinite(parsedCount) && parsedCount >= 1 ? parsedCount : 1;
