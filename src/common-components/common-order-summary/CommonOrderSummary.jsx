@@ -653,6 +653,7 @@ const CommonOrderSummary = () => {
           main_cart_id: router?.query?.main_cart_id,
           upgrade_mode:
             router?.query?.type === "partial-upgrade" ? "partial" : "full",
+          plan_id: router?.query?.planId,
         },
       });
       const walletBalance = res?.data?.wallet_balance;
@@ -661,15 +662,20 @@ const CommonOrderSummary = () => {
         if (!applied && cartData?.plans?.length) {
           applyUpgradeCartState(cartData, cartData?.wallet_balance);
         }
-      } else if (cartData?.plans?.length) {
-        applyUpgradeCartState(cartData, cartData?.wallet_balance);
-      } else {
-        console.log(res?.data?.message, "res?.data?.message");
+      }
+      //  else if (cartData?.plans?.length) {
+      //   applyUpgradeCartState(cartData, cartData?.wallet_balance);
+      // }
+      else {
+        setCartDetails([]);
+        showToast(res?.error?.data?.message, "error");
       }
     } catch (error) {
-      if (cartData?.plans?.length) {
-        applyUpgradeCartState(cartData, cartData?.wallet_balance);
-      }
+      // if (cartData?.plans?.length) {
+      //   applyUpgradeCartState(cartData, cartData?.wallet_balance);
+      // }
+      setCartDetails([]);
+      showToast(error, "error");
     }
   };
 

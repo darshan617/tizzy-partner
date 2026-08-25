@@ -48,7 +48,7 @@ const formatEnrollmentType = (orderType) => {
 
 const getServiceIcon = (providerId) =>
   SIDEBAR_SERVICES_CONSTANTS.find((s) => s.id === Number(providerId))?.image ||
-  SIDEBAR_SERVICES_CONSTANTS.find((s) => s.id === 1)?.image;
+  "-";
 
 const OrderComplete = () => {
   const router = useRouter();

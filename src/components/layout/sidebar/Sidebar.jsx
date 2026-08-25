@@ -58,8 +58,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
         <div className={styles.credScale}>
           <div
             className={styles.credscaleBar}
+            // style={{
+            //   width: `${Math.min(usedPercentage, 100)}%`,
+            // }}
             style={{
-              width: `${Math.min(usedPercentage, 100)}%`,
+              width: `${100 - Math.max(0, usedPercentage)}%`,
             }}
           />
         </div>
