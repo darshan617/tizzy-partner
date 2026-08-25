@@ -288,7 +288,6 @@
   margin: 0;
   overflow: hidden;
   flex-wrap: wrap;
-  flex: 1;
 }
 
 .filterItem {
@@ -564,6 +563,9 @@
   background-color: var(--primaryColor);
   color: var(--whiteColor);
   transition: 0.2s;
+}
+.filterHead {
+  font-weight: 600;
 }
 
 @media (max-width: 991px) {

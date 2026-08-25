@@ -102,11 +102,12 @@ const AllInvoice = ({
   fetchInvoiceData,
   paymentAttempts,
 }) => {
-  console.log("paymentAttempts", paymentAttempts);
   const { showToast } = useToast();
   const router = useRouter();
   const isPopupupVisible = useSelector(selectIsPopupVisible);
   const dispatch = useDispatch();
+
+  console.log(isPopupupVisible, "isPopupupVisibleisPopupupVisible");
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -243,6 +244,7 @@ const AllInvoice = ({
           order_id: razorpay.order_id,
           // prefill: razorpay.prefill,
           handler: async function (response) {
+            dispatch(setIsPopupVisible("verifying-payment"));
             const verifyPaymentRes = await paymentVerify({
               body: {
                 invoice_id: type === "multiple" ? invoiceId : [invoiceId],
@@ -251,7 +253,6 @@ const AllInvoice = ({
                 razorpay_order_id: response.razorpay_order_id,
               },
             });
-            dispatch(setIsPopupVisible("verifying-payment"));
 
             if (
               verifyPaymentRes?.data?.success ||
@@ -289,7 +290,6 @@ const AllInvoice = ({
         rzp.open();
       } else {
         console.log(res, "payment failed");
-
         showToast(res?.data?.message || res?.error?.data?.message, "error");
         dispatch(setIsPopupVisible(null));
         await fetchInvoiceData();
@@ -307,317 +307,320 @@ const AllInvoice = ({
   const showingStart = showingEnd > 0 ? 1 : 0;
 
   return (
-    <div className="col">
-      <div className={`${styles.sectionCard} ${styles.adjustWidth}`}>
-        <div className={styles.filtersMain}>
-          <div className="py-3 px-sm-4 px-3 border-bottom">
-            <div className="row align-items-center justify-content-between">
-              <div className="col-sm-auto order-sm-2">
-                <search className={styles.pageSearchBox}>
-                  <input
-                    type="text"
-                    className={`${styles.pageSearch} form-control`}
-                    placeholder="Search Invoice"
-                    value={searchQuery}
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                  />
-                  <button className={styles.searchBtn} type="button">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className={styles.icon}
-                    >
-                      <circle cx="11" cy="11" r="8" />
-                      <path d="m21 21-4.3-4.3" />
-                    </svg>
-                  </button>
-                </search>
-              </div>
-              <div
-                className={`${styles.searchCount} col-sm-auto order-sm-1 text-left my-2 my-sm-0`}
-              >
-                Showing{" "}
-                <span className="fw-medium darkColor">
-                  {showingStart} - {showingEnd}
-                </span>{" "}
-                from <span className="fw-medium darkColor">{resultTotal}</span>{" "}
-                {resultTotal === 1 ? "result" : "results"}
-                <p style={{ color: "#e0ac52" }}>
-                  (Note: You have {paymentAttempts?.remaining_attempts || 0}{" "}
-                  payment attempt(s) remaining across all invoices)
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.filterWrapper}>
-            <div
-              className={`collapse${filterOpen ? " show" : ""}`}
-              id="invoiceFilterSection"
-            >
-              <div className="p-sm-4 p-3">
-                <div className="row g-4 mb-4">
-                  <div className={`${styles.filterPart} col-auto`}>
-                    <span className={styles.filterHead}>Status :</span>
-                    <ul className={`${styles.filterGroup} gap-2`} role="group">
-                      {statusOrder?.map((status) => (
-                        <li key={status}>
-                          <button
-                            className={`${styles.filterItem} rounded-pill`}
-                            onClick={() => toggleStatus(status)}
-                            style={{
-                              backgroundColor:
-                                selectedStatuses === status
-                                  ? "var(--primaryColor)"
-                                  : "",
-                              color:
-                                selectedStatuses === status
-                                  ? "var(--whiteColor)"
-                                  : "var(--darkColor)",
-                            }}
-                          >
-                            {statusLabelMap[status]}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+    <>
+      <div className="col">
+        <div className={`${styles.sectionCard} ${styles.adjustWidth}`}>
+          <div className={styles.filtersMain}>
+            <div className="py-3 px-sm-4 px-3 border-bottom">
+              <div className="row align-items-center justify-content-between">
+                <div className="col-sm-auto order-sm-2">
+                  <search className={styles.pageSearchBox}>
+                    <input
+                      type="text"
+                      className={`${styles.pageSearch} form-control`}
+                      placeholder="Search Invoice"
+                      value={searchQuery}
+                      onChange={(event) => setSearchQuery(event.target.value)}
+                    />
+                    <button className={styles.searchBtn} type="button">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={styles.icon}
+                      >
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.3-4.3" />
+                      </svg>
+                    </button>
+                  </search>
+                </div>
+                <div
+                  className={`${styles.searchCount} col-sm-auto order-sm-1 text-left my-2 my-sm-0`}
+                >
+                  Showing{" "}
+                  <span className="fw-medium darkColor">
+                    {showingStart} - {showingEnd}
+                  </span>{" "}
+                  from{" "}
+                  <span className="fw-medium darkColor">{resultTotal}</span>{" "}
+                  {resultTotal === 1 ? "result" : "results"}
+                  <p style={{ color: "#e0ac52" }}>
+                    (Note: You have {paymentAttempts?.remaining_attempts || 0}{" "}
+                    payment attempt(s) remaining across all invoices)
+                  </p>
                 </div>
               </div>
             </div>
 
-            <button
-              type="button"
-              className={`${styles.btn} ${styles.small} ${styles.btnDefault} ${styles.filterBtn}`}
-              onClick={() => setFilterOpen((prev) => !prev)}
-              aria-expanded={filterOpen}
-            >
-              {filterOpen ? (
-                <>
-                  <IoClose className={`${styles.icon} me-2`} />
-                  <span>Close</span>
-                </>
-              ) : (
-                <>
-                  <FiFilter className={`${styles.icon} me-2`} />
-                  <span>Filters</span>
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-
-        <div
-          className={`${styles.toolbar} py-2 px-sm-4 px-3 d-flex align-items-center justify-content-between`}
-        >
-          <label className="d-flex align-items-center gap-2 mb-0">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              checked={allVisibleSelected}
-              onChange={toggleSelectAll}
-            />
-            <span className={styles.checkAllLabel}>Check All</span>
-          </label>
-
-          <div className="d-flex align-items-center gap-2">
-            <button
-              onClick={() => handlePayNow(selectedIds, "multiple")}
-              disabled={selectedIds?.length === 0}
-              style={{
-                opacity: selectedIds?.length === 0 ? 0.5 : 1,
-                cursor: selectedIds?.length === 0 ? "not-allowed" : "pointer",
-              }}
-              className={styles.paySelectedBtn}
-            >
-              Pay Selected (₹ {selectedPayment?.toFixed(2)})
-              {isPaymentVerifyLoading && <Loader />}
-            </button>
-            <DownloadExcel
-              className={styles.downloadListBtn}
-              data={filteredInvoices}
-              columns={invoiceColumns}
-              fileName="invoice-list"
-              buttonText="Download List"
-            />
-          </div>
-        </div>
-
-        <div className={styles.listScrollArea}>
-          <div className="py-4 px-sm-4 px-3">
-            <div className="d-flex flex-column gap-3 mb-4">
-              {!isInvoiceDataLoading ? (
-                filteredInvoices?.length > 0 ? (
-                  filteredInvoices
-                    ?.filter((invoice) =>
-                      selectedStatuses === "all"
-                        ? true
-                        : invoice?.status?.toLowerCase() === selectedStatuses,
-                    )
-                    ?.map((invoice, idx) => (
-                      <div
-                        key={invoice?.invoice_no || idx}
-                        className={`${styles.contentRow} btnDisplay`}
+            <div className={styles.filterWrapper}>
+              <div
+                className={`collapse${filterOpen ? " show" : ""}`}
+                id="invoiceFilterSection"
+              >
+                <div className="p-sm-4 p-3">
+                  <div className="row g-4 mb-4">
+                    <div className={`${styles.filterPart} col-auto`}>
+                      <span className={styles.filterHead}>Status :</span>
+                      <ul
+                        className={`${styles.filterGroup} gap-2`}
+                        role="group"
                       >
-                        <div className="row align-items-center g-0">
-                          <div className={`${styles.ckbCol} col-auto`}>
-                            <input
-                              type="checkbox"
-                              className="form-check-input"
-                              checked={selectedIds?.includes(
-                                invoice?.invoice_id,
-                              )}
-                              onChange={() =>
-                                toggleSelectOne(invoice?.invoice_id)
-                              }
-                              disabled={
-                                invoice?.status?.toLowerCase() === "paid" ||
-                                invoice?.status?.toLowerCase() ===
-                                  "cancelled" ||
-                                paymentAttempts?.payment_link_expired
-                              }
+                        {statusOrder?.map((status) => (
+                          <li key={status}>
+                            <button
+                              className={`${styles.filterItem} rounded-pill`}
+                              onClick={() => toggleStatus(status)}
                               style={{
-                                cursor:
+                                backgroundColor:
+                                  selectedStatuses === status
+                                    ? "var(--primaryColor)"
+                                    : "",
+                                color:
+                                  selectedStatuses === status
+                                    ? "var(--whiteColor)"
+                                    : "var(--darkColor)",
+                              }}
+                            >
+                              {statusLabelMap[status]}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className={`${styles.btn} ${styles.small} ${styles.btnDefault} ${styles.filterBtn}`}
+                onClick={() => setFilterOpen((prev) => !prev)}
+                aria-expanded={filterOpen}
+              >
+                {filterOpen ? (
+                  <>
+                    <IoClose className={`${styles.icon} me-2`} />
+                    <span>Close</span>
+                  </>
+                ) : (
+                  <>
+                    <FiFilter className={`${styles.icon} me-2`} />
+                    <span>Filters</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div
+            className={`${styles.toolbar} py-2 px-sm-4 px-3 d-flex align-items-center justify-content-between`}
+          >
+            <label className="d-flex align-items-center gap-2 mb-0">
+              <input
+                type="checkbox"
+                className="form-check-input"
+                checked={allVisibleSelected}
+                onChange={toggleSelectAll}
+              />
+              <span className={styles.checkAllLabel}>Check All</span>
+            </label>
+
+            <div className="d-flex align-items-center gap-2">
+              <button
+                onClick={() => handlePayNow(selectedIds, "multiple")}
+                disabled={selectedIds?.length === 0}
+                style={{
+                  opacity: selectedIds?.length === 0 ? 0.5 : 1,
+                  cursor: selectedIds?.length === 0 ? "not-allowed" : "pointer",
+                }}
+                className={styles.paySelectedBtn}
+              >
+                Pay Selected (₹ {selectedPayment?.toFixed(2)})
+                {isPaymentVerifyLoading && <Loader />}
+              </button>
+              <DownloadExcel
+                className={styles.downloadListBtn}
+                data={filteredInvoices}
+                columns={invoiceColumns}
+                fileName="invoice-list"
+                buttonText="Download List"
+              />
+            </div>
+          </div>
+
+          <div className={styles.listScrollArea}>
+            <div className="py-4 px-sm-4 px-3">
+              <div className="d-flex flex-column gap-3 mb-4">
+                {!isInvoiceDataLoading ? (
+                  filteredInvoices?.length > 0 ? (
+                    filteredInvoices
+                      ?.filter((invoice) =>
+                        selectedStatuses === "all"
+                          ? true
+                          : invoice?.status?.toLowerCase() === selectedStatuses,
+                      )
+                      ?.map((invoice, idx) => (
+                        <div
+                          key={invoice?.invoice_no || idx}
+                          className={`${styles.contentRow} btnDisplay`}
+                        >
+                          <div className="row align-items-center g-0">
+                            <div className={`${styles.ckbCol} col-auto`}>
+                              <input
+                                type="checkbox"
+                                className="form-check-input"
+                                checked={selectedIds?.includes(
+                                  invoice?.invoice_id,
+                                )}
+                                onChange={() =>
+                                  toggleSelectOne(invoice?.invoice_id)
+                                }
+                                disabled={
                                   invoice?.status?.toLowerCase() === "paid" ||
                                   invoice?.status?.toLowerCase() ===
                                     "cancelled" ||
                                   paymentAttempts?.payment_link_expired
-                                    ? "not-allowed"
-                                    : "pointer",
-                              }}
-                            />
-                          </div>
+                                }
+                                style={{
+                                  cursor:
+                                    invoice?.status?.toLowerCase() === "paid" ||
+                                    invoice?.status?.toLowerCase() ===
+                                      "cancelled" ||
+                                    paymentAttempts?.payment_link_expired
+                                      ? "not-allowed"
+                                      : "pointer",
+                                }}
+                              />
+                            </div>
 
-                          <div className="col">
-                            <div className="row align-items-center py-3 px-3">
-                              <div className="col-lg-2 col-md-3 col-12 mb-2 mb-md-0">
-                                <div className={styles.invoiceMeta}>
-                                  <div className={styles.crDate}>
-                                    {invoice?.date}
-                                  </div>
-                                  <div className={styles.crNumber}>
-                                    {invoice?.invoice_no}
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="col-lg-4 col-md-5 col-12 mb-2 mb-md-0">
-                                <div className="d-flex align-items-center">
-                                  <div
-                                    className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
-                                  >
-                                    {invoice?.domain_name
-                                      ?.charAt(0)
-                                      ?.toUpperCase()}
-                                  </div>
-                                  <div className="ps-2 min-w-0">
-                                    <div className={styles.crDomainName}>
-                                      {invoice?.domain_name}
+                            <div className="col">
+                              <div className="row align-items-center py-3 px-3">
+                                <div className="col-lg-2 col-md-3 col-12 mb-2 mb-md-0">
+                                  <div className={styles.invoiceMeta}>
+                                    <div className={styles.crDate}>
+                                      {invoice?.date}
                                     </div>
-                                    <div className={`${styles.crName} mt-1`}>
-                                      {invoice?.plan_name}
+                                    <div className={styles.crNumber}>
+                                      {invoice?.invoice_no}
                                     </div>
                                   </div>
                                 </div>
-                              </div>
 
-                              <div className="col-lg-2 col-md-2 col-6 text-md-left">
-                                <span
-                                  className={`${styles.statusBadge} ${getStatusBadgeClass(invoice?.status)}`}
-                                >
-                                  {invoice?.status}
-                                </span>
-                              </div>
-
-                              <div className="col-lg-2 col-md-2 col-6 text-md-left  ">
-                                <span className={styles.amountValue}>
-                                  {invoice?.formatted_amount ||
-                                    `₹ ${Number(invoice?.amount || 0).toFixed(2)}`}
-                                </span>
-                              </div>
-
-                              <div
-                                className={`col-lg-2 col-md-12 col-12 ${styles.actionsCol} mt-2 mt-lg-0`}
-                              >
-                                <div>
-                                  <button
-                                    type="button"
-                                    className={styles.payNowBtn}
-                                    disabled={
-                                      !showPayNow(invoice?.status) ||
-                                      paymentAttempts?.payment_link_expired
-                                    }
-                                    style={{
-                                      cursor:
-                                        showPayNow(invoice?.status) &&
-                                        !paymentAttempts?.payment_link_expired
-                                          ? "pointer"
-                                          : "not-allowed",
-                                      backgroundColor:
-                                        showPayNow(invoice?.status) &&
-                                        !paymentAttempts?.payment_link_expired
-                                          ? "var(--primaryColor)"
-                                          : "#02499662",
-                                    }}
-                                    onClick={() =>
-                                      handlePayNow(
-                                        invoice?.invoice_id,
-                                        "single",
-                                      )
-                                    }
-                                  >
-                                    Pay Now
-                                  </button>
-
-                                  {paymentAttempts?.payment_link_expired && (
-                                    <p
-                                      className=" text-danger text-center"
-                                      style={{ fontSize: "12px" }}
+                                <div className="col-lg-4 col-md-5 col-12 mb-2 mb-md-0">
+                                  <div className="d-flex align-items-center">
+                                    <div
+                                      className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
                                     >
-                                      {`${paymentAttempts?.remaining_hrs || 0} hrs remaining to pay`}
-                                    </p>
-                                  )}
+                                      {invoice?.domain_name
+                                        ?.charAt(0)
+                                        ?.toUpperCase()}
+                                    </div>
+                                    <div className="ps-2 min-w-0">
+                                      <div className={styles.crDomainName}>
+                                        {invoice?.domain_name}
+                                      </div>
+                                      <div className={`${styles.crName} mt-1`}>
+                                        {invoice?.plan_name}
+                                      </div>
+                                    </div>
+                                  </div>
                                 </div>
 
-                                <Link
-                                  href={`${invoice?.invoice_pdf_url}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className={styles.downloadBtn}
-                                  aria-label="Download invoice"
+                                <div className="col-lg-2 col-md-2 col-6 text-md-left">
+                                  <span
+                                    className={`${styles.statusBadge} ${getStatusBadgeClass(invoice?.status)}`}
+                                  >
+                                    {invoice?.status}
+                                  </span>
+                                </div>
+
+                                <div className="col-lg-2 col-md-2 col-6 text-md-left  ">
+                                  <span className={styles.amountValue}>
+                                    {invoice?.formatted_amount ||
+                                      `₹ ${Number(invoice?.amount || 0).toFixed(2)}`}
+                                  </span>
+                                </div>
+
+                                <div
+                                  className={`col-lg-2 col-md-12 col-12 ${styles.actionsCol} mt-2 mt-lg-0`}
                                 >
-                                  <MdOutlineFileDownload
-                                    className={styles.downloadBtnIcon}
-                                  />
-                                </Link>
+                                  <div>
+                                    <button
+                                      type="button"
+                                      className={styles.payNowBtn}
+                                      disabled={
+                                        !showPayNow(invoice?.status) ||
+                                        paymentAttempts?.payment_link_expired
+                                      }
+                                      style={{
+                                        cursor:
+                                          showPayNow(invoice?.status) &&
+                                          !paymentAttempts?.payment_link_expired
+                                            ? "pointer"
+                                            : "not-allowed",
+                                        backgroundColor:
+                                          showPayNow(invoice?.status) &&
+                                          !paymentAttempts?.payment_link_expired
+                                            ? "var(--primaryColor)"
+                                            : "#02499662",
+                                      }}
+                                      onClick={() =>
+                                        handlePayNow(
+                                          invoice?.invoice_id,
+                                          "single",
+                                        )
+                                      }
+                                    >
+                                      Pay Now
+                                    </button>
+
+                                    {paymentAttempts?.payment_link_expired && (
+                                      <p
+                                        className=" text-danger text-center"
+                                        style={{ fontSize: "12px" }}
+                                      >
+                                        {`${paymentAttempts?.remaining_hrs || 0} hrs remaining to pay`}
+                                      </p>
+                                    )}
+                                  </div>
+
+                                  <Link
+                                    href={`${invoice?.invoice_pdf_url}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.downloadBtn}
+                                    aria-label="Download invoice"
+                                  >
+                                    <MdOutlineFileDownload
+                                      className={styles.downloadBtnIcon}
+                                    />
+                                  </Link>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))
+                      ))
+                  ) : (
+                    <p className="text-center m-0">No Invoice Data</p>
+                  )
                 ) : (
-                  <p className="text-center m-0">No Invoice Data</p>
-                )
-              ) : (
-                <Loader />
-              )}
+                  <Loader />
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
       {isPopupupVisible === "verifying-payment" && (
-        <CustomPopup
-          isOpen={true}
-          onClose={() => dispatch(setIsPopupVisible(null))}
-        >
+        <CustomPopup onClose={() => dispatch(setIsPopupVisible(null))}>
           <div className={styles.verifyingPaymentPopup}>
             <Loader />
             <h2>Verifying Payment...</h2>
@@ -625,7 +628,7 @@ const AllInvoice = ({
           </div>
         </CustomPopup>
       )}
-    </div>
+    </>
   );
 };
 
