@@ -394,7 +394,7 @@ const AllSubscriptions = ({
         </div>
       </div>
       {/* Pagination */}
-      {pageNumbersArray?.length > 10 && (
+      {pageNumbersArray?.length && (
         <div className={styles.paginationContainer}>
           <button
             className={styles.paginationButton}

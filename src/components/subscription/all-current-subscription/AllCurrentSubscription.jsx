@@ -210,60 +210,71 @@ const AllCurrentSubscription = () => {
             <div className="p-sm-4 p-3">
               <div className="row g-4 mb-4">
                 <div className={`${styles.filterPart} col-auto`}>
-                  <span className={styles.filterHead}>Status :</span>
                   <div className="d-flex align-items-start">
-                    <ul className={`${styles.filterGroup} gap-2`} role="group">
-                      {statusOrder.map((status) => (
-                        <li key={status}>
-                          <button
-                            className={`${styles.filterItem} rounded-pill`}
-                            onClick={() =>
-                              selectedStatuses === status
-                                ? setSelectedStatuses("all")
-                                : setSelectedStatuses(status)
-                            }
-                            style={{
-                              backgroundColor:
+                    <div style={{ flex: 1 }}>
+                      <span className={styles.filterHead}>Status :</span>
+                      <ul
+                        className={`${styles.filterGroup} gap-2`}
+                        role="group"
+                      >
+                        {statusOrder.map((status) => (
+                          <li key={status}>
+                            <button
+                              className={`${styles.filterItem} rounded-pill`}
+                              onClick={() =>
                                 selectedStatuses === status
-                                  ? "var(--primaryColor)"
-                                  : "",
-                              color:
-                                selectedStatuses === status
-                                  ? "var(--whiteColor)"
-                                  : "var(--darkColor)",
-                            }}
-                          >
-                            {statusLabelMap[status]}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                    <ul className={`${styles.filterGroup} gap-2`} role="group">
-                      {statusProvider.map((status) => (
-                        <li key={status}>
-                          <button
-                            className={`${styles.filterItem} rounded-pill`}
-                            onClick={() =>
-                              selectedProviderId === status?.id
-                                ? setSelectedProviderId(null)
-                                : setSelectedProviderId(status?.id)
-                            }
-                            style={{
-                              backgroundColor:
+                                  ? setSelectedStatuses("all")
+                                  : setSelectedStatuses(status)
+                              }
+                              style={{
+                                backgroundColor:
+                                  selectedStatuses === status
+                                    ? "var(--primaryColor)"
+                                    : "",
+                                color:
+                                  selectedStatuses === status
+                                    ? "var(--whiteColor)"
+                                    : "var(--darkColor)",
+                              }}
+                            >
+                              {statusLabelMap[status]}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <span className={styles.filterHead}>Provider :</span>
+                      <ul
+                        className={`${styles.filterGroup} gap-2`}
+                        role="group"
+                      >
+                        {statusProvider.map((status) => (
+                          <li key={status}>
+                            <button
+                              className={`${styles.filterItem} rounded-pill`}
+                              onClick={() =>
                                 selectedProviderId === status?.id
-                                  ? "var(--primaryColor)"
-                                  : "",
-                              color:
-                                selectedProviderId === status?.id
-                                  ? "var(--whiteColor)"
-                                  : "var(--darkColor)",
-                            }}
-                          >
-                            {status?.name}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
+                                  ? setSelectedProviderId(null)
+                                  : setSelectedProviderId(status?.id)
+                              }
+                              style={{
+                                backgroundColor:
+                                  selectedProviderId === status?.id
+                                    ? "var(--primaryColor)"
+                                    : "",
+                                color:
+                                  selectedProviderId === status?.id
+                                    ? "var(--whiteColor)"
+                                    : "var(--darkColor)",
+                              }}
+                            >
+                              {status?.name}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>

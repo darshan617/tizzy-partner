@@ -755,33 +755,34 @@ const SubscriptionsDetailsComponent = () => {
                       plan?.status?.toLowerCase() === "expired" ? ( */}
 
                         <div className={`${styles.subActions}`}>
-                          {(plan?.status?.toLowerCase() === "expiring" ||
-                            plan?.status?.toLowerCase() === "expired") && (
-                            <>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  router?.push({
-                                    pathname: "/order-summary",
-                                    query: {
-                                      type: "renew-plan",
-                                      order_id: subscriptionDetails?.order_id,
-                                      order_sub_id: plan?.order_sub_id,
-                                      planId: plan?.plan_id,
-                                    },
-                                  })
-                                }
-                                className={`${styles.subRenewBtn}`}
-                              >
-                                <MdAutorenew
-                                  className="me-2"
-                                  size={14}
-                                  style={{ minWidth: "14px" }}
-                                />
-                                <span>Renew</span>
-                              </button>
-                            </>
-                          )}
+                          {!plan?.hide_upgrade &&
+                            (plan?.status?.toLowerCase() === "expiring" ||
+                              plan?.status?.toLowerCase() === "expired") && (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    router?.push({
+                                      pathname: "/order-summary",
+                                      query: {
+                                        type: "renew-plan",
+                                        order_id: subscriptionDetails?.order_id,
+                                        order_sub_id: plan?.order_sub_id,
+                                        planId: plan?.plan_id,
+                                      },
+                                    })
+                                  }
+                                  className={`${styles.subRenewBtn}`}
+                                >
+                                  <MdAutorenew
+                                    className="me-2"
+                                    size={14}
+                                    style={{ minWidth: "14px" }}
+                                  />
+                                  <span>Renew</span>
+                                </button>
+                              </>
+                            )}
 
                           {plan?.status?.toLowerCase() !== "draft" &&
                           plan?.status?.toLowerCase() !== "pending" &&
@@ -873,37 +874,38 @@ const SubscriptionsDetailsComponent = () => {
                             </button>
                           )}
 
-                          {(plan?.status?.toLowerCase() === "expiring" ||
-                            plan?.status?.toLowerCase() === "expired") && (
-                            <>
-                              <Link
-                                className={styles.downgradeBtn}
-                                href={{
-                                  pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                                  query: {
-                                    type: "downgrade",
-                                    order_id: subscriptionDetails?.order_id,
-                                    customer_id: router?.query?.customerId,
-                                    plan_id: plan?.plan_id,
-                                    order_sub_id: plan?.order_sub_id,
-                                  },
-                                }}
-                                onClick={() => {
-                                  Cookies.remove("customerData");
-                                  Cookies.set(
-                                    "customerData",
-                                    JSON.stringify({
-                                      partner_id: userData?.id,
+                          {!plan?.hide_upgrade &&
+                            (plan?.status?.toLowerCase() === "expiring" ||
+                              plan?.status?.toLowerCase() === "expired") && (
+                              <>
+                                <Link
+                                  className={styles.downgradeBtn}
+                                  href={{
+                                    pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                                    query: {
+                                      type: "downgrade",
+                                      order_id: subscriptionDetails?.order_id,
                                       customer_id: router?.query?.customerId,
-                                      domain_name: domainName,
-                                    }),
-                                  );
-                                }}
-                              >
-                                Downgrade
-                              </Link>
-                            </>
-                          )}
+                                      plan_id: plan?.plan_id,
+                                      order_sub_id: plan?.order_sub_id,
+                                    },
+                                  }}
+                                  onClick={() => {
+                                    Cookies.remove("customerData");
+                                    Cookies.set(
+                                      "customerData",
+                                      JSON.stringify({
+                                        partner_id: userData?.id,
+                                        customer_id: router?.query?.customerId,
+                                        domain_name: domainName,
+                                      }),
+                                    );
+                                  }}
+                                >
+                                  Downgrade
+                                </Link>
+                              </>
+                            )}
                           <button
                             onClick={() =>
                               router?.push({

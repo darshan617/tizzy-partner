@@ -382,6 +382,7 @@ export default function ServiceSlugPage({
             wallet_balance: res?.data?.wallet_balance,
           }),
         );
+        console.log(res);
         router.push({
           pathname: "/order-summary",
           query: {
@@ -389,6 +390,7 @@ export default function ServiceSlugPage({
             customer_id: router?.query?.customer_id,
             order_id: router?.query?.order_id,
             order_sub_id: router?.query?.order_sub_id,
+            planId: res?.data?.data?.plans?.[0]?.plan_id,
           },
         });
       } else {
