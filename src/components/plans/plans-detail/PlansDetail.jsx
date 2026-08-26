@@ -311,23 +311,36 @@ export default function PlansDetail() {
                   >
                     Upgrade
                   </Link>
-                  <Link
-                    href={{
-                      pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                      query: {
-                        type: "partial-upgrade",
-                        order_id: router?.query?.orderId,
-                        customer_id: customer?.cust_id,
-                        order_sub_id: plan?.order_sub_id,
-                        plan_id: router?.query?.planId,
-                        licenses: plan?.licenses,
-                      },
-                    }}
-                    className={styles.upgradeBtn}
-                    type="button"
-                  >
-                    Partial Upgrade
-                  </Link>
+                  {plan.licenses > 1 ? (
+                    <Link
+                      href={{
+                        pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                        query: {
+                          type: "partial-upgrade",
+                          order_id: router?.query?.orderId,
+                          customer_id: customer?.cust_id,
+                          order_sub_id: plan?.order_sub_id,
+                          plan_id: router?.query?.planId,
+                          licenses: plan?.licenses,
+                        },
+                      }}
+                      className={styles.upgradeBtn}
+                      type="button"
+                    >
+                      Partial Upgrade
+                    </Link>
+                  ) : (
+                    <button
+                      className={styles.upgradeBtn}
+                      disabled={true}
+                      style={{
+                        opacity: true ? 0.6 : 1,
+                        cursor: true ? "not-allowed" : " default",
+                      }}
+                    >
+                      Partial Upgrade
+                    </button>
+                  )}
                 </>
               )}
             {statusKey === "expiring" && (

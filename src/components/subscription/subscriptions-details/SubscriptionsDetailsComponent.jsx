@@ -824,35 +824,49 @@ const SubscriptionsDetailsComponent = () => {
                               >
                                 Upgrade
                               </Link>
-                              <Link
-                                href={{
-                                  pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                                  query: {
-                                    type: "partial-upgrade",
-                                    order_id: subscriptionDetails?.order_id,
-                                    customer_id:
-                                      router?.query?.customerId ||
-                                      plan?.customer_id,
-                                    plan_id: plan?.plan_id,
-                                    order_sub_id: plan?.order_sub_id,
-                                    licenses: plan?.licenses,
-                                  },
-                                }}
-                                className={styles.subUpgradeTextLink}
-                                onClick={() => {
-                                  Cookies.remove("customerData");
-                                  Cookies.set(
-                                    "customerData",
-                                    JSON.stringify({
-                                      partner_id: userData?.id,
-                                      customer_id: router?.query?.customerId,
-                                      domain_name: domainName,
-                                    }),
-                                  );
-                                }}
-                              >
-                                Partial Upgrade
-                              </Link>
+                              {plan?.licenses > 1 ? (
+                                <Link
+                                  href={{
+                                    pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                                    query: {
+                                      type: "partial-upgrade",
+                                      order_id: subscriptionDetails?.order_id,
+                                      customer_id:
+                                        router?.query?.customerId ||
+                                        plan?.customer_id,
+                                      plan_id: plan?.plan_id,
+                                      order_sub_id: plan?.order_sub_id,
+                                      licenses: plan?.licenses,
+                                    },
+                                  }}
+                                  className={styles.subUpgradeTextLink}
+                                  onClick={() => {
+                                    Cookies.remove("customerData");
+                                    Cookies.set(
+                                      "customerData",
+                                      JSON.stringify({
+                                        partner_id: userData?.id,
+                                        customer_id: router?.query?.customerId,
+                                        domain_name: domainName,
+                                      }),
+                                    );
+                                  }}
+                                >
+                                  Partial Upgrade
+                                </Link>
+                              ) : (
+                                <button
+                                  className={styles.subUpgradeTextLink}
+                                  disabled={true}
+                                  style={{
+                                    opacity: true ? 0.6 : 1,
+                                    cursor: true ? "not-allowed" : " default",
+                                  }}
+                                >
+                                  Partial Upgrade
+                                </button>
+                              )}
+
                               {/* <button
                                 onClick={() => handlePartialUpgrade(plan)}
                                 className={styles.subUpgradeTextLink}
