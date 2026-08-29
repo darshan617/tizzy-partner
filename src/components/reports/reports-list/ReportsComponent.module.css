@@ -4,10 +4,6 @@
   --muted: #6b7280;
 }
 
-.container {
-  padding: 20px;
-  background: transparent;
-}
 
 .toolbar {
   display: flex;
@@ -46,7 +42,8 @@
 .dateGroup {
   display: flex;
   gap: 8px;
-  align-items: center;
+  align-items: end;
+  flex-wrap: wrap;
 }
 
 .dateLabel {
@@ -110,7 +107,7 @@
 .metricsGrid {
   margin-top: 18px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
 }
 
@@ -126,6 +123,10 @@
 }
 
 .summarySection {
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(11, 99, 183, 0.04);
+  padding: 20px;
   margin-top: 24px;
 }
 
@@ -385,17 +386,18 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
+  margin-top: 16px;
 }
 
 .summaryCard {
-  background: var(--card-bg);
+  /* background: var(--card-bg);
   border-radius: 16px;
   box-shadow: 0 6px 18px rgba(11, 99, 183, 0.04);
   padding: 18px;
-  min-height: 260px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  min-height: 260px; */
+  /* display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px; */
 }
 
 .summaryHeader {
@@ -423,18 +425,73 @@
   align-items: center;
   border-radius: 10px;
 }
-
 .summaryItem {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding-top: 16px;
-  border-top: 1px solid #eef2f7;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+  /* margin-bottom: 16px; */
+}
+.summaryItemIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #eef2ff;
+  color: #4f46e5;
+  margin-bottom: 12px;
+} 
+
+.summaryItem:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border-color: #d1d5db;
 }
 
-.summaryItem:first-of-type {
+/* .summaryItem:first-of-type {
   border-top: none;
   padding-top: 0;
+} */
+
+
+.summaryItem:last-child {
+  margin-bottom: 0;
+}
+.summaryItemLink {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #0355AC;
+  font-weight: 500;
+}
+.summaryItemFooter {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+.summaryItemStat {
+  font-size: 15px;
+  font-weight: 700;
+  color: #4f46e5;
+  margin-bottom: 14px;
+}
+
+
+.summaryItemTime {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #9ca3af;
 }
 
 .summaryItemHeading {
@@ -539,6 +596,15 @@
   color: var(--secondaryColor);
 }
 
+.yellowIcon {
+  color: #e17100 !important ;
+  background: #fef3c6 !important ;
+}
+
+.redIcon {
+  color: #e11000 !important ;
+  background: #ffe4e2 !important ;
+}
 .purpleIcon {
   color: var(--secondaryColor) !important ;
   background: rgba(124, 111, 201, 0.12) !important ;
@@ -578,6 +644,12 @@
   color: var(--primary);
 }
 
+@media (max-width: 1200px) {
+  .metricsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 @media (max-width: 900px) {
   .metricsGrid {
     grid-template-columns: repeat(2, 1fr);
@@ -599,4 +671,71 @@
   .filters {
     flex-wrap: wrap;
   }
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btnFilter {
+  padding: 8px 10px;
+  background: #fff;
+  border: 1px solid #e6e9ef;
+  color: #111827;
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btnFilterYear {
+  padding: 8px 10px;
+  background: #fff;
+  border: none;
+  color: #111827;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btnFilterYear:hover {
+  background: #f3f6fb;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.active {
+  background: var(--primaryColor);
+  color: #fff;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.active:hover {
+  background: var(--primaryColor);
+  color: #fff;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.summaryTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+.summarySectionWrap {
+  border-bottom: 1px solid #eef2f7;
+  padding: 0 0 20px 0;
+}
+
+.summaryStatus{
+  margin: 10px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0355AC;
 }

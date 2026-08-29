@@ -27,6 +27,18 @@
   box-shadow: 0 6px 16px rgba(3, 85, 172, 0.28);
   animation: successPop 0.55s cubic-bezier(0.22, 1.2, 0.36, 1) both;
 }
+.failIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #dc0d0d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  box-shadow: 0 6px 16px rgba(172, 3, 3, 0.28);
+  animation: successPop 0.55s cubic-bezier(0.22, 1.2, 0.36, 1) both;
+}
 
 .checkMark {
   display: block;
