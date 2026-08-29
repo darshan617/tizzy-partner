@@ -19,6 +19,7 @@ import {
 import { FaIndianRupeeSign } from "react-icons/fa6";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { IoIosCheckmark } from "react-icons/io";
+import { RxCross2 } from "react-icons/rx";
 
 const formatCurrency = (value) =>
   `₹${Number(value || 0).toLocaleString("en-IN", {
@@ -57,8 +58,12 @@ const OrderComplete = () => {
   const [userData, setUserData] = useState({});
   const [orderData, setOrderData] = useState(null);
 
-  const [orderPlaceWithoutAadhaar, { isLoading: isOrderPlaceLoading }] =
-    useOrderPlaceWithoutAadhaarMutation();
+  const [
+    orderPlaceWithoutAadhaar,
+    { isLoading: isOrderPlaceLoading, isError, error },
+  ] = useOrderPlaceWithoutAadhaarMutation();
+
+  console.log(error);
 
   useEffect(() => {
     const parsedUser = Cookies?.get("userData")
@@ -165,11 +170,41 @@ const OrderComplete = () => {
     orderData?.order_date,
   )}`;
 
-  if (isOrderPlaceLoading && !orderData) {
+  if (!router?.isReady || (isOrderPlaceLoading && !orderData)) {
     return <Loader />;
   }
 
-  return (
+  return isError ? (
+    <div className={styles.successCard}>
+      <div className={styles.failIcon} aria-hidden>
+        <RxCross2 size={30} color="#fff" className={styles.checkMark} />
+      </div>
+      <h1 className={styles.successTitle}>Order Purchased Failed</h1>
+      <p className={styles.successSubtitle}>
+        {error?.data?.message
+          ? error?.data?.message
+          : "We couldn't complete your order. Please try again."}
+      </p>
+      <div className={styles.successActions}>
+        <button
+          type="button"
+          className={styles.btnSecondary}
+          onClick={() => clearOrderCookieAndNavigate("/dashboard")}
+        >
+          <LayoutDashboard size={16} />
+          Go to Dashboard
+        </button>
+        {/* <button
+          type="button"
+          className={styles.btnSecondary}
+          onClick={() => clearOrderCookieAndNavigate("/subscriptions")}
+        >
+          <Eye size={16} />
+          View Subscriptions
+        </button> */}
+      </div>
+    </div>
+  ) : (
     <div className={styles.pageWrap}>
       <div className={styles.successCard}>
         <div className={styles.successIcon} aria-hidden>
@@ -179,6 +214,7 @@ const OrderComplete = () => {
         <p className={styles.successSubtitle}>
           Your order is in process. We will update you once it is activated.
         </p>
+
         <div className={styles.successActions}>
           <button
             type="button"

@@ -397,13 +397,38 @@ const OrderSummaryCard = ({
 
   const handelUpgradeProceed = async () => {
     try {
+      const formData = new FormData();
+
+      formData.append("partner_id", userData?.id);
+      formData.append(
+        "main_cart_id",
+        cartDetails?.[0]?.main_cart_id ||
+          cartDetails?.[0]?.renew_plan?.main_cart_id,
+      );
+      formData.append("po_mode", isUploadPo ? "uploaded" : "generated");
+      formData.append("po_number", poNumber);
+
+      if (uploadPoPdf) {
+        formData.append("po_document", uploadPoPdf);
+      }
+
+      formData.append(
+        "order_category",
+        router?.query?.type === "upgrade"
+          ? "upgrade"
+          : router?.query?.type === "partial-upgrade"
+            ? "partial"
+            : "downgrade",
+      );
+
       const res = await generateUpgradeOrder({
-        body: {
-          partner_id: userData?.id,
-          main_cart_id: cartDetails?.[0]?.main_cart_id,
-          order_category:
-            router?.query?.type === "upgrade" ? "upgrade" : "downgrade",
-        },
+        // body: {
+        //   partner_id: userData?.id,
+        //   main_cart_id: cartDetails?.[0]?.main_cart_id,
+        //   order_category:
+        //     router?.query?.type === "upgrade" ? "upgrade" : "downgrade",
+        // },
+        body: formData,
       });
       if (res?.data?.success) {
         router?.push({
@@ -534,8 +559,19 @@ const OrderSummaryCard = ({
       setIsPromoCodeAdded(true);
     }
   }, [promoCode]);
+
   useEffect(() => {
-    setPromoCodeInput(cartDetails?.[0]?.coupen);
+    const savedCoupon =
+      cartDetails?.[0]?.coupen ?? cartDetails?.[0]?.coupon_code ?? "";
+
+    if (!savedCoupon) return;
+
+    setPromoCodeInput((currentInput) => {
+      if (!currentInput || currentInput === savedCoupon) {
+        return savedCoupon;
+      }
+      return currentInput;
+    });
   }, [cartDetails]);
 
   return (
