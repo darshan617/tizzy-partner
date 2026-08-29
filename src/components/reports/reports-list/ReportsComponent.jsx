@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import styles from "./ReportsComponent.module.css";
 import { IoChevronForward, IoDocumentTextOutline } from "react-icons/io5";
+import { CiCalendar, CiCircleCheck, CiClock2, CiFilter } from "react-icons/ci";
+import { FaArrowRight, FaClock } from "react-icons/fa";
+import { BsGraphUp } from "react-icons/bs";
+
 import { RiFileExcel2Line } from "react-icons/ri";
 import {
   LuReceiptIndianRupee,
@@ -14,7 +18,19 @@ import {
   LuClock,
   LuTicket,
   LuDownload,
-} from "react-icons/lu";
+  LuFileText,
+  LuUserPlus,
+  LuIndianRupee,
+  LuUsers,
+  LuReceipt,
+  LuRefreshCw,
+  LuCalendarCheck,
+  } from "react-icons/lu";
+
+import { MdCurrencyRupee } from "react-icons/md";
+import { PiPackage, PiReceipt, PiUserPlusLight } from "react-icons/pi";
+import { MdOutlineReplay } from "react-icons/md";
+import { FaRegCalendarCheck } from "react-icons/fa";
 import { FiShoppingCart, FiUsers, FiMoreHorizontal } from "react-icons/fi";
 import { BsPatchCheck } from "react-icons/bs";
 import { FaArrowsRotate } from "react-icons/fa6";
@@ -25,6 +41,8 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import { AiOutlineRise } from "react-icons/ai";
+import { BiSupport } from "react-icons/bi";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const formatRevenue = (value) =>
@@ -70,21 +88,37 @@ const QUICK_INSIGHT_META = {
 
 const CATALOG_GROUP_META = {
   general: {
-    icon: IoDocumentTextOutline,
+    icon: BsGraphUp,
     iconTheme: "blueIcon",
   },
   customers: {
     icon: FiUsers,
-    iconTheme: "greenIcon",
+    iconTheme: "blueIcon",
   },
   billing: {
     icon: LuReceiptIndianRupee,
-    iconTheme: "orangeIcon",
+    iconTheme: "blueIcon",
   },
   support: {
     icon: LuReceiptText,
-    iconTheme: "purpleIcon",
+    iconTheme: "blueIcon",
   },
+};
+
+const SUMMARY_ITEM_ICON_META = {
+  "daily-performance": BsGraphUp,
+  "new-customers": PiUserPlusLight ,
+  "annual-revenue": LuIndianRupee,
+  "open-tickets": BiSupport ,
+  "monthly-subscriptions": CiCalendar ,
+  "subscriptions": LuUsers,
+  "monthly-transactions": PiReceipt ,
+  "resolved-tickets": CiCircleCheck ,
+  "last-3-months-sales": BsGraphUp ,
+  "plan-renewals": LuRefreshCw,
+  "invoices": PiReceipt ,
+  "annual-sales": AiOutlineRise ,
+  "income-forecast": AiOutlineRise,
 };
 
 const FormatBadge = ({ format }) => {
@@ -109,16 +143,16 @@ const FormatBadge = ({ format }) => {
 
 const Icon = ({ name }) => {
   switch (name) {
-    case "wallet":
-      return <LuWallet size={20} />;
+    case "rupee":
+      return <MdCurrencyRupee size={20} />;
     case "users":
       return <FiUsers size={20} />;
     case "subscription":
-      return <BsPatchCheck size={20} />;
-    case "cart":
-      return <FiShoppingCart size={20} />;
-    case "refresh":
-      return <FaArrowsRotate size={20} />;
+      return <MdOutlineReplay size={20} />;
+    case "package":
+      return <PiPackage size={20} />;
+    case "calendar":
+      return <FaRegCalendarCheck size={20} />;
     case "invoice":
       return <LuReceiptText size={20} />;
     default:
@@ -162,6 +196,32 @@ const ReportsComponent = () => {
       console.log(error, "reports error");
     }
   };
+
+  const [activeTab, setActiveTab] = useState("All");
+
+  const tabs = [
+    "All",
+    "Sales",
+    "Customers",
+    "Subscriptions",
+    "Billing",
+    "Revenue",
+    "Renewals",
+    "Support",
+  ];
+
+  const [summaryActiveTab, setSummaryActiveTab] = useState("All");
+  const summaryTabs = [
+    "All",
+    "Today",
+    "This Week",
+    "This Month",
+    "Last 3 Months",
+    "This Year",
+  ];
+
+  const [filterActiveTab, setFilterActiveTab] = useState("All");
+  const filterTabs = ["All", "Provider", "Plan", "Status"];
 
   const summaryCards = reportData?.summary_cards;
   const catalogGroups = reportData?.catalog_groups || [];
@@ -691,17 +751,17 @@ const ReportsComponent = () => {
       meta: summaryCards?.total_revenue?.trend,
       metaTheme: "green",
       valueTheme: "black",
-      icon: "wallet",
+      icon: "rupee",
       iconTheme: "blueIcon",
     },
     {
-      title: "Active Customers",
-      value: summaryCards?.active_customers?.display,
-      meta: summaryCards?.active_customers?.trend,
+      title: "Total Orders",
+      value: summaryCards?.monthly_orders?.display,
+      meta: summaryCards?.monthly_orders?.trend,
       metaTheme: "green",
       valueTheme: "black",
-      icon: "users",
-      iconTheme: "greenIcon",
+      icon: "package",
+      iconTheme: "purpleIcon",
     },
     {
       title: "Active Subscriptions",
@@ -710,35 +770,36 @@ const ReportsComponent = () => {
       metaTheme: "green",
       valueTheme: "black",
       icon: "subscription",
-      iconTheme: "purpleIcon",
-    },
-    {
-      title: "Monthly Orders",
-      value: summaryCards?.monthly_orders?.display,
-      meta: summaryCards?.monthly_orders?.trend,
-      metaTheme: "green",
-      valueTheme: "black",
-      icon: "cart",
       iconTheme: "greenIcon",
     },
     {
-      title: "Renewals Completed",
+      title: "Active Customers",
+      value: summaryCards?.active_customers?.display,
+      meta: summaryCards?.active_customers?.trend,
+      metaTheme: "green",
+      valueTheme: "black",
+      icon: "users",
+      iconTheme: "yellowIcon",
+    },
+
+    {
+      title: "Renewals",
       value: summaryCards?.renewals_completed?.display,
       meta: summaryCards?.renewals_completed?.trend,
       metaTheme: "green",
       valueTheme: "black",
-      icon: "refresh",
-      iconTheme: "orangeIcon",
+      icon: "calendar",
+      iconTheme: "redIcon",
     },
-    {
-      title: "Pending Invoices",
-      value: summaryCards?.pending_invoices?.display,
-      meta: summaryCards?.pending_invoices?.trend,
-      metaTheme: "pink",
-      valueTheme: "black",
-      icon: "invoice",
-      iconTheme: "pink",
-    },
+    // {
+    //   title: "Pending Invoices",
+    //   value: summaryCards?.pending_invoices?.display,
+    //   meta: summaryCards?.pending_invoices?.trend,
+    //   metaTheme: "pink",
+    //   valueTheme: "black",
+    //   icon: "invoice",
+    //   iconTheme: "pink",
+    // },
   ];
 
   useEffect(() => {
@@ -748,7 +809,7 @@ const ReportsComponent = () => {
   console.log(reportData, "reportData");
 
   return (
-    <section className={styles.container}>
+    <section className="containerMain m-auto" >
       <div className={styles.toolbar}>
         <div className={styles.filterCard}>
           <div className={styles.filters}>
@@ -759,31 +820,57 @@ const ReportsComponent = () => {
                 <option value="plan2">Plan B</option>
               </select>
             </div> */}
-            <div className={styles.dateGroup}>
-              <label className={styles.dateLabel}>
-                From Date
-                <input
-                  type="date"
-                  className={styles.dateInput}
-                  value={dateRange.fromDate}
-                  max={today}
-                  onChange={(e) =>
-                    setDateRange({ ...dateRange, fromDate: e.target.value })
-                  }
-                />
-              </label>
-              <label className={styles.dateLabel}>
-                To Date
-                <input
-                  type="date"
-                  className={styles.dateInput}
-                  value={dateRange.toDate}
-                  max={today}
-                  onChange={(e) =>
-                    setDateRange({ ...dateRange, toDate: e.target.value })
-                  }
-                />
-              </label>
+            <div className="d-flex  gap-2 flex-column">
+              <div className={styles.dateGroup}>
+                <label className={styles.dateLabel}>
+                  From Date
+                  <input
+                    type="date"
+                    className={styles.dateInput}
+                    value={dateRange.fromDate}
+                    max={today}
+                    onChange={(e) =>
+                      setDateRange({ ...dateRange, fromDate: e.target.value })
+                    }
+                  />
+                </label>
+                <label className={styles.dateLabel}>
+                  To Date
+                  <input
+                    type="date"
+                    className={styles.dateInput}
+                    value={dateRange.toDate}
+                    max={today}
+                    onChange={(e) =>
+                      setDateRange({ ...dateRange, toDate: e.target.value })
+                    }
+                  />
+                </label>
+                <div className={styles.filterGroup}>
+                  {filterTabs?.map((tab) => (
+                    <button
+                      className={`${styles.btnFilter} ${filterActiveTab === tab ? styles.active : ""}`}
+                      key={tab}
+                      onClick={() => setFilterActiveTab(tab)}
+                    >
+                      <CiFilter />
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.filterYear}>
+                {summaryTabs?.map((tab) => (
+                  <button
+                    key={tab}
+                    className={`${styles.btnFilterYear} ${summaryActiveTab === tab ? styles.active : ""}`}
+                    onClick={() => setSummaryActiveTab(tab)}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
             </div>
             <button className={styles.btnApply} onClick={handleGetReports}>
               Apply
@@ -834,74 +921,99 @@ const ReportsComponent = () => {
           </div>
         ))}
       </div>
+      <div className={`${styles.chartCardWrap} mt-4`}>
+        <div className={styles.chartCard}>
+          <div className={styles.chartHeader}>
+            <h3 className={styles.chartTitle}>
+              {revenueOverview?.title || "Revenue Overview"}
+            </h3>
+            <p className={styles.chartSubtitle}>
+              {revenueOverview?.subtitle ||
+                "Monthly revenue performance across the selected period."}
+            </p>
+          </div>
+          <div className={styles.chartBody}>
+            <Chart
+              options={revenueChartOptions}
+              series={revenueChartSeries}
+              type="line"
+              height={280}
+            />
+          </div>
+        </div>
+      </div>
 
       <section className={styles.summarySection}>
+        <div className={styles.summarySectionWrap}>
+          <div className={styles.summaryHeader}>
+            <h3 className={styles.summaryTitle}>All Reports</h3>
+          </div>
+          <div className={styles.summaryTabs}>
+            {tabs?.map((tab) => (
+              <button
+                key={tab}
+                className={`${styles.btnFilterYear} ${activeTab === tab ? styles.active : ""}`}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className={styles.summaryGrid}>
-          {catalogGroups.map((group) => {
+          {catalogGroups.flatMap((group) => {
             const meta = CATALOG_GROUP_META[group?.group] || {
-              icon: IoDocumentTextOutline,
+              icon: BsGraphUp,
               iconTheme: "blueIcon",
             };
-            const GroupIcon = meta.icon;
 
-            return (
-              <div
-                key={group?.group || group?.group_label}
-                className={styles.summaryCard}
-              >
-                <div className={styles.summaryHeader}>
-                  <div className={styles.summaryLabel}>
-                    <GroupIcon
-                      className={`${styles.summaryLabelIcon} ${styles[meta.iconTheme]}`}
-                    />
-                    {group?.group_label}
-                  </div>
-                </div>
-                {(group?.items || []).map((item) => (
-                  <Link
-                    key={item?.slug || item?.title}
-                    href={`/reports/${item?.slug}`}
-                    className={styles.summaryItem}
+            return (group?.items || []).map((item) => {
+              const ItemIcon = SUMMARY_ITEM_ICON_META[item?.slug] || meta.icon;
+
+              return (
+                <Link
+                  key={item?.slug || item?.title}
+                  href={`/reports/${item?.slug}`}
+                  className={styles.summaryItem}
+                >
+                  <div
+                    className={`${styles.summaryItemIcon} ${styles[meta.iconTheme]}`}
                   >
-                    <div className={styles.summaryItemHeading}>
-                      <div className={styles.summaryItemTitle}>
-                        {item?.title}
-                      </div>
-                      <IoChevronForward className={styles.summaryItemArrow} />
-                    </div>
-                    <div className={styles.summaryItemText}>
-                      {item?.subtitle}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            );
+                    <ItemIcon size={16} />
+                  </div>
+
+                  <div className={styles.summaryItemTitle}>{item?.title}</div>
+                  <div className={styles.summaryItemText}>{item?.subtitle}</div>
+
+                  {item?.stat && (
+                    <div className={styles.summaryItemStat}>{item.stat}</div>
+                  )}
+
+                  <div className={styles.summaryStatus}>
+                    <span >
+                      ₹ 18.2k today
+                    </span>
+                  </div>
+
+                  <div className={styles.summaryItemFooter}>
+                    <span className={styles.summaryItemTime}>
+                      <CiClock2 size={10} />
+                      2 hours ago
+                    </span>
+                    <span className={styles.summaryItemLink}>
+                      View Report <FaArrowRight size={10} />
+                    </span>
+                  </div>
+                </Link>
+              );
+            });
           })}
         </div>
       </section>
 
       <section className={styles.chartsSection}>
         <div className={styles.chartsGrid}>
-          <div className={styles.chartCard}>
-            <div className={styles.chartHeader}>
-              <h3 className={styles.chartTitle}>
-                {revenueOverview?.title || "Revenue Overview"}
-              </h3>
-              <p className={styles.chartSubtitle}>
-                {revenueOverview?.subtitle ||
-                  "Monthly revenue performance across the selected period."}
-              </p>
-            </div>
-            <div className={styles.chartBody}>
-              <Chart
-                options={revenueChartOptions}
-                series={revenueChartSeries}
-                type="line"
-                height={280}
-              />
-            </div>
-          </div>
-
           <div className={styles.chartCard}>
             <div className={styles.chartHeader}>
               <h3 className={styles.chartTitle}>
