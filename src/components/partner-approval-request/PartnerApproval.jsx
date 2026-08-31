@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "@/components/partner-approval-request/PartnerApproval.module.css";
 import partnerApproveImage from "@/assets/partner-approval/partnerApproval.svg";
+import partnerRejectedImg from "@/assets/partner-approval/partnerRejected.png";
 import Image from "next/image";
 import { BiSupport } from "react-icons/bi";
 import Link from "next/link";
@@ -20,6 +21,9 @@ const PartnerApproval = () => {
     console.log("Invalid userData cookie", error);
   }
   const [countdown, setCountdown] = useState(10);
+  const [appStatus, setAppStatus] = useState(false);
+  console.log(appStatus, "Apppp");
+
   const [getPartnerApprovalRequest, { isLoading }] =
     useGetPartnerApprovalRequestMutation();
   const handleGetPartnerApprovalRequest = async () => {
@@ -32,6 +36,7 @@ const PartnerApproval = () => {
       if (res?.data?.success) {
         const status = res?.data?.data?.status;
         Cookies.set("partnerApproval", status);
+        setAppStatus(status);
         if (status === "approved") {
           router.replace("/dashboard");
         }
@@ -79,35 +84,66 @@ const PartnerApproval = () => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.card}>
-        <Image
-          src={partnerApproveImage}
-          alt="Verification in progress"
-          className={styles.image}
-        />
-        <div className={styles.verificationStatus}>
-          <h1 className={styles.title}>
-            Verification in Progress
-            <span className={styles.loadingDots} aria-hidden="true">
-              <span />
-              <span />
-              <span />
-            </span>
-          </h1>
-        </div>
-        <p className={styles.description}>
-          Thank you for completing your registration. Your account is currently
-          under review by our team. Once verified, you&apos;ll receive a
-          confirmation email and can start accessing your dashboard.
-        </p>
-        <div className={styles.refreshStatus}>
-          <span className={styles.refreshIcon} aria-hidden="true" />
-          <span>
-            Checking status in <strong>{countdown}s</strong>
-          </span>
-        </div>
-        <Link href={"#"} className={styles.contactBtn}>
-          <BiSupport size={20} className="me-2" /> Contact Support
-        </Link>
+        {appStatus === "rejected" ? (
+          <div className={styles.rejectedState}>
+            <Image
+              src={partnerRejectedImg}
+              alt="Registration rejected"
+              className={styles.image}
+            />
+            <div className={styles.verificationStatus}>
+              <h1 className={styles.title}>Registration Rejected</h1>
+            </div>
+            <p className={styles.description}>
+              Your partner registration request was not approved. Please review
+              your details and submit a new registration through the signup
+              form.
+            </p>
+            <button
+              onClick={() => {
+                Cookies.remove("userData");
+                Cookies.remove("partnerApproval");
+                router?.push("/auth/signup");
+              }}
+              className={styles.contactBtn}
+            >
+              Go to Signup
+            </button>
+          </div>
+        ) : (
+          <>
+            <Image
+              src={partnerApproveImage}
+              alt="Verification in progress"
+              className={styles.image}
+            />
+            <div className={styles.verificationStatus}>
+              <h1 className={styles.title}>
+                Verification in Progress
+                <span className={styles.loadingDots} aria-hidden="true">
+                  <span />
+                  <span />
+                  <span />
+                </span>
+              </h1>
+            </div>
+            <p className={styles.description}>
+              Thank you for completing your registration. Your account is
+              currently under review by our team. Once verified, you&apos;ll
+              receive a confirmation email and can start accessing your
+              dashboard.
+            </p>
+            <div className={styles.refreshStatus}>
+              <span className={styles.refreshIcon} aria-hidden="true" />
+              <span>
+                Checking status in <strong>{countdown}s</strong>
+              </span>
+            </div>
+            <Link href={"#"} className={styles.contactBtn}>
+              <BiSupport size={20} className="me-2" /> Contact Support
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );
