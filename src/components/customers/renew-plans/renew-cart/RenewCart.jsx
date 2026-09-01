@@ -1154,7 +1154,20 @@ const RenewCart = ({
                                   router?.query?.variant === "downgrade"
                                 }
                                 onClick={() => {
-                                  if (router?.query?.type === "renew-plan") {
+                                  const currentLicenses = Number(
+                                    listMode ? lineLicenses : lisceneCounter,
+                                  );
+
+                                  const routerLicenses = Number(
+                                    router?.query?.licenses,
+                                  );
+
+                                  const newLicenses = currentLicenses - 1;
+
+                                  if (
+                                    router?.query?.type === "renew-plan" &&
+                                    newLicenses < routerLicenses
+                                  ) {
                                     setIsPopupOpen("license-decrease");
                                     return;
                                   }
