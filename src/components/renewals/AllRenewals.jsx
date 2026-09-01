@@ -239,16 +239,24 @@ const AllRenewals = () => {
                                     <div className={`${styles.crName} `}>
                                       {renewal?.plan || "-"}
                                     </div>
-                                    <span
-                                      className={`${styles.crDomainName} d-flex align-items-center gap-1`}
-                                    >
-                                      <FiGlobe
-                                        className={styles.globeIcon}
-                                        width={12}
-                                        height={12}
-                                      />
-                                      {renewal?.domain || "-"}
-                                    </span>
+                                    <div className={styles.domains}>
+                                      {renewal?.domain?.map((domain, index) => (
+                                        <span
+                                          key={index}
+                                          className={styles.crDomainName}
+                                        >
+                                          <FiGlobe
+                                            className={styles.globeIcon}
+                                            width={12}
+                                            height={12}
+                                          />
+                                          <span className={styles.domainText}>
+                                            {domain || "-"}
+                                          </span>
+                                        </span>
+                                      ))}
+                                    </div>
+
                                     <p className="m-0  text-secondary small">
                                       Order Id: {renewal?.order_no || "-"}
                                     </p>
