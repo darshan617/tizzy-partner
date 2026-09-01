@@ -369,6 +369,7 @@ export default function PlansDetail() {
                       order_id: router?.query?.orderId,
                       order_sub_id: plan?.order_sub_id,
                       planId: router?.query?.planId,
+                      licenses: plan?.licenses,
                     },
                   }}
                   className={styles.renewBtn}
