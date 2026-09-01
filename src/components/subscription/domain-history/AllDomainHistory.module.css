@@ -64,13 +64,12 @@
 }
 
 .historyRow {
-  display: flex;
+  display: grid;
+  grid-template-columns: 110px 2.2fr 1fr 0.6fr 1.6fr 1.2fr 28px;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
-  padding: 10px 15px;
+  padding: 14px 15px;
   border-radius: 10px;
-  /* background: #fbfbfb; */
   border: 1px solid rgba(231, 233, 235, 1);
   transition:
     transform 0.2s ease,
@@ -87,8 +86,6 @@
   align-items: flex-start;
   gap: 1rem;
   min-width: 0;
-  flex: 1 1 280px;
-  max-width: 100%;
 }
 
 .productInfo {
@@ -150,11 +147,11 @@
 }
 
 .rowGrid {
-  display: grid;
+  display: contents;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   align-items: start;
-  flex: 1 1 320px;
+  /* flex: 1 1 320px; */
   min-width: 0;
   max-width: 100%;
 }
@@ -162,8 +159,8 @@
 .rowValue {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
   font-weight: 400;
   font-size: 14px;
   gap: 0.15rem;
@@ -203,9 +200,9 @@
 }
 
 @media screen and (min-width: 993px) {
-  .rowLeft {
-    flex: 0 1 375px;
-  }
+  /* .rowLeft {
+    flex: 0 1 335px;
+  } */
 }
 
 @media screen and (max-width: 992px) {
@@ -214,10 +211,11 @@
   }
 
   .historyRow {
-    flex-direction: column;
+    grid-template-columns: 1fr 1fr;
+    /* flex-direction: column;
     align-items: stretch;
     padding: 1rem;
-    gap: 1rem;
+    gap: 1rem; */
   }
 
   .rowLeft {
@@ -288,6 +286,9 @@
   .breadcrumbHeader {
     padding-inline: 0;
   }
+  .historyRow {
+    grid-template-columns: 1fr;
+  }
 
   .rowGrid {
     grid-template-columns: 1fr;
@@ -342,7 +343,7 @@
 }
 
 .txIdBadge {
-  display: inline-block;
+  /* display: inline-block; */
   padding: 3px 10px;
   background: #e7e9eb;
   border-radius: 4px;
@@ -350,10 +351,10 @@
   font-weight: 600;
   color: var(--darkColor);
   line-height: 1.4;
-  white-space: nowrap;
+  /* white-space: nowrap; */
   max-width: 100%;
   overflow: hidden;
-  text-overflow: ellipsis;
+  /* text-overflow: ellipsis; */
 }
 
 .colArrow {
