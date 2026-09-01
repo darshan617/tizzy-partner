@@ -703,3 +703,19 @@
     width: 300px;
   }
 }
+.domains {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;  
+  gap: 4px;
+  width: 100%;
+  
+}
+
+.crDomainName {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
+  word-break: break-word;
+}
