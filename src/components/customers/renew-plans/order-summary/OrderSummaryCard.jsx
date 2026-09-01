@@ -496,6 +496,7 @@ const OrderSummaryCard = ({
                   : router?.query?.type === "add-license"
                     ? "license_add"
                     : "",
+          main_cart_id: cartDetails?.[0]?.main_cart_id,
         },
       });
 

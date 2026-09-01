@@ -769,6 +769,7 @@ const SubscriptionsDetailsComponent = () => {
                                         order_id: subscriptionDetails?.order_id,
                                         order_sub_id: plan?.order_sub_id,
                                         planId: plan?.plan_id,
+                                        licenses: plan?.licenses,
                                       },
                                     })
                                   }

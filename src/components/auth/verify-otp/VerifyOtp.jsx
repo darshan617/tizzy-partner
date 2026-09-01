@@ -100,12 +100,21 @@ const VerifyOtp = () => {
       console.log(res, "res");
 
       if (res?.data?.success) {
-        Cookies.set("userData", JSON.stringify(res?.data?.data?.partner));
+        const partner = res?.data?.data?.partner;
+        const approvalStatus = res?.data?.data?.status;
+
+        // Save logged-in user
+        Cookies.set("userData", JSON.stringify(partner));
+
+        // Save partner approval status
+        Cookies.set("partnerApproval", approvalStatus);
+
         showToast("Email verified successfully", "success");
-        if (res?.data?.data?.status === "approved") {
-          router?.push("/dashboard");
+
+        if (approvalStatus === "approved") {
+          router.replace("/dashboard");
         } else {
-          router?.push("/partner-approval-request");
+          router.replace("/partner-approval-request");
         }
 
         setOtpDetails((prev) => ({
