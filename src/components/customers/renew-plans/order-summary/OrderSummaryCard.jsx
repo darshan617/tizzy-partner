@@ -247,11 +247,23 @@ const OrderSummaryCard = ({
     ? cartDetails[0]?.cart_id
     : cartDetails?.cart_id;
 
+  const resolveMainCartIdFromCart = () => {
+    const values = [
+      cartDetails?.[0]?.main_cart_id,
+      cartDetails?.[0]?.renew_plan?.main_cart_id,
+      cartDetails?.main_cart_id,
+      cartDetails?.renew_plan?.main_cart_id,
+      router?.query?.main_cart_id,
+    ];
+
+    return values.find(
+      (value) => value !== undefined && value !== null && value !== "",
+    );
+  };
+
   console.log("resolvedCartId", resolvedCartId);
 
-  const mainCartId = Array.isArray(cartDetails)
-    ? cartDetails[0]?.main_cart_id
-    : cartDetails?.main_cart_id;
+  const mainCartId = resolveMainCartIdFromCart();
 
   const handleDomainPrefixChange = (id, value) => {
     setDomainNames((prev) =>
@@ -357,15 +369,18 @@ const OrderSummaryCard = ({
       return;
     }
     setPoError(false);
+
+    const currentMainCartId = resolveMainCartIdFromCart();
+    if (!currentMainCartId) {
+      showToast("Cart details are still loading. Please try again.", "error");
+      return;
+    }
+
     try {
       const formData = new FormData();
 
       formData.append("partner_id", userData?.id);
-      formData.append(
-        "main_cart_id",
-        cartDetails?.[0]?.main_cart_id ||
-          cartDetails?.[0]?.renew_plan?.main_cart_id,
-      );
+      formData.append("main_cart_id", currentMainCartId);
       formData.append("po_mode", isUploadPo ? "uploaded" : "generated");
       formData.append("po_number", poNumber);
 
@@ -396,15 +411,17 @@ const OrderSummaryCard = ({
   };
 
   const handelUpgradeProceed = async () => {
+    const currentMainCartId = resolveMainCartIdFromCart();
+    if (!currentMainCartId) {
+      showToast("Cart details are still loading. Please try again.", "error");
+      return;
+    }
+
     try {
       const formData = new FormData();
 
       formData.append("partner_id", userData?.id);
-      formData.append(
-        "main_cart_id",
-        cartDetails?.[0]?.main_cart_id ||
-          cartDetails?.[0]?.renew_plan?.main_cart_id,
-      );
+      formData.append("main_cart_id", currentMainCartId);
       formData.append("po_mode", isUploadPo ? "uploaded" : "generated");
       formData.append("po_number", poNumber);
 
@@ -450,11 +467,17 @@ const OrderSummaryCard = ({
   };
 
   const handleRenewProceed = async () => {
+    const currentMainCartId = resolveMainCartIdFromCart();
+    if (!currentMainCartId) {
+      showToast("Cart details are still loading. Please try again.", "error");
+      return;
+    }
+
     try {
       const res = await generateRenewOrder({
         body: {
           partner_id: userData?.id,
-          main_cart_id: cartDetails?.[0]?.main_cart_id,
+          main_cart_id: currentMainCartId,
           order_id: router?.query?.order_id,
         },
       });

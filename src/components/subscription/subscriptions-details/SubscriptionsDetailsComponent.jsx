@@ -638,7 +638,7 @@ const SubscriptionsDetailsComponent = () => {
                                 className=" mb-0"
                                 style={{ fontSize: "12px", color: "#ff9800" }}
                               >
-                                (Upgrade Initiated)
+                                {plan?.initiate_message || ""}
                               </p>
                             )}
                           </div>
