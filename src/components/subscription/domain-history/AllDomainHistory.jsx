@@ -393,7 +393,9 @@ const AllDomainHistory = () => {
                     <div className={styles.historyRow} key={item?.id}>
                       <div className={styles.colDateMeta}>
                         <p className={styles.txDate}>20 Mar 2026</p>
-                        <span className={styles.txIdBadge}>{item?.order_no || "-"}</span>
+                        <span className={styles.txIdBadge}>
+                          {item?.order_no || "-"}
+                        </span>
                       </div>
 
                       <div className={styles.rowLeft}>
@@ -407,7 +409,12 @@ const AllDomainHistory = () => {
                           <p className={styles.productName}>
                             {item?.plan_name || "-"}
                           </p>
-                          <p className={styles.productPrice}>₹{item?.price || "-"} <span className={styles.productPricePer}>Per User / Per Year</span></p>
+                          <p className={styles.productPrice}>
+                            ₹{item?.price || "-"}{" "}
+                            <span className={styles.productPricePer}>
+                              Per User / Per Year
+                            </span>
+                          </p>
                         </div>
                       </div>
 
@@ -416,7 +423,9 @@ const AllDomainHistory = () => {
                           <span className={styles.fieldLabel}>
                             Enrollment Type
                           </span>
-                          <span className={styles.valueText}>{item?.order_category || "-"}</span>
+                          <span className={styles.valueText}>
+                            {item?.order_category || "-"}
+                          </span>
                         </div>
                         <div className={styles.rowValue}>
                           <span className={styles.fieldLabel}>License</span>
@@ -438,7 +447,20 @@ const AllDomainHistory = () => {
                       <span className={styles.statusLabel}>
                         {formatHistoryStatus(item?.status)}
                       </span>
-                      <FaChevronRight size={12} className={styles.colArrow} />
+                      <button
+                        className="bg-transparent border-0"
+                        onClick={() =>
+                          router?.push({
+                            pathname: "/plan-details",
+                            query: {
+                              planId: item?.plan_id,
+                              orderId: item?.order_id,
+                            },
+                          })
+                        }
+                      >
+                        <FaChevronRight size={12} className={styles.colArrow} />
+                      </button>
                     </div>
                   ))
                 ) : (
