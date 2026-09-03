@@ -25,7 +25,7 @@ import {
   LuReceipt,
   LuRefreshCw,
   LuCalendarCheck,
-  } from "react-icons/lu";
+} from "react-icons/lu";
 
 import { MdCurrencyRupee } from "react-icons/md";
 import { PiPackage, PiReceipt, PiUserPlusLight } from "react-icons/pi";
@@ -43,6 +43,7 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { AiOutlineRise } from "react-icons/ai";
 import { BiSupport } from "react-icons/bi";
+import CustomDropdown from "@/common-components/custom-dropdown/CustomDropdown";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const formatRevenue = (value) =>
@@ -107,17 +108,17 @@ const CATALOG_GROUP_META = {
 
 const SUMMARY_ITEM_ICON_META = {
   "daily-performance": BsGraphUp,
-  "new-customers": PiUserPlusLight ,
+  "new-customers": PiUserPlusLight,
   "annual-revenue": LuIndianRupee,
-  "open-tickets": BiSupport ,
-  "monthly-subscriptions": CiCalendar ,
-  "subscriptions": LuUsers,
-  "monthly-transactions": PiReceipt ,
-  "resolved-tickets": CiCircleCheck ,
-  "last-3-months-sales": BsGraphUp ,
+  "open-tickets": BiSupport,
+  "monthly-subscriptions": CiCalendar,
+  subscriptions: LuUsers,
+  "monthly-transactions": PiReceipt,
+  "resolved-tickets": CiCircleCheck,
+  "last-3-months-sales": BsGraphUp,
   "plan-renewals": LuRefreshCw,
-  "invoices": PiReceipt ,
-  "annual-sales": AiOutlineRise ,
+  invoices: PiReceipt,
+  "annual-sales": AiOutlineRise,
   "income-forecast": AiOutlineRise,
 };
 
@@ -210,18 +211,8 @@ const ReportsComponent = () => {
     "Support",
   ];
 
-  const [summaryActiveTab, setSummaryActiveTab] = useState("All");
-  const summaryTabs = [
-    "All",
-    "Today",
-    "This Week",
-    "This Month",
-    "Last 3 Months",
-    "This Year",
-  ];
-
-  const [filterActiveTab, setFilterActiveTab] = useState("All");
-  const filterTabs = ["All", "Provider", "Plan", "Status"];
+  const [filterActiveTab, setFilterActiveTab] = useState(null);
+  console.log("filterActiveTab", filterActiveTab);
 
   const summaryCards = reportData?.summary_cards;
   const catalogGroups = reportData?.catalog_groups || [];
@@ -809,7 +800,7 @@ const ReportsComponent = () => {
   console.log(reportData, "reportData");
 
   return (
-    <section className="containerMain m-auto" >
+    <section className="containerMain m-auto">
       <div className={styles.toolbar}>
         <div className={styles.filterCard}>
           <div className={styles.filters}>
@@ -847,20 +838,42 @@ const ReportsComponent = () => {
                   />
                 </label>
                 <div className={styles.filterGroup}>
-                  {filterTabs?.map((tab) => (
-                    <button
-                      className={`${styles.btnFilter} ${filterActiveTab === tab ? styles.active : ""}`}
-                      key={tab}
-                      onClick={() => setFilterActiveTab(tab)}
-                    >
-                      <CiFilter />
-                      {tab}
-                    </button>
-                  ))}
+                  <CustomDropdown
+                    placeholder="Select Provider"
+                    isSearchable={false}
+                    value={filterActiveTab}
+                    options={[
+                      {
+                        label: "Google Workspace",
+                        value: "google_workspace",
+                        idx: 1,
+                      },
+                      {
+                        label: "Microsoft 365",
+                        value: "microsoft_365",
+                        idx: 1,
+                      },
+                      {
+                        label: "Tizzy",
+                        value: "tizzy",
+                        idx: 1,
+                      },
+                    ]}
+                    onChange={(selectedOption) =>
+                      setFilterActiveTab(selectedOption?.value || null)
+                    }
+                  />
+
+                  <button
+                    className={styles.btnApply}
+                    onClick={handleGetReports}
+                  >
+                    Apply
+                  </button>
                 </div>
               </div>
 
-              <div className={styles.filterYear}>
+              {/* <div className={styles.filterYear}>
                 {summaryTabs?.map((tab) => (
                   <button
                     key={tab}
@@ -870,11 +883,8 @@ const ReportsComponent = () => {
                     {tab}
                   </button>
                 ))}
-              </div>
+              </div> */}
             </div>
-            <button className={styles.btnApply} onClick={handleGetReports}>
-              Apply
-            </button>
           </div>
 
           <div className={styles.actions}>
@@ -991,15 +1001,12 @@ const ReportsComponent = () => {
                   )}
 
                   <div className={styles.summaryStatus}>
-                    <span >
-                      ₹ 18.2k today
-                    </span>
+                    <span>₹ 18.2k today</span>
                   </div>
 
                   <div className={styles.summaryItemFooter}>
                     <span className={styles.summaryItemTime}>
-                      <CiClock2 size={10} />
-                      2 hours ago
+                      <CiClock2 size={10} />2 hours ago
                     </span>
                     <span className={styles.summaryItemLink}>
                       View Report <FaArrowRight size={10} />
