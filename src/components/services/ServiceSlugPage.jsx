@@ -214,6 +214,8 @@ export default function ServiceSlugPage({
                 : router?.query?.type,
             plan_id: router?.query?.plan_id,
             order_sub_id: router?.query?.order_sub_id,
+            provider_id: currentProvider.id,
+            variant_id: plansVariantId,
           });
           if (res?.data?.success) {
             setPlanDetails(res?.data?.data?.current_plan || null);
