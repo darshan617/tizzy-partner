@@ -188,6 +188,7 @@ const ReportsComponent = () => {
         fromDate: formatDate(dateRange?.fromDate) || "",
         toDate: formatDate(dateRange?.toDate) || "",
         partner_id: userData?.id,
+        provider_id: selectedProvider || "",
       });
 
       if (response?.data?.status) {
@@ -212,7 +213,8 @@ const ReportsComponent = () => {
   ];
 
   const [filterActiveTab, setFilterActiveTab] = useState(null);
-  console.log("filterActiveTab", filterActiveTab);
+  const [selectedProvider, setSelectedProvider] = useState(null);
+  console.log("selectedProvider", selectedProvider);
 
   const summaryCards = reportData?.summary_cards;
   const catalogGroups = reportData?.catalog_groups || [];
@@ -795,9 +797,7 @@ const ReportsComponent = () => {
 
   useEffect(() => {
     handleGetReports();
-  }, []);
-
-  console.log(reportData, "reportData");
+  }, [selectedProvider]);
 
   return (
     <section className="containerMain m-auto">
@@ -846,12 +846,12 @@ const ReportsComponent = () => {
                       {
                         label: "Google Workspace",
                         value: "google_workspace",
-                        idx: 1,
+                        idx: 3,
                       },
                       {
                         label: "Microsoft 365",
                         value: "microsoft_365",
-                        idx: 1,
+                        idx: 2,
                       },
                       {
                         label: "Tizzy",
@@ -859,9 +859,10 @@ const ReportsComponent = () => {
                         idx: 1,
                       },
                     ]}
-                    onChange={(selectedOption) =>
-                      setFilterActiveTab(selectedOption?.value || null)
-                    }
+                    onChange={(selectedOption) => {
+                      setFilterActiveTab(selectedOption?.label || null);
+                      setSelectedProvider(selectedOption?.idx || null);
+                    }}
                   />
 
                   <button
@@ -972,14 +973,14 @@ const ReportsComponent = () => {
         </div>
 
         <div className={styles.summaryGrid}>
-          {catalogGroups.flatMap((group) => {
+          {catalogGroups?.flatMap((group) => {
             const meta = CATALOG_GROUP_META[group?.group] || {
               icon: BsGraphUp,
               iconTheme: "blueIcon",
             };
 
             return (group?.items || []).map((item) => {
-              const ItemIcon = SUMMARY_ITEM_ICON_META[item?.slug] || meta.icon;
+              const ItemIcon = SUMMARY_ITEM_ICON_META[item?.slug] || meta?.icon;
 
               return (
                 <Link
@@ -988,7 +989,7 @@ const ReportsComponent = () => {
                   className={styles.summaryItem}
                 >
                   <div
-                    className={`${styles.summaryItemIcon} ${styles[meta.iconTheme]}`}
+                    className={`${styles.summaryItemIcon} ${styles[meta?.iconTheme]}`}
                   >
                     <ItemIcon size={16} />
                   </div>
@@ -1000,13 +1001,13 @@ const ReportsComponent = () => {
                     <div className={styles.summaryItemStat}>{item.stat}</div>
                   )}
 
-                  <div className={styles.summaryStatus}>
+                  {/* <div className={styles.summaryStatus}>
                     <span>₹ 18.2k today</span>
-                  </div>
+                  </div> */}
 
                   <div className={styles.summaryItemFooter}>
                     <span className={styles.summaryItemTime}>
-                      <CiClock2 size={10} />2 hours ago
+                      {/* <CiClock2 size={10} />2 hours ago */}
                     </span>
                     <span className={styles.summaryItemLink}>
                       View Report <FaArrowRight size={10} />
