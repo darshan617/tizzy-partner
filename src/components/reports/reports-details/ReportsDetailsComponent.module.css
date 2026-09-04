@@ -46,7 +46,7 @@
   background: #fff;
   padding: 8px 32px 8px 14px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0.03em;
   color: #1b2430;
   cursor: pointer;
@@ -73,7 +73,7 @@
   background: var(--primaryColor, #1857c4);
   color: #fff;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   padding: 9px 16px;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -138,7 +138,7 @@
   margin-bottom: 24px;
 }
 
-/* ---------------- table ---------------- */
+/* ---------------- summary table ---------------- */
 
 .tableWrap {
   overflow-x: auto;
@@ -182,13 +182,298 @@
 
 .rowLabel {
   text-align: left;
-  font-weight: 600;
+  font-weight: 500;
   color: #1b2430;
 }
 
 .rowShaded {
   background: #fafbfc;
 }
+
+/* ---------------- records list (pill-row cards) ---------------- */
+
+.recordsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.recordCard {
+  border: 1px solid #eef1f4;
+  border-radius: 5px;
+  padding: 8px 20px;
+  background: #fff;
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.recordCard:hover {
+  border-color: #e3e7ee;
+  box-shadow: 0 4px 14px rgba(20, 30, 60, 0.06);
+}
+
+.recordGrid {
+  display: grid;
+  grid-template-columns: 85px 1.6fr 1.6fr 74px 128px 96px 36px;
+  align-items: center;
+  gap: 16px;
+}
+
+.colLabel {
+  display: block;
+  font-size: 11px;
+  color: #8b93a1;
+  margin-bottom: 2px;
+}
+
+/* order/date column */
+
+.colOrder {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.dateValue {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #1b2430;
+}
+
+.orderNo {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #5f6b7a;
+  background: #f1f4f8;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-block;
+  width: fit-content;
+}
+
+/* company column */
+
+.colCompany {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.avatarBg0 {
+  background: #c9433f;
+}
+.avatarBg1 {
+  background: #d85a30;
+}
+.avatarBg2 {
+  background: #0f6e56;
+}
+.avatarBg3 {
+  background: #993556;
+}
+.avatarBg4 {
+  background: #7f77dd;
+}
+.avatarBg5 {
+  background: #b5760a;
+}
+
+.companyInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.companyName {
+  font-weight: 500;
+  color: #1b2430;
+  font-size: 13.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contactName {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  color: #8b93a1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* plan column */
+
+.colPlan {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.planName {
+  font-weight: 500;
+  color: #1b2430;
+  font-size: 13.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.domainName {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  color: #8b93a1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.metaIcon {
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+/* license column */
+
+.colLicense {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.licenseValue {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #1b2430;
+}
+
+/* enrollment column */
+
+.colEnrollment {
+  display: flex;
+  flex-direction: column;
+}
+
+.enrollmentValue {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #1b2430;
+}
+
+/* status column */
+
+.colStatus {
+  display: flex;
+  justify-content: center;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 18px;
+  border-radius: 999px;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.statusSuccess {
+  background: #d9f4e6;
+  color: #0f8a54;
+}
+
+.statusPending {
+  background: #fdf1e0;
+  color: #a3690c;
+}
+
+.statusDanger {
+  background: #fbe9e9;
+  color: #b23434;
+}
+
+.statusDefault {
+  background: #eef1f4;
+  color: #5f6b7a;
+}
+
+/* arrow column */
+
+.colArrow {
+  display: flex;
+  justify-content: center;
+}
+
+.arrowBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #e3e7ee;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.arrowBtn:hover {
+  background: #f4f7fb;
+  border-color: #d3dae4;
+}
+
+.arrowIcon {
+  font-size: 14px;
+  color: #5f6b7a;
+}
+
+@media (max-width: 900px) {
+  .recordCard {
+    border-radius: 16px;
+  }
+
+  .recordGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 16px;
+  }
+
+  .colArrow {
+    justify-content: flex-end;
+  }
+}
+
+/* ---------------- filters ---------------- */
+
 .filterGroup {
   display: flex;
   align-items: center;
