@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import styles from "./ReportsDetailsComponent.module.css";
-import { FiChevronDown } from "react-icons/fi";
+import { FiChevronDown, FiChevronRight, FiGlobe, FiUser } from "react-icons/fi";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { RiFileExcel2Line } from "react-icons/ri";
 import { IoDocumentTextOutline } from "react-icons/io5";
@@ -12,8 +12,18 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import CustomDropdown from "@/common-components/custom-dropdown/CustomDropdown";
 
 const AVAILABLE_YEARS = [2026, 2025, 2024, 2023];
+
+const AVATAR_BG_CLASSES = [
+  "avatarBg0",
+  "avatarBg1",
+  "avatarBg2",
+  "avatarBg3",
+  "avatarBg4",
+  "avatarBg5",
+];
 
 const slugify = (value) =>
   String(value || "report")
@@ -38,6 +48,19 @@ const getChartImageUri = async (chartRef) => {
   return result?.imgURI || null;
 };
 
+const getStatusClass = (status) => {
+  const key = String(status || "")
+    .toLowerCase()
+    .trim();
+  if (["completed", "active", "success"].includes(key))
+    return styles.statusSuccess;
+  if (["pending", "processing", "new service"].includes(key))
+    return styles.statusPending;
+  if (["failed", "cancelled", "rejected", "inactive"].includes(key))
+    return styles.statusDanger;
+  return styles.statusDefault;
+};
+
 const ReportsDetailsComponent = () => {
   const userData = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
@@ -51,18 +74,32 @@ const ReportsDetailsComponent = () => {
   const chartRef = useRef(null);
   const downloadMenuRef = useRef(null);
 
+  const [dateRange, setDateRange] = useState({
+    fromDate: "",
+    toDate: "",
+  });
+  const today = new Date().toISOString().split("T")[0];
+  const [filterActiveTab, setFilterActiveTab] = useState({
+    provider: null,
+    type: null,
+  });
+  const [selectedProvider, setSelectedProvider] = useState(null);
+
   const getReportDetails = async () => {
     try {
       const response = await reportDetails({
         body: {
-          slug: router.query.slug,
+          slug: router?.query?.slug,
           partner_id: userData?.id,
-          year,
+          fromDate: dateRange.fromDate || null,
+          toDate: dateRange.toDate || null,
+          provider_id: selectedProvider || null,
+          type: filterActiveTab?.type?.toLowerCase() || null,
         },
       });
 
       if (response?.data?.status) {
-        setReportData(response.data);
+        setReportData(response?.data);
       }
     } catch (error) {
       console.log(error);
@@ -73,6 +110,8 @@ const ReportsDetailsComponent = () => {
   const table = reportData?.table;
   const columns = table?.columns || [];
   const rows = table?.rows || [];
+  const records = reportData?.records || [];
+
   const reportTitle =
     reportData?.title || router.query.slug?.replace(/-/g, " ").toUpperCase();
   const fileBaseName = `${slugify(reportTitle)}-${year}`;
@@ -81,7 +120,7 @@ const ReportsDetailsComponent = () => {
     if (router?.isReady && router.query.slug) {
       getReportDetails();
     }
-  }, [router?.isReady, router.query.slug, year]);
+  }, [router?.isReady, router.query.slug]);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -302,6 +341,12 @@ const ReportsDetailsComponent = () => {
     }
   };
 
+  useEffect(() => {
+    if (router?.query?.slug) {
+      getReportDetails();
+    }
+  }, [selectedProvider, filterActiveTab]);
+
   return (
     <>
       <div className={styles.pageWrap}>
@@ -312,19 +357,104 @@ const ReportsDetailsComponent = () => {
 
         <div className={styles.card}>
           <div className={styles.cardHeader}>
-            <div className={styles.yearSelectWrap}>
-              <select
-                className={styles.yearSelect}
-                value={year}
-                onChange={(e) => setYear(Number(e.target.value))}
-              >
-                {AVAILABLE_YEARS.map((y) => (
-                  <option key={y} value={y}>
-                    YEAR {y}
-                  </option>
-                ))}
-              </select>
-              <FiChevronDown className={styles.yearSelectIcon} />
+            <div className="d-flex  gap-2 flex-column">
+              <div className={styles.dateGroup}>
+                <label className={styles.dateLabel}>
+                  From Date
+                  <input
+                    type="date"
+                    className={styles.dateInput}
+                    value={dateRange.fromDate}
+                    max={today}
+                    onChange={(e) =>
+                      setDateRange({ ...dateRange, fromDate: e.target.value })
+                    }
+                  />
+                </label>
+                <label className={styles.dateLabel}>
+                  To Date
+                  <input
+                    type="date"
+                    className={styles.dateInput}
+                    value={dateRange.toDate}
+                    max={today}
+                    onChange={(e) =>
+                      setDateRange({ ...dateRange, toDate: e.target.value })
+                    }
+                  />
+                </label>
+                <div className={styles.filterGroup}>
+                  <CustomDropdown
+                    placeholder="Select Provider"
+                    isSearchable={false}
+                    value={filterActiveTab?.provider || null}
+                    options={[
+                      {
+                        label: "Google Workspace",
+                        value: "google_workspace",
+                        idx: 3,
+                      },
+                      {
+                        label: "Microsoft 365",
+                        value: "microsoft_365",
+                        idx: 2,
+                      },
+                      {
+                        label: "Tizzy",
+                        value: "tizzy",
+                        idx: 1,
+                      },
+                    ]}
+                    onChange={(selectedOption) => {
+                      setFilterActiveTab((prev) => ({
+                        ...prev,
+                        provider: selectedOption?.label || null,
+                      }));
+                      setSelectedProvider(selectedOption?.idx || null);
+                    }}
+                    customWidth={"182px"}
+                  />
+
+                  {router?.query?.slug === "daily-performance" && (
+                    <CustomDropdown
+                      placeholder="Select"
+                      isSearchable={false}
+                      value={filterActiveTab?.type || null}
+                      options={[
+                        {
+                          label: "Sales",
+                          value: "sales",
+                          idx: 3,
+                        },
+                        {
+                          label: "Orders",
+                          value: "orders",
+                          idx: 2,
+                        },
+                        {
+                          label: "Renewals",
+                          value: "renewals",
+                          idx: 1,
+                        },
+                      ]}
+                      onChange={(selectedOption) => {
+                        setFilterActiveTab((prev) => ({
+                          ...prev,
+                          type: selectedOption?.label || null,
+                        }));
+                      }}
+                      customWidth={"182px"}
+                    />
+                  )}
+
+                  <button
+                    className={styles.btnApply}
+                    onClick={getReportDetails}
+                  >
+                    Apply
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className={styles.downloadWrap} ref={downloadMenuRef}>
@@ -404,6 +534,115 @@ const ReportsDetailsComponent = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {records.length > 0 && (
+            <div className={styles.recordsList}>
+              {records.map((record, idx) => {
+                const initial =
+                  record?.avatar_initial ||
+                  record?.company_name?.charAt(0)?.toUpperCase() ||
+                  "-";
+                const avatarClass =
+                  styles[AVATAR_BG_CLASSES[idx % AVATAR_BG_CLASSES.length]];
+
+                return (
+                  <div
+                    key={record?.order_id || record?.order_no || idx}
+                    className={styles.recordCard}
+                  >
+                    <div className={styles.recordGrid}>
+                      <div className={styles.colOrder}>
+                        <span className={styles.dateValue}>
+                          {record?.date || "-"}
+                        </span>
+                        <span className={styles.orderNo}>
+                          {record?.order_no || "-"}
+                        </span>
+                      </div>
+
+                      <div className={styles.colCompany}>
+                        <div className={`${styles.avatar} ${avatarClass}`}>
+                          {initial}
+                        </div>
+                        <div className={styles.companyInfo}>
+                          <span
+                            className={styles.companyName}
+                            title={record?.company_name}
+                          >
+                            {record?.company_name || "-"}
+                          </span>
+                          {record?.contact_name && (
+                            <span className={styles.contactName}>
+                              <FiUser className={styles.metaIcon} />
+                              {record.contact_name}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className={styles.colPlan}>
+                        <span
+                          className={styles.planName}
+                          title={record?.plan_name}
+                        >
+                          {record?.plan_name || "-"}
+                        </span>
+                        {record?.domain_name && (
+                          <span className={styles.domainName}>
+                            <FiGlobe className={styles.metaIcon} />
+                            {record.domain_name}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className={styles.colLicense}>
+                        <span className={styles.colLabel}>License</span>
+                        <span className={styles.licenseValue}>
+                          {record?.licenses ?? "-"}
+                        </span>
+                      </div>
+
+                      <div className={styles.colEnrollment}>
+                        <span className={styles.colLabel}>Enrollment Type</span>
+                        <span className={styles.enrollmentValue}>
+                          {record?.enrollment_type || "-"}
+                        </span>
+                      </div>
+
+                      <div className={styles.colStatus}>
+                        <span
+                          className={`${styles.statusBadge} ${getStatusClass(
+                            record?.order_status || record?.status,
+                          )}`}
+                        >
+                          {record?.status || "-"}
+                        </span>
+                      </div>
+
+                      <div className={styles.colArrow}>
+                        <button
+                          type="button"
+                          className={styles.arrowBtn}
+                          aria-label="View order details"
+                          onClick={() =>
+                            router.push({
+                              pathname: "/subscriptions/subscriptions-details",
+                              query: {
+                                orderId: record?.order_id,
+                                customerId: record?.customer_id,
+                              },
+                            })
+                          }
+                        >
+                          <FiChevronRight className={styles.arrowIcon} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
