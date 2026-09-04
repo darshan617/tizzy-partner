@@ -57,7 +57,10 @@ const ReportsDetailsComponent = () => {
     toDate: "",
   });
   const today = new Date().toISOString().split("T")[0];
-  const [filterActiveTab, setFilterActiveTab] = useState(null);
+  const [filterActiveTab, setFilterActiveTab] = useState({
+    provider: null,
+    type: null,
+  });
   const [selectedProvider, setSelectedProvider] = useState(null);
 
   const getReportDetails = async () => {
@@ -69,11 +72,12 @@ const ReportsDetailsComponent = () => {
           fromDate: dateRange.fromDate || null,
           toDate: dateRange.toDate || null,
           provider_id: selectedProvider || null,
+          type: filterActiveTab?.type?.toLowerCase() || null,
         },
       });
 
       if (response?.data?.status) {
-        setReportData(response.data);
+        setReportData(response?.data);
       }
     } catch (error) {
       console.log(error);
@@ -317,7 +321,7 @@ const ReportsDetailsComponent = () => {
     if (router?.query?.slug) {
       getReportDetails();
     }
-  }, [selectedProvider]);
+  }, [selectedProvider, filterActiveTab]);
 
   return (
     <>
@@ -373,7 +377,7 @@ const ReportsDetailsComponent = () => {
                   <CustomDropdown
                     placeholder="Select Provider"
                     isSearchable={false}
-                    value={filterActiveTab}
+                    value={filterActiveTab?.provider || null}
                     options={[
                       {
                         label: "Google Workspace",
@@ -392,11 +396,46 @@ const ReportsDetailsComponent = () => {
                       },
                     ]}
                     onChange={(selectedOption) => {
-                      setFilterActiveTab(selectedOption?.label || null);
+                      setFilterActiveTab((prev) => ({
+                        ...prev,
+                        provider: selectedOption?.label || null,
+                      }));
                       setSelectedProvider(selectedOption?.idx || null);
                     }}
                     customWidth={"182px"}
                   />
+
+                  {router?.query?.slug === "daily-performance" && (
+                    <CustomDropdown
+                      placeholder="Select"
+                      isSearchable={false}
+                      value={filterActiveTab?.type || null}
+                      options={[
+                        {
+                          label: "Sales",
+                          value: "sales",
+                          idx: 3,
+                        },
+                        {
+                          label: "Orders",
+                          value: "orders",
+                          idx: 2,
+                        },
+                        {
+                          label: "Renewals",
+                          value: "renewals",
+                          idx: 1,
+                        },
+                      ]}
+                      onChange={(selectedOption) => {
+                        setFilterActiveTab((prev) => ({
+                          ...prev,
+                          type: selectedOption?.label || null,
+                        }));
+                      }}
+                      customWidth={"182px"}
+                    />
+                  )}
 
                   <button
                     className={styles.btnApply}
