@@ -19,6 +19,7 @@ const CustomDropdown = ({
   isSearchable = true,
   onChange,
   customHeight = "auto",
+  customWidth = "100%",
 }) => {
   const [selectedOption, setSelectedOption] = useState(() =>
     toDisplayValue(value),
@@ -49,7 +50,10 @@ const CustomDropdown = ({
         <div
           className={styles.dropdownToggle}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          style={{ height: customHeight || "auto" }}
+          style={{
+            height: customHeight || "auto",
+            width: customWidth || "100%",
+          }}
         >
           <span className={!hasSelection ? styles.placeholderText : undefined}>
             {hasSelection ? selectedOption : placeholder}
