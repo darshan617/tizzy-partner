@@ -12,6 +12,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import CustomDropdown from "@/common-components/custom-dropdown/CustomDropdown";
 
 const AVAILABLE_YEARS = [2026, 2025, 2024, 2023];
 
@@ -51,13 +52,23 @@ const ReportsDetailsComponent = () => {
   const chartRef = useRef(null);
   const downloadMenuRef = useRef(null);
 
+  const [dateRange, setDateRange] = useState({
+    fromDate: "",
+    toDate: "",
+  });
+  const today = new Date().toISOString().split("T")[0];
+  const [filterActiveTab, setFilterActiveTab] = useState(null);
+  const [selectedProvider, setSelectedProvider] = useState(null);
+
   const getReportDetails = async () => {
     try {
       const response = await reportDetails({
         body: {
-          slug: router.query.slug,
+          slug: router?.query?.slug,
           partner_id: userData?.id,
-          year,
+          fromDate: dateRange.fromDate || null,
+          toDate: dateRange.toDate || null,
+          provider_id: selectedProvider || null,
         },
       });
 
@@ -81,7 +92,7 @@ const ReportsDetailsComponent = () => {
     if (router?.isReady && router.query.slug) {
       getReportDetails();
     }
-  }, [router?.isReady, router.query.slug, year]);
+  }, [router?.isReady, router.query.slug]);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -302,6 +313,12 @@ const ReportsDetailsComponent = () => {
     }
   };
 
+  useEffect(() => {
+    if (router?.query?.slug) {
+      getReportDetails();
+    }
+  }, [selectedProvider]);
+
   return (
     <>
       <div className={styles.pageWrap}>
@@ -312,7 +329,7 @@ const ReportsDetailsComponent = () => {
 
         <div className={styles.card}>
           <div className={styles.cardHeader}>
-            <div className={styles.yearSelectWrap}>
+            {/* <div className={styles.yearSelectWrap}>
               <select
                 className={styles.yearSelect}
                 value={year}
@@ -325,6 +342,82 @@ const ReportsDetailsComponent = () => {
                 ))}
               </select>
               <FiChevronDown className={styles.yearSelectIcon} />
+            </div> */}
+            <div className="d-flex  gap-2 flex-column">
+              <div className={styles.dateGroup}>
+                <label className={styles.dateLabel}>
+                  From Date
+                  <input
+                    type="date"
+                    className={styles.dateInput}
+                    value={dateRange.fromDate}
+                    max={today}
+                    onChange={(e) =>
+                      setDateRange({ ...dateRange, fromDate: e.target.value })
+                    }
+                  />
+                </label>
+                <label className={styles.dateLabel}>
+                  To Date
+                  <input
+                    type="date"
+                    className={styles.dateInput}
+                    value={dateRange.toDate}
+                    max={today}
+                    onChange={(e) =>
+                      setDateRange({ ...dateRange, toDate: e.target.value })
+                    }
+                  />
+                </label>
+                <div className={styles.filterGroup}>
+                  <CustomDropdown
+                    placeholder="Select Provider"
+                    isSearchable={false}
+                    value={filterActiveTab}
+                    options={[
+                      {
+                        label: "Google Workspace",
+                        value: "google_workspace",
+                        idx: 3,
+                      },
+                      {
+                        label: "Microsoft 365",
+                        value: "microsoft_365",
+                        idx: 2,
+                      },
+                      {
+                        label: "Tizzy",
+                        value: "tizzy",
+                        idx: 1,
+                      },
+                    ]}
+                    onChange={(selectedOption) => {
+                      setFilterActiveTab(selectedOption?.label || null);
+                      setSelectedProvider(selectedOption?.idx || null);
+                    }}
+                    customWidth={"182px"}
+                  />
+
+                  <button
+                    className={styles.btnApply}
+                    onClick={getReportDetails}
+                  >
+                    Apply
+                  </button>
+                </div>
+              </div>
+
+              {/* <div className={styles.filterYear}>
+                            {summaryTabs?.map((tab) => (
+                              <button
+                                key={tab}
+                                className={`${styles.btnFilterYear} ${summaryActiveTab === tab ? styles.active : ""}`}
+                                onClick={() => setSummaryActiveTab(tab)}
+                              >
+                                {tab}
+                              </button>
+                            ))}
+                          </div> */}
             </div>
 
             <div className={styles.downloadWrap} ref={downloadMenuRef}>

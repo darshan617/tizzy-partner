@@ -1,202 +1,241 @@
 .pageWrap {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 24px 20px 60px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
 }
 
 .breadcrumb {
-    font-size: 12px;
-    color: #8b93a1;
-    margin-bottom: 6px;
+  font-size: 12px;
+  color: #8b93a1;
+  margin-bottom: 6px;
 }
 
 .pageTitle {
-    font-size: 22px;
-    font-weight: 700;
-    color: #1b2430;
-    margin: 0 0 20px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1b2430;
+  margin: 0 0 20px;
 }
 
 .card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(20, 30, 60, 0.06);
-    padding: 24px 28px 28px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(20, 30, 60, 0.06);
+  padding: 24px 28px 28px;
 }
 
 .cardHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .yearSelectWrap {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
 
 .yearSelect {
-    appearance: none;
-    -webkit-appearance: none;
-    border: 1px solid #e3e7ee;
-    border-radius: 8px;
-    background: #fff;
-    padding: 8px 32px 8px 14px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    color: #1b2430;
-    cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid #e3e7ee;
+  border-radius: 8px;
+  background: #fff;
+  padding: 8px 32px 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #1b2430;
+  cursor: pointer;
 }
 
 .yearSelectIcon {
-    position: absolute;
-    right: 10px;
-    pointer-events: none;
-    color: #8b93a1;
-    font-size: 14px;
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  color: #8b93a1;
+  font-size: 14px;
 }
 
 .downloadWrap {
-    position: relative;
+  position: relative;
 }
 
 .downloadBtn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    border: none;
-    border-radius: 8px;
-    background: var(--primaryColor, #1857c4);
-    color: #fff;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 9px 16px;
-    cursor: pointer;
-    transition: background 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: 8px;
+  background: var(--primaryColor, #1857c4);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
 
 .downloadBtn:hover:not(:disabled) {
-    background: #124a9e;
+  background: #124a9e;
 }
 
 .downloadBtn:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .downloadMenu {
-    position: absolute;
-    top: calc(100% + 6px);
-    right: 0;
-    min-width: 180px;
-    background: #fff;
-    border: 1px solid #e3e7ee;
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(20, 30, 60, 0.12);
-    padding: 6px;
-    z-index: 20;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid #e3e7ee;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(20, 30, 60, 0.12);
+  padding: 6px;
+  z-index: 20;
 }
 
 .downloadOption {
-    width: 100%;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    border: none;
-    background: transparent;
-    color: #1b2430;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 10px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    text-align: left;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  color: #1b2430;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
 }
 
 .downloadOption:hover {
-    background: #f4f7fb;
-    color: var(--primaryColor, #1857c4);
+  background: #f4f7fb;
+  color: var(--primaryColor, #1857c4);
 }
 
 .cardSubtitle {
-    margin: 18px 0 0;
-    font-size: 12px;
-    color: #8b93a1;
+  margin: 18px 0 0;
+  font-size: 12px;
+  color: #8b93a1;
 }
 
 .divider {
-    border: none;
-    border-top: 1px solid #eef1f4;
-    margin: 14px 0 20px;
+  border: none;
+  border-top: 1px solid #eef1f4;
+  margin: 14px 0 20px;
 }
 
 .chartWrap {
-    margin-bottom: 24px;
+  margin-bottom: 24px;
 }
 
 /* ---------------- table ---------------- */
 
 .tableWrap {
-    overflow-x: auto;
-    border: 1px solid #eef1f4;
-    border-radius: 8px;
-    scrollbar-width: thin;
+  overflow-x: auto;
+  border: 1px solid #eef1f4;
+  border-radius: 8px;
+  scrollbar-width: thin;
 }
 
 .table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 720px;
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
 }
 
 .table thead th {
-    font-size: 12px;
-    font-weight: 500;
-    color: #8b93a1;
-    text-align: center;
-    padding: 12px 10px;
-    border-bottom: 1px solid #eef1f4;
-    white-space: nowrap;
+  font-size: 12px;
+  font-weight: 500;
+  color: #8b93a1;
+  text-align: center;
+  padding: 12px 10px;
+  border-bottom: 1px solid #eef1f4;
+  white-space: nowrap;
 }
 
 .rowLabelHead {
-    min-width: 160px;
+  min-width: 160px;
 }
 
 .table tbody td {
-    font-size: 13px;
-    color: #1b2430;
-    text-align: center;
-    padding: 12px 10px;
-    border-bottom: 1px solid #f4f6f8;
-    white-space: nowrap;
+  font-size: 13px;
+  color: #1b2430;
+  text-align: center;
+  padding: 12px 10px;
+  border-bottom: 1px solid #f4f6f8;
+  white-space: nowrap;
 }
 
 .table tbody tr:last-child td {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .rowLabel {
-    text-align: left;
-    font-weight: 600;
-    color: #1b2430;
+  text-align: left;
+  font-weight: 600;
+  color: #1b2430;
 }
 
 .rowShaded {
-    background: #fafbfc;
+  background: #fafbfc;
+}
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.dateGroup {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.dateLabel {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.dateInput {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #e6e9ef;
+  background: var(--card-bg);
+  height: 38px;
+}
+
+.btnApply {
+  margin-left: 8px;
+  padding: 5px 20px;
+  background: var(--primaryColor);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  height: 38px;
 }
 
 @media (max-width: 640px) {
-    .card {
-        padding: 18px 16px 20px;
-    }
+  .card {
+    padding: 18px 16px 20px;
+  }
 
-    .cardHeader {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+  .cardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
