@@ -199,7 +199,7 @@ const ReportsComponent = () => {
     }
   };
 
-  const [activeTab, setActiveTab] = useState("All");
+  const [activeTab, setActiveTab] = useState(null);
 
   const tabs = [
     "All",
@@ -214,7 +214,6 @@ const ReportsComponent = () => {
 
   const [filterActiveTab, setFilterActiveTab] = useState(null);
   const [selectedProvider, setSelectedProvider] = useState(null);
-  console.log("selectedProvider", selectedProvider);
 
   const summaryCards = reportData?.summary_cards;
   const catalogGroups = reportData?.catalog_groups || [];
@@ -226,6 +225,10 @@ const ReportsComponent = () => {
   const quickInsightsData = reportData?.quick_insights;
   const recentReportsData = reportData?.recent_reports;
   const recentReports = recentReportsData?.items || [];
+
+  const updatedReports = catalogGroups?.find((group) => {
+    return group?.group === activeTab;
+  });
 
   const dateRangeLabel =
     dateRange.fromDate && dateRange.toDate
@@ -863,6 +866,7 @@ const ReportsComponent = () => {
                       setFilterActiveTab(selectedOption?.label || null);
                       setSelectedProvider(selectedOption?.idx || null);
                     }}
+                    customWidth={"182px"}
                   />
 
                   <button
@@ -954,69 +958,149 @@ const ReportsComponent = () => {
         </div>
       </div>
 
+      <div className={styles.chartCard}>
+        <div className={styles.chartHeader}>
+          <h3 className={styles.chartTitle}>Quick Insights</h3>
+          <p className={styles.chartSubtitle}>Key highlights at a glance.</p>
+        </div>
+        <ul className={styles.insightsList}>
+          {quickInsights.map((item) => {
+            const InsightIcon = item.icon;
+            return (
+              <li key={item.key || item.label} className={styles.insightItem}>
+                <div
+                  className={`${styles.insightIcon} ${styles[item.iconTheme]}`}
+                >
+                  <InsightIcon size={18} />
+                </div>
+                <div className={styles.insightContent}>
+                  <span className={styles.insightLabel}>{item.label}</span>
+                  <span className={styles.insightValue}>{item.value}</span>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
       <section className={styles.summarySection}>
         <div className={styles.summarySectionWrap}>
           <div className={styles.summaryHeader}>
             <h3 className={styles.summaryTitle}>All Reports</h3>
           </div>
           <div className={styles.summaryTabs}>
-            {tabs?.map((tab) => (
+            <button
+              className={`${styles.btnFilterYear} ${
+                activeTab === null ? styles.active : ""
+              }`}
+              onClick={() => setActiveTab(null)}
+            >
+              All
+            </button>
+            {catalogGroups?.map((tab) => (
               <button
-                key={tab}
-                className={`${styles.btnFilterYear} ${activeTab === tab ? styles.active : ""}`}
-                onClick={() => setActiveTab(tab)}
+                key={tab?.group}
+                className={`${styles.btnFilterYear} ${
+                  activeTab === tab?.group ? styles.active : ""
+                }`}
+                onClick={() => setActiveTab(tab?.group)}
               >
-                {tab}
+                {tab?.group}
               </button>
             ))}
           </div>
         </div>
 
         <div className={styles.summaryGrid}>
-          {catalogGroups?.flatMap((group) => {
-            const meta = CATALOG_GROUP_META[group?.group] || {
-              icon: BsGraphUp,
-              iconTheme: "blueIcon",
-            };
+          {activeTab === null
+            ? catalogGroups?.flatMap((group) => {
+                const meta = CATALOG_GROUP_META[group?.group] || {
+                  icon: BsGraphUp,
+                  iconTheme: "blueIcon",
+                };
 
-            return (group?.items || []).map((item) => {
-              const ItemIcon = SUMMARY_ITEM_ICON_META[item?.slug] || meta?.icon;
+                return (group?.items || []).map((item) => {
+                  const ItemIcon =
+                    SUMMARY_ITEM_ICON_META[item?.slug] || meta?.icon;
 
-              return (
-                <Link
-                  key={item?.slug || item?.title}
-                  href={`/reports/${item?.slug}`}
-                  className={styles.summaryItem}
-                >
-                  <div
-                    className={`${styles.summaryItemIcon} ${styles[meta?.iconTheme]}`}
-                  >
-                    <ItemIcon size={16} />
-                  </div>
+                  return (
+                    <Link
+                      key={item?.slug || item?.title}
+                      href={`/reports/${item?.slug}`}
+                      className={styles.summaryItem}
+                    >
+                      <div
+                        className={`${styles.summaryItemIcon} ${styles[meta?.iconTheme]}`}
+                      >
+                        <ItemIcon size={16} />
+                      </div>
 
-                  <div className={styles.summaryItemTitle}>{item?.title}</div>
-                  <div className={styles.summaryItemText}>{item?.subtitle}</div>
+                      <div className={styles.summaryItemTitle}>
+                        {item?.title}
+                      </div>
+                      <div className={styles.summaryItemText}>
+                        {item?.subtitle}
+                      </div>
 
-                  {item?.stat && (
-                    <div className={styles.summaryItemStat}>{item.stat}</div>
-                  )}
+                      {item?.stat && (
+                        <div className={styles.summaryItemStat}>
+                          {item.stat}
+                        </div>
+                      )}
 
-                  {/* <div className={styles.summaryStatus}>
+                      {/* <div className={styles.summaryStatus}>
                     <span>₹ 18.2k today</span>
                   </div> */}
 
-                  <div className={styles.summaryItemFooter}>
-                    <span className={styles.summaryItemTime}>
-                      {/* <CiClock2 size={10} />2 hours ago */}
-                    </span>
-                    <span className={styles.summaryItemLink}>
-                      View Report <FaArrowRight size={10} />
-                    </span>
-                  </div>
-                </Link>
-              );
-            });
-          })}
+                      <div className={styles.summaryItemFooter}>
+                        <span className={styles.summaryItemTime}>
+                          {/* <CiClock2 size={10} />2 hours ago */}
+                        </span>
+                        <span className={styles.summaryItemLink}>
+                          View Report <FaArrowRight size={10} />
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                });
+              })
+            : (updatedReports?.items || [])?.map((item) => {
+                const ItemIcon =
+                  SUMMARY_ITEM_ICON_META[item?.slug] || BsGraphUp;
+                return (
+                  <Link
+                    key={item?.slug || item?.title}
+                    href={`/reports/${item?.slug}`}
+                    className={styles.summaryItem}
+                  >
+                    <div className={`${styles.summaryItemIcon}`}>
+                      <ItemIcon size={16} />
+                    </div>
+
+                    <div className={styles.summaryItemTitle}>{item?.title}</div>
+                    <div className={styles.summaryItemText}>
+                      {item?.subtitle}
+                    </div>
+
+                    {item?.stat && (
+                      <div className={styles.summaryItemStat}>{item.stat}</div>
+                    )}
+
+                    {/* <div className={styles.summaryStatus}>
+                    <span>₹ 18.2k today</span>
+                  </div> */}
+
+                    <div className={styles.summaryItemFooter}>
+                      <span className={styles.summaryItemTime}>
+                        {/* <CiClock2 size={10} />2 hours ago */}
+                      </span>
+                      <span className={styles.summaryItemLink}>
+                        View Report <FaArrowRight size={10} />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
         </div>
       </section>
 
@@ -1062,7 +1146,7 @@ const ReportsComponent = () => {
             </div>
           </div>
 
-          <div className={styles.chartCard}>
+          {/* <div className={styles.chartCard}>
             <div className={styles.chartHeader}>
               <h3 className={styles.chartTitle}>Quick Insights</h3>
               <p className={styles.chartSubtitle}>
@@ -1090,7 +1174,7 @@ const ReportsComponent = () => {
                 );
               })}
             </ul>
-          </div>
+          </div> */}
         </div>
       </section>
 
