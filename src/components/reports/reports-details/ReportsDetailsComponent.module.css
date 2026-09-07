@@ -520,6 +520,12 @@
   gap: 16px;
   display: grid;
 }
+.transactionRecordsList {
+  grid-template-columns: 80px 1.6fr 1.6fr 74px 70px 50px;
+  align-items: center;
+  gap: 16px;
+  display: grid;
+}
 
 @media (max-width: 640px) {
   .card {

@@ -116,6 +116,88 @@ const ReportsDetailsComponent = () => {
     reportData?.title || router.query.slug?.replace(/-/g, " ").toUpperCase();
   const fileBaseName = `${slugify(reportTitle)}-${year}`;
 
+  const getRecordExportData = () => {
+    if (!records?.length) {
+      return { columns: [], rows: [] };
+    }
+
+    // New Customers report
+    if (router?.query?.slug === "new-customers") {
+      return {
+        columns: [
+          "Date",
+          "Customer No",
+          "Company",
+          "Name",
+          "Email",
+          "Mobile",
+          "Status",
+        ],
+        rows: records.map((record) => [
+          record?.registered || "-",
+          record?.customer_no || "-",
+          record?.company_name || "-",
+          record?.name || "-",
+          record?.email || "-",
+          record?.mobile || "-",
+          record?.status || "-",
+        ]),
+      };
+    }
+
+    // Transactions report
+    if (router?.query?.slug === "transactions") {
+      return {
+        columns: [
+          "Date",
+          "Order No",
+          "Company",
+          "Domain",
+          "Invoice No",
+          "Plan",
+          "Enrollment Category",
+          "Amount",
+          "Status",
+        ],
+        rows: records.map((record) => [
+          record?.date || "-",
+          record?.order_no || "-",
+          record?.company_name || "-",
+          record?.domain_name || "-",
+          record?.bill_no_full || "-",
+          record?.plan_name || "-",
+          record?.enrollment_category || "-",
+          record?.price != null ? `₹ ${Number(record.price).toFixed(2)}` : "-",
+          record?.status || "-",
+        ]),
+      };
+    }
+
+    // Other reports
+    return {
+      columns: [
+        "Date",
+        "Order No",
+        "Company",
+        "Plan",
+        "Domain",
+        "License",
+        "Enrollment Type",
+        "Status",
+      ],
+      rows: records.map((record) => [
+        record?.date || "-",
+        record?.order_no || "-",
+        record?.company_name || "-",
+        record?.plan_name || "-",
+        record?.domain_name || "-",
+        record?.licenses ?? "-",
+        record?.enrollment_type || "-",
+        record?.status || "-",
+      ]),
+    };
+  };
+
   useEffect(() => {
     if (router?.isReady && router.query.slug) {
       getReportDetails();
@@ -198,6 +280,74 @@ const ReportsDetailsComponent = () => {
           if (length > maxLength) maxLength = length;
         });
         column.width = Math.min(maxLength + 4, 28);
+      });
+    }
+
+    const recordExport = getRecordExportData();
+
+    if (recordExport.columns.length > 0 && recordExport.rows.length > 0) {
+      worksheet.addRow([]);
+      worksheet.addRow(["Records"]);
+
+      const recordHeaderRow = worksheet.addRow(recordExport.columns);
+
+      recordHeaderRow.eachCell((cell) => {
+        cell.font = {
+          bold: true,
+          color: { argb: "FFFFFFFF" },
+          size: 11,
+        };
+
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "0355AC" },
+        };
+
+        cell.alignment = {
+          horizontal: "center",
+          vertical: "middle",
+        };
+
+        cell.border = {
+          top: { style: "thin" },
+          bottom: { style: "thin" },
+          left: { style: "thin" },
+          right: { style: "thin" },
+        };
+      });
+
+      recordExport.rows.forEach((recordRow) => {
+        const dataRow = worksheet.addRow(recordRow);
+
+        dataRow.eachCell((cell) => {
+          cell.alignment = {
+            vertical: "middle",
+            horizontal: "left",
+          };
+
+          cell.border = {
+            top: { style: "thin" },
+            bottom: { style: "thin" },
+            left: { style: "thin" },
+            right: { style: "thin" },
+          };
+        });
+      });
+
+      // Adjust column widths for records
+      worksheet.columns.forEach((column) => {
+        let maxLength = 12;
+
+        column.eachCell?.({ includeEmpty: true }, (cell) => {
+          const length = cell.value ? String(cell.value).length : 10;
+
+          if (length > maxLength) {
+            maxLength = length;
+          }
+        });
+
+        column.width = Math.min(maxLength + 4, 35);
       });
     }
 
@@ -317,6 +467,75 @@ const ReportsDetailsComponent = () => {
 
         y = (pdf.lastAutoTable?.finalY || y) + 6;
       }
+    }
+
+    const recordExport = getRecordExportData();
+
+    if (recordExport.columns.length > 0 && recordExport.rows.length > 0) {
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      // Start records on a new page
+      pdf.addPage();
+
+      let recordsY = margin;
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(13);
+      pdf.setTextColor(27, 36, 48);
+
+      pdf.text("Records", margin, recordsY);
+
+      recordsY += 6;
+
+      autoTable(pdf, {
+        startY: recordsY,
+
+        head: [recordExport.columns],
+
+        body: recordExport.rows.map((row) =>
+          row.map((value) => toPdfText(value)),
+        ),
+
+        theme: "grid",
+
+        styles: {
+          font: "helvetica",
+          fontSize: 7,
+          cellPadding: 1.5,
+          overflow: "ellipsize",
+          valign: "middle",
+          halign: "center",
+          textColor: [27, 36, 48],
+          lineColor: [238, 241, 244],
+          lineWidth: 0.2,
+        },
+
+        headStyles: {
+          fillColor: [3, 85, 172],
+          textColor: [255, 255, 255],
+          fontStyle: "bold",
+          halign: "center",
+        },
+
+        alternateRowStyles: {
+          fillColor: [250, 251, 252],
+        },
+
+        margin: {
+          left: margin,
+          right: margin,
+          bottom: margin,
+        },
+
+        tableWidth: "auto",
+
+        didParseCell: (data) => {
+          // Keep long text readable
+          if (data.section === "body") {
+            data.cell.styles.fontSize = 7;
+          }
+        },
+      });
     }
 
     pdf.save(`${fileBaseName}.pdf`);
@@ -649,52 +868,67 @@ const ReportsDetailsComponent = () => {
                   })}
                 </div>
               )
-            : records?.length > 0 && (
-                <div className={styles.recordsList}>
-                  {records?.map((record, idx) => {
-                    const initial =
-                      record?.avatar_initial ||
-                      record?.company_name?.charAt(0)?.toUpperCase() ||
-                      "-";
-                    const avatarClass =
-                      styles[AVATAR_BG_CLASSES[idx % AVATAR_BG_CLASSES.length]];
+            : router?.query?.slug === "transactions"
+              ? records?.length > 0 && (
+                  <div className={styles.recordsList}>
+                    {records?.map((record, idx) => {
+                      const initial =
+                        record?.avatar_initial ||
+                        record?.company_name?.charAt(0)?.toUpperCase() ||
+                        "-";
+                      const avatarClass =
+                        styles[
+                          AVATAR_BG_CLASSES[idx % AVATAR_BG_CLASSES.length]
+                        ];
 
-                    return (
-                      <div
-                        key={record?.order_id || record?.order_no || idx}
-                        className={styles.recordCard}
-                      >
-                        <div className={styles.recordGrid}>
-                          <div className={styles.colOrder}>
-                            <span className={styles.dateValue}>
-                              {record?.date || "-"}
-                            </span>
-                            <span className={styles.orderNo}>
-                              {record?.order_no || "-"}
-                            </span>
-                          </div>
-
-                          <div className={styles.colCompany}>
-                            <div className={`${styles.avatar} ${avatarClass}`}>
-                              {initial}
-                            </div>
-                            <div className={styles.companyInfo}>
-                              <span
-                                className={styles.companyName}
-                                title={record?.company_name}
-                              >
-                                {record?.company_name || "-"}
+                      return (
+                        <div
+                          key={record?.order_id || record?.order_no || idx}
+                          className={styles.recordCard}
+                        >
+                          <div className={styles.transactionRecordsList}>
+                            <div className={styles.colOrder}>
+                              <span className={styles.dateValue}>
+                                {record?.date || "-"}
                               </span>
-                              {record?.contact_name && (
-                                <span className={styles.contactName}>
-                                  <FiUser className={styles.metaIcon} />
-                                  {record.contact_name}
-                                </span>
-                              )}
+                              <span className={styles.orderNo}>
+                                {record?.order_no || "-"}
+                              </span>
                             </div>
-                          </div>
 
-                          <div className={styles.colPlan}>
+                            <div className={styles.colCompany}>
+                              <div
+                                className={`${styles.avatar} ${avatarClass}`}
+                              >
+                                {initial}
+                              </div>
+                              <div className={styles.companyInfo}>
+                                <span
+                                  className={styles.companyName}
+                                  title={record?.company_name}
+                                >
+                                  {record?.company_name || "-"}
+                                </span>
+                                <span
+                                  className={styles.customerName}
+                                  title={record?.name}
+                                >
+                                  <FiGlobe
+                                    className={`${styles.metaIcon} me-1`}
+                                  />
+                                  {record?.domain_name || "-"}
+                                </span>
+                                <small
+                                  className={`${styles.customerName} text-secondary`}
+                                  title={record?.name}
+                                >
+                                  Received payment for invoice no{" "}
+                                  {record?.bill_no_full || "-"}
+                                </small>
+                              </div>
+                            </div>
+
+                            {/* <div className={styles.colPlan}>
                             <span
                               className={styles.planName}
                               title={record?.plan_name}
@@ -707,59 +941,172 @@ const ReportsDetailsComponent = () => {
                                 {record.domain_name}
                               </span>
                             )}
-                          </div>
+                          </div> */}
 
-                          <div className={styles.colLicense}>
-                            <span className={styles.colLabel}>License</span>
-                            <span className={styles.licenseValue}>
-                              {record?.licenses ?? "-"}
-                            </span>
-                          </div>
+                            <div className={styles.colLicense}>
+                              <span className="text-start w-100">
+                                {record?.plan_name}
+                              </span>
+                              <small className="text-start w-100 text-capitalize text-secondary">
+                                {record?.enrollment_category ?? "-"}
+                              </small>
+                            </div>
 
-                          <div className={styles.colEnrollment}>
-                            <span className={styles.colLabel}>
-                              Enrollment Type
-                            </span>
-                            <span className={styles.enrollmentValue}>
-                              {record?.enrollment_type || "-"}
-                            </span>
-                          </div>
+                            <div className={styles.colEnrollment}>
+                              <span className="">
+                                ₹ {Number(record?.price)?.toFixed(2) || "-"}
+                              </span>
+                            </div>
 
-                          <div className={styles.colStatus}>
-                            <span
-                              className={`${styles.statusBadge} ${getStatusClass(
-                                record?.order_status || record?.status,
-                              )}`}
-                            >
-                              {record?.status || "-"}
-                            </span>
-                          </div>
+                            <div className={styles.colStatus}>
+                              <span
+                                className={`${styles.statusBadge} ${getStatusClass(
+                                  record?.order_status || record?.status,
+                                )}`}
+                              >
+                                {record?.status || "-"}
+                              </span>
+                            </div>
 
-                          <div className={styles.colArrow}>
-                            <button
-                              type="button"
-                              className={styles.arrowBtn}
-                              aria-label="View order details"
-                              onClick={() =>
-                                router.push({
-                                  pathname:
-                                    "/subscriptions/subscriptions-details",
-                                  query: {
-                                    orderId: record?.order_id,
-                                    customerId: record?.customer_id,
-                                  },
-                                })
-                              }
-                            >
-                              <FiChevronRight className={styles.arrowIcon} />
-                            </button>
+                            <div className={styles.colArrow}>
+                              <button
+                                type="button"
+                                className={styles.arrowBtn}
+                                aria-label="View order details"
+                                onClick={() =>
+                                  router.push({
+                                    pathname:
+                                      "/transactions/transaction-details",
+                                    query: {
+                                      order_id: record?.order_id,
+                                    },
+                                  })
+                                }
+                              >
+                                <FiChevronRight className={styles.arrowIcon} />
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+                      );
+                    })}
+                  </div>
+                )
+              : records?.length > 0 && (
+                  <div className={styles.recordsList}>
+                    {records?.map((record, idx) => {
+                      const initial =
+                        record?.avatar_initial ||
+                        record?.company_name?.charAt(0)?.toUpperCase() ||
+                        "-";
+                      const avatarClass =
+                        styles[
+                          AVATAR_BG_CLASSES[idx % AVATAR_BG_CLASSES.length]
+                        ];
+
+                      return (
+                        <div
+                          key={record?.order_id || record?.order_no || idx}
+                          className={styles.recordCard}
+                        >
+                          <div className={styles.recordGrid}>
+                            <div className={styles.colOrder}>
+                              <span className={styles.dateValue}>
+                                {record?.date || "-"}
+                              </span>
+                              <span className={styles.orderNo}>
+                                {record?.order_no || "-"}
+                              </span>
+                            </div>
+
+                            <div className={styles.colCompany}>
+                              <div
+                                className={`${styles.avatar} ${avatarClass}`}
+                              >
+                                {initial}
+                              </div>
+                              <div className={styles.companyInfo}>
+                                <span
+                                  className={styles.companyName}
+                                  title={record?.company_name}
+                                >
+                                  {record?.company_name || "-"}
+                                </span>
+                                {record?.contact_name && (
+                                  <span className={styles.contactName}>
+                                    <FiUser className={styles.metaIcon} />
+                                    {record.contact_name}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className={styles.colPlan}>
+                              <span
+                                className={styles.planName}
+                                title={record?.plan_name}
+                              >
+                                {record?.plan_name || "-"}
+                              </span>
+                              {record?.domain_name && (
+                                <span className={styles.domainName}>
+                                  <FiGlobe className={styles.metaIcon} />
+                                  {record.domain_name}
+                                </span>
+                              )}
+                            </div>
+
+                            <div className={styles.colLicense}>
+                              <span className={styles.colLabel}>License</span>
+                              <span className={styles.licenseValue}>
+                                {record?.licenses ?? "-"}
+                              </span>
+                            </div>
+
+                            <div className={styles.colEnrollment}>
+                              <span className={styles.colLabel}>
+                                Enrollment Type
+                              </span>
+                              <span className={styles.enrollmentValue}>
+                                {record?.enrollment_type || "-"}
+                              </span>
+                            </div>
+
+                            <div className={styles.colStatus}>
+                              <span
+                                className={`${styles.statusBadge} ${getStatusClass(
+                                  record?.order_status || record?.status,
+                                )}`}
+                              >
+                                {record?.status || "-"}
+                              </span>
+                            </div>
+
+                            <div className={styles.colArrow}>
+                              <button
+                                type="button"
+                                className={styles.arrowBtn}
+                                aria-label="View order details"
+                                onClick={() =>
+                                  router.push({
+                                    pathname:
+                                      "/subscriptions/subscriptions-details",
+                                    query: {
+                                      orderId: record?.order_id,
+                                      customerId: record?.customer_id,
+                                    },
+                                  })
+                                }
+                              >
+                                <FiChevronRight className={styles.arrowIcon} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
         </div>
       </div>
     </>
