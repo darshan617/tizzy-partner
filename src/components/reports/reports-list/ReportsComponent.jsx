@@ -258,9 +258,9 @@ const ReportsComponent = () => {
       trend: summaryCards?.total_revenue?.trend ?? "-",
     },
     {
-      label: "Active Customers",
-      value: summaryCards?.active_customers?.display ?? "-",
-      trend: summaryCards?.active_customers?.trend ?? "-",
+      label: "Total Orders",
+      value: summaryCards?.monthly_orders?.display ?? "-",
+      trend: summaryCards?.monthly_orders?.trend ?? "-",
     },
     {
       label: "Active Subscriptions",
@@ -268,20 +268,20 @@ const ReportsComponent = () => {
       trend: summaryCards?.active_subscriptions?.trend ?? "-",
     },
     {
-      label: "Monthly Orders",
-      value: summaryCards?.monthly_orders?.display ?? "-",
-      trend: summaryCards?.monthly_orders?.trend ?? "-",
+      label: "Active Customers",
+      value: summaryCards?.active_customers?.display ?? "-",
+      trend: summaryCards?.active_customers?.trend ?? "-",
     },
     {
       label: "Renewals Completed",
       value: summaryCards?.renewals_completed?.display ?? "-",
       trend: summaryCards?.renewals_completed?.trend ?? "-",
     },
-    {
-      label: "Pending Invoices",
-      value: summaryCards?.pending_invoices?.display ?? "-",
-      trend: summaryCards?.pending_invoices?.trend ?? "-",
-    },
+    // {
+    //   label: "Pending Invoices",
+    //   value: summaryCards?.pending_invoices?.display ?? "-",
+    //   trend: summaryCards?.pending_invoices?.trend ?? "-",
+    // },
   ];
 
   const styleExcelHeader = (row) => {
@@ -349,14 +349,6 @@ const ReportsComponent = () => {
       styleExcelDataRow(worksheet.addRow([row.label, row.value, row.trend]));
     });
 
-    worksheet.addRow([]);
-    worksheet.addRow(["Quick Insights"]).font = { bold: true, size: 12 };
-    const insightHeader = worksheet.addRow(["Insight", "Value"]);
-    styleExcelHeader(insightHeader);
-    quickInsights.forEach((item) => {
-      styleExcelDataRow(worksheet.addRow([item.label, item.value]));
-    });
-
     const revenueCategories = revenueOverview?.x_axis?.values || [];
     const revenueValues = revenueDataset?.data || [];
     if (revenueCategories.length > 0) {
@@ -376,6 +368,14 @@ const ReportsComponent = () => {
         );
       });
     }
+
+    worksheet.addRow([]);
+    worksheet.addRow(["Quick Insights"]).font = { bold: true, size: 12 };
+    const insightHeader = worksheet.addRow(["Insight", "Value"]);
+    styleExcelHeader(insightHeader);
+    quickInsights.forEach((item) => {
+      styleExcelDataRow(worksheet.addRow([item.label, item.value]));
+    });
 
     if (salesByServiceKeys.length > 0) {
       worksheet.addRow([]);

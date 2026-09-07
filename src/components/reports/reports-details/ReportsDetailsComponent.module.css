@@ -514,6 +514,13 @@
   height: 38px;
 }
 
+.customerRecordsList {
+  grid-template-columns: 100px 1.6fr 1.6fr 74px 50px;
+  align-items: center;
+  gap: 16px;
+  display: grid;
+}
+
 @media (max-width: 640px) {
   .card {
     padding: 18px 16px 20px;

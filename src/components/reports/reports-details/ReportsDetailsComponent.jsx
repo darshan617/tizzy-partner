@@ -537,114 +537,229 @@ const ReportsDetailsComponent = () => {
             </div>
           )}
 
-          {records.length > 0 && (
-            <div className={styles.recordsList}>
-              {records.map((record, idx) => {
-                const initial =
-                  record?.avatar_initial ||
-                  record?.company_name?.charAt(0)?.toUpperCase() ||
-                  "-";
-                const avatarClass =
-                  styles[AVATAR_BG_CLASSES[idx % AVATAR_BG_CLASSES.length]];
+          {router?.query?.slug === "new-customers"
+            ? records?.length > 0 && (
+                <div className={styles.recordsList}>
+                  {records?.map((record, idx) => {
+                    const initial =
+                      record?.avatar_initial ||
+                      record?.company_name?.charAt(0)?.toUpperCase() ||
+                      "-";
+                    const avatarClass =
+                      styles[AVATAR_BG_CLASSES[idx % AVATAR_BG_CLASSES.length]];
 
-                return (
-                  <div
-                    key={record?.order_id || record?.order_no || idx}
-                    className={styles.recordCard}
-                  >
-                    <div className={styles.recordGrid}>
-                      <div className={styles.colOrder}>
-                        <span className={styles.dateValue}>
-                          {record?.date || "-"}
-                        </span>
-                        <span className={styles.orderNo}>
-                          {record?.order_no || "-"}
-                        </span>
-                      </div>
-
-                      <div className={styles.colCompany}>
-                        <div className={`${styles.avatar} ${avatarClass}`}>
-                          {initial}
-                        </div>
-                        <div className={styles.companyInfo}>
-                          <span
-                            className={styles.companyName}
-                            title={record?.company_name}
-                          >
-                            {record?.company_name || "-"}
-                          </span>
-                          {record?.contact_name && (
-                            <span className={styles.contactName}>
-                              <FiUser className={styles.metaIcon} />
-                              {record.contact_name}
+                    return (
+                      <div
+                        key={record?.order_id || record?.order_no || idx}
+                        className={styles.recordCard}
+                      >
+                        <div className={styles.customerRecordsList}>
+                          <div className={styles.colOrder}>
+                            <span className={styles.dateValue}>
+                              {record?.registered || "-"}
                             </span>
-                          )}
+                            <span className={styles.orderNo}>
+                              {record?.customer_no || "-"}
+                            </span>
+                          </div>
+
+                          <div className={styles.colCompany}>
+                            <div className={`${styles.avatar} ${avatarClass}`}>
+                              {initial}
+                            </div>
+                            <div className={styles.companyInfo}>
+                              <span
+                                className={styles.companyName}
+                                title={record?.company_name}
+                              >
+                                {record?.company_name || "-"}
+                              </span>
+                              <span
+                                className={styles.customerName}
+                                title={record?.name}
+                              >
+                                {record?.name || "-"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* <div className={styles.colPlan}>
+                            <span
+                              className={styles.planName}
+                              title={record?.plan_name}
+                            >
+                              {record?.plan_name || "-"}
+                            </span>
+                            {record?.domain_name && (
+                              <span className={styles.domainName}>
+                                <FiGlobe className={styles.metaIcon} />
+                                {record.domain_name}
+                              </span>
+                            )}
+                          </div> */}
+
+                          <div className={styles.colLicense}>
+                            <span className="text-start w-100">
+                              {record?.email}
+                            </span>
+                            <span className="text-start w-100">
+                              {record?.mobile ?? "-"}
+                            </span>
+                          </div>
+
+                          {/* <div className={styles.colEnrollment}>
+                            <span className={styles.colLabel}>
+                              Enrollment Type
+                            </span>
+                            <span className={styles.enrollmentValue}>
+                              {record?.enrollment_type || "-"}
+                            </span>
+                          </div> */}
+
+                          <div className={styles.colStatus}>
+                            <span
+                              className={`${styles.statusBadge} ${getStatusClass(
+                                record?.order_status || record?.status,
+                              )}`}
+                            >
+                              {record?.status || "-"}
+                            </span>
+                          </div>
+
+                          <div className={styles.colArrow}>
+                            <button
+                              type="button"
+                              className={styles.arrowBtn}
+                              aria-label="View order details"
+                              onClick={() =>
+                                router.push({
+                                  pathname: "/customers/customer-details",
+                                  query: {
+                                    customerId: record?.customer_id,
+                                  },
+                                })
+                              }
+                            >
+                              <FiChevronRight className={styles.arrowIcon} />
+                            </button>
+                          </div>
                         </div>
                       </div>
+                    );
+                  })}
+                </div>
+              )
+            : records?.length > 0 && (
+                <div className={styles.recordsList}>
+                  {records?.map((record, idx) => {
+                    const initial =
+                      record?.avatar_initial ||
+                      record?.company_name?.charAt(0)?.toUpperCase() ||
+                      "-";
+                    const avatarClass =
+                      styles[AVATAR_BG_CLASSES[idx % AVATAR_BG_CLASSES.length]];
 
-                      <div className={styles.colPlan}>
-                        <span
-                          className={styles.planName}
-                          title={record?.plan_name}
-                        >
-                          {record?.plan_name || "-"}
-                        </span>
-                        {record?.domain_name && (
-                          <span className={styles.domainName}>
-                            <FiGlobe className={styles.metaIcon} />
-                            {record.domain_name}
-                          </span>
-                        )}
-                      </div>
+                    return (
+                      <div
+                        key={record?.order_id || record?.order_no || idx}
+                        className={styles.recordCard}
+                      >
+                        <div className={styles.recordGrid}>
+                          <div className={styles.colOrder}>
+                            <span className={styles.dateValue}>
+                              {record?.date || "-"}
+                            </span>
+                            <span className={styles.orderNo}>
+                              {record?.order_no || "-"}
+                            </span>
+                          </div>
 
-                      <div className={styles.colLicense}>
-                        <span className={styles.colLabel}>License</span>
-                        <span className={styles.licenseValue}>
-                          {record?.licenses ?? "-"}
-                        </span>
-                      </div>
+                          <div className={styles.colCompany}>
+                            <div className={`${styles.avatar} ${avatarClass}`}>
+                              {initial}
+                            </div>
+                            <div className={styles.companyInfo}>
+                              <span
+                                className={styles.companyName}
+                                title={record?.company_name}
+                              >
+                                {record?.company_name || "-"}
+                              </span>
+                              {record?.contact_name && (
+                                <span className={styles.contactName}>
+                                  <FiUser className={styles.metaIcon} />
+                                  {record.contact_name}
+                                </span>
+                              )}
+                            </div>
+                          </div>
 
-                      <div className={styles.colEnrollment}>
-                        <span className={styles.colLabel}>Enrollment Type</span>
-                        <span className={styles.enrollmentValue}>
-                          {record?.enrollment_type || "-"}
-                        </span>
-                      </div>
+                          <div className={styles.colPlan}>
+                            <span
+                              className={styles.planName}
+                              title={record?.plan_name}
+                            >
+                              {record?.plan_name || "-"}
+                            </span>
+                            {record?.domain_name && (
+                              <span className={styles.domainName}>
+                                <FiGlobe className={styles.metaIcon} />
+                                {record.domain_name}
+                              </span>
+                            )}
+                          </div>
 
-                      <div className={styles.colStatus}>
-                        <span
-                          className={`${styles.statusBadge} ${getStatusClass(
-                            record?.order_status || record?.status,
-                          )}`}
-                        >
-                          {record?.status || "-"}
-                        </span>
-                      </div>
+                          <div className={styles.colLicense}>
+                            <span className={styles.colLabel}>License</span>
+                            <span className={styles.licenseValue}>
+                              {record?.licenses ?? "-"}
+                            </span>
+                          </div>
 
-                      <div className={styles.colArrow}>
-                        <button
-                          type="button"
-                          className={styles.arrowBtn}
-                          aria-label="View order details"
-                          onClick={() =>
-                            router.push({
-                              pathname: "/subscriptions/subscriptions-details",
-                              query: {
-                                orderId: record?.order_id,
-                                customerId: record?.customer_id,
-                              },
-                            })
-                          }
-                        >
-                          <FiChevronRight className={styles.arrowIcon} />
-                        </button>
+                          <div className={styles.colEnrollment}>
+                            <span className={styles.colLabel}>
+                              Enrollment Type
+                            </span>
+                            <span className={styles.enrollmentValue}>
+                              {record?.enrollment_type || "-"}
+                            </span>
+                          </div>
+
+                          <div className={styles.colStatus}>
+                            <span
+                              className={`${styles.statusBadge} ${getStatusClass(
+                                record?.order_status || record?.status,
+                              )}`}
+                            >
+                              {record?.status || "-"}
+                            </span>
+                          </div>
+
+                          <div className={styles.colArrow}>
+                            <button
+                              type="button"
+                              className={styles.arrowBtn}
+                              aria-label="View order details"
+                              onClick={() =>
+                                router.push({
+                                  pathname:
+                                    "/subscriptions/subscriptions-details",
+                                  query: {
+                                    orderId: record?.order_id,
+                                    customerId: record?.customer_id,
+                                  },
+                                })
+                              }
+                            >
+                              <FiChevronRight className={styles.arrowIcon} />
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                    );
+                  })}
+                </div>
+              )}
         </div>
       </div>
     </>

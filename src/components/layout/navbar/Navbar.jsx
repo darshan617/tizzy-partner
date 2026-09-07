@@ -177,27 +177,45 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     }
   };
 
-  const handleMarkNotificationAsRead = async (
-    notificationId,
-    customerId,
-    orderId,
-    event,
-  ) => {
+  const handleMarkNotificationAsRead = async (notification, event) => {
     event.stopPropagation();
     if (!user?.id) return;
     try {
+      const {
+        notification_id,
+        customer_id,
+        order_id,
+        main_cart_id,
+        order_sub_id,
+        type,
+      } = notification;
       const response = await markNotificationAsRead({
         body: {
           partner_id: user?.id,
-          notification_id: notificationId,
+          notification_id: notification_id,
         },
       });
       console.log(response);
       if (response?.data?.success) {
         showToast("Notification marked as read", "success");
-        router.push(
-          `/subscriptions/subscriptions-details?customerId=${customerId}&orderId=${orderId}`,
-        );
+        if (main_cart_id) {
+          router?.push({
+            pathname: "/order-summary",
+            query: {
+              type: type,
+              order_id: order_id,
+              order_sub_id: order_sub_id,
+              licenses: "3",
+              customer_id: customer_id,
+              main_cart_id: main_cart_id,
+            },
+          });
+        } else {
+          router.push(
+            `/subscriptions/subscriptions-details?customerId=${customer_id}&orderId=${order_id}`,
+          );
+        }
+
         setIsNotificationSidebarOpen(false);
       } else {
         showToast(
@@ -595,12 +613,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                             : ""
                         }`}
                         onClick={(e) => {
-                          handleMarkNotificationAsRead(
-                            notification?.notification_id,
-                            notification?.customer_id,
-                            notification?.order_id,
-                            e,
-                          );
+                          handleMarkNotificationAsRead(notification, e);
                         }}
                       >
                         <div className={styles.notificationIcon}>
