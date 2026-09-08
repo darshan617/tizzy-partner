@@ -518,7 +518,9 @@ const OrderSummaryCard = ({
                   ? "upgrade"
                   : router?.query?.type === "add-license"
                     ? "license_add"
-                    : "",
+                    : router?.query?.type === "renew-plan"
+                      ? "renew"
+                      : "",
           main_cart_id: cartDetails?.[0]?.main_cart_id,
         },
       });
@@ -798,7 +800,8 @@ const OrderSummaryCard = ({
                   (router?.query?.type === "add-license" ||
                     router?.query?.type === "upgrade" ||
                     router?.query?.type === "downgrade" ||
-                    router?.query?.type === "partial-upgrade")
+                    router?.query?.type === "partial-upgrade" ||
+                    router?.query?.type === "renew-plan")
                 ) {
                   setIsPopupOpen("buy-plan-request");
                 } else if (tizzyProviderId && tempDomainNames?.length < 1) {
