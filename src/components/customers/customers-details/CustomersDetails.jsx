@@ -152,7 +152,7 @@ export default function CustomerDetail() {
   const customerDetails = customerDetailsData?.data?.customer;
   const allPlans = customerDetailsData?.data?.current_plans;
   const allTransactions = customerDetailsData?.data?.transaction_history || [];
-  const allInvoices = customerDetailsData?.data?.invoices || [];
+  const allInvoices = customerDetailsData?.data?.invoice || [];
   const summary = customerDetailsData?.data?.summary;
   const txnTotal = allTransactions?.length || 0;
   const txnStartIndex = (txnPage - 1) * TXN_ITEM_PER_PAGE;
@@ -927,7 +927,11 @@ export default function CustomerDetail() {
                       <div className={`${styles.card} p-sm-4 p-3`}>
                         <div className="d-flex align-items-start justify-content-between gap-3 mb-3">
                           <div>
-                            <h2 className={styles.cardHead}>Transactions</h2>
+                            <h2 className={styles.cardHead}>
+                              {txnTab === "transactions"
+                                ? "Transactions"
+                                : "Invoices"}
+                            </h2>
                             <p className={`${styles.txnShowing} mb-0`}>
                               Showing{" "}
                               <strong>
@@ -1216,7 +1220,7 @@ export default function CustomerDetail() {
                                     <div className={styles.invCardBody}>
                                       <div className={styles.txnMeta}>
                                         <div className={styles.txnDate}>
-                                          {invoice?.date ||
+                                          {invoice?.invoice_date ||
                                             invoice?.created_at ||
                                             "-"}
                                         </div>
