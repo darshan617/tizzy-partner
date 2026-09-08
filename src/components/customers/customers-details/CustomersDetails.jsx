@@ -161,6 +161,9 @@ export default function CustomerDetail() {
     allTransactions?.slice(txnStartIndex, txnStartIndex + TXN_ITEM_PER_PAGE) ||
     [];
 
+  const pagedInvoices =
+    allInvoices?.slice(txnStartIndex, txnStartIndex + TXN_ITEM_PER_PAGE) || [];
+
   const selectableInvoiceIds = useMemo(
     () =>
       allInvoices
@@ -1168,7 +1171,7 @@ export default function CustomerDetail() {
                             </div>
 
                             <div className={styles.txnList}>
-                              {allInvoices?.map((invoice, i) => {
+                              {pagedInvoices?.map((invoice, i) => {
                                 const invoiceId = getInvoiceId(invoice);
                                 const canSelect = isInvoiceSelectable(invoice);
                                 const canPay = showInvoicePayNow(
@@ -1334,6 +1337,16 @@ export default function CustomerDetail() {
                                 );
                               })}
                             </div>
+                            {allInvoices?.length > TXN_ITEM_PER_PAGE && (
+                              <div className="mt-3">
+                                <Pagination
+                                  data={allInvoices}
+                                  currentPage={txnPage}
+                                  setCurrentPage={setTxnPage}
+                                  itemPerPage={TXN_ITEM_PER_PAGE}
+                                />
+                              </div>
+                            )}
                           </>
                         ) : (
                           <p className="text-center m-0 text-secondary py-3">
