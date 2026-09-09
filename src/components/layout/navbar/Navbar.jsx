@@ -188,6 +188,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
         main_cart_id,
         order_sub_id,
         type,
+        licenses,
       } = notification;
       const response = await markNotificationAsRead({
         body: {
@@ -205,7 +206,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
               type: type,
               order_id: order_id,
               order_sub_id: order_sub_id,
-              licenses: "3",
+              licenses: licenses,
               customer_id: customer_id,
               main_cart_id: main_cart_id,
             },
