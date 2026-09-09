@@ -69,6 +69,8 @@ const buildAutoUpdateCartBody = ({
   customerId,
   coupen,
   order_id,
+  partner_id,
+  order_sub_id,
 }) => {
   const domain_name = resolveCartDomains(
     item,
@@ -84,6 +86,9 @@ const buildAutoUpdateCartBody = ({
     transfer_domain: item?.transfer_domain ?? "no",
     coupen: coupen,
     order_id: order_id || "",
+    partner_id: partner_id || userData?.id,
+    plan_id: item?.plan_id || item?.plan?.id,
+    order_sub_id: order_sub_id || item?.renew_plan?.order_sub_id,
   };
 
   if (domain_name.length > 0) {
@@ -432,6 +437,8 @@ const CommonOrderSummary = () => {
           customer_id: currentItem?.customer_id ?? customerData?.customer_id,
           transfer_domain: isTransferDomain ? "yes" : "no",
           coupen: promoCode,
+          partner_id: userData?.id,
+          plan_id: currentItem?.plan_id || currentItem?.plan?.id,
         },
       });
       const updatedItem = resolveUpdatedCartItem(updateRes?.data?.data, {
@@ -496,6 +503,8 @@ const CommonOrderSummary = () => {
             currentItem?.company_name ?? selectedCompany,
           ),
           customer_id: currentItem?.customer_id ?? customerData?.customer_id,
+          partner_id: userData?.id,
+          plan_id: currentItem?.plan_id || currentItem?.plan?.id,
         },
       });
     } catch (error) {
@@ -777,6 +786,10 @@ const CommonOrderSummary = () => {
           customerId: cartDetails?.[0]?.customer_id,
           coupen: promoCode,
           order_id: router?.query?.order_id || "",
+          partner_id: userData?.id,
+          plan_id: item?.plan_id || item?.plan?.id,
+          order_sub_id:
+            router?.query?.order_sub_id || item?.renew_plan?.order_sub_id,
         });
 
         const updateRes = await updateCart({ body });

@@ -96,9 +96,12 @@ const OrderSummaryCard = ({
   const cartSummaryItem = Array.isArray(cartDetails)
     ? cartDetails?.[0]
     : cartDetails;
+  console.log("cartSummaryItem", cartSummaryItem);
   const remainingValue =
     Number(
-      cartSummaryItem?.pro_rata_adjustment ??
+      cartSummaryItem?.remaining_value ??
+        cartSummaryItem?.pricing?.remaining_value ??
+        cartSummaryItem?.pro_rata_adjustment ??
         cartSummaryItem?.pricing?.pro_rata_adjustment ??
         0,
     ) || 0;

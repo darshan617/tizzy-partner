@@ -13,18 +13,21 @@ const Customers = () => {
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemPerPage, setItemPerPage] = useState(10);
   const {
     data: allCustomers,
     isFetching: isFetchingAllCustomers,
     refetch,
   } = useGetAllCustomersQuery({
     partner_id: userData?.id,
+    page_no: currentPage,
+    per_page: itemPerPage,
   });
 
   useEffect(() => {
     refetch();
-  }, []);
+  }, [currentPage, itemPerPage]);
 
   console.log(allCustomers?.data?.customers, "allCustomers");
 
@@ -46,6 +49,11 @@ const Customers = () => {
         allCustomers={allCustomers}
         isFetchingAllCustomers={isFetchingAllCustomers}
         refetch={refetch}
+        currentPage={currentPage}
+        itemPerPage={itemPerPage}
+        setCurrentPage={setCurrentPage}
+        setItemPerPage={setItemPerPage}
+        paginationData={allCustomers?.data?.pagination}
       />
     </Layout>
   );

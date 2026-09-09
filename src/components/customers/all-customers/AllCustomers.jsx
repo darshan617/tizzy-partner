@@ -10,6 +10,8 @@ import { CUSTOMER_STATUS } from "@/constants/customer-constants";
 import Image from "next/image";
 import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarConstant";
 import Pagination from "@/common-components/pagination/Pagination";
+import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
+import PaginationNew from "@/common-components/pagination/PaginationNew";
 
 const avatarColorClasses = [
   styles.avatarRed,
@@ -24,14 +26,18 @@ export default function CustomerList({
   allCustomers,
   isFetchingAllCustomers,
   refetch,
+  currentPage,
+  itemPerPage,
+  setCurrentPage,
+  setItemPerPage,
+  paginationData,
 }) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState("all");
   const [selectedServices, setSelectedServices] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemPerPage, setItemPerPage] = useState(5);
+
   const startIndex = (currentPage - 1) * itemPerPage;
   console.log(startIndex, "ssss");
 
@@ -49,6 +55,11 @@ export default function CustomerList({
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
   }
+
+  const pageNumbersArray = Array.from(
+    { length: Math.ceil(paginationData?.total / itemPerPage) },
+    (_, i) => i + 1,
+  );
 
   const filteredCustomers = useMemo(
     () =>
@@ -362,14 +373,13 @@ export default function CustomerList({
           </div>
         </div>
       </div>
-      {filteredCustomers?.length > itemPerPage && (
-        <Pagination
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          data={filteredCustomers}
-          itemPerPage={itemPerPage}
-        />
-      )}
+
+      <PaginationNew
+        pageNumbersArray={pageNumbersArray}
+        setCurrentPage={setCurrentPage}
+        currentPage={currentPage}
+        itemPerPage={itemPerPage}
+      />
     </div>
   );
 }
