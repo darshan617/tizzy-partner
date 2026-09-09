@@ -189,6 +189,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
         order_sub_id,
         type,
         licenses,
+        plan_id,
       } = notification;
       const response = await markNotificationAsRead({
         body: {
@@ -198,7 +199,6 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
       });
       console.log(response);
       if (response?.data?.success) {
-        showToast("Notification marked as read", "success");
         if (main_cart_id) {
           router?.push({
             pathname: "/order-summary",
@@ -209,6 +209,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
               licenses: licenses,
               customer_id: customer_id,
               main_cart_id: main_cart_id,
+              plnId: plan_id,
             },
           });
         } else {
