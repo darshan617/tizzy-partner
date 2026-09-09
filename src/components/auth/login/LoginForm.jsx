@@ -34,7 +34,9 @@ const LoginForm = () => {
     return newErrors;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e?.preventDefault();
+
     const formErrors = validateForm();
 
     if (Object.keys(formErrors).length > 0) {
@@ -43,6 +45,7 @@ const LoginForm = () => {
     }
 
     setErrors({});
+
     try {
       const res = await sendOtp({
         body: {
@@ -68,7 +71,9 @@ const LoginForm = () => {
             inp: input,
           },
         });
+
         setInput("");
+
         if (inputType === "mobile") {
           dispatch(setUserData({ mobile: input }));
         } else {
@@ -92,75 +97,87 @@ const LoginForm = () => {
 
         <p className={styles.subtitle}>Sign in to continue.</p>
 
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Email / Mobile Number
-            <span className={styles.required} style={{ color: "#f6051d" }}>
-              *
-            </span>
-          </label>
-          {inputType === "email" ? (
-            <>
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => {
-                  setInput(e?.target?.value);
-                  setErrors((prev) => ({ ...prev, input: "" }));
-                  setInputType(
-                    new RegExp(/^[0-9].*$/).test(e?.target?.value)
-                      ? "mobile"
-                      : "email",
-                  );
-                }}
-                className={styles.input}
-                placeholder="Enter your email or mobile number"
-                autoFocus={true}
-              />
-              {errors.input && (
-                <p className={styles.errorMsg}>{errors.input}</p>
-              )}
-            </>
-          ) : (
-            <>
-              <div className={`${styles.mobileInputWrapper} `}>
-                <select
-                  className={styles.countryCode}
-                  aria-label="Country code"
-                >
-                  <option value="+91">+91</option>
-                </select>
+        <form onSubmit={handleSubmit}>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              Email / Mobile Number
+              <span className={styles.required} style={{ color: "#f6051d" }}>
+                *
+              </span>
+            </label>
+
+            {inputType === "email" ? (
+              <>
                 <input
-                  type="tel"
-                  inputMode="numeric"
-                  maxLength={10}
+                  type="text"
                   value={input}
                   onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, "");
-                    setInput(value);
-                    setErrors((prev) => ({ ...prev, input: "" }));
-                    setInputType(/^[0-9].*$/.test(value) ? "mobile" : "email");
+                    setInput(e.target.value);
+
+                    setErrors((prev) => ({
+                      ...prev,
+                      input: "",
+                    }));
+
+                    setInputType(
+                      /^[0-9].*$/.test(e.target.value) ? "mobile" : "email",
+                    );
                   }}
-                  className={styles.mobileInput}
-                  placeholder="Enter your mobile number"
+                  className={styles.input}
+                  placeholder="Enter your email or mobile number"
                   autoFocus
                 />
-              </div>
 
-              {errors.input && (
-                <p className={styles.errorMsg}>{errors.input}</p>
-              )}
-            </>
-          )}
-        </div>
+                {errors.input && (
+                  <p className={styles.errorMsg}>{errors.input}</p>
+                )}
+              </>
+            ) : (
+              <>
+                <div className={styles.mobileInputWrapper}>
+                  <select
+                    className={styles.countryCode}
+                    aria-label="Country code"
+                  >
+                    <option value="+91">+91</option>
+                  </select>
 
-        <button
-          className={styles.otpBtn}
-          onClick={handleSubmit}
-          disabled={isLoading}
-        >
-          {isLoading ? "Sending OTP..." : "Get OTP"}
-        </button>
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
+                    value={input}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, "");
+
+                      setInput(value);
+
+                      setErrors((prev) => ({
+                        ...prev,
+                        input: "",
+                      }));
+
+                      setInputType(
+                        /^[0-9].*$/.test(value) ? "mobile" : "email",
+                      );
+                    }}
+                    className={styles.mobileInput}
+                    placeholder="Enter your mobile number"
+                    autoFocus
+                  />
+                </div>
+
+                {errors.input && (
+                  <p className={styles.errorMsg}>{errors.input}</p>
+                )}
+              </>
+            )}
+          </div>
+
+          <button type="submit" className={styles.otpBtn} disabled={isLoading}>
+            {isLoading ? "Sending OTP..." : "Get OTP"}
+          </button>
+        </form>
 
         <p className={styles.footerText}>
           Want to be a partner?{" "}

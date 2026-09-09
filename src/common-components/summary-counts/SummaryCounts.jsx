@@ -9,6 +9,10 @@ import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
 import { HiOutlineDocumentCurrencyRupee } from "react-icons/hi2";
 import { TbCoinRupeeFilled } from "react-icons/tb";
 import Loader from "../loader/Loader";
+import creditNote from "@/assets/images/file-2.svg";
+import pendingWallet from "@/assets/images/filr.svg";
+import creditWallet from "@/assets/images/time.svg";
+import totalCredit from "@/assets/images/coin.svg";
 
 const TotalRevenue = () => (
   <svg
@@ -441,28 +445,46 @@ export default function SummaryCounts({
       boxClass: "infoGrad",
       iconClass: "infoColor",
       badgeClass: "up",
-      icon: <CreditNoteIcon />,
+      icon: (
+        <Image
+          src={creditNote}
+          alt="Total credit notes"
+          width={28}
+          height={28}
+        />
+      ),
       redirectUrl: null,
     },
     "pending wallet credit": {
       boxClass: "warningGrad",
       iconClass: "warningColor",
       badgeClass: "up",
-      icon: <CreditNoteIcon />,
+      icon: (
+        <Image src={creditWallet} alt="pending wallet" width={28} height={28} />
+      ),
       redirectUrl: null,
     },
     "credited to wallet": {
       boxClass: "secondaryGrad",
       iconClass: "secondaryColor",
       badgeClass: "up",
-      icon: <CreditNoteIcon />,
+      icon: (
+        <Image
+          src={pendingWallet}
+          alt="pending wallet"
+          width={28}
+          height={28}
+        />
+      ),
       redirectUrl: null,
     },
     "total credited amount": {
       boxClass: "successGrad",
       iconClass: "successColor",
       badgeClass: "up",
-      icon: <TbCoinRupeeFilled size={28} />,
+      icon: (
+        <Image src={totalCredit} alt="pending wallet" width={28} height={28} />
+      ),
       redirectUrl: null,
     },
   };
