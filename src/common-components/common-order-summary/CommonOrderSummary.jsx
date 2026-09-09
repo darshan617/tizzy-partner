@@ -984,6 +984,7 @@ const CommonOrderSummary = () => {
               isAadharNumberLoading={isAadharNumberLoading}
               uploadPoPdf={uploadPoPdf}
               setUploadPoPdf={setUploadPoPdf}
+              isUpdatingCart={isUpdatingCart}
             />
           </aside>
         </div>
