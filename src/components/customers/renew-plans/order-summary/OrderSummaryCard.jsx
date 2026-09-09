@@ -680,7 +680,10 @@ const OrderSummaryCard = ({
         <div className={styles.summaryRow}>
           <span className={styles.label}>GST 18%</span>
           <span className={styles.value}>
-            ₹ {isUpdatingCart ? "Calculating..." : gst.toFixed(2)}
+            ₹{" "}
+            {router?.query?.type && isUpdatingCart
+              ? "Calculating..."
+              : gst.toFixed(2)}
           </span>
         </div>
         {(router?.query?.type === "upgrade" ||
