@@ -13,6 +13,8 @@ import { saveAs } from "file-saver";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import CustomDropdown from "@/common-components/custom-dropdown/CustomDropdown";
+import Link from "next/link";
+import { IoMdArrowBack } from "react-icons/io";
 
 const AVAILABLE_YEARS = [2026, 2025, 2024, 2023];
 
@@ -569,10 +571,19 @@ const ReportsDetailsComponent = () => {
   return (
     <>
       <div className={styles.pageWrap}>
-        <nav className={styles.breadcrumb}>
-          Dashboard / Reports / General Reports /
-        </nav>
-        <h1 className={styles.pageTitle}>{reportTitle}</h1>
+        <div className="d-flex justify-content-between">
+          <nav className={styles.breadcrumb}>
+            Dashboard / Reports / General Reports /
+          
+          <h1 className={styles.pageTitle}>{reportTitle}</h1>
+          </nav>
+          <div className="col-auto">
+            <Link href="" onClick={router.back} className="btn small btnWhite">
+              <IoMdArrowBack />
+              <span>Back</span>
+            </Link>
+          </div>
+        </div>
 
         <div className={styles.card}>
           <div className={styles.cardHeader}>

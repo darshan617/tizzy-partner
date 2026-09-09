@@ -109,7 +109,9 @@ const SignupForm = () => {
     }));
   };
 
-  const handleRegister = async () => {
+  const handleRegister = async (e) => {
+    e?.preventDefault();
+
     const formErrors = validateForm();
 
     if (Object.keys(formErrors).length > 0) {
@@ -259,142 +261,147 @@ const SignupForm = () => {
           data-aos="fade-up"
           data-aos-duration="900"
         >
-          <h1 className={styles.heading}>Ready to become a Partner?</h1>
-          <p className={styles.subheading}>
-            Join 2000+ partners already scaling with Tizzy.
-          </p>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              Name<span className={styles.required}>*</span>
-            </label>
-            <input
-              name="name"
-              type="text"
-              value={userDetails?.name}
-              onChange={handleChange}
-              className={`${styles.input} ${errors?.name ? styles.inputError : ""}`}
-              placeholder="Enter your full name"
-            />
-            {errors?.name && (
-              <span className={styles.errorMessage}>{errors?.name}</span>
-            )}
-          </div>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              Email<span className={styles.required}>*</span>
-            </label>
-            <input
-              name="email"
-              type="email"
-              placeholder="Enter your email address"
-              value={userDetails?.email}
-              onChange={handleChange}
-              className={`${styles.input} ${errors?.email ? styles.inputError : ""}`}
-            />
-            {errors?.email && (
-              <span className={styles.errorMessage}>{errors?.email}</span>
-            )}
-          </div>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              Mobile No.<span className={styles.required}>*</span>
-            </label>
-            <div className={styles.mobileInputWrapper}>
-              <select className={styles.countryCode}>
-                <option>+91</option>
-              </select>
+          <form onSubmit={handleRegister}>
+            <h1 className={styles.heading}>Ready to become a Partner?</h1>
+            <p className={styles.subheading}>
+              Join 2000+ partners already scaling with Tizzy.
+            </p>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Name<span className={styles.required}>*</span>
+              </label>
               <input
-                name="mobile"
+                name="name"
                 type="text"
-                placeholder="Enter your mobile number"
-                value={userDetails?.mobile}
+                value={userDetails?.name}
                 onChange={handleChange}
-                maxLength={10}
-                className={`${styles.mobileInput} ${errors?.mobile ? styles.inputError : ""}`}
+                className={`${styles.input} ${errors?.name ? styles.inputError : ""}`}
+                placeholder="Enter your full name"
               />
+              {errors?.name && (
+                <span className={styles.errorMessage}>{errors?.name}</span>
+              )}
             </div>
-            {errors?.mobile && (
-              <span className={styles.errorMessage}>{errors?.mobile}</span>
-            )}
-          </div>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              GSTIN<span className={styles.required}>*</span>
-            </label>
-            <div className={styles.gstinInputWrapper}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Email<span className={styles.required}>*</span>
+              </label>
               <input
-                name="gstin"
-                type="text"
-                placeholder="Enter your GSTIN"
-                value={userDetails?.gstin}
+                name="email"
+                type="email"
+                placeholder="Enter your email address"
+                value={userDetails?.email}
                 onChange={handleChange}
-                className={`${styles.gstinInput} ${errors?.gstin ? styles.inputError : ""}`}
+                className={`${styles.input} ${errors?.email ? styles.inputError : ""}`}
               />
-              <button onClick={handleSearchGstin} className={styles.searchBtn}>
-                {isSearchingGstinLoading ? "Searching..." : "Search"}
-              </button>
+              {errors?.email && (
+                <span className={styles.errorMessage}>{errors?.email}</span>
+              )}
             </div>
-            {errors?.gstin && (
-              <span className={styles.errorMessage}>{errors?.gstin}</span>
-            )}
-          </div>
-          {isValidGstIn && (
-            <>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>
-                  Company Name<span className={styles.required}>*</span>
-                </label>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Mobile No.<span className={styles.required}>*</span>
+              </label>
+              <div className={styles.mobileInputWrapper}>
+                <select className={styles.countryCode}>
+                  <option>+91</option>
+                </select>
                 <input
-                  name="company_name"
+                  name="mobile"
                   type="text"
-                  placeholder=""
-                  value={userDetails?.company_name}
+                  placeholder="Enter your mobile number"
+                  value={userDetails?.mobile}
                   onChange={handleChange}
-                  className={styles.input}
-                  readOnly
+                  maxLength={10}
+                  className={`${styles.mobileInput} ${errors?.mobile ? styles.inputError : ""}`}
                 />
               </div>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>
-                  Company Address<span className={styles.required}>*</span>
-                </label>
+              {errors?.mobile && (
+                <span className={styles.errorMessage}>{errors?.mobile}</span>
+              )}
+            </div>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                GSTIN<span className={styles.required}>*</span>
+              </label>
+              <div className={styles.gstinInputWrapper}>
                 <input
-                  name="company_address"
+                  name="gstin"
                   type="text"
-                  placeholder=""
-                  value={userDetails?.company_address}
+                  placeholder="Enter your GSTIN"
+                  value={userDetails?.gstin}
                   onChange={handleChange}
-                  className={styles.input}
-                  readOnly
+                  className={`${styles.gstinInput} ${errors?.gstin ? styles.inputError : ""}`}
                 />
+                <button
+                  onClick={handleSearchGstin}
+                  className={styles.searchBtn}
+                >
+                  {isSearchingGstinLoading ? "Searching..." : "Search"}
+                </button>
               </div>
-            </>
-          )}
-          <div className={styles.termsWrapper}>
-            <label htmlFor="terms" className={styles.termsLabel}>
-              By clicking 'Register' below, you agree to our{" "}
-              <Link href="/terms-of-services" className={styles.link}>
-                Terms of Services
-              </Link>{" "}
-              and{" "}
-              <Link href="/privacy-policy" className={styles.link}>
-                Privacy Policy
+              {errors?.gstin && (
+                <span className={styles.errorMessage}>{errors?.gstin}</span>
+              )}
+            </div>
+            {isValidGstIn && (
+              <>
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>
+                    Company Name<span className={styles.required}>*</span>
+                  </label>
+                  <input
+                    name="company_name"
+                    type="text"
+                    placeholder=""
+                    value={userDetails?.company_name}
+                    onChange={handleChange}
+                    className={styles.input}
+                    readOnly
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>
+                    Company Address<span className={styles.required}>*</span>
+                  </label>
+                  <input
+                    name="company_address"
+                    type="text"
+                    placeholder=""
+                    value={userDetails?.company_address}
+                    onChange={handleChange}
+                    className={styles.input}
+                    readOnly
+                  />
+                </div>
+              </>
+            )}
+            <div className={styles.termsWrapper}>
+              <label htmlFor="terms" className={styles.termsLabel}>
+                By clicking 'Register' below, you agree to our{" "}
+                <Link href="/terms-of-services" className={styles.link}>
+                  Terms of Services
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy-policy" className={styles.link}>
+                  Privacy Policy
+                </Link>
+              </label>
+            </div>
+            <button
+              onClick={handleRegister}
+              className={styles.registerBtn}
+              disabled={!isValidGstIn}
+            >
+              {isLoading ? "Registering..." : "Register"}
+            </button>
+            <p className={styles.signinLink}>
+              Already a partner?{" "}
+              <Link href="/auth/login" className={styles.link}>
+                Sign in
               </Link>
-            </label>
-          </div>
-          <button
-            onClick={handleRegister}
-            className={styles.registerBtn}
-            disabled={!isValidGstIn}
-          >
-            {isLoading ? "Registering..." : "Register"}
-          </button>
-          <p className={styles.signinLink}>
-            Already a partner?{" "}
-            <Link href="/auth/login" className={styles.link}>
-              Sign in
-            </Link>
-          </p>
+            </p>
+          </form>
         </div>
       </AuthLayout>
     </>
