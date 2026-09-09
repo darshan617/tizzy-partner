@@ -305,6 +305,8 @@ const CommonOrderSummary = () => {
           order_id: router?.query?.order_id,
           order_sub_id: router?.query?.order_sub_id,
           licenses: router?.query?.licenses,
+          plan_id: plan?.id || plan?.plan_id || router?.query?.plnId,
+          main_cart_id: router?.query?.main_cart_id || plan?.main_cart_id,
         },
       });
       if (res?.data?.success) {

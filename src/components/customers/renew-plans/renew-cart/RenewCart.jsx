@@ -414,22 +414,6 @@ const RenewCart = ({
                               ₹ {lineTotal.toFixed(2)}
                             </div>
                           </div>
-
-                          {router?.query?.type !== "renew-plan" &&
-                            router?.query?.type !== "partial-upgrade" && (
-                              <button
-                                className={styles.removeBtn}
-                                onClick={() => {
-                                  setIsPopupOpen("delete-cart");
-                                  setCartToDelete({
-                                    cart_id: item?.cart_id,
-                                    main_cart_id: item?.main_cart_id,
-                                  });
-                                }}
-                              >
-                                ×
-                              </button>
-                            )}
                         </div>
                       </div>
                     );

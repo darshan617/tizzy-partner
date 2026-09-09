@@ -189,6 +189,27 @@ const VerifyOtp = () => {
   };
 
   const handleKeyDown = (e, index) => {
+    // Press Enter to verify OTP
+    if (e.key === "Enter") {
+      e.preventDefault();
+  
+      if (
+        !isGetOtpVerifiedLoading &&
+        !isVerifyOtpLoading &&
+        !isVerifyAadharNumberOtpLoading &&
+        !isOrderAadharVerifyLoading
+      ) {
+        if (router?.query?.type === "order") {
+          handleSubmitAadharNumberOtp();
+        } else {
+          handleSubmit();
+        }
+      }
+  
+      return;
+    }
+  
+    // Backspace → previous OTP input
     if (e.key === "Backspace" && !otpArray[index] && index > 0) {
       inputsRef.current[index - 1].focus();
     }

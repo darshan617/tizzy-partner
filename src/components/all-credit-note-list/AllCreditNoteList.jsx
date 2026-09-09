@@ -279,7 +279,7 @@ const AllCreditNoteList = ({ creditNotesList, isLoading }) => {
         </div>
 
         <div className={styles.listScrollArea}>
-          <div className="py-4 px-sm-4 px-3">
+          <div className="px-sm-4 px-3">
             <div className="d-flex flex-column gap-3 mb-4">
               {!isLoading ? (
                 paginatedList?.length > 0 ? (
@@ -288,8 +288,8 @@ const AllCreditNoteList = ({ creditNotesList, isLoading }) => {
                       key={note?.credit_note_id || note?.credit_note_no}
                       className={`${styles.contentRow} btnDisplay`}
                     >
-                      <div className="row align-items-center py-3 px-sm-4 px-3 g-2">
-                        <div className="col-12 col-md-2 col-lg-2">
+                      <div className="row align-items-center py-3 px-3 g-2">
+                        <div className="col-6 col-sm-4 col-md-2 col-lg-2">
                           <div className={styles.txMeta}>
                             <div className={styles.txDate}>
                               {formatDate(note?.bill_date || note?.created_at)}
@@ -300,43 +300,50 @@ const AllCreditNoteList = ({ creditNotesList, isLoading }) => {
                           </div>
                         </div>
 
-                        <div className="col-12 col-md-3 col-lg-3">
+                        <div className="col-6 col-md-4 col-sm-4 col-lg-3">
                           <div className={styles.orderBlock}>
                             <div className={styles.orderNo}>
                               ORD: {note?.order_no || "-"}
                             </div>
-                            <span
+                            {/* <span
                               className={`${styles.statusBadge} ${getOrderStatusClass(note?.order_status)}`}
                             >
                               ORD STATUS: {formatLabel(note?.order_status)}
-                            </span>
+                            </span> */}
                           </div>
                         </div>
 
-                        <div className="col-12 col-md-3 col-lg-3">
+                        <div className="col-6 col-md-3 col-sm-4 col-lg-3">
                           <div className={styles.walletBlock}>
-                            <span
+                            <span style={{fontSize: '12px', color: "rgba(155, 166, 183, 1)"}}>Order Type</span>
+                            {/* <span
                               className={`${styles.statusBadge} ${getWalletStatusClass(note?.wallet_status)}`}
                             >
                               {formatLabel(note?.wallet_status)}
+                            </span> */}
+                            <span className={`${styles.statusBadge}`}>
+                              {formatLabel(note?.order_status)}
                             </span>
-                            <div className={styles.walletMeta}>
+                            {/* <div className={styles.walletMeta}>
                               {note?.wallet_withdrawable
                                 ? "Withdrawable"
                                 : "Non-withdrawable"}
-                            </div>
+                            </div> */}
                           </div>
                         </div>
 
-                        <div className="col-6 col-md-2 col-lg-2 text-md-center">
+                        <div className="d-flex flex-column gap-2 col-6 col-md-2 col-lg-2 text-md-center align-items-center" >
                           <span
                             className={`${styles.statusBadge} ${getCreditStatusClass(note?.credit_note_status)}`}
                           >
                             {formatLabel(note?.credit_note_status)}
                           </span>
+                          <span style={{fontSize: "12px", color: "rgba(155, 166, 183, 1)"}}>
+                            {formatLabel(note?.wallet_status)}
+                          </span>
                         </div>
 
-                        <div className="col-6 col-md-2 col-lg-2">
+                        <div className="col-12 col-md-2 col-lg-2">
                           <div className={styles.amountActions}>
                             <span className={styles.amountValue}>
                               {formatAmount(note?.credit_note_amount)}
