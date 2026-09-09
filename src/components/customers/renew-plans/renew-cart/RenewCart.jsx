@@ -900,9 +900,13 @@ const RenewCart = ({
                   |{" "}
                   <strong>
                     ₹{" "}
-                    {Number(cartDetails?.[0]?.pro_rata_adjustment || 0).toFixed(
-                      2,
-                    )}
+                    {Number(
+                      cartDetails?.[0]?.remaining_value ??
+                        cartDetails?.[0]?.pricing?.remaining_value ??
+                        cartDetails?.[0]?.pro_rata_adjustment ??
+                        cartDetails?.[0]?.pricing?.pro_rata_adjustment ??
+                        0,
+                    ).toFixed(2)}
                   </strong>
                 </div>
                 <p className={styles.remainingNote}>

@@ -62,6 +62,7 @@ const OrderSummaryCard = ({
   isAadharNumberLoading,
   uploadPoPdf,
   setUploadPoPdf,
+  isUpdatingCart,
 }) => {
   console.log("_creditBalance_", _creditBalance_);
   console.log("uploadPoPdf", uploadPoPdf);
@@ -96,9 +97,12 @@ const OrderSummaryCard = ({
   const cartSummaryItem = Array.isArray(cartDetails)
     ? cartDetails?.[0]
     : cartDetails;
+
   const remainingValue =
     Number(
-      cartSummaryItem?.pro_rata_adjustment ??
+      cartSummaryItem?.remaining_value ??
+        cartSummaryItem?.pricing?.remaining_value ??
+        cartSummaryItem?.pro_rata_adjustment ??
         cartSummaryItem?.pricing?.pro_rata_adjustment ??
         0,
     ) || 0;
@@ -675,14 +679,21 @@ const OrderSummaryCard = ({
 
         <div className={styles.summaryRow}>
           <span className={styles.label}>GST 18%</span>
-          <span className={styles.value}>₹ {gst.toFixed(2)}</span>
+          <span className={styles.value}>
+            ₹{" "}
+            {router?.query?.type && isUpdatingCart
+              ? "Calculating..."
+              : gst.toFixed(2)}
+          </span>
         </div>
         {(router?.query?.type === "upgrade" ||
           router?.query?.type === "downgrade" ||
           router?.query?.type === "partial-upgrade") && (
           <div className={styles.summaryRow}>
             <span className={styles.label}>Remaining Value</span>
-            <span className={styles.value}>₹ {remainingValue}</span>
+            <span className={styles.value}>
+              ₹ {isUpdatingCart ? "Calculating..." : remainingValue.toFixed(2)}
+            </span>
           </div>
         )}
 
