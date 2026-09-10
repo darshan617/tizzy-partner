@@ -1152,13 +1152,14 @@ const RenewCart = ({
 
                                   const newLicenses = currentLicenses - 1;
 
-                                  // if (
-                                  //   router?.query?.type === "renew-plan" &&
-                                  //   newLicenses < routerLicenses
-                                  // ) {
-                                  //   setIsPopupOpen("license-decrease");
-                                  //   return;
-                                  // }
+                                  if (
+                                    router?.query?.type === "renew-plan" &&
+                                    newLicenses < routerLicenses &&
+                                    cartDetails?.[0]?.plan?.provider_id === 2
+                                  ) {
+                                    setIsPopupOpen("license-decrease");
+                                    return;
+                                  }
                                   if (listMode) {
                                     if (lineLicenses > 1) {
                                       onLineLicensesChange?.(

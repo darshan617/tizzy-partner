@@ -539,7 +539,8 @@ const SubscriptionsDetailsComponent = () => {
                   <div className={styles.domainBarRight}>
                     {subscriptionDetails?.status?.toLowerCase() !==
                       "cancelled" &&
-                      subscriptionDetails?.plans?.[0]?.provider_id !== 3 && (
+                      subscriptionDetails?.plans?.[0]?.provider_id !== 3 &&
+                      subscriptionDetails?.can_cancel && (
                         <button
                           type="button"
                           className={styles.cancelOrderBtn}
