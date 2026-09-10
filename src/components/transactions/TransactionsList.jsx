@@ -320,6 +320,23 @@ const TransactionsList = ({ variant = "default", limit }) => {
 
   return (
     <div className="col py-4">
+      {router?.query?.customerId && (
+        <div>
+          <p className="m-0">
+            Customer Name:{" "}
+            <span className="fw-bold">
+              {finalTransactionsList?.[0]?.customer}
+            </span>
+          </p>
+          <p>
+            Comapany Name:{" "}
+            <span className="fw-bold">
+              {" "}
+              {finalTransactionsList?.[0]?.company_name}
+            </span>
+          </p>
+        </div>
+      )}
       <div className={`${styles.sectionCard} ${styles.adjustWidth}`}>
         <div className={styles.filtersMain}>
           <div className="py-3 px-sm-4 px-3 border-bottom">
@@ -589,7 +606,6 @@ const TransactionsList = ({ variant = "default", limit }) => {
           </div>
         </div>
       </div>
-
       <Pagination
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
