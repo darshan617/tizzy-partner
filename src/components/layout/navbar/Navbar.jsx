@@ -232,7 +232,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
               licenses: licenses,
               customer_id: customer_id,
               main_cart_id: main_cart_id,
-              plnId: plan_id,
+              planId: plan_id,
             },
           });
         } else {
