@@ -172,10 +172,26 @@ const AllCurrentSubscription = () => {
           </button>
         </div>
       </div>
-
       <div className={styles.title}>
         <h1>Customer Current Subscriptions</h1>
       </div>
+      {router?.query?.customer_id && (
+        <div>
+          <p className="m-0">
+            Customer Name:{" "}
+            <span className="fw-bold">
+              {customers?.[0]?.customer_name}
+            </span>
+          </p>
+          <p>
+            Comapany Name:{" "}
+            <span className="fw-bold">
+              {" "}
+              {customers?.[0]?.company_name}
+            </span>
+          </p>
+        </div>
+      )}
 
       <div className={styles.filtersMain}>
         <div className="py-3 px-sm-4 px-3 border-bottom">
