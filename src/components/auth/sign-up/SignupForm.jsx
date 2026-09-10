@@ -182,7 +182,8 @@ const SignupForm = () => {
       console.log("error", error);
     }
   };
-  const handleSearchGstin = async () => {
+  const handleSearchGstin = async (e) => {
+    e.preventDefault();
     const gstin = userDetails?.gstin?.toUpperCase().trim();
 
     if (!gstin) {
@@ -336,6 +337,7 @@ const SignupForm = () => {
                 <button
                   onClick={handleSearchGstin}
                   className={styles.searchBtn}
+                  type="button"
                 >
                   {isSearchingGstinLoading ? "Searching..." : "Search"}
                 </button>
@@ -392,6 +394,7 @@ const SignupForm = () => {
               onClick={handleRegister}
               className={styles.registerBtn}
               disabled={!isValidGstIn}
+              type="button"
             >
               {isLoading ? "Registering..." : "Register"}
             </button>
