@@ -156,6 +156,7 @@
   margin: 0;
   overflow: hidden;
   flex-wrap: wrap;
+  flex: 1;
 }
 
 .filterItem {
@@ -176,7 +177,7 @@
   background: var(--whiteColor);
 }
 
-.btn-check:checked+.filterItem {
+.btn-check:checked + .filterItem {
   background: var(--whiteColor);
   border: 1px solid var(--darkColor);
   color: var(--darkColor);
@@ -198,7 +199,10 @@
 
 .rowInner {
   display: grid;
-  grid-template-columns: 80px minmax(0, 1.35fr) minmax(0, 1.3fr) 80px 100px 100px 40px;
+  grid-template-columns: 80px minmax(0, 1.35fr) minmax(
+      0,
+      1.3fr
+    ) 80px 100px 100px 40px;
   grid-template-areas: "txn company plan license enrollment status arrow";
   align-items: center;
   column-gap: 16px;
@@ -544,8 +548,6 @@
   border-color: var(--primaryColor);
 }
 
-
-
 @media (max-width: 1199.98px) {
   /* .rowInner {
     grid-template-columns: 90px minmax(0, 1.2fr) minmax(0, 1fr) 70px 110px 100px 36px;
@@ -577,7 +579,6 @@
     padding-left: 4px;
   }
 }
-
 
 @media (max-width: 767.98px) {
   /* .rowInner {
@@ -617,7 +618,7 @@
   }
 }
 
-  @media (max-width: 575.98px) {
+@media (max-width: 575.98px) {
   .searchCount {
     font-size: var(--fs11);
   }
@@ -627,7 +628,7 @@
   }
 
   .rowInner {
-   display: block;
+    display: block;
   }
   .arrowCol {
     margin-top: -22px;
@@ -686,10 +687,10 @@
     width: auto;
     border-radius: 0;
   }
-  
-.companyInfo {
- padding: 10px  0;
-}
+
+  .companyInfo {
+    padding: 10px 0;
+  }
 }
 
 @media (min-width: 576px) {
@@ -706,10 +707,9 @@
 .domains {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;  
+  flex-wrap: wrap;
   gap: 4px;
   width: 100%;
-  
 }
 
 .crDomainName {

@@ -13,6 +13,7 @@ import { saveAs } from "file-saver";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import CustomDropdown from "@/common-components/custom-dropdown/CustomDropdown";
+import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import Link from "next/link";
 import { IoMdArrowBack } from "react-icons/io";
 
@@ -68,6 +69,16 @@ const ReportsDetailsComponent = () => {
     ? JSON.parse(Cookies.get("userData"))
     : null;
   const [reportDetails, { isLoading }] = useReportDetailsMutation();
+  const {
+    data: allCustomers,
+    isFetching: isFetchingAllCustomers,
+    refetch,
+  } = useGetAllCustomersQuery({
+    partner_id: userData?.id,
+    page_no: 1,
+    per_page: 100,
+  });
+
   const router = useRouter();
   const [year, setYear] = useState(AVAILABLE_YEARS[0]);
   const [reportData, setReportData] = useState(null);
@@ -84,8 +95,10 @@ const ReportsDetailsComponent = () => {
   const [filterActiveTab, setFilterActiveTab] = useState({
     provider: null,
     type: null,
+    customer: null,
   });
   const [selectedProvider, setSelectedProvider] = useState(null);
+  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
 
   const getReportDetails = async () => {
     try {
@@ -97,6 +110,7 @@ const ReportsDetailsComponent = () => {
           toDate: dateRange.toDate || null,
           provider_id: selectedProvider || null,
           type: filterActiveTab?.type?.toLowerCase() || null,
+          customer_id: selectedCustomerId,
         },
       });
 
@@ -574,8 +588,7 @@ const ReportsDetailsComponent = () => {
         <div className="d-flex justify-content-between">
           <nav className={styles.breadcrumb}>
             Dashboard / Reports / General Reports /
-          
-          <h1 className={styles.pageTitle}>{reportTitle}</h1>
+            <h1 className={styles.pageTitle}>{reportTitle}</h1>
           </nav>
           <div className="col-auto">
             <Link href="" onClick={router.back} className="btn small btnWhite">
@@ -647,7 +660,7 @@ const ReportsDetailsComponent = () => {
 
                   {router?.query?.slug === "daily-performance" && (
                     <CustomDropdown
-                      placeholder="Select"
+                      placeholder="Select Type"
                       isSearchable={false}
                       value={filterActiveTab?.type || null}
                       options={[
@@ -676,6 +689,24 @@ const ReportsDetailsComponent = () => {
                       customWidth={"182px"}
                     />
                   )}
+
+                  <CustomDropdown
+                    placeholder="Select Customer"
+                    isSearchable={false}
+                    value={filterActiveTab?.customer || null}
+                    options={allCustomers?.data?.customers?.map((customer) => ({
+                      label: customer?.name,
+                      value: customer?.id,
+                    }))}
+                    onChange={(selectedOption) => {
+                      setFilterActiveTab((prev) => ({
+                        ...prev,
+                        customer: selectedOption?.label || null,
+                      }));
+                      setSelectedCustomerId(selectedOption?.value);
+                    }}
+                    customWidth={"182px"}
+                  />
 
                   <button
                     className={styles.btnApply}
