@@ -9,6 +9,7 @@ import { BsPlusCircleDotted } from "react-icons/bs";
 const Subscriptions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(10);
+  const [selectedProviderId, setSelectedProviderId] = useState(null);
   const [
     getAllSubscriptions,
     { refetch, isLoading: isAllSubscriptionDataLoading },
@@ -24,6 +25,7 @@ const Subscriptions = () => {
           partner_id: userData?.id,
           page_no: currentPage,
           per_page: itemPerPage,
+          provider_id: selectedProviderId,
         },
       });
       if (res?.data?.success) {
@@ -35,7 +37,7 @@ const Subscriptions = () => {
   };
   useEffect(() => {
     fetchAllSubscriptions();
-  }, [currentPage, itemPerPage]);
+  }, [currentPage, itemPerPage, selectedProviderId]);
   return (
     <Layout>
       <SummaryCounts
@@ -58,6 +60,8 @@ const Subscriptions = () => {
         itemPerPage={itemPerPage}
         setCurrentPage={setCurrentPage}
         setItemPerPage={setItemPerPage}
+        selectedProviderId={selectedProviderId}
+        setSelectedProviderId={setSelectedProviderId}
       />
     </Layout>
   );

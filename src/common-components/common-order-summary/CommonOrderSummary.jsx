@@ -522,6 +522,7 @@ const CommonOrderSummary = () => {
           partner_id: userData?.id,
           order_sub_id: router?.query?.order_sub_id,
           plan_id: router?.query?.planId,
+          main_cart_id: router?.query?.main_cart_id,
         },
       });
       if (res?.data?.success) {

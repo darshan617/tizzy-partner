@@ -23,7 +23,7 @@ const statusLabelMap = {
   expiring: "Expiring",
   pending: "Pending",
   downgraded: "Downgraded",
-  draft: "Draft",
+  // draft: "Draft",
   cancelled: "Cancelled",
   upgraded: "Upgraded",
   renewed: "Renewed",
@@ -37,7 +37,7 @@ const statusOrder = [
   "active",
   "processing",
   // "pending",
-  "draft",
+  // "draft",
   "expiring",
   "upgraded",
   "downgraded",
@@ -48,6 +48,21 @@ const statusOrder = [
   "renewal pending",
 ];
 
+const statusProvider = [
+  {
+    id: 3,
+    name: "Google Workspace",
+  },
+  {
+    id: 2,
+    name: "Microsoft 365",
+  },
+  {
+    id: 1,
+    name: "Tizzy",
+  },
+];
+
 const AllSubscriptions = ({
   paginationData,
   allSubscriptionsData,
@@ -56,6 +71,8 @@ const AllSubscriptions = ({
   itemPerPage,
   setCurrentPage,
   setItemPerPage,
+  setSelectedProviderId,
+  selectedProviderId,
 }) => {
   const router = useRouter();
 
@@ -70,6 +87,10 @@ const AllSubscriptions = ({
 
   const toggleStatus = (status) => {
     setSelectedStatuses((prev) => (prev === status ? "all" : status));
+  };
+
+  const toogleProviderStatus = (status) => {
+    setSelectedProviderId((prev) => (prev === status?.id ? null : status?.id));
   };
 
   const filteredSubscriptions = useMemo(
@@ -167,29 +188,62 @@ const AllSubscriptions = ({
                 <div className="row g-4 mb-4">
                   <div className={`${styles.filterPart} col-auto`}>
                     <span className={styles.filterHead}>Status :</span>
-                    <ul className={`${styles.filterGroup} gap-2`} role="group">
-                      {statusOrder.map((status) => (
-                        <li key={status}>
-                          <button
-                            key={status}
-                            className={`${styles.filterItem} rounded-pill`}
-                            onClick={() => toggleStatus(status)}
-                            style={{
-                              backgroundColor:
-                                selectedStatuses === status
-                                  ? "var(--primaryColor)"
-                                  : "",
-                              color:
-                                selectedStatuses === status
-                                  ? "var(--whiteColor)"
-                                  : "var(--darkColor)",
-                            }}
-                          >
-                            {statusLabelMap[status]}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="d-flex align-items-start">
+                      <ul
+                        className={`${styles.filterGroup} gap-2`}
+                        role="group"
+                      >
+                        {statusOrder.map((status) => (
+                          <li key={status}>
+                            <button
+                              key={status}
+                              className={`${styles.filterItem} rounded-pill`}
+                              onClick={() => toggleStatus(status)}
+                              style={{
+                                backgroundColor:
+                                  selectedStatuses === status
+                                    ? "var(--primaryColor)"
+                                    : "",
+                                color:
+                                  selectedStatuses === status
+                                    ? "var(--whiteColor)"
+                                    : "var(--darkColor)",
+                              }}
+                            >
+                              {statusLabelMap[status]}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                      <ul
+                        className={`${styles.filterGroup} gap-2`}
+                        role="group"
+                      >
+                        {statusProvider.map((status) => (
+                          <li key={status}>
+                            <button
+                              className={`${styles.filterItem} rounded-pill`}
+                              onClick={() => {
+                                // setSelectedProviderId(status?.id);
+                                toogleProviderStatus(status);
+                              }}
+                              style={{
+                                backgroundColor:
+                                  selectedProviderId === status?.id
+                                    ? "var(--primaryColor)"
+                                    : "",
+                                color:
+                                  selectedProviderId === status?.id
+                                    ? "var(--whiteColor)"
+                                    : "var(--darkColor)",
+                              }}
+                            >
+                              {status?.name}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>

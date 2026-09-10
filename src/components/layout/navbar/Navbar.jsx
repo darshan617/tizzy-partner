@@ -32,6 +32,7 @@ import {
 } from "@/redux/apis/notificationApi";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserData } from "@/redux/slices/userSlice";
+import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi";
 
 const formatNotificationTime = (dateString) => {
   if (!dateString) return "";
@@ -57,6 +58,9 @@ const formatNotificationTime = (dateString) => {
 
 const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const router = useRouter();
+  const userData = Cookies.get("userData")
+    ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
+    : {};
   const dispatch = useDispatch();
   const { showToast } = useToast();
   const [user, setUser] = useState(null);
@@ -72,6 +76,14 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     getNotificationList,
     { data: notificationList, isLoading: isNotificationListLoading },
   ] = useGetNotificationListMutation();
+
+  const { data: balanceAndCartDatas, refetch: balanceCartRefetch } =
+    useGetBalanceAndCartDetailsQuery(
+      { partner_id: userData?.id },
+      {
+        skip: !userData?.id,
+      },
+    );
   const [
     markNotificationAsRead,
     { isLoading: isMarkNotificationAsReadLoading },
@@ -140,6 +152,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
         partner_id: user?.id,
       },
     });
+    balanceCartRefetch();
   }, [user?.id]);
 
   const handleDeleteNotification = async (notificationId, event) => {
@@ -199,8 +212,18 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
       });
       console.log(response);
       if (response?.data?.success) {
-        if (main_cart_id) {
-          router?.push({
+        showToast("Notification marked as read", "success");
+
+        if (type === "credit-note") {
+          router.push({
+            pathname: "/credit-notes",
+            query: {
+              customer_id: customer_id,
+              order_id: order_id,
+            },
+          });
+        } else if (main_cart_id) {
+          router.push({
             pathname: "/order-summary",
             query: {
               type: type,
@@ -209,7 +232,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
               licenses: licenses,
               customer_id: customer_id,
               main_cart_id: main_cart_id,
-              plnId: plan_id,
+              planId: plan_id,
             },
           });
         } else {
