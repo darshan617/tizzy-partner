@@ -199,8 +199,18 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
       });
       console.log(response);
       if (response?.data?.success) {
-        if (main_cart_id) {
-          router?.push({
+        showToast("Notification marked as read", "success");
+
+        if (type === "credit-note") {
+          router.push({
+            pathname: "/credit-notes",
+            query: {
+              customer_id: customer_id,
+              order_id: order_id,
+            },
+          });
+        } else if (main_cart_id) {
+          router.push({
             pathname: "/order-summary",
             query: {
               type: type,
