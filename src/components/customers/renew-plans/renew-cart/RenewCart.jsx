@@ -964,8 +964,11 @@ const RenewCart = ({
                           className={`${styles.qtyCtrl} ${styles.planDetailQtyCtrl}`}
                         >
                           <button
-                            // disabled={lineLicenses <= 1}
-                            disabled={true}
+                            disabled={
+                              Number(lineLicenses || 1) <=
+                              Number(currentPlanDetails?.quantity || 1)
+                            }
+                            // disabled={true}
                             onClick={() => {
                               const next = lineLicenses - 1;
                               onLineLicensesChange?.(lineKey, next);
@@ -975,14 +978,15 @@ const RenewCart = ({
                           >
                             −
                           </button>
-                          {/* <input
+                          <input
                             type="text"
                             value={lineLicenses}
                             onChange={(e) => {
                               const value = Number(e.target.value);
                               if (
-                                customerLimit == null ||
-                                value <= customerLimit
+                                (customerLimit == null ||
+                                  value <= customerLimit) &&
+                                router?.query?.type === "upgrade"
                               ) {
                                 const next = Number.isFinite(value) ? value : 1;
                                 onLineLicensesChange?.(lineKey, next);
@@ -992,8 +996,8 @@ const RenewCart = ({
                             className={styles.qtyInput}
                             min={1}
                             max={customerLimit}
-                          /> */}
-                          <input
+                          />
+                          {/* <input
                             type="text"
                             value={
                               router?.query?.type === "upgrade"
@@ -1004,7 +1008,7 @@ const RenewCart = ({
                             className={styles.qtyInput}
                             min={1}
                             max={customerLimit}
-                          />
+                          /> */}
                           <button
                             onClick={() => {
                               if (customerLimit != null) {
@@ -1020,11 +1024,13 @@ const RenewCart = ({
                               }
                             }}
                             className={styles.qtyBtn}
-                            // disabled={
-                            //   customerLimit != null &&
-                            //   lineLicenses === customerLimit
-                            // }
-                            disabled={true}
+                            disabled={
+                              router?.query?.type === "upgrade"
+                                ? customerLimit != null &&
+                                  lineLicenses === customerLimit
+                                : true
+                            }
+                            // disabled={true}
                           >
                             +
                           </button>
@@ -1033,7 +1039,9 @@ const RenewCart = ({
                       <div className={styles.totalCol}>
                         <div className={styles.colLabel}>Total</div>
                         <div className={styles.priceVal}>
-                          {/* ₹ {lineTotal.toFixed(2)} */}₹ {total?.toFixed(2)}
+                          {router?.query?.type === "upgrade"
+                            ? ` ₹ ${lineTotal.toFixed(2)}`
+                            : `₹ ${total?.toFixed(2)}`}
                         </div>
                       </div>
                     </div>
