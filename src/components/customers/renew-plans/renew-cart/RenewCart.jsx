@@ -815,7 +815,8 @@ const RenewCart = ({
             </>
           )}
           {(router?.query?.type === "upgrade" ||
-            router?.query?.type === "downgrade") && (
+            router?.query?.type === "downgrade" ||
+            router?.query?.type === "partial-upgrade") && (
             <div className={styles.upgradePlansSection}>
               <div className={styles.upgradePlanCard}>
                 <div className={styles.planCardHeader}>
@@ -902,102 +903,106 @@ const RenewCart = ({
               <div className={styles.upgradeDivider}>
                 <span className={styles.upgradeBadge}>
                   <IoMdArrowDown />
-                  {router?.query?.type === "upgrade"
+                  {router?.query?.type === "upgrade" ||
+                  router?.query?.type === "partial-upgrade"
                     ? "Upgrading to"
                     : "Downgrading to"}
                 </span>
               </div>
 
-              {cartItemList?.map((item, idx) => {
-                const customerLimit =
-                  item?.customerLimit ?? item?.customer_limit ?? undefined;
-                const lineKey = item?.cart_id ?? item?.id ?? idx;
-                const unitPrice =
-                  Number(item?.price_per_unit ?? item?.unit_price ?? 0) || 0;
-                const lineLicenses = Math.max(
-                  1,
-                  Number(item?.licenses) || Number(lisceneCounter) || 1,
-                );
-                const lineTotal = unitPrice * lineLicenses;
+              {router?.query?.type !== "partial-upgrade" &&
+                cartItemList?.map((item, idx) => {
+                  const customerLimit =
+                    item?.customerLimit ?? item?.customer_limit ?? undefined;
+                  const lineKey = item?.cart_id ?? item?.id ?? idx;
+                  const unitPrice =
+                    Number(item?.price_per_unit ?? item?.unit_price ?? 0) || 0;
+                  const lineLicenses = Math.max(
+                    1,
+                    Number(item?.licenses) || Number(lisceneCounter) || 1,
+                  );
+                  const lineTotal = unitPrice * lineLicenses;
 
-                return (
-                  <div
-                    className={`${styles.upgradePlanCard} ${styles.upgradeNewPlanCard}`}
-                    key={lineKey}
-                  >
-                    <div className={styles.planCardHeader}>
-                      <span className={styles.planCardTitle}>NEW PLAN</span>
-                    </div>
-                    <div className={styles.cartRow}>
-                      <div>
-                        <span className={styles.iconCircle}>
-                          {SIDEBAR_SERVICES_CONSTANTS?.find(
-                            (menu) =>
-                              menu?.id ===
-                              Number(
-                                item?.plan?.provider_id ||
-                                  item?.plan_info?.provider_id ||
-                                  item?.provider_id,
-                              ),
-                          )?.image || "-"}
-                        </span>
+                  return (
+                    <div
+                      className={`${styles.upgradePlanCard} ${styles.upgradeNewPlanCard}`}
+                      key={lineKey}
+                    >
+                      <div className={styles.planCardHeader}>
+                        <span className={styles.planCardTitle}>NEW PLAN</span>
                       </div>
-                      <div className={styles.productInfo}>
-                        <div className={styles.productName}>
-                          {item?.plan_name || "-"}
+                      <div className={styles.cartRow}>
+                        <div>
+                          <span className={styles.iconCircle}>
+                            {SIDEBAR_SERVICES_CONSTANTS?.find(
+                              (menu) =>
+                                menu?.id ===
+                                Number(
+                                  item?.plan?.provider_id ||
+                                    item?.plan_info?.provider_id ||
+                                    item?.provider_id,
+                                ),
+                            )?.image || "-"}
+                          </span>
                         </div>
-                        <div className={styles.productDate}>
-                          {item?.subscription_start_date} –{" "}
-                          {item?.subscription_end_date}
+                        <div className={styles.productInfo}>
+                          <div className={styles.productName}>
+                            {item?.plan_name || "-"}
+                          </div>
+                          <div className={styles.productDate}>
+                            {item?.subscription_start_date} –{" "}
+                            {item?.subscription_end_date}
+                          </div>
                         </div>
-                      </div>
-                      <div className={styles.priceCol}>
-                        <div className={styles.colLabel}>Price</div>
-                        <div className={styles.priceVal}>
-                          ₹ {unitPrice.toFixed(2)}
+                        <div className={styles.priceCol}>
+                          <div className={styles.colLabel}>Price</div>
+                          <div className={styles.priceVal}>
+                            ₹ {unitPrice.toFixed(2)}
+                          </div>
+                          <div className={styles.priceSub}>per user/year</div>
                         </div>
-                        <div className={styles.priceSub}>per user/year</div>
-                      </div>
-                      <div className={styles.licenseCol}>
-                        <div className={styles.colLabel}>License</div>
-                        <div
-                          className={`${styles.qtyCtrl} ${styles.planDetailQtyCtrl}`}
-                        >
-                          <button
-                            disabled={
-                              Number(lineLicenses || 1) <=
-                              Number(currentPlanDetails?.quantity || 1)
-                            }
-                            // disabled={true}
-                            onClick={() => {
-                              const next = lineLicenses - 1;
-                              onLineLicensesChange?.(lineKey, next);
-                              setLisceneCounter(next);
-                            }}
-                            className={styles.qtyBtn}
+                        <div className={styles.licenseCol}>
+                          <div className={styles.colLabel}>License</div>
+                          <div
+                            className={`${styles.qtyCtrl} ${styles.planDetailQtyCtrl}`}
                           >
-                            −
-                          </button>
-                          <input
-                            type="text"
-                            value={lineLicenses}
-                            onChange={(e) => {
-                              const value = Number(e.target.value);
-                              if (
-                                (customerLimit == null ||
-                                  value <= customerLimit) &&
-                                router?.query?.type === "upgrade"
-                              ) {
-                                const next = Number.isFinite(value) ? value : 1;
+                            <button
+                              disabled={
+                                Number(lineLicenses || 1) <=
+                                Number(currentPlanDetails?.quantity || 1)
+                              }
+                              // disabled={true}
+                              onClick={() => {
+                                const next = lineLicenses - 1;
                                 onLineLicensesChange?.(lineKey, next);
                                 setLisceneCounter(next);
-                              }
-                            }}
-                            className={styles.qtyInput}
-                            min={1}
-                            max={customerLimit}
-                          />
-                          {/* <input
+                              }}
+                              className={styles.qtyBtn}
+                            >
+                              −
+                            </button>
+                            <input
+                              type="text"
+                              value={lineLicenses}
+                              onChange={(e) => {
+                                const value = Number(e.target.value);
+                                if (
+                                  (customerLimit == null ||
+                                    value <= customerLimit) &&
+                                  router?.query?.type === "upgrade"
+                                ) {
+                                  const next = Number.isFinite(value)
+                                    ? value
+                                    : 1;
+                                  onLineLicensesChange?.(lineKey, next);
+                                  setLisceneCounter(next);
+                                }
+                              }}
+                              className={styles.qtyInput}
+                              min={1}
+                              max={customerLimit}
+                            />
+                            {/* <input
                             type="text"
                             value={
                               router?.query?.type === "upgrade"
@@ -1009,45 +1014,45 @@ const RenewCart = ({
                             min={1}
                             max={customerLimit}
                           /> */}
-                          <button
-                            onClick={() => {
-                              if (customerLimit != null) {
-                                if (lineLicenses < customerLimit) {
+                            <button
+                              onClick={() => {
+                                if (customerLimit != null) {
+                                  if (lineLicenses < customerLimit) {
+                                    const next = lineLicenses + 1;
+                                    onLineLicensesChange?.(lineKey, next);
+                                    setLisceneCounter(next);
+                                  }
+                                } else {
                                   const next = lineLicenses + 1;
                                   onLineLicensesChange?.(lineKey, next);
                                   setLisceneCounter(next);
                                 }
-                              } else {
-                                const next = lineLicenses + 1;
-                                onLineLicensesChange?.(lineKey, next);
-                                setLisceneCounter(next);
+                              }}
+                              className={styles.qtyBtn}
+                              disabled={
+                                router?.query?.type === "upgrade"
+                                  ? customerLimit != null &&
+                                    lineLicenses === customerLimit
+                                  : true
                               }
-                            }}
-                            className={styles.qtyBtn}
-                            disabled={
-                              router?.query?.type === "upgrade"
-                                ? customerLimit != null &&
-                                  lineLicenses === customerLimit
-                                : true
-                            }
-                            // disabled={true}
-                          >
-                            +
-                          </button>
+                              // disabled={true}
+                            >
+                              +
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                      <div className={styles.totalCol}>
-                        <div className={styles.colLabel}>Total</div>
-                        <div className={styles.priceVal}>
-                          {router?.query?.type === "upgrade"
-                            ? ` ₹ ${lineTotal.toFixed(2)}`
-                            : `₹ ${total?.toFixed(2)}`}
+                        <div className={styles.totalCol}>
+                          <div className={styles.colLabel}>Total</div>
+                          <div className={styles.priceVal}>
+                            {router?.query?.type === "upgrade"
+                              ? ` ₹ ${lineTotal.toFixed(2)}`
+                              : `₹ ${total?.toFixed(2)}`}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           )}
 
