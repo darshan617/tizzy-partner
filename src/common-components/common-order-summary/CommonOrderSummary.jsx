@@ -725,7 +725,8 @@ const CommonOrderSummary = () => {
     isGettingUpgradeCartDetailsApi ||
     isRenewingCustomerDetails ||
     isGettingCartDetails ||
-    isRenewingCartDetails;
+    isRenewingCartDetails ||
+    isLicensesAddToCartLoading;
   useEffect(() => {
     if (router?.query?.plan_id && router?.query?.variant) {
       handleAddToCart();
