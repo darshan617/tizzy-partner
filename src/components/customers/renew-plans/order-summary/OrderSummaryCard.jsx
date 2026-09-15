@@ -519,7 +519,7 @@ const OrderSummaryCard = ({
               : router?.query?.type === "downgrade"
                 ? "downgrade"
                 : router?.query?.type === "partial-upgrade"
-                  ? "upgrade"
+                  ? "partial-upgrade"
                   : router?.query?.type === "add-license"
                     ? "license_add"
                     : router?.query?.type === "renew-plan"
