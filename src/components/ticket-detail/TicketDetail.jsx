@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useGetTicketDetailMutation } from "@/redux/apis/supportTicketsApi";
 import Cookies from "js-cookie";
 import Image from "next/image";
+import { CiMail } from "react-icons/ci";
 
 const activitiesColor = [
   {
@@ -88,11 +89,13 @@ const TicketDetail = () => {
         <section className={styles.detailCard}>
           <div className={styles.customerHeader}>
             <div className={styles.avatar} aria-hidden="true">
-              {ticketDetail?.name?.charAt(0)}
+              {ticketDetail?.company_name?.charAt(0)}
             </div>
             <div>
               <p className={styles.fieldLabel}>Customer Name</p>
-              <h2 className={styles.customerName}>{ticketDetail?.name}</h2>
+              <h2 className={styles.customerName}>
+                {ticketDetail?.company_name}
+              </h2>
             </div>
           </div>
 
@@ -101,7 +104,7 @@ const TicketDetail = () => {
               <p className={styles.fieldLabel}>Customer Name</p>
               <p className={styles.metaValue}>
                 <FiUser className={styles.metaIcon} />
-                {ticketDetail?.name}
+                {ticketDetail?.company_name}
               </p>
             </div>
             <div className={styles.metaItem}>
@@ -142,6 +145,13 @@ const TicketDetail = () => {
               <p className={styles.metaValue}>
                 <FiCalendar className={styles.metaIcon} />
                 {ticketDetail?.created_on}
+              </p>
+            </div>
+            <div className={styles.metaItem}>
+              <p className={styles.fieldLabel}>CC Mails</p>
+              <p className={styles.metaValue}>
+                <CiMail className={styles.metaIcon} />
+                {ticketDetail?.cc_emails?.map((item, idx) => item)}
               </p>
             </div>
           </div>
