@@ -3,39 +3,32 @@ import { BiChevronDown, BiX } from "react-icons/bi";
 import styles from "./CreateNewTicketForm.module.css";
 import {
   useAddTicketMutation,
-  useGetAllServiceListQuery,
+  useDetailsForSupportMutation,
   useGetOrdersByPartnerMutation,
-  usePlanViewByPartnerQuery,
 } from "@/redux/apis/supportTicketsApi";
 import { GrAttachment } from "react-icons/gr";
-import { FaTrash } from "react-icons/fa";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import CustomDropdown from "@/common-components/custom-dropdown/CustomDropdown";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
+import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 
 const MAX_DESCRIPTION_LENGTH = 200;
 const MAX_FILE_SIZE_MB = 2;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 const MAX_TOTAL_ATTACHMENTS_MB = 5;
 const MAX_TOTAL_ATTACHMENTS_BYTES = MAX_TOTAL_ATTACHMENTS_MB * 1024 * 1024;
-
-const serviceOptions = [
-  "Tizzy® Mail Enterprise 300 GB",
-  "Tizzy® Mail Enterprise - 100 GB",
-  "Tizzy® Mail Enterprise - 50 GB",
-];
-
 const priorityOptions = ["Low", "Medium", "High"];
 
 const initialFormData = {
-  orderId: "",
-  name: "",
-  email: "",
+  partner_id: "",
+  customer_id: "",
+  provider_id: "",
+  cc_emails: [],
   domain: "",
   service: "",
   subject: "",
-  priority: "Low",
+  priority: "",
   description: "",
   attachments: [],
 };
@@ -49,21 +42,87 @@ const toServiceOptions = (list) =>
     })
     .filter(Boolean);
 
+const toPlanOptions = (list) =>
+  (Array.isArray(list) ? list : [])
+    .map((plan) => ({
+      label: plan?.plan_name,
+      value: plan?.plan_id,
+      domains: plan?.domains,
+    }))
+    .filter((plan) => plan.label);
+
+const toDomainOptions = (list) =>
+  (Array.isArray(list) ? list : [])
+    .map((domain) => ({
+      label: domain?.domain_name || domain?.domain,
+      value: domain?.domain_name || domain?.domain,
+    }))
+    .filter((domain) => domain.label);
+
 const CreateNewTicketForm = () => {
   const { showToast } = useToast();
   const [formData, setFormData] = useState(initialFormData);
+  const [ccEmailInput, setCcEmailInput] = useState("");
   const [errors, setErrors] = useState({});
-  const [serviceOptionsList, setServiceOptionsList] = useState([]);
+  const [optionsList, setOptionsList] = useState({
+    serviceDdList: [],
+    domainDdList: [],
+    providerDdList: [],
+  });
+  const [selectedId, setSelectedId] = useState({
+    customer: null,
+    provider: null,
+  });
+
+  console.log(formData, "formData😁");
+  console.log(selectedId, "selectedId😁");
+  console.log(optionsList, "optionsList😁");
+
   const userData = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
     : {};
-  const { data: serviceList } = usePlanViewByPartnerQuery();
   const [addTicket, { isLoading: isAddingTicket }] = useAddTicketMutation();
   const [getOrdersByPartner, { isLoading: isGettingOrders }] =
     useGetOrdersByPartnerMutation();
-
+  const [detailsForSupport, { isLoading }] = useDetailsForSupportMutation();
+  const {
+    data: allCustomers,
+    isFetching: isFetchingAllCustomers,
+    refetch,
+  } = useGetAllCustomersQuery({
+    partner_id: userData?.id,
+    page_no: 1,
+    per_page: 100,
+  });
   const remainingCharacters =
     MAX_DESCRIPTION_LENGTH - formData.description.length;
+
+  const getTicketDetails = async () => {
+    try {
+      const res = await detailsForSupport({
+        body: {
+          customer_id: selectedId?.customer,
+          partner_id: userData?.id,
+        },
+      });
+      if (res?.data?.success) {
+        console.log(res?.data);
+
+        setOptionsList((prev) => ({
+          ...prev,
+          providerDdList: Array.isArray(res?.data?.data?.providers)
+            ? res.data.data.providers
+            : [],
+          serviceDdList: [],
+          domainDdList: [],
+        }));
+      } else {
+        console.log(res?.error?.message);
+      }
+    } catch (error) {
+      console.log(error, "getTicketDetails ");
+    }
+  };
 
   const handleChange = (event) => {
     const { name, value, files } = event.target;
@@ -82,7 +141,10 @@ const CreateNewTicketForm = () => {
         return;
       }
 
-      const nextAttachments = [...formData.attachments, ...selectedFiles];
+      const existingAttachments = Array.isArray(formData?.attachments)
+        ? formData.attachments
+        : [];
+      const nextAttachments = [...existingAttachments, ...selectedFiles];
       const totalSize = nextAttachments.reduce(
         (sum, file) => sum + file.size,
         0,
@@ -116,24 +178,30 @@ const CreateNewTicketForm = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.name) {
-      newErrors.name = "Name is required";
+    if (!formData.customer_id) {
+      newErrors.customer_id = "Customer is required";
     }
-    if (!formData.email) {
-      newErrors.email = "Email is required";
+
+    if (!formData.provider_id) {
+      newErrors.provider_id = "Provider is required";
     }
+
     if (!formData.domain) {
       newErrors.domain = "Domain is required";
     }
-    if (!formData.service || formData.service === "") {
+
+    if (!formData.service) {
       newErrors.service = "Service is required";
     }
+
     if (!formData.subject) {
       newErrors.subject = "Subject is required";
     }
+
     if (!formData.priority) {
       newErrors.priority = "Priority is required";
     }
+
     if (!formData.description) {
       newErrors.description = "Description is required";
     }
@@ -146,6 +214,11 @@ const CreateNewTicketForm = () => {
     setFormData((prev) => ({
       ...prev,
       service: option?.label || "",
+      domain: "",
+    }));
+    setOptionsList((prev) => ({
+      ...prev,
+      domainDdList: toDomainOptions(option?.domains),
     }));
     setErrors((prev) => ({
       ...prev,
@@ -178,6 +251,37 @@ const CreateNewTicketForm = () => {
     }));
   };
 
+  const handleAddCcEmail = () => {
+    const email = ccEmailInput.trim();
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if (!isValidEmail) {
+      setErrors((prev) => ({
+        ...prev,
+        cc_emails: "Enter a valid email address",
+      }));
+      return;
+    }
+
+    if (formData.cc_emails.includes(email)) {
+      setErrors((prev) => ({
+        ...prev,
+        cc_emails: "This email has already been added",
+      }));
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      cc_emails: [...prev.cc_emails, email],
+    }));
+    setCcEmailInput("");
+    setErrors((prev) => ({
+      ...prev,
+      cc_emails: "",
+    }));
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!validateForm()) return;
@@ -185,11 +289,18 @@ const CreateNewTicketForm = () => {
       const { attachments, ...fields } = formData;
       const body = new FormData();
 
-      body.append("partner_id", String(userData?.id ?? ""));
       Object.entries(fields).forEach(([key, value]) => {
-        body.append(key, value ?? "");
+        if (key === "cc_emails" && Array.isArray(value)) {
+          value.forEach((email) => body.append("cc_emails[]", email));
+        } else if (key === "partner_id") {
+          body.set(key, String(userData?.id ?? ""));
+        } else if (key === "provider_id") {
+          body.set(key, String(selectedId?.provider));
+        } else {
+          body.append(key, value ?? "");
+        }
       });
-      attachments.forEach((file) => {
+      (Array.isArray(attachments) ? attachments : []).forEach((file) => {
         body.append("attachments[]", file);
       });
 
@@ -197,7 +308,10 @@ const CreateNewTicketForm = () => {
       if (res?.data?.success) {
         showToast(res?.data?.message, "success");
         setFormData(initialFormData);
+        setCcEmailInput("");
         return;
+      } else {
+        console.log(res?.error);
       }
 
       if (res?.error?.status === 413) {
@@ -211,6 +325,7 @@ const CreateNewTicketForm = () => {
       showToast(res?.error?.data?.message || "Something went wrong", "error");
     } catch (error) {
       showToast(error?.data?.message || "Something went wrong", "error");
+      console.log(error);
     }
   };
 
@@ -222,7 +337,10 @@ const CreateNewTicketForm = () => {
 
       if (res?.data?.success) {
         const planOptions = toServiceOptions(res?.data?.data?.plan_list);
-        setServiceOptionsList(planOptions);
+        setOptionsList((prev) => ({
+          ...prev,
+          serviceDdList: planOptions,
+        }));
         setFormData((prev) => ({
           ...prev,
           name: res?.data?.data?.name,
@@ -261,9 +379,10 @@ const CreateNewTicketForm = () => {
   };
 
   useEffect(() => {
-    if (!serviceList?.data) return;
-    setServiceOptionsList(toServiceOptions(serviceList.data));
-  }, [serviceList]);
+    if (selectedId?.customer) {
+      getTicketDetails();
+    }
+  }, [selectedId?.customer]);
 
   return (
     <div className={styles.wrapper}>
@@ -273,7 +392,7 @@ const CreateNewTicketForm = () => {
             Customer Details
           </h2>
 
-          <div className={styles.grid}>
+          {/* <div className={styles.grid}>
             <div className={styles.formGroup}>
               <label className={styles.label} htmlFor="ticket-email">
                 Order ID
@@ -305,77 +424,92 @@ const CreateNewTicketForm = () => {
                 </button>
               </div>
             </div>
-          </div>
+          </div> */}
           <div className={styles.grid}>
             <div className={styles.formGroup}>
-              <label className={styles.label} htmlFor="ticket-name">
-                Name<span className={styles.required}>*</span>
-              </label>
-              <input
-                id="ticket-name"
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="form-control"
-              />
-              {errors.name && <p className={styles.error}>{errors.name}</p>}
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label} htmlFor="ticket-email">
-                Email<span className={styles.required}>*</span>
-              </label>
-              <input
-                id="ticket-email"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="form-control"
-              />
-              {errors.email && <p className={styles.error}>{errors.email}</p>}
-            </div>
-          </div>
-
-          <div className={styles.grid}>
-            <div className={styles.formGroup}>
-              <label className={styles.label} htmlFor="ticket-domain">
-                Domain<span className={styles.required}>*</span>
-              </label>
-              <input
-                id="ticket-domain"
-                type="text"
-                name="domain"
-                value={formData.domain}
-                onChange={handleChange}
-                className="form-control"
-              />
-              {errors.domain && <p className={styles.error}>{errors.domain}</p>}
-            </div>
-
-            <div className={styles.formGroup}>
-              {/* <label className={styles.label} htmlFor="ticket-service">
-                Service<span className={styles.required}>*</span>
-              </label> */}
               <div className={styles.selectWrap}>
-                {/* <select
-                  id="ticket-service"
-                  name="service"
-                  value={formData.service}
-                  onChange={handleChange}
-                  className={`form-control ${styles.select}`}
-                >
-                  {formData?.service?.map((service) => (
-                    <option key={service} value={service}>
-                      {service}
-                    </option>
-                  ))}
-                </select>
-                <BiChevronDown className={styles.selectIcon} aria-hidden /> */}
+                <CustomDropdown
+                  label="Select Customer"
+                  options={allCustomers?.data?.customers?.map((customer) => ({
+                    label: customer?.name,
+                    value: customer?.id,
+                  }))}
+                  onChange={(option) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      customer_id: option?.value || null,
+                    }));
+
+                    setSelectedId({
+                      customer: option?.value || null,
+                      provider: null,
+                    });
+                    setOptionsList({
+                      serviceDdList: [],
+                      domainDdList: [],
+                      providerDdList: [],
+                    });
+                    setCcEmailInput("");
+                    setErrors({});
+                  }}
+                  value={formData.customer_id}
+                  placeholder="Select Customer"
+                  isSearchable={true}
+                  customHeight="39px"
+                />
+                {errors.service && (
+                  <p className={styles.error}>{errors.service}</p>
+                )}
+              </div>
+            </div>
+            <div className={styles.formGroup}>
+              <div className={styles.selectWrap}>
+                <CustomDropdown
+                  label="Select Provider"
+                  options={(Array.isArray(optionsList?.providerDdList)
+                    ? optionsList.providerDdList
+                    : []
+                  ).map((customer) => ({
+                    label: customer?.provider_name,
+                    value: customer?.provider_id,
+                    plans: customer?.plans,
+                  }))}
+                  onChange={(option) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      provider_id: option?.value || "",
+                      service: "",
+                      domain: "",
+                    }));
+
+                    setSelectedId((prev) => ({
+                      ...prev,
+                      provider: option?.value || null,
+                    }));
+                    setOptionsList((prev) => ({
+                      ...prev,
+                      serviceDdList: toPlanOptions(option?.plans),
+                      domainDdList: [],
+                    }));
+                  }}
+                  value={formData.provider_id}
+                  placeholder="Select Provider"
+                  isSearchable={true}
+                  customHeight="39px"
+                />
+                {errors.service && (
+                  <p className={styles.error}>{errors.service}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.grid}>
+            <div className={styles.formGroup}>
+              <div className={styles.selectWrap}>
                 <CustomDropdown
                   label="Service"
-                  options={serviceOptionsList}
+                  options={optionsList?.serviceDdList}
                   onChange={handleServiceChange}
                   value={formData.service}
                   placeholder="Select Service"
@@ -386,6 +520,31 @@ const CreateNewTicketForm = () => {
                   <p className={styles.error}>{errors.service}</p>
                 )}
               </div>
+            </div>
+            <div className={styles.formGroup}>
+              <div className={styles.selectWrap}>
+                <CustomDropdown
+                  label="Domain"
+                  options={optionsList?.domainDdList}
+                  onChange={(option) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      domain: option?.label || "",
+                    }));
+                    setErrors((prev) => ({
+                      ...prev,
+                      domain: "",
+                    }));
+                  }}
+                  value={formData.domain}
+                  placeholder="Select Domain"
+                  isSearchable={true}
+                  customHeight="39px"
+                />
+              </div>
+              {errors?.domain && (
+                <p className={styles.error}>{errors?.domain}</p>
+              )}
             </div>
           </div>
 
@@ -437,31 +596,89 @@ const CreateNewTicketForm = () => {
             </div>
           </div>
 
-          <div className={styles.descriptionGroup}>
-            <label className={styles.label} htmlFor="ticket-description">
-              Description<span className={styles.required}>*</span>
-            </label>
-            <textarea
-              id="ticket-description"
-              name="description"
-              value={formData.description}
-              onChange={handleDescriptionChange}
-              className={`form-control ${styles.textarea}`}
-              placeholder="Describe the issue in detail"
-              // rows={2}
-              style={{ resize: "none" }}
-            />
-            <div className="d-flex align-items-center gap-2 justify-content-between">
-              {errors.description ? (
-                <p className={`${styles.error} ${styles.charCount}`}>
-                  {errors.description}
+          <div className={styles.grid}>
+            <div className={styles.descriptionGroup}>
+              <label className={styles.label} htmlFor="ticket-description">
+                Description<span className={styles.required}>*</span>
+              </label>
+              <textarea
+                id="ticket-description"
+                name="description"
+                value={formData.description}
+                onChange={handleDescriptionChange}
+                className={`form-control ${styles.textarea}`}
+                placeholder="Describe the issue in detail"
+                // rows={2}
+                style={{ resize: "none" }}
+              />
+              <div className="d-flex align-items-center gap-2 justify-content-between">
+                {errors.description ? (
+                  <p className={`${styles.error} ${styles.charCount}`}>
+                    {errors.description}
+                  </p>
+                ) : (
+                  <p className="m-0"></p>
+                )}
+                <p className={styles.charCount}>
+                  Remaining {remainingCharacters} Characters
                 </p>
-              ) : (
-                <p className="m-0"></p>
+              </div>
+            </div>
+
+            <div className={`${styles.formGroup}`}>
+              <label className={styles.label} htmlFor="ticket-cc-email">
+                Add CC
+              </label>
+              <div className="d-flex gap-2">
+                <input
+                  id="ticket-cc-email"
+                  type="email"
+                  value={ccEmailInput}
+                  onChange={(event) => setCcEmailInput(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      handleAddCcEmail();
+                    }
+                  }}
+                  className="form-control"
+                  placeholder="Enter email address"
+                />
+                <button
+                  type="button"
+                  className={styles.attachmentsBtn}
+                  onClick={handleAddCcEmail}
+                >
+                  Add
+                </button>
+              </div>
+              {errors?.cc_emails && (
+                <p className={styles.error}>{errors?.cc_emails}</p>
               )}
-              <p className={styles.charCount}>
-                Remaining {remainingCharacters} Characters
-              </p>
+              {formData?.cc_emails.length > 0 && (
+                <div className="d-flex flex-wrap gap-2 mt-2">
+                  {formData?.cc_emails?.map((email) => (
+                    <span key={email} className="badge text-bg-light fs-6">
+                      {email}
+                      <button
+                        type="button"
+                        className="border-0 bg-transparent ms-1"
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            cc_emails: prev.cc_emails?.filter(
+                              (item) => item !== email,
+                            ),
+                          }))
+                        }
+                        aria-label={`Remove ${email}`}
+                      >
+                        <BiX />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
