@@ -92,7 +92,7 @@ const TicketDetail = () => {
               {ticketDetail?.company_name?.charAt(0)}
             </div>
             <div>
-              <p className={styles.fieldLabel}>Customer Name</p>
+              <p className={styles.fieldLabel}>Company Name</p>
               <h2 className={styles.customerName}>
                 {ticketDetail?.company_name}
               </h2>
@@ -101,7 +101,7 @@ const TicketDetail = () => {
 
           <div className={styles.metaGrid}>
             <div className={styles.metaItem}>
-              <p className={styles.fieldLabel}>Customer Name</p>
+              <p className={styles.fieldLabel}>Company Name</p>
               <p className={styles.metaValue}>
                 <FiUser className={styles.metaIcon} />
                 {ticketDetail?.company_name}
@@ -156,10 +156,10 @@ const TicketDetail = () => {
             </div>
           </div>
 
-          <div className={styles.sectionBlock}>
+          {/* <div className={styles.sectionBlock}>
             <p className={styles.fieldLabel}>Subject</p>
             <p className={styles.bodyText}>{ticketDetail?.subject}</p>
-          </div>
+          </div> */}
 
           <div className={styles.sectionBlock}>
             <p className={styles.fieldLabel}>Description</p>
@@ -223,36 +223,36 @@ const TicketDetail = () => {
             </button>
           </div>
         </section>
-
-        <aside className={styles.activityCard}>
-          <div className={styles.activityHeader}>
-            <p className={styles.fieldLabel}>Activity</p>
-          </div>
-          <div className={styles.boder}></div>
-          <ul className={styles.timeline}>
-            {ticketDetail?.activities?.map((item, idx) => (
-              <li key={item.id} className={styles.timelineItem}>
-                <div className={styles.timelineLeft}>
-                  <span className={styles.timelineDate}>{item.date}</span>
-                  <span
-                    className={styles.timelineDot}
-                    style={{
-                      backgroundColor:
-                        activitiesColor?.[idx % activitiesColor.length]?.color,
-                    }}
-                  />
-                </div>
-                <div className={styles.timelineContent}>
-                  <h3 className={styles.timelineTitle}>{item.title}</h3>
-                  <p className={styles.timelineDesc}>{item.description}</p>
-                  <button type="button" className={styles.timelineBy}>
-                    By {item.by}
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </aside>
+        <aside>ss</aside>
+      </div>
+      <div className={styles.activityCard}>
+        <div className={styles.activityHeader}>
+          <p className={styles.fieldLabel}>Activity</p>
+        </div>
+        <div className={styles.boder}></div>
+        <ul className={styles.timeline}>
+          {ticketDetail?.activities?.map((item, idx) => (
+            <li key={item.id} className={styles.timelineItem}>
+              <div className={styles.timelineLeft}>
+                <span className={styles.timelineDate}>{item.date}</span>
+                <span
+                  className={styles.timelineDot}
+                  style={{
+                    backgroundColor:
+                      activitiesColor?.[idx % activitiesColor.length]?.color,
+                  }}
+                />
+              </div>
+              <div className={styles.timelineContent}>
+                <h3 className={styles.timelineTitle}>{item.title}</h3>
+                <p className={styles.timelineDesc}>{item.description}</p>
+                <button type="button" className={styles.timelineBy}>
+                  By {item.by}
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
