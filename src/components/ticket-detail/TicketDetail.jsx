@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "@/components/ticket-detail/TicketDetail.module.css";
 import { FiUser, FiGlobe, FiLayers, FiCalendar } from "react-icons/fi";
 import { BsPrinter } from "react-icons/bs";
@@ -8,6 +8,7 @@ import { useGetTicketDetailMutation } from "@/redux/apis/supportTicketsApi";
 import Cookies from "js-cookie";
 import Image from "next/image";
 import { CiMail } from "react-icons/ci";
+import SupportChat from "./SupportChat";
 
 const activitiesColor = [
   {
@@ -34,6 +35,8 @@ const TicketDetail = () => {
     ? JSON.parse(Cookies.get("userData"))
     : {};
   const [ticketDetail, setTicketDetail] = useState(null);
+  const detailCardRef = useRef(null);
+  const [detailCardHeight, setDetailCardHeight] = useState(null);
   console.log(ticketDetail, "ticketDetail");
   const [getTicketDetail, { isLoading: isGettingTicketDetail }] =
     useGetTicketDetailMutation();
@@ -57,6 +60,19 @@ const TicketDetail = () => {
       fetchTicketDetail();
     }
   }, [userData?.id, router?.query?.ticket_id, router?.isReady]);
+
+  useEffect(() => {
+    const detailCard = detailCardRef.current;
+    if (!detailCard) return;
+
+    const updateHeight = () => setDetailCardHeight(detailCard.offsetHeight);
+    updateHeight();
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(detailCard);
+
+    return () => observer.disconnect();
+  }, []);
 
   const priorityPillClass = {
     High: styles.pillDanger,
@@ -86,7 +102,7 @@ const TicketDetail = () => {
       </div>
 
       <div className={styles.contentGrid}>
-        <section className={styles.detailCard}>
+        <section ref={detailCardRef} className={styles.detailCard}>
           <div className={styles.customerHeader}>
             <div className={styles.avatar} aria-hidden="true">
               {ticketDetail?.company_name?.charAt(0)}
@@ -223,7 +239,9 @@ const TicketDetail = () => {
             </button>
           </div>
         </section>
-        <aside>ss</aside>
+        <aside style={{ height: detailCardHeight || undefined }}>
+          <SupportChat />
+        </aside>
       </div>
       <div className={styles.activityCard}>
         <div className={styles.activityHeader}>

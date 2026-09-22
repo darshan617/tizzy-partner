@@ -100,7 +100,7 @@
 }
 
 .pillDanger {
-  background: #F7577E;
+  background: #f7577e;
 }
 
 .pillWarning {
@@ -114,14 +114,18 @@
 
 .pillDefault {
   background-color: #ffa000;
-
 }
 
 .contentGrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 380px;
   gap: 16px;
-  align-items: start;
+  align-items: stretch;
+}
+
+.contentGrid > aside {
+  min-height: 0;
+  display: flex;
 }
 
 .detailCard,
