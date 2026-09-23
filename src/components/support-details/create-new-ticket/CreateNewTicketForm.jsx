@@ -781,7 +781,7 @@ const CreateNewTicketForm = () => {
 
             <div className={`${styles.formGroup}`}>
               <label className={styles.label} htmlFor="ticket-cc-email">
-                Add CC
+                Add CC<span className={styles.required}>*</span>
               </label>
               <div className="d-flex gap-2">
                 <input
