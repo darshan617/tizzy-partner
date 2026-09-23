@@ -120,12 +120,25 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) 380px;
   gap: 16px;
-  align-items: stretch;
+  align-items: start;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
 }
 
 .contentGrid > aside {
   min-height: 0;
   display: flex;
+}
+
+.chatAside {
+  position: sticky;
+  top: 16px;
+  align-self: start;
 }
 
 .detailCard,
@@ -141,9 +154,6 @@
 }
 
 .activityCard {
-  position: sticky;
-  top: 0;
-
   padding: 20px 18px;
 }
 
@@ -153,7 +163,7 @@
   gap: 14px;
   margin: 0 -24px;
   padding: 0 24px 18px;
-  border-bottom: 1px solid #eef1f5;
+  /* border-bottom: 1px solid #eef1f5; */
 }
 
 .avatar {
@@ -192,7 +202,7 @@
 
 .metaGrid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px 20px;
   margin: 0 -24px;
   padding: 18px 24px;
@@ -228,6 +238,46 @@
   border-bottom: 1px solid #eef1f5;
 }
 
+.descriptionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.descriptionTitle {
+  margin: 0;
+  color: #4b4b5d;
+  font-family: "Baloo Bhai 2", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.descriptionPills {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.descriptionPillGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.descriptionPillLabel {
+  color: #9ba6b7;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
 .bodyText,
 .descriptionBody {
   margin: 0;
@@ -238,6 +288,7 @@
 
 .descriptionBody p {
   margin: 0 0 12px;
+  white-space: pre-line;
 }
 
 .descriptionBody p:last-child {
@@ -415,6 +466,10 @@
     grid-template-columns: 1fr;
   }
 
+  .chatAside {
+    position: static;
+  }
+
   .timelineItem {
     grid-template-columns: 130px minmax(0, 1fr);
   }
@@ -433,6 +488,10 @@
   .metaGrid {
     grid-template-columns: 1fr;
     gap: 14px;
+  }
+
+  .descriptionHeader {
+    align-items: flex-start;
   }
 
   .detailCard,

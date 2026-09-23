@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "@/components/ticket-detail/TicketDetail.module.css";
-import { FiUser, FiGlobe, FiLayers, FiCalendar } from "react-icons/fi";
+import { FiUser, FiGlobe, FiLayers, FiCalendar, FiBox } from "react-icons/fi";
 import { BsPrinter } from "react-icons/bs";
 import { IoReturnUpForwardOutline } from "react-icons/io5";
 import { useRouter } from "next/router";
@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 import Image from "next/image";
 import { CiMail } from "react-icons/ci";
 import SupportChat from "./SupportChat";
+import { SIDEBAR_SERVICES_CONSTANTS } from "../layout/sidebar/SidebarConstant";
 
 const activitiesColor = [
   {
@@ -102,175 +103,259 @@ const TicketDetail = () => {
       </div>
 
       <div className={styles.contentGrid}>
-        <section ref={detailCardRef} className={styles.detailCard}>
-          <div className={styles.customerHeader}>
-            <div className={styles.avatar} aria-hidden="true">
-              {ticketDetail?.company_name?.charAt(0)}
+        <div className={styles.leftColumn}>
+          <section ref={detailCardRef} className={styles.detailCard}>
+            <div
+              className="d-flex justify-content-between align-items-center"
+              style={{ borderBottom: "1px solid #eef1f5" }}
+            >
+              <div className={styles.customerHeader}>
+                <div className={styles.avatar} aria-hidden="true">
+                  {ticketDetail?.company_name?.charAt(0)}
+                </div>
+                <div>
+                  {/* <p className={styles.fieldLabel}>Company Name</p> */}
+                  <h2 className={styles.customerName}>
+                    {ticketDetail?.company_name}
+                  </h2>
+                  <p className="m-0">{ticketDetail?.customer_name}</p>
+                </div>
+              </div>
+              <div className={styles.metaItem}>
+                <p className={styles.fieldLabel}>{ticketDetail?.created_on}</p>
+              </div>
             </div>
-            <div>
-              <p className={styles.fieldLabel}>Company Name</p>
-              <h2 className={styles.customerName}>
-                {ticketDetail?.company_name}
-              </h2>
-            </div>
-          </div>
 
-          <div className={styles.metaGrid}>
-            <div className={styles.metaItem}>
-              <p className={styles.fieldLabel}>Company Name</p>
-              <p className={styles.metaValue}>
-                <FiUser className={styles.metaIcon} />
-                {ticketDetail?.company_name}
-              </p>
-            </div>
-            <div className={styles.metaItem}>
-              <p className={styles.fieldLabel}>Domain</p>
-              <p className={styles.metaValue}>
-                <FiGlobe className={styles.metaIcon} />
-                {ticketDetail?.domain}
-              </p>
-            </div>
-            <div className={styles.metaItem}>
-              <p className={styles.fieldLabel}>Service</p>
-              <p className={styles.metaValue}>
-                <FiLayers className={styles.metaIcon} />
-                {ticketDetail?.service}
-              </p>
-            </div>
-            <div className={styles.metaItem}>
-              <p className={styles.fieldLabel}>Priority</p>
-              <span
-                className={`${styles.pill} ${
-                  priorityPillClass[ticketDetail?.priority] ??
-                  styles.pillDefault
-                } ${styles.pillSm}`}
-              >
-                {ticketDetail?.priority}
-              </span>
-            </div>
-            <div className={styles.metaItem}>
-              <p className={styles.fieldLabel}>Status</p>
-              <span
-                className={`${styles.pill} ${styles.pillWarning} ${styles.pillSm}`}
-              >
-                {ticketDetail?.status}
-              </span>
-            </div>
-            <div className={styles.metaItem}>
+            <div className={styles.metaGrid}>
+              {/* <div className={styles.metaItem}>
+                <p className={styles.fieldLabel}>Company Name</p>
+                <p className={styles.metaValue}>
+                  <FiUser className={styles.metaIcon} />
+                  {ticketDetail?.company_name}
+                </p>
+              </div> */}
+              <div className={styles.metaItem}>
+                <div className={styles.metaValue}>
+                  <div
+                    style={{
+                      width: 25,
+                      height: 25,
+                      minWidth: 25,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {
+                      SIDEBAR_SERVICES_CONSTANTS?.find(
+                        (item) =>
+                          item?.id === Number(ticketDetail?.provider_id),
+                      )?.image
+                    }
+                  </div>
+
+                  <div>
+                    <p className={styles.metaValue}>
+                      {/* <FiLayers className={styles.metaIcon} /> */}
+                      {ticketDetail?.service}
+                    </p>
+                    <p className={styles.metaValue}>
+                      {/* <FiGlobe className={styles.metaIcon} /> */}
+                      {ticketDetail?.domain}
+                    </p>
+                    <div className="d-flex justify-content-between align-items-center mt-2">
+                      <p className={styles.metaValue}>
+                        <FiBox className={styles.metaIcon} />
+                        {ticketDetail?.order_category}
+                      </p>
+                      <p className={styles.metaValue}>
+                        <FiLayers className={styles.metaIcon} />
+                        {ticketDetail?.subscription_id}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* <div className={styles.metaItem}>
+                <p className={styles.fieldLabel}>Domain</p>
+                <p className={styles.metaValue}>
+                  <FiGlobe className={styles.metaIcon} />
+                  {ticketDetail?.domain}
+                </p>
+              </div>
+              <div className={styles.metaItem}>
+                <p className={styles.fieldLabel}>Service</p>
+                <p className={styles.metaValue}>
+                  <FiLayers className={styles.metaIcon} />
+                  {ticketDetail?.service}
+                </p>
+              </div> */}
+              {/* <div className={styles.metaItem}>
+                <p className={styles.fieldLabel}>Priority</p>
+                <span
+                  className={`${styles.pill} ${
+                    priorityPillClass[ticketDetail?.priority] ??
+                    styles.pillDefault
+                  } ${styles.pillSm}`}
+                >
+                  {ticketDetail?.priority}
+                </span>
+              </div>
+              <div className={styles.metaItem}>
+                <p className={styles.fieldLabel}>Status</p>
+                <span
+                  className={`${styles.pill} ${styles.pillWarning} ${styles.pillSm}`}
+                >
+                  {ticketDetail?.status}
+                </span>
+              </div> */}
+              {/* <div className={styles.metaItem}>
               <p className={styles.fieldLabel}>Created On</p>
               <p className={styles.metaValue}>
                 <FiCalendar className={styles.metaIcon} />
                 {ticketDetail?.created_on}
               </p>
+            </div> */}
+              <div className={styles.metaItem}>
+                <p className={styles.fieldLabel}>CC Mails</p>
+                <p className={styles.metaValue}>
+                  <CiMail className={styles.metaIcon} />
+                  {ticketDetail?.cc_emails?.map((item, idx) => item)}
+                </p>
+              </div>
             </div>
-            <div className={styles.metaItem}>
-              <p className={styles.fieldLabel}>CC Mails</p>
-              <p className={styles.metaValue}>
-                <CiMail className={styles.metaIcon} />
-                {ticketDetail?.cc_emails?.map((item, idx) => item)}
-              </p>
-            </div>
-          </div>
 
-          {/* <div className={styles.sectionBlock}>
+            {/* <div className={styles.sectionBlock}>
             <p className={styles.fieldLabel}>Subject</p>
             <p className={styles.bodyText}>{ticketDetail?.subject}</p>
           </div> */}
 
-          <div className={styles.sectionBlock}>
-            <p className={styles.fieldLabel}>Description</p>
-            <div className={styles.descriptionBody}>
-              <p>{ticketDetail?.description}</p>
+            <div
+              className={`${styles.sectionBlock} ${styles.descriptionSection}`}
+            >
+              <div className={styles.descriptionHeader}>
+                <h4 className={styles.descriptionTitle}>Description</h4>
+                <div className={styles.descriptionPills}>
+                  <div className={styles.descriptionPillGroup}>
+                    <span className={styles.descriptionPillLabel}>
+                      Priority
+                    </span>
+                    <span
+                      className={`${styles.pill} ${
+                        priorityPillClass[ticketDetail?.priority] ??
+                        styles.pillDefault
+                      } ${styles.pillSm}`}
+                    >
+                      {ticketDetail?.priority}
+                    </span>
+                  </div>
+                  <div className={styles.descriptionPillGroup}>
+                    <span className={styles.descriptionPillLabel}>Status</span>
+                    <span
+                      className={`${styles.pill} ${styles.pillWarning} ${styles.pillSm}`}
+                    >
+                      {ticketDetail?.status}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className={styles.descriptionBody}>
+                <p>{ticketDetail?.description}</p>
+              </div>
             </div>
-          </div>
 
-          <div className={styles.sectionBlock}>
-            <p className={styles.fieldLabel}>Attachments</p>
-            <div className={styles.allAttachments}>
-              {ticketDetail?.attachments?.length > 0 ? (
-                ticketDetail?.attachments?.map((item) => {
-                  const src = item?.url?.replace(/([^:]\/)\/+/g, "$1");
-                  const isImage = item?.mime_type?.startsWith("image/");
+            <div className={styles.sectionBlock}>
+              <p className={styles.fieldLabel}>Attachments</p>
+              <div className={styles.allAttachments}>
+                {ticketDetail?.attachments?.length > 0 ? (
+                  ticketDetail?.attachments?.map((item) => {
+                    const src = item?.url?.replace(/([^:]\/)\/+/g, "$1");
+                    const isImage = item?.mime_type?.startsWith("image/");
 
-                  if (isImage) {
+                    if (isImage) {
+                      return (
+                        <a
+                          key={item.id}
+                          href={src}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.attachmentThumb}
+                        >
+                          <img src={src} alt={item?.filename || "Attachment"} />
+                        </a>
+                      );
+                    }
+
                     return (
                       <a
                         key={item.id}
                         href={src}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={styles.attachmentThumb}
+                        className={styles.attachmentLink}
                       >
-                        <img src={src} alt={item?.filename || "Attachment"} />
+                        {item?.filename || "Download file"}
                       </a>
                     );
-                  }
-
-                  return (
-                    <a
-                      key={item.id}
-                      href={src}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.attachmentLink}
-                    >
-                      {item?.filename || "Download file"}
-                    </a>
-                  );
-                })
-              ) : (
-                <p className="text-muted small-text">No attachments found</p>
-              )}
+                  })
+                ) : (
+                  <p className="text-muted small-text">No attachments found</p>
+                )}
+              </div>
             </div>
-          </div>
 
-          <div className={styles.actions}>
-            {/* <button type="button" className={styles.actionBtn}>
+            <div className={styles.actions}>
+              {/* <button type="button" className={styles.actionBtn}>
               <BsReply />
               Reply
             </button> */}
-            <button type="button" className={styles.actionBtn}>
-              <IoReturnUpForwardOutline />
-              Forward
-            </button>
-            <button type="button" className={styles.actionBtn}>
-              <BsPrinter />
-              Print
-            </button>
+              <button type="button" className={styles.actionBtn}>
+                <IoReturnUpForwardOutline />
+                Forward
+              </button>
+              <button type="button" className={styles.actionBtn}>
+                <BsPrinter />
+                Print
+              </button>
+            </div>
+          </section>
+          <div className={styles.activityCard}>
+            <div className={styles.activityHeader}>
+              <p className={styles.fieldLabel}>Activity</p>
+            </div>
+            <div className={styles.boder}></div>
+            <ul className={styles.timeline}>
+              {ticketDetail?.activities?.map((item, idx) => (
+                <li key={item.id} className={styles.timelineItem}>
+                  <div className={styles.timelineLeft}>
+                    <span className={styles.timelineDate}>{item.date}</span>
+                    <span
+                      className={styles.timelineDot}
+                      style={{
+                        backgroundColor:
+                          activitiesColor?.[idx % activitiesColor.length]
+                            ?.color,
+                      }}
+                    />
+                  </div>
+                  <div className={styles.timelineContent}>
+                    <h3 className={styles.timelineTitle}>{item.title}</h3>
+                    <p className={styles.timelineDesc}>{item.description}</p>
+                    <button type="button" className={styles.timelineBy}>
+                      By {item.by}
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
-        </section>
-        <aside style={{ height: detailCardHeight || undefined }}>
+        </div>
+        <aside
+          className={styles.chatAside}
+          style={{ height: detailCardHeight || undefined }}
+        >
           <SupportChat />
         </aside>
-      </div>
-      <div className={styles.activityCard}>
-        <div className={styles.activityHeader}>
-          <p className={styles.fieldLabel}>Activity</p>
-        </div>
-        <div className={styles.boder}></div>
-        <ul className={styles.timeline}>
-          {ticketDetail?.activities?.map((item, idx) => (
-            <li key={item.id} className={styles.timelineItem}>
-              <div className={styles.timelineLeft}>
-                <span className={styles.timelineDate}>{item.date}</span>
-                <span
-                  className={styles.timelineDot}
-                  style={{
-                    backgroundColor:
-                      activitiesColor?.[idx % activitiesColor.length]?.color,
-                  }}
-                />
-              </div>
-              <div className={styles.timelineContent}>
-                <h3 className={styles.timelineTitle}>{item.title}</h3>
-                <p className={styles.timelineDesc}>{item.description}</p>
-                <button type="button" className={styles.timelineBy}>
-                  By {item.by}
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
   );
