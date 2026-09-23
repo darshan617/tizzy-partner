@@ -13,6 +13,7 @@ import CustomDropdown from "@/common-components/custom-dropdown/CustomDropdown";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import { useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 // const MAX_DESCRIPTION_LENGTH = 200;
 const MAX_FILE_SIZE_MB = 2;
