@@ -157,98 +157,104 @@ const SupportChat = () => {
       {/* Messages */}
       <div className={styles.msgContainer}>
         <div className={styles.messages}>
-          {chats?.map((item, idx) => {
-            const messageDate = getMessageDate(item);
-            const dateKey = getDateKey(messageDate);
-            const previousDate = getMessageDate(chats[idx - 1]);
-            const hasNewDate =
-              idx === 0 || dateKey !== getDateKey(previousDate);
+          {chats?.length > 0 ? (
+            chats?.map((item, idx) => {
+              const messageDate = getMessageDate(item);
+              const dateKey = getDateKey(messageDate);
+              const previousDate = getMessageDate(chats[idx - 1]);
+              const hasNewDate =
+                idx === 0 || dateKey !== getDateKey(previousDate);
 
-            return (
-              <div key={idx} className={styles.messageGroup}>
-                {hasNewDate && (
-                  <div className={styles.datePillWrap}>
-                    <span className={styles.datePill}>
-                      {formatDateLabel(messageDate)}
-                    </span>
-                  </div>
-                )}
-                {item?.author_role === "support" ? (
-                  <div className={`${styles.messageRow} ${styles.left}`}>
-                    <div className={styles.receiverBubble}>
-                      {item?.message}
-                      {item?.attachments?.length > 0 && (
-                        <div className={styles.attachmentContainer}>
-                          {item?.attachments?.map((item, idx) => {
-                            return (
-                              <div className={styles.attachment}>
-                                <svg
-                                  xmlns="http://w3.org"
-                                  viewBox="0 0 100 100"
-                                  width="10%"
-                                  height="10%"
-                                >
-                                  <path
-                                    d="M78.5,35.5 L48.5,65.5 C43,71 34,71 28.5,65.5 C23,60 23,51 28.5,45.5 L55.5,18.5 C59.5,14.5 66,14.5 70,18.5 C74,22.5 74,29 70,33 L43,60 C40.5,62.5 36.5,62.5 34,60 C31.5,57.5 31.5,53.5 34,51 L58,27"
-                                    fill="none"
-                                    stroke="#ffffff75"
-                                    stroke-width="5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  />
-                                </svg>
-
-                                <Link href={item?.url} target="_blank">
-                                  {item?.filename}
-                                </Link>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
+              return (
+                <div key={idx} className={styles.messageGroup}>
+                  {hasNewDate && (
+                    <div className={styles.datePillWrap}>
+                      <span className={styles.datePill}>
+                        {formatDateLabel(messageDate)}
+                      </span>
                     </div>
-                    <span className={styles.timestamp}>{item?.time}</span>
-                  </div>
-                ) : (
-                  <div className={`${styles.messageRow} ${styles.right}`}>
-                    <div className={styles.senderBubble}>
-                      {item?.message}
-                      {item?.attachments?.length > 0 && (
-                        <div className={styles.attachmentContainer}>
-                          {item?.attachments?.map((item, idx) => {
-                            return (
-                              <div className={styles.attachment}>
-                                <svg
-                                  xmlns="http://w3.org"
-                                  viewBox="0 0 100 100"
-                                  width="10%"
-                                  height="10%"
-                                >
-                                  <path
-                                    d="M78.5,35.5 L48.5,65.5 C43,71 34,71 28.5,65.5 C23,60 23,51 28.5,45.5 L55.5,18.5 C59.5,14.5 66,14.5 70,18.5 C74,22.5 74,29 70,33 L43,60 C40.5,62.5 36.5,62.5 34,60 C31.5,57.5 31.5,53.5 34,51 L58,27"
-                                    fill="none"
-                                    stroke="#ffffff75"
-                                    stroke-width="5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  />
-                                </svg>
+                  )}
+                  {item?.author_role === "support" ? (
+                    <div className={`${styles.messageRow} ${styles.left}`}>
+                      <div className={styles.receiverBubble}>
+                        {item?.message}
+                        {item?.attachments?.length > 0 && (
+                          <div className={styles.attachmentContainer}>
+                            {item?.attachments?.map((item, idx) => {
+                              return (
+                                <div className={styles.attachment}>
+                                  <svg
+                                    xmlns="http://w3.org"
+                                    viewBox="0 0 100 100"
+                                    width="10%"
+                                    height="10%"
+                                  >
+                                    <path
+                                      d="M78.5,35.5 L48.5,65.5 C43,71 34,71 28.5,65.5 C23,60 23,51 28.5,45.5 L55.5,18.5 C59.5,14.5 66,14.5 70,18.5 C74,22.5 74,29 70,33 L43,60 C40.5,62.5 36.5,62.5 34,60 C31.5,57.5 31.5,53.5 34,51 L58,27"
+                                      fill="none"
+                                      stroke="#ffffff75"
+                                      stroke-width="5"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                    />
+                                  </svg>
 
-                                <Link href={item?.url} target="_blank">
-                                  {item?.filename}
-                                </Link>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
+                                  <Link href={item?.url} target="_blank">
+                                    {item?.filename}
+                                  </Link>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                      <span className={styles.timestamp}>{item?.time}</span>
                     </div>
-                    <span className={styles.timestamp}>{item?.time}</span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                  ) : (
+                    <div className={`${styles.messageRow} ${styles.right}`}>
+                      <div className={styles.senderBubble}>
+                        {item?.message}
+                        {item?.attachments?.length > 0 && (
+                          <div className={styles.attachmentContainer}>
+                            {item?.attachments?.map((item, idx) => {
+                              return (
+                                <div className={styles.attachment}>
+                                  <svg
+                                    xmlns="http://w3.org"
+                                    viewBox="0 0 100 100"
+                                    width="10%"
+                                    height="10%"
+                                  >
+                                    <path
+                                      d="M78.5,35.5 L48.5,65.5 C43,71 34,71 28.5,65.5 C23,60 23,51 28.5,45.5 L55.5,18.5 C59.5,14.5 66,14.5 70,18.5 C74,22.5 74,29 70,33 L43,60 C40.5,62.5 36.5,62.5 34,60 C31.5,57.5 31.5,53.5 34,51 L58,27"
+                                      fill="none"
+                                      stroke="#ffffff75"
+                                      stroke-width="5"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                    />
+                                  </svg>
+
+                                  <Link href={item?.url} target="_blank">
+                                    {item?.filename}
+                                  </Link>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                      <span className={styles.timestamp}>{item?.time}</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          ) : (
+            <p className="w-100 text-center mt-auto mb-auto">
+              No chats available
+            </p>
+          )}
         </div>
       </div>
 

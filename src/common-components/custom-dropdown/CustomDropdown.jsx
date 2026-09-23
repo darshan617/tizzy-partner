@@ -3,12 +3,16 @@ import { BiChevronDown } from "react-icons/bi";
 import styles from "@/common-components/custom-dropdown/CustomerDropdown.module.css";
 import { IoClose } from "react-icons/io5";
 
-const toDisplayValue = (value) => {
+const toDisplayValue = (value, options = []) => {
   if (typeof value === "string") return value;
   if (value && typeof value === "object" && "label" in value) {
     return String(value.label ?? "");
   }
-  return "";
+
+  const selectedOption = options.find(
+    (option) => String(option?.value) === String(value),
+  );
+  return selectedOption?.label ? String(selectedOption.label) : "";
 };
 
 const CustomDropdown = ({
@@ -28,8 +32,8 @@ const CustomDropdown = ({
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
-    setSelectedOption(toDisplayValue(value));
-  }, [value]);
+    setSelectedOption(toDisplayValue(value, options));
+  }, [value, options]);
 
   const filteredOptions =
     options?.filter((option) =>
