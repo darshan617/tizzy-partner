@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 import CustomDropdown from "@/common-components/custom-dropdown/CustomDropdown";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
+import { useRouter } from "next/router";
 
 const MAX_DESCRIPTION_LENGTH = 200;
 const MAX_FILE_SIZE_MB = 2;
@@ -48,6 +49,7 @@ const toPlanOptions = (list) =>
       label: plan?.plan_name,
       value: plan?.plan_id,
       domains: plan?.domains,
+      order_id: plan?.order_id,
     }))
     .filter((plan) => plan.label);
 
@@ -56,10 +58,12 @@ const toDomainOptions = (list) =>
     .map((domain) => ({
       label: domain?.domain_name || domain?.domain,
       value: domain?.domain_name || domain?.domain,
+      order_id: domain?.order_id,
     }))
     .filter((domain) => domain.label);
 
 const CreateNewTicketForm = () => {
+  const router = useRouter();
   const { showToast } = useToast();
   const [formData, setFormData] = useState(initialFormData);
   const [ccEmailInput, setCcEmailInput] = useState("");
@@ -73,10 +77,8 @@ const CreateNewTicketForm = () => {
     customer: null,
     provider: null,
   });
-
-  console.log(formData, "formData😁");
-  console.log(selectedId, "selectedId😁");
-  console.log(optionsList, "optionsList😁");
+  const [planId, setPlanId] = useState("");
+  const [orderId, setOrderId] = useState("");
 
   const userData = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
@@ -194,7 +196,7 @@ const CreateNewTicketForm = () => {
       newErrors.service = "Service is required";
     }
 
-    if (!formData.subject) {
+    if (!formData.subject.trim()) {
       newErrors.subject = "Subject is required";
     }
 
@@ -202,8 +204,25 @@ const CreateNewTicketForm = () => {
       newErrors.priority = "Priority is required";
     }
 
-    if (!formData.description) {
+    if (!formData.description.trim()) {
       newErrors.description = "Description is required";
+    }
+
+    const pendingCcEmail = ccEmailInput.trim();
+    if (!formData.cc_emails.length) {
+      newErrors.cc_emails = pendingCcEmail
+        ? "Click Add to include this email"
+        : "At least one CC email is required";
+    } else if (pendingCcEmail) {
+      const isValidCcEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pendingCcEmail);
+
+      if (!isValidCcEmail) {
+        newErrors.cc_emails = "Enter a valid email address or click Add";
+      } else if (formData.cc_emails.includes(pendingCcEmail)) {
+        newErrors.cc_emails = "This email has already been added";
+      } else {
+        newErrors.cc_emails = "Click Add to include this email";
+      }
     }
 
     setErrors(newErrors);
@@ -211,6 +230,8 @@ const CreateNewTicketForm = () => {
   };
 
   const handleServiceChange = (option) => {
+    console.log(option);
+
     setFormData((prev) => ({
       ...prev,
       service: option?.label || "",
@@ -224,6 +245,8 @@ const CreateNewTicketForm = () => {
       ...prev,
       service: "",
     }));
+    setPlanId(option?.value || "");
+    setOrderId("");
   };
 
   const handleDescriptionChange = (event) => {
@@ -300,6 +323,8 @@ const CreateNewTicketForm = () => {
           body.append(key, value ?? "");
         }
       });
+      body.set("plan_id", String(planId ?? ""));
+      body.set("order_id", String(orderId ?? ""));
       (Array.isArray(attachments) ? attachments : []).forEach((file) => {
         body.append("attachments[]", file);
       });
@@ -309,6 +334,7 @@ const CreateNewTicketForm = () => {
         showToast(res?.data?.message, "success");
         setFormData(initialFormData);
         setCcEmailInput("");
+        router?.push("/support");
         return;
       } else {
         console.log(res?.error);
@@ -450,15 +476,23 @@ const CreateNewTicketForm = () => {
                       providerDdList: [],
                     });
                     setCcEmailInput("");
-                    setErrors({});
+                    setPlanId("");
+                    setOrderId("");
+                    setErrors((prev) => ({
+                      ...prev,
+                      customer_id: "",
+                      provider_id: "",
+                      service: "",
+                      domain: "",
+                    }));
                   }}
                   value={formData.customer_id}
                   placeholder="Select Customer"
                   isSearchable={true}
                   customHeight="39px"
                 />
-                {errors.service && (
-                  <p className={styles.error}>{errors.service}</p>
+                {errors.customer_id && (
+                  <p className={styles.error}>{errors.customer_id}</p>
                 )}
               </div>
             </div>
@@ -491,14 +525,22 @@ const CreateNewTicketForm = () => {
                       serviceDdList: toPlanOptions(option?.plans),
                       domainDdList: [],
                     }));
+                    setPlanId("");
+                    setOrderId("");
+                    setErrors((prev) => ({
+                      ...prev,
+                      provider_id: "",
+                      service: "",
+                      domain: "",
+                    }));
                   }}
                   value={formData.provider_id}
                   placeholder="Select Provider"
                   isSearchable={true}
                   customHeight="39px"
                 />
-                {errors.service && (
-                  <p className={styles.error}>{errors.service}</p>
+                {errors.provider_id && (
+                  <p className={styles.error}>{errors.provider_id}</p>
                 )}
               </div>
             </div>
@@ -531,6 +573,7 @@ const CreateNewTicketForm = () => {
                       ...prev,
                       domain: option?.label || "",
                     }));
+                    setOrderId(option?.order_id || "");
                     setErrors((prev) => ({
                       ...prev,
                       domain: "",
@@ -627,14 +670,20 @@ const CreateNewTicketForm = () => {
 
             <div className={`${styles.formGroup}`}>
               <label className={styles.label} htmlFor="ticket-cc-email">
-                Add CC
+                Add CC<span className={styles.required}>*</span>
               </label>
               <div className="d-flex gap-2">
                 <input
                   id="ticket-cc-email"
                   type="email"
                   value={ccEmailInput}
-                  onChange={(event) => setCcEmailInput(event.target.value)}
+                  onChange={(event) => {
+                    setCcEmailInput(event.target.value);
+                    setErrors((prev) => ({
+                      ...prev,
+                      cc_emails: "",
+                    }));
+                  }}
                   onKeyDown={(event) => {
                     if (event.key === "Enter") {
                       event.preventDefault();

@@ -413,12 +413,19 @@ export default function SummaryCounts({
       icon: <DraftInvoiceIcon />,
       redirectUrl: null,
     },
-    "active tickets": {
+    "total tickets": {
       boxClass: "successGrad",
       iconClass: "successColor",
       badgeClass: "up",
       icon: <PaidInvoiceIcon />,
       redirectUrl: "/services/google-workspace",
+    },
+    "open tickets": {
+      boxClass: "secondaryGrad",
+      iconClass: "secondaryColor",
+      badgeClass: "down",
+      icon: <DraftInvoiceIcon />,
+      redirectUrl: null,
     },
     "pending tickets": {
       boxClass: "warningGrad",
