@@ -6,7 +6,6 @@ import { IoReturnUpForwardOutline } from "react-icons/io5";
 import { useRouter } from "next/router";
 import { useGetTicketDetailMutation } from "@/redux/apis/supportTicketsApi";
 import Cookies from "js-cookie";
-import Image from "next/image";
 import { CiMail } from "react-icons/ci";
 import SupportChat from "./SupportChat";
 import { SIDEBAR_SERVICES_CONSTANTS } from "../layout/sidebar/SidebarConstant";
