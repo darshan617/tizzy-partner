@@ -81,6 +81,7 @@ const RenewCart = ({
       idx: index,
     }),
   );
+  console.log("companyNames", companyNames);
 
   const cartItemList = Array.isArray(cartDetails)
     ? cartDetails
