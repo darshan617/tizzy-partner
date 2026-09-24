@@ -327,8 +327,8 @@
 }
 
 .deviceStatusActive {
-  background: #02BC9C1A;
-  color: #02BC9C;
+  background: #02bc9c1a;
+  color: #02bc9c;
 }
 
 .deviceStatusMuted {
@@ -434,6 +434,16 @@
   cursor: pointer;
 }
 
+.permissionToggle:disabled,
+.moduleCheckbox:disabled {
+  cursor: not-allowed;
+}
+
+.disabledCell {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .checkBadge {
   width: 14px;
   height: 14px;
@@ -498,7 +508,6 @@
   transform: translateY(-1px);
 }
 
-
 .addUserForm {
   width: 100%;
 }
@@ -556,7 +565,6 @@
 }
 
 @media (max-width: 991px) {
-
   .headerRow,
   .permissionFooter {
     flex-direction: column;
@@ -606,7 +614,7 @@
   }
 
   .permissionCard::-webkit-scrollbar {
-    height: 8PX;
+    height: 8px;
   }
 
   .permissionTable {
