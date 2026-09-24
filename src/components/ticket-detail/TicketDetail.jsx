@@ -162,7 +162,7 @@ const TicketDetail = () => {
                       {/* <FiGlobe className={styles.metaIcon} /> */}
                       {ticketDetail?.domain}
                     </p>
-                    <div className="d-flex justify-content-between align-items-center mt-2">
+                    <div className="d-flex justify-content-between align-items-center gap-1 mt-2">
                       <p className={styles.metaValue}>
                         <FiBox className={styles.metaIcon} />
                         {ticketDetail?.order_category}

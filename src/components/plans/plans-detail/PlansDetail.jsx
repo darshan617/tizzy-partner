@@ -12,6 +12,7 @@ import Loader from "@/common-components/loader/Loader";
 import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarConstant";
 import Link from "next/link";
 import { usePartialUpgradeAddToCartMutation } from "@/redux/apis/addToCartApi";
+import { HiOutlineSupport } from "react-icons/hi";
 
 const normalizeStatus = (status) => String(status ?? "").toLowerCase();
 
@@ -121,7 +122,7 @@ export default function PlansDetail() {
 
   return (
     <div className={styles.page}>
-      <div className="container px-0">
+      <div className="container-fluid px-0">
         <div className="d-flex justify-content-between align-items-start mb-3">
           <div>
             <div className={styles.breadcrumb}>
@@ -170,267 +171,298 @@ export default function PlansDetail() {
           </div>
         </div>
 
-        <div className={`${styles.card} mb-3`}>
-          <div className={styles.cardHeaderRow}>
-            <span className={styles.cardHeaderTitle}>
-              <LuLayers /> Subscription Details
-            </span>
-            <span className={getStatusBadgeClass(status)}>{status}</span>
-          </div>
-
-          <div className={styles.divider} />
-
-          <div className={styles.subHeaderRow}>
-            <div className="d-flex">
-              <div className={styles.subIcon}>
-                {
-                  SIDEBAR_SERVICES_CONSTANTS.find(
-                    (s) => s.id === Number(plan?.provider_id),
-                  )?.image
-                }
+        <div className={styles.mainContentRow}>
+          <div className={styles.subscriptionPanel}>
+            <div className={`${styles.card} mb-3`}>
+              <div className={styles.cardHeaderRow}>
+                <span className={styles.cardHeaderTitle}>
+                  <LuLayers /> Subscription Details
+                </span>
+                <span className={getStatusBadgeClass(status)}>{status}</span>
               </div>
-              <div className="ms-2">
-                <div className={styles.subName}>
-                  {plan?.product_name || "-"}
+
+              <div className={styles.divider} />
+
+              <div className={styles.subHeaderRow}>
+                <div className="d-flex">
+                  <div className={styles.subIcon}>
+                    {
+                      SIDEBAR_SERVICES_CONSTANTS.find(
+                        (s) => s.id === Number(plan?.provider_id),
+                      )?.image
+                    }
+                  </div>
+                  <div className="ms-2">
+                    <div className={styles.subName}>
+                      {plan?.product_name || "-"}
+                    </div>
+                    <div className={styles.subPrice}>
+                      {plan?.price_label ? (
+                        plan.price_label
+                      ) : (
+                        <>
+                          ₹{priceAmount}{" "}
+                          <span className={styles.subUnit}>
+                            Per User / Per Year
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className={styles.subPrice}>
-                  {plan?.price_label ? (
-                    plan.price_label
-                  ) : (
+                <div className={styles.provideText}>
+                  Provider : {plan?.provider || "-"}
+                </div>
+              </div>
+
+              <div className={styles.detailGrid}>
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>License</span>
+                  <div className="d-flex align-items-center gap-2">
+                    <span className={styles.detailValue}>
+                      {plan?.license_label ||
+                        (plan?.licenses ? `${plan.licenses} Users` : "-")}
+                    </span>
+
+                    <button
+                      className={styles.addBtn}
+                      type="button"
+                      onClick={() => {
+                        router?.push({
+                          pathname: "/order-summary",
+                          query: {
+                            type: "add-license",
+                            order_id: router?.query?.orderId,
+                            customer_id: customer?.cust_id,
+                            order_sub_id: plan?.order_sub_id,
+                            licenses: plan?.licenses,
+                          },
+                        });
+                      }}
+                      disabled={isProcessingOrCancelled || plan?.hide_upgrade}
+                      style={{
+                        opacity:
+                          isProcessingOrCancelled || plan?.hide_upgrade
+                            ? 0.5
+                            : 1,
+                        cursor:
+                          isProcessingOrCancelled || plan?.hide_upgrade
+                            ? "not-allowed"
+                            : "pointer",
+                      }}
+                    >
+                      <IoMdAdd size={14} className={styles.addIcon} />
+                      Add
+                    </button>
+                  </div>
+                </div>
+
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>Domain</span>
+                  <span className={styles.detailValue}>{domainName}</span>
+                </div>
+
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>Billing Cycle</span>
+                  <span className={styles.detailValue}>
+                    {plan?.billing_cycle || "-"}
+                  </span>
+                </div>
+
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>Start Date</span>
+                  <span className={styles.detailValue}>
+                    {plan?.start_date || "-"}
+                  </span>
+                </div>
+
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>Renewal Date</span>
+                  <span className={styles.renewalValue}>
+                    {plan?.renewal_date || "-"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="d-flex justify-content-end gap-2 mt-3">
+                {plan?.hide_upgrade && (
+                  <p
+                    className="mb-0"
+                    style={{ fontSize: "14px", color: "#ff9800" }}
+                  >
+                    {plan?.initiate_message || ""}
+                  </p>
+                )}
+                {statusKey !== "processing" &&
+                  statusKey !== "upgrade pending" &&
+                  statusKey !== "downgrade pending" &&
+                  statusKey !== "cancelled" &&
+                  statusKey !== "renewal pending" &&
+                  !plan?.hide_upgrade && (
                     <>
-                      ₹{priceAmount}{" "}
-                      <span className={styles.subUnit}>
-                        Per User / Per Year
-                      </span>
+                      <Link
+                        href={{
+                          pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                          query: {
+                            type: "upgrade",
+                            order_id: router?.query?.orderId,
+                            customer_id: customer?.cust_id,
+                            order_sub_id: plan?.order_sub_id,
+                            plan_id: router?.query?.planId,
+                          },
+                        }}
+                        className={styles.upgradeBtn}
+                        type="button"
+                      >
+                        Upgrade
+                      </Link>
+                      {plan.licenses > 1 ? (
+                        <Link
+                          href={{
+                            pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                            query: {
+                              type: "partial-upgrade",
+                              order_id: router?.query?.orderId,
+                              customer_id: customer?.cust_id,
+                              order_sub_id: plan?.order_sub_id,
+                              plan_id: router?.query?.planId,
+                              licenses: plan?.licenses,
+                            },
+                          }}
+                          className={styles.upgradeBtn}
+                          type="button"
+                        >
+                          Partial Upgrade
+                        </Link>
+                      ) : (
+                        <button
+                          className={styles.upgradeBtn}
+                          disabled={true}
+                          style={{
+                            opacity: true ? 0.6 : 1,
+                            cursor: true ? "not-allowed" : " default",
+                          }}
+                        >
+                          Partial Upgrade
+                        </button>
+                      )}
                     </>
                   )}
-                </div>
-              </div>
-            </div>
-            <div className={styles.provideText}>
-              Provider : {plan?.provider || "-"}
-            </div>
-          </div>
-
-          <div className={styles.detailGrid}>
-            <div className={styles.detailRow}>
-              <span className={styles.detailLabel}>License</span>
-              <div className="d-flex align-items-center gap-2">
-                <span className={styles.detailValue}>
-                  {plan?.license_label ||
-                    (plan?.licenses ? `${plan.licenses} Users` : "-")}
-                </span>
-
-                <button
-                  className={styles.addBtn}
-                  type="button"
-                  onClick={() => {
-                    router?.push({
-                      pathname: "/order-summary",
-                      query: {
-                        type: "add-license",
-                        order_id: router?.query?.orderId,
-                        customer_id: customer?.cust_id,
-                        order_sub_id: plan?.order_sub_id,
-                        licenses: plan?.licenses,
-                      },
-                    });
-                  }}
-                  disabled={isProcessingOrCancelled || plan?.hide_upgrade}
-                  style={{
-                    opacity:
-                      isProcessingOrCancelled || plan?.hide_upgrade ? 0.5 : 1,
-                    cursor:
-                      isProcessingOrCancelled || plan?.hide_upgrade
-                        ? "not-allowed"
-                        : "pointer",
-                  }}
-                >
-                  <IoMdAdd size={14} className={styles.addIcon} />
-                  Add
-                </button>
-              </div>
-            </div>
-
-            <div className={styles.detailRow}>
-              <span className={styles.detailLabel}>Domain</span>
-              <span className={styles.detailValue}>{domainName}</span>
-            </div>
-
-            <div className={styles.detailRow}>
-              <span className={styles.detailLabel}>Billing Cycle</span>
-              <span className={styles.detailValue}>
-                {plan?.billing_cycle || "-"}
-              </span>
-            </div>
-
-            <div className={styles.detailRow}>
-              <span className={styles.detailLabel}>Start Date</span>
-              <span className={styles.detailValue}>
-                {plan?.start_date || "-"}
-              </span>
-            </div>
-
-            <div className={styles.detailRow}>
-              <span className={styles.detailLabel}>Renewal Date</span>
-              <span className={styles.renewalValue}>
-                {plan?.renewal_date || "-"}
-              </span>
-            </div>
-          </div>
-
-          <div className="d-flex justify-content-end gap-2 mt-3">
-            {plan?.hide_upgrade && (
-              <p
-                className="mb-0"
-                style={{ fontSize: "14px", color: "#ff9800" }}
-              >
-                {plan?.initiate_message || ""}
-              </p>
-            )}
-            {statusKey !== "processing" &&
-              statusKey !== "upgrade pending" &&
-              statusKey !== "downgrade pending" &&
-              statusKey !== "cancelled" &&
-              statusKey !== "renewal pending" &&
-              !plan?.hide_upgrade && (
-                <>
-                  <Link
-                    href={{
-                      pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                      query: {
-                        type: "upgrade",
-                        order_id: router?.query?.orderId,
-                        customer_id: customer?.cust_id,
-                        order_sub_id: plan?.order_sub_id,
-                        plan_id: router?.query?.planId,
-                      },
-                    }}
-                    className={styles.upgradeBtn}
-                    type="button"
-                  >
-                    Upgrade
-                  </Link>
-                  {plan.licenses > 1 ? (
+                {statusKey === "expiring" && (
+                  <>
                     <Link
                       href={{
                         pathname: `/services/${getServicePath(plan?.provider_id)}`,
                         query: {
-                          type: "partial-upgrade",
+                          type: "downgrade",
                           order_id: router?.query?.orderId,
                           customer_id: customer?.cust_id,
                           order_sub_id: plan?.order_sub_id,
                           plan_id: router?.query?.planId,
-                          licenses: plan?.licenses,
                         },
                       }}
                       className={styles.upgradeBtn}
                       type="button"
                     >
-                      Partial Upgrade
+                      Downgrade
                     </Link>
-                  ) : (
-                    <button
-                      className={styles.upgradeBtn}
-                      disabled={true}
-                      style={{
-                        opacity: true ? 0.6 : 1,
-                        cursor: true ? "not-allowed" : " default",
+                    <Link
+                      href={{
+                        pathname: `order-summary`,
+                        query: {
+                          type: "renew-plan",
+                          order_id: router?.query?.orderId,
+                          order_sub_id: plan?.order_sub_id,
+                          planId: router?.query?.planId,
+                          licenses: plan?.licenses,
+                        },
                       }}
+                      className={styles.renewBtn}
+                      type="button"
                     >
-                      Partial Upgrade
-                    </button>
-                  )}
-                </>
-              )}
-            {statusKey === "expiring" && (
-              <>
-                <Link
-                  href={{
-                    pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                    query: {
-                      type: "downgrade",
-                      order_id: router?.query?.orderId,
-                      customer_id: customer?.cust_id,
-                      order_sub_id: plan?.order_sub_id,
-                      plan_id: router?.query?.planId,
-                    },
-                  }}
-                  className={styles.upgradeBtn}
-                  type="button"
-                >
-                  Downgrade
-                </Link>
-                <Link
-                  href={{
-                    pathname: `order-summary`,
-                    query: {
-                      type: "renew-plan",
-                      order_id: router?.query?.orderId,
-                      order_sub_id: plan?.order_sub_id,
-                      planId: router?.query?.planId,
-                      licenses: plan?.licenses,
-                    },
-                  }}
-                  className={styles.renewBtn}
-                  type="button"
-                >
-                  Renew
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-
-        <div className={styles.card}>
-          <div className={styles.cardHeaderRow}>
-            <span className={styles.cardHeaderTitle}>
-              <MdOutlineAccessTime /> Timeline
-            </span>
-            {/* {timelineMeta?.view_all && (
-              <a href="#" className={styles.viewAllLink}>
-                View All
-              </a>
-            )} */}
+                      Renew
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
 
-          <div className={styles.divider} />
+          <div className={styles.timelinePanel}>
+            <div className={styles.card}>
+              <div className={styles.cardHeaderRow}>
+                <span className={styles.cardHeaderTitle}>
+                  <MdOutlineAccessTime /> Timeline
+                </span>
+                {/* <a href="#" className={styles.viewAllLink}>
+                  View All
+                </a> */}
+              </div>
 
-          <div className={styles.activityLabel}>ACTIVITY</div>
+              <div className={styles.divider} />
 
-          <ul className={styles.timelineList}>
-            {timeline.length > 0 ? (
-              timeline.map((item, index) => (
-                <li
-                  key={`${item?.event || item?.title}-${index}`}
-                  className={styles.timelineItem}
-                >
-                  <span
-                    className={`${styles.timelineDot} ${styles.timelineDotDone}`}
-                  />
-                  <div className={styles.timelineContent}>
-                    <div className="d-flex justify-content-between align-items-start">
-                      <div>
-                        <div className={styles.timelineTitle}>
-                          {item?.title || "-"}
-                        </div>
-                        <div className={styles.timelineDesc}>
-                          {item?.description || "-"}
+              <div className={styles.activityLabel}>ACTIVITY</div>
+
+              <ul className={styles.timelineList}>
+                {timeline.length > 0 ? (
+                  timeline.map((item, index) => (
+                    <li
+                      key={`${item?.event || item?.title}-${index}`}
+                      className={styles.timelineItem}
+                    >
+                      <span
+                        className={`${styles.timelineDot} ${styles.timelineDotDone}`}
+                      />
+                      <div className={styles.timelineContent}>
+                        <div className="d-flex justify-content-between align-items-start">
+                          <div>
+                            <div className={styles.timelineTitle}>
+                              {item?.title || "-"}
+                            </div>
+                            <div className={styles.timelineDesc}>
+                              {item?.description || "-"}
+                            </div>
+                          </div>
+                          <span className={styles.timelineTime}>
+                            {item?.date || "-"}
+                          </span>
                         </div>
                       </div>
-                      <span className={styles.timelineTime}>
-                        {item?.date || "-"}
-                      </span>
-                    </div>
-                  </div>
-                </li>
-              ))
-            ) : (
-              <li className={styles.timelineItem}>
-                <div className={styles.timelineDesc}>No activity yet</div>
-              </li>
-            )}
-          </ul>
+                    </li>
+                  ))
+                ) : (
+                  <li className={styles.timelineItem}>
+                    <div className={styles.timelineDesc}>No activity yet</div>
+                  </li>
+                )}
+              </ul>
+            </div>
+            <button
+              type="button"
+              className={styles.raiseTicketBtn}
+              onClick={() =>
+                router.push({
+                  pathname: "/support/create-new-ticket",
+                  query: {
+                    cust_id: customer?.cust_id,
+                    contact_name: customer?.contact_name,
+                    provider_id: plan?.provider_id,
+                    provider: plan?.provider,
+                    domain: plan?.domain,
+                    plan: plan?.product_name,
+                    planId: plan?.plan_id,
+                    orderId: plan?.order_id,
+                  },
+                })
+              }
+            >
+              <div>
+                <HiOutlineSupport className="me-2" size={22} strokeWidth={1} />
+                <span className="fw-normal">Raise Support Ticket</span>
+              </div>
+              <span className={styles.raiseTicketArrow}>›</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
