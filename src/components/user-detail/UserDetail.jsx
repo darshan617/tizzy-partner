@@ -10,6 +10,7 @@ import Image from "next/image";
 import {
   useGetPartnerUserDetailMutation,
   useUpdatePartnerUserMutation,
+  useUserManagementUpdateMutation,
 } from "@/redux/apis/userDetail";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
@@ -39,26 +40,38 @@ const devices = [
 
 const actionColumns = ["View", "Add", "Edit", "Edit"];
 
-// Transforms the flat `permissions` array from the API response
-// (module_id, module_key, module_name, group_name, can_view, can_add, can_edit, can_delete)
-// into the grouped { category, items: [{ label, access: [bool,bool,bool,bool] }] } shape
-// that the permission table below already renders.
+// Maps the API permission row into the UI model:
+// - access = current permission value to save to the API
+// - visibleAccess = which checkboxes are allowed to be clicked
 const mapPermissionsToGroups = (apiPermissions = []) => {
   const groupMap = new Map();
 
   apiPermissions.forEach((perm) => {
-    if (!groupMap.has(perm.group_name)) {
-      groupMap.set(perm.group_name, {
-        category: perm.group_name,
+    const groupName = perm.group_name || "General";
+
+    if (!groupMap.has(groupName)) {
+      groupMap.set(groupName, {
+        category: groupName,
         items: [],
       });
     }
 
-    groupMap.get(perm.group_name).items.push({
-      label: perm.module_name,
+    groupMap.get(groupName).items.push({
+      label: perm.module_name || perm.module_key || "Untitled Module",
       module_id: perm.module_id,
       module_key: perm.module_key,
-      access: [perm.can_view, perm.can_add, perm.can_edit, perm.can_delete],
+      access: [
+        Boolean(perm.can_view ?? false),
+        Boolean(perm.can_add ?? false),
+        Boolean(perm.can_edit ?? false),
+        Boolean(perm.can_delete ?? false),
+      ],
+      visibleAccess: [
+        Boolean(perm.is_visible_view ?? true),
+        Boolean(perm.is_visible_add ?? true),
+        Boolean(perm.is_visible_edit ?? true),
+        Boolean(perm.is_visible_delete ?? true),
+      ],
     });
   });
 
@@ -587,10 +600,7 @@ const UserDetail = () => {
   const { partner_user_id } = useRouter().query;
   const [partnerUserDetail, setPartnerUserDetail] = useState(null);
   const { showToast } = useToast();
-  const [permissionGroups, setPermissionGroups] = useState(
-    permissionsData || [],
-  );
-  console.log();
+  const [permissionGroups, setPermissionGroups] = useState([]);
 
   const [showEditUserPopup, setShowEditUserPopup] = useState(false);
 
@@ -598,6 +608,22 @@ const UserDetail = () => {
     useGetPartnerUserDetailMutation();
   const [updatePartnerUser, { isLoading: isUpdating }] =
     useUpdatePartnerUserMutation();
+  const [userManagementUpdate, { isLoading: isUserManagementUpdateLoading }] =
+    useUserManagementUpdateMutation();
+
+  const buildPermissionPayload = () =>
+    permissionGroups.flatMap((group) =>
+      (group?.items || []).map((item) => ({
+        module_key: item?.module_key || item?.label,
+        module_name: item?.label,
+        group_name: group?.category || "Main",
+        can_view: Boolean(item?.access?.[0]),
+        can_add: Boolean(item?.access?.[1]),
+        can_edit: Boolean(item?.access?.[2]),
+        can_delete: Boolean(item?.access?.[3]),
+      })),
+    );
+
   const togglePermission = (groupCategory, itemLabel, accessIndex) => {
     setPermissionGroups((currentGroups) =>
       currentGroups.map((group) => {
@@ -612,16 +638,53 @@ const UserDetail = () => {
               return item;
             }
 
+            if (!item.visibleAccess?.[accessIndex]) {
+              return item;
+            }
+
+            const nextAccess = [...item.access];
+            nextAccess[accessIndex] = !nextAccess[accessIndex];
+
             return {
               ...item,
-              access: item.access.map((enabled, index) =>
-                index === accessIndex ? !enabled : enabled,
-              ),
+              access: nextAccess,
             };
           }),
         };
       }),
     );
+  };
+
+  const handleUpdate = async () => {
+    try {
+      const payload = {
+        partner_id: userData?.id,
+        partner_user_id: partner_user_id,
+        permissions: buildPermissionPayload(),
+      };
+
+      const response = await userManagementUpdate({ body: payload }).unwrap();
+
+      if (response?.data || response?.success) {
+        showToast("Permissions updated successfully", "success");
+        getPartnerUserDetailData();
+        return;
+      }
+
+      showToast(
+        response?.message ||
+          response?.error?.data?.message ||
+          "Failed to update permissions",
+        "error",
+      );
+    } catch (error) {
+      console.log(error);
+      showToast(
+        error?.data?.message ||
+          "Something went wrong while updating permissions",
+        "error",
+      );
+    }
   };
 
   const [formData, setFormData] = useState({
@@ -642,9 +705,9 @@ const UserDetail = () => {
       }).unwrap();
       if (response?.data) {
         setPartnerUserDetail(response?.data);
-        // setPermissionGroups(
-        //   mapPermissionsToGroups(response?.data?.permissions),
-        // );
+        setPermissionGroups(
+          mapPermissionsToGroups(response?.data?.permissions || []),
+        );
       } else {
         showToast(
           response?.error?.data?.message || "Failed to get partner user detail",
@@ -713,19 +776,32 @@ const UserDetail = () => {
               return item;
             }
 
-            const nextValue = !item.access.every(Boolean);
+            const allowedIndexes = item.visibleAccess
+              .map((visible, index) => (visible ? index : -1))
+              .filter((index) => index !== -1);
+
+            if (!allowedIndexes.length) {
+              return item;
+            }
+
+            const shouldEnable = !allowedIndexes.every(
+              (index) => item.access[index],
+            );
 
             return {
               ...item,
-              access: item.access.map(() => nextValue),
+              access: item.access.map((value, index) =>
+                allowedIndexes.includes(index) ? shouldEnable : value,
+              ),
             };
           }),
         };
       }),
     );
   };
-  const handleChangePermission = (groupCategory, itemLabel, grpidx) => {
-    console.log(groupCategory, itemLabel, grpidx);
+
+  const handleChangePermission = (groupCategory, itemLabel, accessIndex) => {
+    togglePermission(groupCategory, itemLabel, accessIndex);
   };
 
   return (
@@ -890,28 +966,40 @@ const UserDetail = () => {
                   ))}
                 </div>
 
-                {/* {permissionGroups?.map((group) => (
+                {permissionGroups?.map((group) => (
                   <div key={group.category} className={styles.permissionGroup}>
                     <div className={styles.groupLabel}>{group.category}</div>
 
                     {group?.items?.map((item) => (
                       <div key={item.label} className={styles.permissionRow}>
                         <div className={styles.moduleCell}>
-                          <button
+                          {/* <button
                             type="button"
                             className={`${styles.moduleCheckbox} ${
-                              item?.access?.every(Boolean)
+                              item?.access?.every(
+                                (value, index) =>
+                                  !item.canAccess?.[index] || value,
+                              )
                                 ? styles.moduleCheckboxActive
                                 : ""
                             }`}
                             onClick={() =>
                               togglePermissionRow(group.category, item.label)
                             }
-                            aria-pressed={item?.access?.every(Boolean)}
-                            aria-label={`Toggle all permissions for ${item.label}`}
+                            disabled={!item.canAccess?.some(Boolean)}
+                            aria-pressed={item?.access?.some(
+                              (value, index) =>
+                                item.canAccess?.[index] && value,
+                            )}
+                            aria-label={`Toggle all allowed permissions for ${item.label}`}
                           >
-                            {item?.access?.every(Boolean) ? <FaCheck /> : null}
-                          </button>
+                            {item?.access?.some(
+                              (value, index) =>
+                                item.canAccess?.[index] && value,
+                            ) ? (
+                              <FaCheck />
+                            ) : null}
+                          </button> */}
                           <span>{item?.label}</span>
                         </div>
 
@@ -924,15 +1012,20 @@ const UserDetail = () => {
                               type="button"
                               className={`${styles.permissionToggle} ${
                                 enabled ? styles.checkBadge : styles.emptyCell
+                              } ${
+                                !item.visibleAccess?.[index]
+                                  ? styles.disabledCell
+                                  : ""
                               }`}
                               onClick={() =>
-                                togglePermission(
+                                handleChangePermission(
                                   group.category,
                                   item?.label,
                                   index,
                                 )
                               }
                               aria-pressed={enabled}
+                              disabled={!item.visibleAccess?.[index]}
                               aria-label={`${enabled ? "Remove" : "Grant"} ${
                                 actionColumns[index]
                               } access for ${item.label}`}
@@ -944,54 +1037,7 @@ const UserDetail = () => {
                       </div>
                     ))}
                   </div>
-                ))} */}
-                {permissionGroups?.map((group, idx) => {
-                  return (
-                    <div key={group.category || idx}>
-                      {/* Category */}
-                      <div className={styles.groupLabel}>{group.title}</div>
-                      {group?.permissions?.map((item) => {
-                        return (
-                          <div className={styles.permissionRow}>
-                            <div className={styles.moduleCell}>
-                              <input
-                                type="checkbox"
-                                checked={item.selected}
-                                onChange={() =>
-                                  handleChangePermission(
-                                    group.title,
-                                    item.name,
-                                    idx,
-                                  )
-                                }
-                              />
-                              <span>{item.name}</span>
-                            </div>
-                            {item?.actions?.map((action) => {
-                              return (
-                                <div className={styles.accessCell}>
-                                  <input
-                                    type="checkbox"
-                                    checked={action.selected}
-                                    onChange={() =>
-                                      handleChangePermission(
-                                        group.title,
-                                        item.name,
-                                        idx,
-                                        action.key,
-                                      )
-                                    }
-                                  />
-                                  <span>{action.name}</span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                })}
+                ))}
               </div>
 
               <div className={styles.permissionFooter}>
@@ -1001,7 +1047,11 @@ const UserDetail = () => {
                     You can update the notification preferences at any time.
                   </span>
                 </div>
-                <button type="button" className={styles.saveBtn}>
+                <button
+                  type="button"
+                  className={styles.saveBtn}
+                  onClick={() => handleUpdate()}
+                >
                   Save
                 </button>
               </div>

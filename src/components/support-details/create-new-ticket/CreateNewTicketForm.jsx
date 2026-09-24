@@ -62,6 +62,11 @@ const toDomainOptions = (list) =>
     }))
     .filter((domain) => domain.label);
 
+const flattenPlanDomains = (plans = []) =>
+  (Array.isArray(plans) ? plans : []).flatMap((plan) =>
+    Array.isArray(plan?.domains) ? plan.domains : [],
+  );
+
 const CreateNewTicketForm = () => {
   const router = useRouter();
   const { showToast } = useToast();
@@ -409,6 +414,116 @@ const CreateNewTicketForm = () => {
       getTicketDetails();
     }
   }, [selectedId?.customer]);
+
+  useEffect(() => {
+    if (!router?.isReady) return;
+
+    const queryCustomerId =
+      router?.query?.cust_id ?? router?.query?.customer_id;
+    const queryProviderId =
+      router?.query?.provider_id ?? router?.query?.providerId;
+    const queryDomain = router?.query?.domain ?? "";
+
+    const customerId = queryCustomerId ? Number(queryCustomerId) : "";
+    const providerId = queryProviderId ? Number(queryProviderId) : "";
+
+    setFormData((prev) => ({
+      ...prev,
+      customer_id: customerId || prev.customer_id,
+      provider_id: providerId || prev.provider_id,
+      domain: queryDomain || prev.domain,
+    }));
+
+    setSelectedId((prev) => ({
+      ...prev,
+      customer: customerId || prev.customer,
+      provider: providerId || prev.provider,
+    }));
+  }, [
+    router?.isReady,
+    router?.query?.cust_id,
+    router?.query?.customer_id,
+    router?.query?.provider_id,
+    router?.query?.providerId,
+    router?.query?.domain,
+  ]);
+
+  useEffect(() => {
+    if (!router?.isReady) return;
+
+    const queryProviderId =
+      router?.query?.provider_id ?? router?.query?.providerId ?? "";
+    const queryProviderName = router?.query?.provider ?? "";
+    const queryDomain = router?.query?.domain ?? "";
+    const queryPlan = router?.query?.plan ?? "";
+
+    if (
+      !Array.isArray(optionsList?.providerDdList) ||
+      !optionsList.providerDdList.length
+    ) {
+      return;
+    }
+
+    const matchedProvider =
+      optionsList.providerDdList.find(
+        (provider) => String(provider?.provider_id) === String(queryProviderId),
+      ) ||
+      optionsList.providerDdList.find(
+        (provider) =>
+          provider?.provider_name?.toLowerCase() ===
+          String(queryProviderName).toLowerCase(),
+      );
+
+    if (!matchedProvider) return;
+
+    const planOptions = toPlanOptions(matchedProvider?.plans);
+    const domainOptions = toDomainOptions(
+      flattenPlanDomains(matchedProvider?.plans),
+    );
+
+    const matchedPlan =
+      planOptions.find(
+        (option) =>
+          option?.label?.toLowerCase() === String(queryPlan).toLowerCase(),
+      ) ||
+      planOptions.find((option) =>
+        option?.label?.toLowerCase().includes(String(queryPlan).toLowerCase()),
+      );
+
+    setOptionsList((prev) => ({
+      ...prev,
+      serviceDdList: planOptions,
+      domainDdList: domainOptions,
+    }));
+
+    setFormData((prev) => ({
+      ...prev,
+      service: matchedPlan?.label || prev.service,
+      domain: queryDomain || prev.domain,
+    }));
+
+    setPlanId(router?.query?.planId || matchedPlan?.value || planId || "");
+    setOrderId(
+      router?.query?.orderId || matchedPlan?.order_id || orderId || "",
+    );
+
+    if (queryDomain) {
+      setFormData((prev) => ({
+        ...prev,
+        domain: queryDomain,
+      }));
+    }
+  }, [
+    router?.isReady,
+    router?.query?.provider_id,
+    router?.query?.providerId,
+    router?.query?.provider,
+    router?.query?.domain,
+    router?.query?.plan,
+    optionsList?.providerDdList,
+    router?.query?.planId,
+    router?.query?.orderId,
+  ]);
 
   return (
     <div className={styles.wrapper}>

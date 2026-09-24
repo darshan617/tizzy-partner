@@ -25,6 +25,8 @@ const CustomDropdown = ({
   customHeight = "auto",
   customWidth = "100%",
 }) => {
+  console.log(options, "oooooooooooo");
+
   const [selectedOption, setSelectedOption] = useState(() =>
     toDisplayValue(value),
   );

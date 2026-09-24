@@ -41,8 +41,6 @@ const DynamicSummaryCounts = dynamic(
 );
 
 const dashboard = ({ partner_id, partner_name }) => {
-  console.log("Partner ID:", partner_id);
-
   const {
     data: dashboardData,
     error,

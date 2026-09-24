@@ -241,6 +241,8 @@ const CommonOrderSummary = () => {
   const { data: getAllCustomers } = useGetAllCustomersQuery(
     {
       partner_id: userData?.id,
+      page_no: "",
+      per_page: "",
     },
     {
       skip:
