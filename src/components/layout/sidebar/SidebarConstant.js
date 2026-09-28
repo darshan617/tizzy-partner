@@ -8,7 +8,6 @@ import {
   LuUsers,
 } from "react-icons/lu";
 
-
 import { RiNoCreditCardFill, RiUserSettingsLine } from "react-icons/ri";
 import { MdAutorenew } from "react-icons/md";
 import { PiHandCoinsLight } from "react-icons/pi";
@@ -71,42 +70,49 @@ export const SIDEBAR_MENU_CONSTANTS = [
     title: "Dashboard",
     icon: LuLayoutDashboard,
     href: "/dashboard",
+    key: "dashboard",
   },
   {
     id: 2,
     title: "Customers",
     icon: LuUsers,
     href: "/customers",
+    key: "customers",
   },
   {
     id: 3,
     title: "Subscriptions",
     icon: VscFiles,
     href: "/subscriptions",
+    key: "subscriptions",
   },
   {
     id: 7,
     title: "Renewals",
     icon: MdAutorenew,
     href: "/renewals",
+    key: "renewals",
   },
   {
     id: 4,
     title: "Invoices",
-    icon: LuReceiptIndianRupee  ,
+    icon: LuReceiptIndianRupee,
     href: "/invoice",
+    key: "invoices",
   },
   {
     id: 5,
     title: "Transactions",
     icon: LuWallet,
     href: "/transactions",
+    key: "transactions",
   },
   {
     id: 6,
     title: "Reports",
     icon: BsFileEarmarkBarGraph,
     href: "/reports",
+    key: "reports",
   },
   {
     id: 8,

@@ -2,6 +2,7 @@ import SalesReport from "@/components/dashboard/sales-report/SalesReport";
 import Support from "@/components/dashboard/support/Support";
 import TransactionSection from "@/components/dashboard/transaction/Transaction";
 import Layout from "@/components/layout/Layout";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 import { useGetDashboardDataQuery } from "@/redux/apis/dashboardApi";
 import dynamic from "next/dynamic";
 import React from "react";
@@ -46,6 +47,7 @@ const dashboard = ({ partner_id, partner_name }) => {
     error,
     isLoading: isDashboardLoading,
   } = useGetDashboardDataQuery({ partner_id });
+  const { canView } = usePermissions();
 
   return (
     <Layout>
@@ -68,7 +70,7 @@ const dashboard = ({ partner_id, partner_name }) => {
         data={dashboardData?.data}
         isDataLoading={isDashboardLoading}
       />
-      <Support />
+      {canView("support") && <Support />}
     </Layout>
   );
 };

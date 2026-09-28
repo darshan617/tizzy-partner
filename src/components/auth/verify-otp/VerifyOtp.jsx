@@ -102,12 +102,15 @@ const VerifyOtp = () => {
       if (res?.data?.success) {
         const partner = res?.data?.data?.partner;
         const approvalStatus = res?.data?.data?.status;
-
+        const permissions = res?.data?.data?.permissions;
         // Save logged-in user
         Cookies.set("userData", JSON.stringify(partner));
 
         // Save partner approval status
         Cookies.set("partnerApproval", approvalStatus);
+
+        //Save user permissions
+        localStorage.setItem("UP", JSON.stringify(permissions));
 
         showToast("Email verified successfully", "success");
 
@@ -192,7 +195,7 @@ const VerifyOtp = () => {
     // Press Enter to verify OTP
     if (e.key === "Enter") {
       e.preventDefault();
-  
+
       if (
         !isGetOtpVerifiedLoading &&
         !isVerifyOtpLoading &&
@@ -205,10 +208,10 @@ const VerifyOtp = () => {
           handleSubmit();
         }
       }
-  
+
       return;
     }
-  
+
     // Backspace → previous OTP input
     if (e.key === "Backspace" && !otpArray[index] && index > 0) {
       inputsRef.current[index - 1].focus();
