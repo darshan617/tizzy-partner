@@ -33,6 +33,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserData } from "@/redux/slices/userSlice";
 import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const formatNotificationTime = (dateString) => {
   if (!dateString) return "";
@@ -71,6 +72,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const [isClient, setIsClient] = useState(false);
   const dropdownRef = useRef(null);
   const userInfo = useSelector(selectUserData);
+  const { canAdd, canDelete, canEdit, canView } = usePermissions();
 
   const [
     getNotificationList,
@@ -109,6 +111,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     Cookies.remove("customerData");
     Cookies.remove("partnerApproval");
     Cookies.remove("userToken");
+    localStorage.removeItem("UP");
     router?.push("/auth/login");
     showToast("Signed Out successfully", "success");
   };

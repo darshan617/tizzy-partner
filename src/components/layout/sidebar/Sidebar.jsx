@@ -10,6 +10,7 @@ import {
 } from "./SidebarConstant";
 import { useRouter } from "next/router";
 import { LuMessageCircleQuestion } from "react-icons/lu";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const [mounted, setMounted] = useState(false);
@@ -25,6 +26,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const usedPercentage = creditLimit > 0 ? (creditUsed / creditLimit) * 100 : 0;
   const isAccountPage = ACCOUNT_PATHS.includes(router?.pathname);
   const isSupportActive = router?.pathname?.startsWith("/support");
+
+  const { canView, canAdd, canDelete, canEdit } = usePermissions();
+  const sidebarMenu = SIDEBAR_MENU_CONSTANTS.filter((item) =>
+    canView(item?.key),
+  );
 
   const formatBalance = (value) =>
     Number(value || 0).toLocaleString("en-IN", {
@@ -44,7 +50,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
         className={`${styles.titleBar} d-flex align-items-center justify-content-between`}
       >
         <span>CREDITS</span>
-        <Link href="/invoice">PAY NOW</Link>
+        {canView("invoices") && <Link href="/invoice">PAY NOW</Link>}
       </div>
 
       <div className={styles.creditBody}>
@@ -223,7 +229,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                 <ul
                   className={`${styles.sideMenuList} d-flex flex-column gap-1`}
                 >
-                  {SIDEBAR_MENU_CONSTANTS?.map((menu, idx) => {
+                  {sidebarMenu?.map((menu, idx) => {
                     const ICON = menu?.icon || "";
                     const isActive = router?.pathname === menu?.href;
                     return (
@@ -259,62 +265,72 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                   })}
                 </ul>
               </div>
-              <div className={`${styles.sideMenuHead} mb-2`}>SERVICES</div>
-
-              <ul className={`${styles.sideMenuList} d-flex flex-column gap-1`}>
-                {SIDEBAR_SERVICES_CONSTANTS?.map((menu, idx) => {
-                  const isActive =
-                    `/services/${router?.query?.slug}` === menu?.href;
-                  return (
-                    <Link
-                      href={menu?.href}
-                      className={`${styles.sideMenuItem} ${isActive ? styles.active : ""}`}
-                      key={idx}
-                      style={{
-                        background: isActive
-                          ? "var(--primaryColor)"
-                          : "transparent",
-                      }}
-                    >
-                      <button
-                        className={`${styles.menuLink} d-flex align-items-center gap-3`}
-                      >
-                        <span
-                          className={`${styles.iconCircle} ${isActive ? styles.active : ""}`}
-                        >
-                          {menu?.image}
-                        </span>
-                        <span
-                          className={`${styles.menuLabel}`}
+              {canAdd("subscriptions") && (
+                <>
+                  <div className={`${styles.sideMenuHead} mb-2`}>SERVICES</div>
+                  <ul
+                    className={`${styles.sideMenuList} d-flex flex-column gap-1`}
+                  >
+                    {SIDEBAR_SERVICES_CONSTANTS?.map((menu, idx) => {
+                      const isActive =
+                        `/services/${router?.query?.slug}` === menu?.href;
+                      return (
+                        <Link
+                          href={menu?.href}
+                          className={`${styles.sideMenuItem} ${isActive ? styles.active : ""}`}
+                          key={idx}
                           style={{
-                            color: isActive
-                              ? "var(--whiteColor)"
-                              : "var(--textBody)",
+                            background: isActive
+                              ? "var(--primaryColor)"
+                              : "transparent",
                           }}
                         >
-                          {menu?.title}
-                        </span>
-                      </button>
-                    </Link>
-                  );
-                })}
-              </ul>
+                          <button
+                            className={`${styles.menuLink} d-flex align-items-center gap-3`}
+                          >
+                            <span
+                              className={`${styles.iconCircle} ${isActive ? styles.active : ""}`}
+                            >
+                              {menu?.image}
+                            </span>
+                            <span
+                              className={`${styles.menuLabel}`}
+                              style={{
+                                color: isActive
+                                  ? "var(--whiteColor)"
+                                  : "var(--textBody)",
+                              }}
+                            >
+                              {menu?.title}
+                            </span>
+                          </button>
+                        </Link>
+                      );
+                    })}
+                  </ul>
+                </>
+              )}
             </div>
 
             <div
               className={`${styles.sideBottom} d-flex flex-column gap-3 p-3`}
             >
-              <div className={styles.sideSupport}>
-                <Link
-                  href="/support"
-                  className={`${styles.menuLink} d-flex align-items-center justify-content-center`}
-                >
-                  <span className={`${styles.iconWrapper}`}>
-                    <LuMessageCircleQuestion size={20} />
-                  </span>
-                  <span className={`${styles.menuLabel}`}>SUPPORT</span>
-                </Link>
-              </div>
+              {canView(
+                "support" && (
+                  <div className={styles.sideSupport}>
+                    <Link
+                      href="/support"
+                      className={`${styles.menuLink} d-flex align-items-center justify-content-center`}
+                    >
+                      <span className={`${styles.iconWrapper}`}>
+                        <LuMessageCircleQuestion size={20} />
+                      </span>
+                      <span className={`${styles.menuLabel}`}>SUPPORT</span>
+                    </Link>
+                  </div>
+                ),
+              )}
+
               {creditsCard}
             </div>
           </>

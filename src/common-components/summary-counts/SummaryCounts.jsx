@@ -13,6 +13,7 @@ import creditNote from "@/assets/images/file-2.svg";
 import pendingWallet from "@/assets/images/filr.svg";
 import creditWallet from "@/assets/images/time.svg";
 import totalCredit from "@/assets/images/coin.svg";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const TotalRevenue = () => (
   <svg
@@ -305,6 +306,7 @@ export default function SummaryCounts({
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
+  const { canView } = usePermissions();
 
   const [asOnDate, setAsOnDate] = useState("");
   useEffect(() => {
@@ -331,7 +333,7 @@ export default function SummaryCounts({
       iconClass: "successColor",
       badgeClass: "down",
       icon: <CustomerIcon />,
-      redirectUrl: "/customers/create-customer",
+      redirectUrl: canView("customers") ? "/customers/create-customer" : null,
     },
 
     "active subscriptions": {
@@ -341,7 +343,9 @@ export default function SummaryCounts({
         router?.pathname === "/subscriptions" ? "successColor" : "warningColor",
       badgeClass: "up",
       icon: <SubscriptionIcon />,
-      redirectUrl: "/services/google-workspace",
+      redirectUrl: canView("subscriptions")
+        ? "/services/google-workspace"
+        : null,
     },
     "total subscriptions": {
       boxClass:
@@ -350,7 +354,9 @@ export default function SummaryCounts({
         router?.pathname === "/subscriptions" ? "successColor" : "warningColor",
       badgeClass: "up",
       icon: <SubscriptionIcon />,
-      redirectUrl: "/services/google-workspace",
+      redirectUrl: canView("subscriptions")
+        ? "/services/google-workspace"
+        : null,
     },
 
     "renewals this month": {
