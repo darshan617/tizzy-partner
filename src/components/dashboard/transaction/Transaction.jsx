@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "@/components/dashboard/transaction/Transaction.module.css";
 import { FiChevronsDown, FiChevronsUp, FiGlobe } from "react-icons/fi";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const getStatusClass = (status) => {
   const key = status?.toLowerCase()?.replace(/\s+/g, "");
@@ -50,6 +51,7 @@ export default function TransactionSection({ data, isDataLoading }) {
   const [activeTab, setActiveTab] = useState("transactions");
   const [currentData, setCurrentData] = useState(data?.transaction_history);
   const [showAll, setShowAll] = useState(false);
+  const { canView } = usePermissions();
 
   useEffect(() => {
     setCurrentData(
@@ -62,6 +64,11 @@ export default function TransactionSection({ data, isDataLoading }) {
   const visibleData = currentData?.slice(0, showAll ? 10 : 5) || [];
   const viewAllHref =
     activeTab === "transactions" ? "/transactions" : "/renewals";
+
+  const canViewAll =
+    activeTab === "transactions"
+      ? canView("transactions")
+      : canView("renewals");
   const isRenewals = activeTab === "renewals";
 
   const handleTabChange = (tab) => {
@@ -78,7 +85,9 @@ export default function TransactionSection({ data, isDataLoading }) {
     <div className={styles.contentRow} key={item?.order_id || index}>
       <Link
         href={{
-          pathname: "/transactions/transaction-details",
+          pathname: canView("transactions")
+            ? "/transactions/transaction-details"
+            : null,
           query: { order_id: item?.order_id },
         }}
       >
@@ -129,32 +138,34 @@ export default function TransactionSection({ data, isDataLoading }) {
               {formatAmount(item?.amount)}
             </span>
           </div>
-          <div
-            className={`${styles.colArrow} col-6 col-md-2 col-lg-2 text-end`}
-          >
-            <Link
-              href={{
-                pathname: "/transactions/transaction-details",
-                query: { order_id: item?.order_id },
-              }}
-              className={styles.arrowBtn}
-              aria-label="View renewal details"
+          {canView("transactions") && (
+            <div
+              className={`${styles.colArrow} col-6 col-md-2 col-lg-2 text-end`}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+              <Link
+                href={{
+                  pathname: "/transactions/transaction-details",
+                  query: { order_id: item?.order_id },
+                }}
+                className={styles.arrowBtn}
+                aria-label="View renewal details"
               >
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </Link>
-          </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </Link>
+            </div>
+          )}
         </div>
       </Link>
     </div>
@@ -212,30 +223,32 @@ export default function TransactionSection({ data, isDataLoading }) {
           </span>
         </div>
 
-        <div className={styles.colArrow}>
-          <Link
-            href={{
-              pathname: "/subscriptions/subscriptions-details",
-              query: { orderId: item?.order_id, type: "renewals" },
-            }}
-            className={styles.arrowBtn}
-            aria-label="View renewal details"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+        {canView("renewals") && (
+          <div className={styles.colArrow}>
+            <Link
+              href={{
+                pathname: "/subscriptions/subscriptions-details",
+                query: { orderId: item?.order_id, type: "renewals" },
+              }}
+              className={styles.arrowBtn}
+              aria-label="View renewal details"
             >
-              <path d="m9 18 6-6-6-6" />
-            </svg>
-          </Link>
-        </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -260,9 +273,11 @@ export default function TransactionSection({ data, isDataLoading }) {
               Upcoming Renewals
             </button>
           </div>
-          <Link href={viewAllHref} className={styles.viewAllLink}>
-            View All
-          </Link>
+          {canViewAll && (
+            <Link href={viewAllHref} className={styles.viewAllLink}>
+              View All
+            </Link>
+          )}
         </div>
 
         <div className={styles.contentBody}>

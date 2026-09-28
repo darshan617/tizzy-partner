@@ -18,6 +18,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import Loader from "@/common-components/loader/Loader";
 import { BiChevronRight } from "react-icons/bi";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 export default function TransactionDetails() {
   const [activeTab, setActiveTab] = useState("po");
@@ -28,9 +29,8 @@ export default function TransactionDetails() {
     ? JSON.parse(Cookies.get("userData"))
     : null;
   const [transactionData, setTransactionData] = useState(null);
-  console.log(transactionData, "transactionData");
-  console.log(userData, "userData");
-  console.log(router?.query?.order_id, "order_id");
+  const { canView } = usePermissions();
+
   const transactionDetails = async () => {
     try {
       const response = await getTransactionDetails({
@@ -266,20 +266,22 @@ export default function TransactionDetails() {
                             {sub?.renewal_date}
                           </span>
                         </div>
-                        <div>
-                          <Link
-                            href={{
-                              pathname: `/plan-details`,
-                              query: {
-                                orderId: router?.query?.order_id,
-                                planId: sub?.plan_id,
-                              },
-                            }}
-                            className={styles.subActionBtnViewMore}
-                          >
-                            <BiChevronRight size={16} />
-                          </Link>
-                        </div>
+                        {canView("subscriptions") && (
+                          <div>
+                            <Link
+                              href={{
+                                pathname: `/plan-details`,
+                                query: {
+                                  orderId: router?.query?.order_id,
+                                  planId: sub?.plan_id,
+                                },
+                              }}
+                              className={styles.subActionBtnViewMore}
+                            >
+                              <BiChevronRight size={16} />
+                            </Link>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ),
