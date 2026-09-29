@@ -431,7 +431,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                             {`Partner ID : ${userInfo?.id || user?.id || "-"}`}
                           </span>
                           <div className="statusBadge primaryBg profAdmin ms-1">
-                            Admin
+                            {user?.login_as?.replace("_", " ")?.toUpperCase()}
                           </div>
                         </div>
                       </div>
