@@ -44,6 +44,7 @@ const Customers = () => {
           },
         ]}
         isFetchingCountData={isFetchingAllCustomers}
+        permissionName="customers"
       />
       <CustomerList
         allCustomers={allCustomers}

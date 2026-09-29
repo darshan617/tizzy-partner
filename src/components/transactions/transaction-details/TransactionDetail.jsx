@@ -61,9 +61,13 @@ export default function TransactionDetails() {
         {/* Header */}
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className={styles.pageTitle}>Transaction Details</h5>
-          <Link href="/transactions" className={styles.backBtn} type="button">
+          <button
+            onClick={() => router?.back()}
+            className={styles.backBtn}
+            type="button"
+          >
             <IoMdArrowBack /> Back
-          </Link>
+          </button>
         </div>
         {isLoadingTransactionDetails ? (
           <Loader />

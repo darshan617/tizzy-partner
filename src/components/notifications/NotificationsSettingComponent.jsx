@@ -8,6 +8,7 @@ import {
 } from "@/redux/apis/notificationApi";
 import Cookies from "js-cookie";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const preferenceData = [
   {
@@ -57,6 +58,7 @@ const NotificationsSettingComponent = () => {
   const userData = Cookies?.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies?.get("userData")))
     : {};
+  const { canAdd, canDelete, canEdit, canView } = usePermissions();
 
   const [selectedChannels, setSelectedChannels] = useState({
     subscription_sms: false,
@@ -171,7 +173,17 @@ const NotificationsSettingComponent = () => {
                           checked={selectedChannels[channel?.key]}
                           name={channel?.key}
                           onChange={(e) => handleChannelChange(e, idx)}
-                          disabled={isSavingSettings}
+                          disabled={
+                            isSavingSettings ||
+                            !canEdit("notifications_settings")
+                          }
+                          style={{
+                            cursor:
+                              isSavingSettings ||
+                              !canEdit("notifications_settings")
+                                ? "not-allowed"
+                                : "pointer",
+                          }}
                         />
                         <span>{channel?.name}</span>
                       </label>

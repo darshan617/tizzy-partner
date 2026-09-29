@@ -8,12 +8,19 @@ const usePermissions = () => {
   useEffect(() => {
     const storedPermissions = localStorage.getItem("UP");
 
-    if (storedPermissions) {
+    if (storedPermissions === "undefined") {
+      localStorage.removeItem("UP");
+    } else if (storedPermissions) {
       try {
-        setPermissions(JSON.parse(storedPermissions));
-      } catch (error) {
-        console.error("Invalid permissions:", error);
-        setPermissions([]);
+        const parsedPermissions = JSON.parse(storedPermissions);
+
+        if (Array.isArray(parsedPermissions)) {
+          setPermissions(parsedPermissions);
+        } else {
+          localStorage.removeItem("UP");
+        }
+      } catch {
+        localStorage.removeItem("UP");
       }
     }
 

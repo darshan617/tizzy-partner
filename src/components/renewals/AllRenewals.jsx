@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { useGetAllRenewalsListMutation } from "@/redux/apis/renewalsApi";
 import Cookies from "js-cookie";
 import React, { useEffect } from "react";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const statusLabelMap = {
   expiring: "Expiring",
@@ -44,6 +45,7 @@ const AllRenewals = () => {
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
+  const { canAdd, canDelete, canEdit, canView } = usePermissions();
 
   const [getAllRenewalsList, { isLoading: isAllRenewalsListLoading }] =
     useGetAllRenewalsListMutation();
@@ -320,36 +322,38 @@ const AllRenewals = () => {
                             </div>
                           </div>
 
-                          <div
-                            className={`col-auto align-self-stretch d-flex align-items-center justify-content-end order-sm-3 mobAction ${styles.arrowCol}`}
-                          >
-                            <Link
-                              className={styles.crBtn}
-                              href={{
-                                pathname:
-                                  "/subscriptions/subscriptions-details",
-                                query: {
-                                  orderId: renewal?.order_id,
-                                  type: "renewals",
-                                },
-                              }}
+                          {canView("subscriptions") && (
+                            <div
+                              className={`col-auto align-self-stretch d-flex align-items-center justify-content-end order-sm-3 mobAction ${styles.arrowCol}`}
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className={styles.icon}
+                              <Link
+                                className={styles.crBtn}
+                                href={{
+                                  pathname:
+                                    "/subscriptions/subscriptions-details",
+                                  query: {
+                                    orderId: renewal?.order_id,
+                                    type: "renewals",
+                                  },
+                                }}
                               >
-                                <path d="m9 18 6-6-6-6" />
-                              </svg>
-                            </Link>
-                          </div>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className={styles.icon}
+                                >
+                                  <path d="m9 18 6-6-6-6" />
+                                </svg>
+                              </Link>
+                            </div>
+                          )}
                         </div>
                       </div>
                     );

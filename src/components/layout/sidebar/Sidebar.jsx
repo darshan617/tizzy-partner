@@ -32,6 +32,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     canView(item?.key),
   );
 
+  const navmenu = ACCOUNT_MENU_CONSTANTS?.filter?.((item) =>
+    canView(item?.key),
+  );
   const formatBalance = (value) =>
     Number(value || 0).toLocaleString("en-IN", {
       minimumFractionDigits: 2,
@@ -143,7 +146,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const accountPanel = (
     <div className={styles.accountPanel}>
       <ul className={styles.accountMenuList}>
-        {ACCOUNT_MENU_CONSTANTS.map((item) => {
+        {navmenu.map((item) => {
           const ICON = item.icon;
           const isActive = router?.pathname === item.href;
           return (

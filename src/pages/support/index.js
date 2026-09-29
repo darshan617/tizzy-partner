@@ -47,11 +47,9 @@ const SupportPage = () => {
             icon: <LuTicket size={22} />,
           },
         ]}
+        permissionName="support"
       />
-      <SupportList
-        ticketsData={ticketsData?.tickets}
-        isLoading={isLoading}
-      />
+      <SupportList ticketsData={ticketsData?.tickets} isLoading={isLoading} />
     </Layout>
   );
 };

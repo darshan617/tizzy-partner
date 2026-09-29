@@ -10,6 +10,8 @@ import { useRouter } from "next/router";
 import DownloadExcel from "@/common-components/download-excel/DownloadExcel";
 import { FiGlobe } from "react-icons/fi";
 import Pagination from "@/common-components/pagination/Pagination";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
+import Link from "next/link";
 
 const statusLabelMap = {
   completed: "Completed",
@@ -126,6 +128,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState("all");
   const [selectedProviderId, setSelectedProviderId] = useState(null);
+  const { canAdd, canDelete, canEdit, canView } = usePermissions();
 
   const [getTransactionsList, { isLoading }] =
     useGetTransactionHistoryMutation();
@@ -219,9 +222,11 @@ const TransactionsList = ({ variant = "default", limit }) => {
       <section className={styles.billingCard}>
         <div className={styles.billingHeader}>
           <h2 className={styles.billingTitle}>Transaction History</h2>
-          <a href="/transactions" className={styles.billingViewAllLink}>
-            View All
-          </a>
+          {canView("transactions") && (
+            <Link href="/transactions" className={styles.billingViewAllLink}>
+              View All
+            </Link>
+          )}
         </div>
 
         <div className={styles.billingContentBody}>
@@ -274,35 +279,37 @@ const TransactionsList = ({ variant = "default", limit }) => {
                         </span>
                       </div>
 
-                      <div className={styles.billingColArrow}>
-                        <button
-                          type="button"
-                          className={styles.billingArrowBtn}
-                          aria-label="View transaction details"
-                          onClick={() =>
-                            router.push({
-                              pathname: "/transactions/transaction-details",
-                              query: {
-                                order_id: tx?.order_id || tx?.order_no,
-                              },
-                            })
-                          }
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
+                      {canView("transactions") && (
+                        <div className={styles.billingColArrow}>
+                          <button
+                            type="button"
+                            className={styles.billingArrowBtn}
+                            aria-label="View transaction details"
+                            onClick={() =>
+                              router.push({
+                                pathname: "/transactions/transaction-details",
+                                query: {
+                                  order_id: tx?.order_id || tx?.order_no,
+                                },
+                              })
+                            }
                           >
-                            <path d="m9 18 6-6-6-6" />
-                          </svg>
-                        </button>
-                      </div>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="m9 18 6-6-6-6" />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </article>
                 ))}

@@ -13,6 +13,7 @@ import {
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import { setUserData } from "@/redux/slices/userSlice";
 import { useDispatch } from "react-redux";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const INITIAL_PROFILE = {
   fullName: "",
@@ -32,6 +33,7 @@ const AccountInfo = () => {
   const userData = Cookies?.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies?.get("userData")))
     : {};
+  const { canAdd, canDelete, canEdit, canView } = usePermissions();
 
   const handleOpenEdit = () => {
     setFormData({
@@ -161,14 +163,17 @@ const AccountInfo = () => {
           <div className="col-lg-4 col-12">
             <div className={styles.profCard}>
               <div className={`${styles.profHeader} position-relative`}>
-                <button
-                  type="button"
-                  className={styles.cardEditBtn}
-                  aria-label="Edit profile"
-                  onClick={handleOpenEdit}
-                >
-                  <FaPen />
-                </button>
+                {canEdit("my_account") && (
+                  <button
+                    type="button"
+                    className={styles.cardEditBtn}
+                    aria-label="Edit profile"
+                    onClick={handleOpenEdit}
+                  >
+                    <FaPen />
+                  </button>
+                )}
+
                 <Image
                   src={createBtnBg}
                   alt=""

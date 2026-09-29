@@ -13,6 +13,7 @@ import Loader from "@/common-components/loader/Loader";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { TiAttachment } from "react-icons/ti";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const tickets = [
   {
@@ -176,6 +177,7 @@ const SupportList = ({ ticketsData, isLoading }) => {
   const itemsPerPage = 12;
   const totalTickets = 124000;
   const router = useRouter();
+  const { canAdd, canDelete, canEdit, canView } = usePermissions();
   const filteredTickets = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
@@ -418,13 +420,15 @@ const SupportList = ({ ticketsData, isLoading }) => {
                         </span>
                       </div>
 
-                      <Link
-                        href={`/support/ticket-details?ticket_id=${ticket?.ticket_id}`}
-                        className={styles.arrowButton}
-                        aria-label="Open ticket"
-                      >
-                        <FiChevronRight size={18} />
-                      </Link>
+                      {canView("support") && (
+                        <Link
+                          href={`/support/ticket-details?ticket_id=${ticket?.ticket_id}`}
+                          className={styles.arrowButton}
+                          aria-label="Open ticket"
+                        >
+                          <FiChevronRight size={18} />
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </article>
