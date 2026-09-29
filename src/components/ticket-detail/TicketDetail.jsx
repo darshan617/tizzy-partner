@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 import { CiMail } from "react-icons/ci";
 import SupportChat from "./SupportChat";
 import { SIDEBAR_SERVICES_CONSTANTS } from "../layout/sidebar/SidebarConstant";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const activitiesColor = [
   {
@@ -37,7 +38,8 @@ const TicketDetail = () => {
   const [ticketDetail, setTicketDetail] = useState(null);
   const detailCardRef = useRef(null);
   const [detailCardHeight, setDetailCardHeight] = useState(null);
-  console.log(ticketDetail, "ticketDetail");
+  const { canAdd, canDelete, canEdit, canView } = usePermissions();
+
   const [getTicketDetail, { isLoading: isGettingTicketDetail }] =
     useGetTicketDetailMutation();
   useEffect(() => {
@@ -349,12 +351,14 @@ const TicketDetail = () => {
             </ul>
           </div>
         </div>
-        <aside
-          className={styles.chatAside}
-          style={{ height: detailCardHeight || undefined }}
-        >
-          <SupportChat />
-        </aside>
+        {canEdit("support") && (
+          <aside
+            className={styles.chatAside}
+            style={{ height: detailCardHeight || undefined }}
+          >
+            <SupportChat />
+          </aside>
+        )}
       </div>
     </div>
   );

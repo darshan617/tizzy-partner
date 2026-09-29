@@ -344,18 +344,20 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                       <BiSearch size={22} />
                     </button>
                   </div>
-                  <div className="">
-                    <button
-                      className={styles.navBtns}
-                      type="button"
-                      onClick={handleGetNotificationList}
-                    >
-                      <FiBell size={20} />
-                      {unreadCount > 0 && (
-                        <span className={styles.navLabel}>{unreadCount}</span>
-                      )}
-                    </button>
-                  </div>
+                  {canView("notification") && (
+                    <div className="">
+                      <button
+                        className={styles.navBtns}
+                        type="button"
+                        onClick={handleGetNotificationList}
+                      >
+                        <FiBell size={20} />
+                        {unreadCount > 0 && (
+                          <span className={styles.navLabel}>{unreadCount}</span>
+                        )}
+                      </button>
+                    </div>
+                  )}
                   {canAdd("subscriptions") && (
                     <div className="">
                       <Link className={styles.navBtns} href="/order-summary">
@@ -627,19 +629,21 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                             {formatNotificationTime(notification?.created_at)}
                           </span>
                         </div>
-                        <button
-                          type="button"
-                          className={styles.notificationDeleteBtn}
-                          aria-label="Delete notification"
-                          onClick={(e) =>
-                            handleDeleteNotification(
-                              notification?.notification_id,
-                              e,
-                            )
-                          }
-                        >
-                          <FiTrash2 size={18} />
-                        </button>
+                        {canDelete("notification") && (
+                          <button
+                            type="button"
+                            className={styles.notificationDeleteBtn}
+                            aria-label="Delete notification"
+                            onClick={(e) =>
+                              handleDeleteNotification(
+                                notification?.notification_id,
+                                e,
+                              )
+                            }
+                          >
+                            <FiTrash2 size={18} />
+                          </button>
+                        )}
                       </li>
                     ))}
                   </ul>

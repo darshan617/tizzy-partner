@@ -38,7 +38,7 @@ const devices = [
   },
 ];
 
-const actionColumns = ["View", "Add", "Edit", "Edit"];
+const actionColumns = ["View", "Add", "Edit", "Delete"];
 
 // Maps the API permission row into the UI model:
 // - access = current permission value to save to the API
