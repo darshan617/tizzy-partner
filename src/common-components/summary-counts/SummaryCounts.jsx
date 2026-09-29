@@ -301,12 +301,13 @@ export default function SummaryCounts({
   title = "Summary",
   additionalBtns = [],
   infoBtn = null,
+  permissionName = "",
 }) {
   const router = useRouter();
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
-  const { canView } = usePermissions();
+  const { canView, canAdd, canDelete, canEdit } = usePermissions();
 
   const [asOnDate, setAsOnDate] = useState("");
   useEffect(() => {
@@ -588,7 +589,8 @@ export default function SummaryCounts({
                   </div>
                 );
               })}
-              {additionalBtns?.length > 0 &&
+              {canAdd(permissionName) &&
+                additionalBtns?.length > 0 &&
                 additionalBtns?.map((btn, index) => (
                   <div className="col pt-4 m-0">
                     <button

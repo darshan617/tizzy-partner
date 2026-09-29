@@ -33,6 +33,7 @@ import { MdOutlineFileDownload } from "react-icons/md";
 import DownloadExcel from "@/common-components/download-excel/DownloadExcel";
 import Pagination from "@/common-components/pagination/Pagination";
 import Loader from "@/common-components/loader/Loader";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const TXN_ITEM_PER_PAGE = 5;
 
@@ -123,7 +124,7 @@ export default function CustomerDetail() {
   const [txnTab, setTxnTab] = useState("transactions");
   const [txnPage, setTxnPage] = useState(1);
   const [selectedInvoiceIds, setSelectedInvoiceIds] = useState([]);
-  console.log(selectedInvoiceIds);
+  const { canAdd, canDelete, canEdit, canView } = usePermissions();
 
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
@@ -609,20 +610,31 @@ export default function CustomerDetail() {
                       </div>
 
                       <div className={styles.quickActionBody}>
-                        <Link
-                          href={`/customers/edit-customer?customerId=${router?.query?.customerId}`}
-                          className={styles.quickActionItem}
-                        >
-                          <SquarePen size={16} strokeWidth={1.75} />
-                          <span>Edit Customer</span>
-                        </Link>
-                        <Link
-                          href={`/services/google-workspace?customerId=${router?.query?.customerId}`}
-                          className={styles.quickActionItem}
-                        >
-                          <ShoppingCart size={16} strokeWidth={1.75} />
-                          <span>Create Order</span>
-                        </Link>
+                        {canEdit("customers") || canAdd("subscriptions") ? (
+                          <>
+                            {canEdit("customers") && (
+                              <Link
+                                href={`/customers/edit-customer?customerId=${router?.query?.customerId}`}
+                                className={styles.quickActionItem}
+                              >
+                                <SquarePen size={16} strokeWidth={1.75} />
+                                <span>Edit Customer</span>
+                              </Link>
+                            )}
+
+                            {canAdd("subscriptions") && (
+                              <Link
+                                href={`/services/google-workspace?customerId=${router?.query?.customerId}`}
+                                className={styles.quickActionItem}
+                              >
+                                <ShoppingCart size={16} strokeWidth={1.75} />
+                                <span>Create Order</span>
+                              </Link>
+                            )}
+                          </>
+                        ) : (
+                          <div className="m-2">No actions available</div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -656,137 +668,146 @@ export default function CustomerDetail() {
                         ))}
                       </div>
                     </div>
-
-                    <div className="col">
-                      <div className={`${styles.pageWrap}`}>
-                        <div className={`${styles.card} p-sm-4 p-3`}>
-                          <div className="d-flex align-items-center justify-content-between mb-3">
-                            <h2 className={`${styles.cardHead}`}>
-                              Current Subscription{" "}
-                              <span>({allInnerPlans?.length || 0})</span>
-                            </h2>
-                            {allInnerPlans?.length > 0 && (
-                              <Link
-                                href={{
-                                  pathname: "/subscriptions/all-subscription",
-                                  query: {
-                                    customer_id: router?.query?.customerId,
-                                  },
-                                }}
-                                className={`${styles.viewAll} text-decoration-underline`}
-                              >
-                                View All
-                              </Link>
-                            )}
-                          </div>
-
-                          {allInnerPlans?.length === 0 ? (
-                            <div className="text-center d-flex flex-column align-items-center justify-content-center gap-2 py-3">
-                              <p className="m-0">No Subscriptions</p>
-                              <button
-                                className="small btnDefault btn"
-                                onClick={() =>
-                                  router.push("/services/google-workspace")
-                                }
-                              >
-                                <BsPlusCircleDotted
-                                  className="me-2"
-                                  size={14}
-                                />
-                                <span>Buy New Subscription</span>
-                              </button>
+                    {canView("subscriptions") && (
+                      <div className="col">
+                        <div className={`${styles.pageWrap}`}>
+                          <div className={`${styles.card} p-sm-4 p-3`}>
+                            <div className="d-flex align-items-center justify-content-between mb-3">
+                              <h2 className={`${styles.cardHead}`}>
+                                Current Subscription{" "}
+                                <span>({allInnerPlans?.length || 0})</span>
+                              </h2>
+                              {allInnerPlans?.length > 0 && (
+                                <Link
+                                  href={{
+                                    pathname: "/subscriptions/all-subscription",
+                                    query: {
+                                      customer_id: router?.query?.customerId,
+                                    },
+                                  }}
+                                  className={`${styles.viewAll} text-decoration-underline`}
+                                >
+                                  View All
+                                </Link>
+                              )}
                             </div>
-                          ) : (
-                            allInnerPlans
-                              ?.slice(0, 5)
-                              ?.map((innerPlan, idx) => (
-                                <div className={`${styles.subRow}`} key={idx}>
-                                  <div className={`${styles.subTop}`}>
-                                    <div className={`${styles.subPlan}`}>
-                                      <p
-                                        className={`${styles.subPlanIcon} m-0 flex-shrink-0`}
+
+                            {canAdd("subscriptions") &&
+                            allInnerPlans?.length === 0 ? (
+                              <div className="text-center d-flex flex-column align-items-center justify-content-center gap-2 py-3">
+                                <p className="m-0">No Subscriptions</p>
+                                <button
+                                  className="small btnDefault btn"
+                                  onClick={() =>
+                                    router.push("/services/google-workspace")
+                                  }
+                                >
+                                  <BsPlusCircleDotted
+                                    className="me-2"
+                                    size={14}
+                                  />
+                                  <span>Buy New Subscription</span>
+                                </button>
+                              </div>
+                            ) : (
+                              allInnerPlans
+                                ?.slice(0, 5)
+                                ?.map((innerPlan, idx) => (
+                                  <div className={`${styles.subRow}`} key={idx}>
+                                    <div className={`${styles.subTop}`}>
+                                      <div className={`${styles.subPlan}`}>
+                                        <p
+                                          className={`${styles.subPlanIcon} m-0 flex-shrink-0`}
+                                        >
+                                          {plansImg?.[
+                                            innerPlan?.provider_id - 1
+                                          ] || "-"}
+                                        </p>
+                                        <div className="ms-2">
+                                          <div
+                                            className={`${styles.subPlanName}`}
+                                          >
+                                            {innerPlan?.plan_name || "-"}
+                                          </div>
+                                          <small
+                                            className={`${styles.subPlanPrice}`}
+                                          >
+                                            ₹{innerPlan?.price}{" "}
+                                            <span>Per User / Per Year</span>
+                                          </small>
+                                        </div>
+                                      </div>
+
+                                      <span
+                                        className={`${styles.statusBadge} ${styles?.[innerPlan?.status?.toLowerCase()?.replace(" ", "_")]}`}
                                       >
-                                        {plansImg?.[
-                                          innerPlan?.provider_id - 1
-                                        ] || "-"}
-                                      </p>
-                                      <div className="ms-2">
-                                        <div
-                                          className={`${styles.subPlanName}`}
-                                        >
-                                          {innerPlan?.plan_name || "-"}
-                                        </div>
-                                        <small
-                                          className={`${styles.subPlanPrice}`}
-                                        >
-                                          ₹{innerPlan?.price}{" "}
-                                          <span>Per User / Per Year</span>
-                                        </small>
-                                      </div>
+                                        {innerPlan?.status || "-"}
+                                      </span>
                                     </div>
 
-                                    <span
-                                      className={`${styles.statusBadge} ${styles?.[innerPlan?.status?.toLowerCase()?.replace(" ", "_")]}`}
-                                    >
-                                      {innerPlan?.status || "-"}
-                                    </span>
-                                  </div>
-
-                                  <div className={`${styles.subBottom}`}>
-                                    <div className={`${styles.subMeta} ps-1`}>
-                                      <div className={`${styles.subMetaItem}`}>
-                                        <FiLayers
-                                          className={`${styles.subMetaIcon}`}
-                                        />
+                                    <div className={`${styles.subBottom}`}>
+                                      <div className={`${styles.subMeta} ps-1`}>
                                         <div
-                                          className={`${styles.subMetaValue}`}
+                                          className={`${styles.subMetaItem}`}
                                         >
-                                          #{innerPlan?.subscription_id}
-                                        </div>
-                                      </div>
-                                      <div className={`${styles.subMetaItem}`}>
-                                        <Calendar
-                                          className={`${styles.subMetaIcon}`}
-                                        />
-                                        <div>
+                                          <FiLayers
+                                            className={`${styles.subMetaIcon}`}
+                                          />
                                           <div
                                             className={`${styles.subMetaValue}`}
                                           >
-                                            {innerPlan?.start_date} -{" "}
-                                            {innerPlan?.end_date}
+                                            #{innerPlan?.subscription_id}
+                                          </div>
+                                        </div>
+                                        <div
+                                          className={`${styles.subMetaItem}`}
+                                        >
+                                          <Calendar
+                                            className={`${styles.subMetaIcon}`}
+                                          />
+                                          <div>
+                                            <div
+                                              className={`${styles.subMetaValue}`}
+                                            >
+                                              {innerPlan?.start_date} -{" "}
+                                              {innerPlan?.end_date}
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        <div
+                                          className={`${styles.subMetaItem}`}
+                                        >
+                                          <Globe
+                                            className={`${styles.subMetaIcon}`}
+                                          />
+                                          <div>
+                                            <div
+                                              className={`${styles.subMetaValue}`}
+                                            >
+                                              {innerPlan?.domain_name || "-"}
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        <div
+                                          className={`${styles.subMetaItem}`}
+                                        >
+                                          <Users
+                                            className={`${styles.subMetaIcon}`}
+                                          />
+                                          <div>
+                                            <div
+                                              className={`${styles.subMetaValue}`}
+                                            >
+                                              {innerPlan?.license_count || "-"}{" "}
+                                              Users
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
 
-                                      <div className={`${styles.subMetaItem}`}>
-                                        <Globe
-                                          className={`${styles.subMetaIcon}`}
-                                        />
-                                        <div>
-                                          <div
-                                            className={`${styles.subMetaValue}`}
-                                          >
-                                            {innerPlan?.domain_name || "-"}
-                                          </div>
-                                        </div>
-                                      </div>
-
-                                      <div className={`${styles.subMetaItem}`}>
-                                        <Users
-                                          className={`${styles.subMetaIcon}`}
-                                        />
-                                        <div>
-                                          <div
-                                            className={`${styles.subMetaValue}`}
-                                          >
-                                            {innerPlan?.license_count || "-"}{" "}
-                                            Users
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    {/* <div className={`${styles.subActions}`}>
+                                      {/* <div className={`${styles.subActions}`}>
                                   {(innerPlan?.status?.toLowerCase() ===
                                     "expiring" ||
                                     innerPlan?.status?.toLowerCase() ===
@@ -902,29 +923,34 @@ export default function CustomerDetail() {
                                     </>
                                   )}
                                 </div> */}
-                                    <div className={`${styles.subActions}`}>
-                                      <button
-                                        className={styles.subActionBtnViewMore}
-                                        onClick={() =>
-                                          router.push({
-                                            pathname: "/plan-details",
-                                            query: {
-                                              planId: innerPlan?.plan_id,
-                                              orderId: innerPlan?.order_id,
-                                            },
-                                          })
-                                        }
-                                      >
-                                        <BiChevronRight size={16} />
-                                      </button>
+                                      {canView("subscriptions") && (
+                                        <div className={`${styles.subActions}`}>
+                                          <button
+                                            className={
+                                              styles.subActionBtnViewMore
+                                            }
+                                            onClick={() =>
+                                              router.push({
+                                                pathname: "/plan-details",
+                                                query: {
+                                                  planId: innerPlan?.plan_id,
+                                                  orderId: innerPlan?.order_id,
+                                                },
+                                              })
+                                            }
+                                          >
+                                            <BiChevronRight size={16} />
+                                          </button>
+                                        </div>
+                                      )}
                                     </div>
                                   </div>
-                                </div>
-                              ))
-                          )}
+                                ))
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
 
                     <div className="col">
                       <div className={`${styles.card} p-sm-4 p-3`}>
@@ -945,12 +971,24 @@ export default function CustomerDetail() {
                               from <strong>{txnTotal}</strong> Transactions
                             </p>
                           </div>
-                          <Link
-                            href={`/transactions?customerId=${router?.query?.customerId}`}
-                            className={`${styles.viewAll} text-decoration-underline`}
-                          >
-                            View All
-                          </Link>
+
+                          {txnTab === "transactions"
+                            ? canView("transactions") && (
+                                <Link
+                                  href={`/transactions?customerId=${router?.query?.customerId}`}
+                                  className={`${styles.viewAll} text-decoration-underline`}
+                                >
+                                  View All
+                                </Link>
+                              )
+                            : canView("invoices") && (
+                                <Link
+                                  href={`/invoice?customerId=${router?.query?.customerId}`}
+                                  className={`${styles.viewAll} text-decoration-underline`}
+                                >
+                                  View All
+                                </Link>
+                              )}
                         </div>
 
                         <div className={styles.txnToolbar}>
@@ -987,18 +1025,20 @@ export default function CustomerDetail() {
                               Invoice
                             </button>
                           </div>
-                          {txnTab === "transactions" && (
-                            <DownloadExcel
-                              data={allTransactions}
-                              columns={txnDownloadColumns}
-                              fileName="customer-transactions"
-                              className={styles.txnDownloadBtn}
-                              buttonText="Download List"
-                            />
-                          )}
+                          {canView("transactions") &&
+                            txnTab === "transactions" && (
+                              <DownloadExcel
+                                data={allTransactions}
+                                columns={txnDownloadColumns}
+                                fileName="customer-transactions"
+                                className={styles.txnDownloadBtn}
+                                buttonText="Download List"
+                              />
+                            )}
                         </div>
 
                         {txnTab === "transactions" ? (
+                          canView("transactions") &&
                           allTransactions?.length > 0 ? (
                             <>
                               <div className={styles.txnList}>
@@ -1076,7 +1116,7 @@ export default function CustomerDetail() {
                               No transactions found
                             </p>
                           )
-                        ) : allInvoices?.length > 0 ? (
+                        ) : canView("invoices") && allInvoices?.length > 0 ? (
                           <>
                             <div className={styles.invToolbar}>
                               <label
@@ -1355,437 +1395,6 @@ export default function CustomerDetail() {
                         )}
                       </div>
                     </div>
-
-                    {/* <div className="col">
-                    <div className={`${styles.card} py-4`}>
-                      <div className="d-flex px-sm-4 px-3 mb-3 align-items-center">
-                        <div className="col">
-                          <h2 className={`${styles.cardHead}`}>
-                            Support Tickets <span>(10)</span>
-                          </h2>
-                        </div>
-                        <div className="col-auto">
-                          <Link
-                            href="#"
-                            className={`${styles.btnDefault} ${styles.small} ${styles.btn}`}
-                          >
-                            <Plus className={styles.icon} size={14} />
-                            <span>Open New Ticket</span>
-                          </Link>
-                        </div>
-                      </div>
-
-                      <div className="swiper supportSwiper px-sm-4 px-3 mb-4">
-                        <div className="swiper-wrapper mb-4">
-
-                          <div className="swiper-slide">
-                            <div
-                              className={`${styles.supportTkt} btnDisplay d-flex flex-column`}
-                            >
-                              <div
-                                className={`${styles.stktTop} d-flex align-items-center col-auto`}
-                              >
-                                <div className="col">
-                                  <div className={`${styles.stktNo}`}>
-                                    SUP2523
-                                  </div>
-                                  <span
-                                    className={`${styles.statusBadge} ${styles.subtleSuccess}`}
-                                  >
-                                    Active
-                                  </span>
-                                </div>
-                                <div className="col-auto">
-                                  <div className={`${styles.stktDate}`}>
-                                    20 Mar, 2026
-                                  </div>
-                                </div>
-                              </div>
-                              <div className={`${styles.stktContent} col`}>
-                                <span
-                                  className={`${styles.priorityBadge} ${styles.high}`}
-                                >
-                                  High Priority
-                                </span>
-                                <Link href="#">
-                                  <h3 className={`${styles.stktHead} my-2`}>
-                                    Can&apos;t access dashboard after update
-                                  </h3>
-                                </Link>
-                                <div className="">
-                                  Tizzy® Mail Enterprise - 100 GB
-                                </div>
-                              </div>
-                              <div
-                                className={`${styles.stktBtm} d-flex align-items-center col-auto`}
-                              >
-                                <div className="col">
-                                  <div
-                                    className={`${styles.crDomain} d-flex align-items-center`}
-                                  >
-                                    <div
-                                      className={`${styles.avatarSmall} flex-shrink-0 warningBg`}
-                                    >
-                                      G
-                                    </div>
-                                    <div className="crDomainName ps-2">
-                                      ganeshenterprises.com
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="col-auto">
-                                  <Link href="#" className={`${styles.crBtn}`}>
-                                    <ChevronRight
-                                      className={`${styles.icon} me-0`}
-                                    />
-                                  </Link>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="swiper-slide">
-                            <div
-                              className={`${styles.supportTkt} ${styles.supportTkt} d-flex flex-column`}
-                            >
-                              <div
-                                className={`${styles.stktTop} d-flex align-items-center col-auto`}
-                              >
-                                <div className="col">
-                                  <div className={`${styles.stktNo}`}>
-                                    SUP2523
-                                  </div>
-                                  <span
-                                    className={`${styles.statusBadge} ${styles.subtleSuccess}`}
-                                  >
-                                    Active
-                                  </span>
-                                </div>
-                                <div className="col-auto">
-                                  <div className={`${styles.stktDate}`}>
-                                    20 Mar, 2026
-                                  </div>
-                                </div>
-                              </div>
-                              <div className={`${styles.stktContent} col`}>
-                                <span
-                                  className={`${styles.priorityBadge} ${styles.low}`}
-                                >
-                                  Low Priority
-                                </span>
-                                <Link href="#">
-                                  <h3 className={`${styles.stktHead} my-2`}>
-                                    Can&apos;t access dashboard after update
-                                  </h3>
-                                </Link>
-                                <div className="">
-                                  Tizzy® Mail Enterprise - 100 GB
-                                </div>
-                              </div>
-                              <div
-                                className={`${styles.stktBtm} d-flex align-items-center col-auto`}
-                              >
-                                <div className="col">
-                                  <div
-                                    className={`${styles.crDomain} d-flex align-items-center`}
-                                  >
-                                    <div
-                                      className={`${styles.avatarSmall} flex-shrink-0 successBg`}
-                                    >
-                                      A
-                                    </div>
-                                    <div
-                                      className={`${styles.crDomainName} ps-2`}
-                                    >
-                                      goyalinfotech.com
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="col-auto">
-                                  <Link href="#" className={`${styles.crBtn}`}>
-                                    <ChevronRight
-                                      className={`${styles.icon} me-0`}
-                                    />
-                                  </Link>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="swiper-slide">
-                            <div
-                              className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}
-                            >
-                              <div
-                                className={`${styles.stktTop} d-flex align-items-center col-auto`}
-                              >
-                                <div className="col">
-                                  <div className={`${styles.stktNo}`}>
-                                    SUP2523
-                                  </div>
-                                  <span
-                                    className={`${styles.statusBadge} ${styles.statusBadge} ${styles.subtleSuccess}`}
-                                  >
-                                    Active
-                                  </span>
-                                </div>
-                                <div className="col-auto">
-                                  <div className={`${styles.stktDate}`}>
-                                    20 Mar, 2026
-                                  </div>
-                                </div>
-                              </div>
-                              <div className={`${styles.stktContent} col`}>
-                                <span
-                                  className={`${styles.priorityBadge} ${styles.high}`}
-                                >
-                                  High Priority
-                                </span>
-                                <Link href="#">
-                                  <h3 className={`${styles.stktHead} my-2`}>
-                                    Can&apos;t access dashboard after update
-                                  </h3>
-                                </Link>
-                                <div className="">
-                                  Tizzy® Mail Enterprise - 100 GB
-                                </div>
-                              </div>
-                              <div
-                                className={`${styles.stktBtm} d-flex align-items-center col-auto`}
-                              >
-                                <div className="col">
-                                  <div
-                                    className={`${styles.crDomain} d-flex align-items-center`}
-                                  >
-                                    <div
-                                      className={`${styles.avatarSmall} flex-shrink-0 secondaryBg`}
-                                    >
-                                      P
-                                    </div>
-                                    <div
-                                      className={`${styles.crDomainName} ps-2`}
-                                    >
-                                      kingstonmarketing.net
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="col-auto">
-                                  <Link href="#" className={`${styles.crBtn}`}>
-                                    <ChevronRight
-                                      className={`${styles.icon} me-0`}
-                                    />
-                                  </Link>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="swiper-slide">
-                            <div
-                              className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}
-                            >
-                              <div
-                                className={`${styles.stktTop} d-flex align-items-center col-auto`}
-                              >
-                                <div className="col">
-                                  <div className={`${styles.stktNo}`}>
-                                    SUP2523
-                                  </div>
-                                  <span
-                                    className={`${styles.statusBadge} ${styles.subtleSuccess}`}
-                                  >
-                                    Active
-                                  </span>
-                                </div>
-                                <div className="col-auto">
-                                  <div className={`${styles.stktDate}`}>
-                                    20 Mar, 2026
-                                  </div>
-                                </div>
-                              </div>
-                              <div className={`${styles.stktContent} col`}>
-                                <span
-                                  className={`${styles.priorityBadge} ${styles.med}`}
-                                >
-                                  Medium Priority
-                                </span>
-                                <Link href="#">
-                                  <h3 className={`${styles.stktHead} my-2`}>
-                                    Can&apos;t access dashboard after update
-                                  </h3>
-                                </Link>
-                                <div className="">
-                                  Tizzy® Mail Enterprise - 100 GB
-                                </div>
-                              </div>
-                              <div
-                                className={`${styles.stktBtm} d-flex align-items-center col-auto`}
-                              >
-                                <div className="col">
-                                  <div
-                                    className={`${styles.crDomain} d-flex align-items-center`}
-                                  >
-                                    <div
-                                      className={`${styles.avatarSmall} ${styles.infoBg} flex-shrink-0`}
-                                    >
-                                      G
-                                    </div>
-                                    <div className="crDomainName ps-2">
-                                      pinchthewallet.com
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="col-auto">
-                                  <Link href="#" className={`${styles.crBtn}`}>
-                                    <ChevronRight
-                                      className={`${styles.icon} me-0`}
-                                    />
-                                  </Link>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="swiper-slide">
-                            <div
-                              className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}
-                            >
-                              <div
-                                className={`${styles.stktTop} d-flex align-items-center col-auto`}
-                              >
-                                <div className="col">
-                                  <div className={`${styles.stktNo}`}>
-                                    SUP2523
-                                  </div>
-                                  <span
-                                    className={`${styles.statusBadge} ${styles.subtleSuccess}`}
-                                  >
-                                    Active
-                                  </span>
-                                </div>
-                                <div className="col-auto">
-                                  <div className={`${styles.stktDate}`}>
-                                    20 Mar, 2026
-                                  </div>
-                                </div>
-                              </div>
-                              <div className={`${styles.stktContent} col`}>
-                                <span
-                                  className={`${styles.priorityBadge} ${styles.high}`}
-                                >
-                                  High Priority
-                                </span>
-                                <Link href="#">
-                                  <h3 className={`${styles.stktHead} my-2`}>
-                                    Can&apos;t access dashboard after update
-                                  </h3>
-                                </Link>
-                                <div className="">
-                                  Tizzy® Mail Enterprise - 100 GB
-                                </div>
-                              </div>
-                              <div
-                                className={`${styles.stktBtm} d-flex align-items-center col-auto`}
-                              >
-                                <div className="col">
-                                  <div
-                                    className={`${styles.crDomain} d-flex align-items-center`}
-                                  >
-                                    <div
-                                      className={`${styles.avatarSmall} flex-shrink-0 warningBg`}
-                                    >
-                                      G
-                                    </div>
-                                    <div
-                                      className={`${styles.crDomainName} ps-2`}
-                                    >
-                                      ganeshenterprises.com
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="col-auto">
-                                  <Link href="#" className={`${styles.crBtn}`}>
-                                    <ChevronRight
-                                      className={`${styles.icon} me-0`}
-                                    />
-                                  </Link>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="swiper-slide">
-                            <div
-                              className={`${styles.supportTkt} ${styles.btnDisplay} d-flex flex-column`}
-                            >
-                              <div
-                                className={`${styles.stktTop} d-flex align-items-center col-auto`}
-                              >
-                                <div className="col">
-                                  <div className={`${styles.stktNo}`}>
-                                    SUP2523
-                                  </div>
-                                  <span
-                                    className={`${styles.statusBadge} ${styles.subtleSuccess}`}
-                                  >
-                                    Active
-                                  </span>
-                                </div>
-                                <div className="col-auto">
-                                  <div className={`${styles.stktDate}`}>
-                                    20 Mar, 2026
-                                  </div>
-                                </div>
-                              </div>
-                              <div className={`${styles.stktContent} col`}>
-                                <span
-                                  className={`${styles.priorityBadge} ${styles.high}`}
-                                >
-                                  High Priority
-                                </span>
-                                <Link href="#">
-                                  <h3 className={`${styles.stktHead} my-2`}>
-                                    Can&apos;t access dashboard after update
-                                  </h3>
-                                </Link>
-                                <div className="">
-                                  Tizzy® Mail Enterprise - 100 GB
-                                </div>
-                              </div>
-                              <div
-                                className={`${styles.stktBtm} d-flex align-items-center col-auto`}
-                              >
-                                <div className="col">
-                                  <div
-                                    className={`${styles.crDomain} d-flex align-items-center`}
-                                  >
-                                    <div
-                                      className={`${styles.avatarSmall} flex-shrink-0 dangerBg`}
-                                    >
-                                      G
-                                    </div>
-                                    <div
-                                      className={`${styles.crDomainName} ps-2`}
-                                    >
-                                      ganeshenterprises.com
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="col-auto">
-                                  <Link href="#" className={`${styles.crBtn}`}>
-                                    <ChevronRight
-                                      className={`${styles.icon} me-0`}
-                                    />
-                                  </Link>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="swiper-scrollbar"></div>
-                      </div>
-                    </div>
-                  </div> */}
                   </div>
                 </div>
               </div>
