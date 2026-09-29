@@ -34,6 +34,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectUserData } from "@/redux/slices/userSlice";
 import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi";
 import usePermissions from "@/custom-hooks/permissions/usePermissions";
+import { ACCOUNT_MENU_CONSTANTS } from "../sidebar/SidebarConstant";
 
 const formatNotificationTime = (dateString) => {
   if (!dateString) return "";
@@ -91,6 +92,11 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     { isLoading: isMarkNotificationAsReadLoading },
   ] = useMarkNotificationAsReadMutation();
   const [deleteNotification] = useDeleteNotificationMutation();
+
+  const navmenu = ACCOUNT_MENU_CONSTANTS?.filter?.((item) =>
+    canView(item?.key),
+  );
+
   useEffect(() => {
     try {
       const cookie = Cookies.get("userData");
@@ -282,6 +288,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
       console.log(error);
     }
   };
+
   return (
     <>
       <header className={styles.pageHeader}>
@@ -337,26 +344,31 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                       <BiSearch size={22} />
                     </button>
                   </div>
-                  <div className="">
-                    <button
-                      className={styles.navBtns}
-                      type="button"
-                      onClick={handleGetNotificationList}
-                    >
-                      <FiBell size={20} />
-                      {unreadCount > 0 && (
-                        <span className={styles.navLabel}>{unreadCount}</span>
-                      )}
-                    </button>
-                  </div>
-                  <div className="">
-                    <Link className={styles.navBtns} href="/order-summary">
-                      <BsHandbag size={20} color="#000" />
-                      <span className={`${styles.navLabel} `}>
-                        {balanceAndCartData?.cart_item_count || 0}
-                      </span>
-                    </Link>
-                  </div>
+                  {canView("notification") && (
+                    <div className="">
+                      <button
+                        className={styles.navBtns}
+                        type="button"
+                        onClick={handleGetNotificationList}
+                      >
+                        <FiBell size={20} />
+                        {unreadCount > 0 && (
+                          <span className={styles.navLabel}>{unreadCount}</span>
+                        )}
+                      </button>
+                    </div>
+                  )}
+                  {canAdd("subscriptions") && (
+                    <div className="">
+                      <Link className={styles.navBtns} href="/order-summary">
+                        <BsHandbag size={20} color="#000" />
+                        <span className={`${styles.navLabel} `}>
+                          {balanceAndCartData?.cart_item_count || 0}
+                        </span>
+                      </Link>
+                    </div>
+                  )}
+
                   <div className="vr"></div>
                   <div className={styles.profHolder} ref={dropdownRef}>
                     <div
@@ -419,75 +431,26 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                             {`Partner ID : ${userInfo?.id || user?.id || "-"}`}
                           </span>
                           <div className="statusBadge primaryBg profAdmin ms-1">
-                            Admin
+                            {user?.login_as?.replace("_", " ")?.toUpperCase()}
                           </div>
                         </div>
                       </div>
                       <ul className="my-3">
-                        <li>
-                          <Link href="/my-account">
-                            <FaRegCircleUser
-                              className={`${styles.icon} me-2`}
-                              size={20}
-                            />
-                            My Account
-                          </Link>
-                        </li>
-                        <li>
-                          <Link href="/billing-credit">
-                            <LuWallet
-                              className={`${styles.icon} me-2`}
-                              size={20}
-                            />
-                            Billing & Credits
-                          </Link>
-                        </li>
-                        {/* <li>
-                          <Link href="#">
-                            <BiKey
-                              className={`${styles.icon} me-2`}
-                              size={20}
-                            />
-                            Change Password
-                          </Link>
-                        </li> */}
-                        <li>
-                          <Link href="/bank-detail">
-                            <RiBankLine
-                              className={`${styles.icon} me-2`}
-                              size={20}
-                            />
-                            Bank Details
-                          </Link>
-                        </li>
-                        <li>
-                          <Link href="/user-management">
-                            <RiUserSettingsLine
-                              className={`${styles.icon} me-2`}
-                              size={20}
-                            />
-                            User Management
-                          </Link>
-                        </li>
-                        <li>
-                          <Link href="/notifications-settings">
-                            <LuCalendarCog
-                              className={`${styles.icon} me-2`}
-                              size={20}
-                            />
-                            Notifications Settings
-                          </Link>
-                        </li>
-                        <li>
-                          <Link href="/help-center">
-                            <IoHelpBuoyOutline
-                              className={`${styles.icon} me-2`}
-                              size={20}
-                              style={{ transform: "rotate(45deg)" }}
-                            />
-                            Help Center
-                          </Link>
-                        </li>
+                        {navmenu?.map((item) => {
+                          const ICON = item.icon;
+                          return (
+                            <li>
+                              <Link href={item.href}>
+                                <ICON
+                                  className={`${styles.icon} me-2`}
+                                  size={20}
+                                />
+                                <span>{item.title}</span>
+                              </Link>
+                            </li>
+                          );
+                        })}
+
                         {/* <li>
                           <a href="#">
                             <RiUserAddLine
@@ -666,19 +629,21 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                             {formatNotificationTime(notification?.created_at)}
                           </span>
                         </div>
-                        <button
-                          type="button"
-                          className={styles.notificationDeleteBtn}
-                          aria-label="Delete notification"
-                          onClick={(e) =>
-                            handleDeleteNotification(
-                              notification?.notification_id,
-                              e,
-                            )
-                          }
-                        >
-                          <FiTrash2 size={18} />
-                        </button>
+                        {canDelete("notification") && (
+                          <button
+                            type="button"
+                            className={styles.notificationDeleteBtn}
+                            aria-label="Delete notification"
+                            onClick={(e) =>
+                              handleDeleteNotification(
+                                notification?.notification_id,
+                                e,
+                              )
+                            }
+                          >
+                            <FiTrash2 size={18} />
+                          </button>
+                        )}
                       </li>
                     ))}
                   </ul>

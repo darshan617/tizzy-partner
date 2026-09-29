@@ -110,7 +110,10 @@ const VerifyOtp = () => {
         Cookies.set("partnerApproval", approvalStatus);
 
         //Save user permissions
-        localStorage.setItem("UP", JSON.stringify(permissions));
+        localStorage.setItem(
+          "UP",
+          JSON.stringify(Array.isArray(permissions) ? permissions : []),
+        );
 
         showToast("Email verified successfully", "success");
 

@@ -13,6 +13,7 @@ import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarC
 import Link from "next/link";
 import { usePartialUpgradeAddToCartMutation } from "@/redux/apis/addToCartApi";
 import { HiOutlineSupport } from "react-icons/hi";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const normalizeStatus = (status) => String(status ?? "").toLowerCase();
 
@@ -40,13 +41,15 @@ const getStatusBadgeClass = (status) => {
 export default function PlansDetail() {
   const router = useRouter();
   const [planDetails, setPlanDetails] = useState(null);
+  const { canAdd, canDelete, canEdit, canView } = usePermissions();
+
   const [getPlanDetails, { isLoading: isGetPlanDetailsLoading }] =
     usePlanDetailsMutation();
-
   const [
     partialUpgradeAddToCart,
     { isLoading: isPartialUpgradeAddToCartLoading },
   ] = usePartialUpgradeAddToCartMutation();
+
   const userData = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
     : {};
@@ -224,36 +227,38 @@ export default function PlansDetail() {
                         (plan?.licenses ? `${plan.licenses} Users` : "-")}
                     </span>
 
-                    <button
-                      className={styles.addBtn}
-                      type="button"
-                      onClick={() => {
-                        router?.push({
-                          pathname: "/order-summary",
-                          query: {
-                            type: "add-license",
-                            order_id: router?.query?.orderId,
-                            customer_id: customer?.cust_id,
-                            order_sub_id: plan?.order_sub_id,
-                            licenses: plan?.licenses,
-                          },
-                        });
-                      }}
-                      disabled={isProcessingOrCancelled || plan?.hide_upgrade}
-                      style={{
-                        opacity:
-                          isProcessingOrCancelled || plan?.hide_upgrade
-                            ? 0.5
-                            : 1,
-                        cursor:
-                          isProcessingOrCancelled || plan?.hide_upgrade
-                            ? "not-allowed"
-                            : "pointer",
-                      }}
-                    >
-                      <IoMdAdd size={14} className={styles.addIcon} />
-                      Add
-                    </button>
+                    {canEdit("subscriptions") && (
+                      <button
+                        className={styles.addBtn}
+                        type="button"
+                        onClick={() => {
+                          router?.push({
+                            pathname: "/order-summary",
+                            query: {
+                              type: "add-license",
+                              order_id: router?.query?.orderId,
+                              customer_id: customer?.cust_id,
+                              order_sub_id: plan?.order_sub_id,
+                              licenses: plan?.licenses,
+                            },
+                          });
+                        }}
+                        disabled={isProcessingOrCancelled || plan?.hide_upgrade}
+                        style={{
+                          opacity:
+                            isProcessingOrCancelled || plan?.hide_upgrade
+                              ? 0.5
+                              : 1,
+                          cursor:
+                            isProcessingOrCancelled || plan?.hide_upgrade
+                              ? "not-allowed"
+                              : "pointer",
+                        }}
+                      >
+                        <IoMdAdd size={14} className={styles.addIcon} />
+                        Add
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -284,27 +289,78 @@ export default function PlansDetail() {
                 </div>
               </div>
 
-              <div className="d-flex justify-content-end gap-2 mt-3">
-                {plan?.hide_upgrade && (
-                  <p
-                    className="mb-0"
-                    style={{ fontSize: "14px", color: "#ff9800" }}
-                  >
-                    {plan?.initiate_message || ""}
-                  </p>
-                )}
-                {statusKey !== "processing" &&
-                  statusKey !== "upgrade pending" &&
-                  statusKey !== "downgrade pending" &&
-                  statusKey !== "cancelled" &&
-                  statusKey !== "renewal pending" &&
-                  !plan?.hide_upgrade && (
+              {canEdit("subscriptions") && (
+                <div className="d-flex justify-content-end gap-2 mt-3">
+                  {plan?.hide_upgrade && (
+                    <p
+                      className="mb-0"
+                      style={{ fontSize: "14px", color: "#ff9800" }}
+                    >
+                      {plan?.initiate_message || ""}
+                    </p>
+                  )}
+                  {statusKey !== "processing" &&
+                    statusKey !== "upgrade pending" &&
+                    statusKey !== "downgrade pending" &&
+                    statusKey !== "cancelled" &&
+                    statusKey !== "renewal pending" &&
+                    !plan?.hide_upgrade && (
+                      <>
+                        <Link
+                          href={{
+                            pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                            query: {
+                              type: "upgrade",
+                              order_id: router?.query?.orderId,
+                              customer_id: customer?.cust_id,
+                              order_sub_id: plan?.order_sub_id,
+                              plan_id: router?.query?.planId,
+                            },
+                          }}
+                          className={styles.upgradeBtn}
+                          type="button"
+                        >
+                          Upgrade
+                        </Link>
+                        {plan.licenses > 1 ? (
+                          <Link
+                            href={{
+                              pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                              query: {
+                                type: "partial-upgrade",
+                                order_id: router?.query?.orderId,
+                                customer_id: customer?.cust_id,
+                                order_sub_id: plan?.order_sub_id,
+                                plan_id: router?.query?.planId,
+                                licenses: plan?.licenses,
+                              },
+                            }}
+                            className={styles.upgradeBtn}
+                            type="button"
+                          >
+                            Partial Upgrade
+                          </Link>
+                        ) : (
+                          <button
+                            className={styles.upgradeBtn}
+                            disabled={true}
+                            style={{
+                              opacity: true ? 0.6 : 1,
+                              cursor: true ? "not-allowed" : " default",
+                            }}
+                          >
+                            Partial Upgrade
+                          </button>
+                        )}
+                      </>
+                    )}
+                  {statusKey === "expiring" && (
                     <>
                       <Link
                         href={{
                           pathname: `/services/${getServicePath(plan?.provider_id)}`,
                           query: {
-                            type: "upgrade",
+                            type: "downgrade",
                             order_id: router?.query?.orderId,
                             customer_id: customer?.cust_id,
                             order_sub_id: plan?.order_sub_id,
@@ -314,77 +370,28 @@ export default function PlansDetail() {
                         className={styles.upgradeBtn}
                         type="button"
                       >
-                        Upgrade
+                        Downgrade
                       </Link>
-                      {plan.licenses > 1 ? (
-                        <Link
-                          href={{
-                            pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                            query: {
-                              type: "partial-upgrade",
-                              order_id: router?.query?.orderId,
-                              customer_id: customer?.cust_id,
-                              order_sub_id: plan?.order_sub_id,
-                              plan_id: router?.query?.planId,
-                              licenses: plan?.licenses,
-                            },
-                          }}
-                          className={styles.upgradeBtn}
-                          type="button"
-                        >
-                          Partial Upgrade
-                        </Link>
-                      ) : (
-                        <button
-                          className={styles.upgradeBtn}
-                          disabled={true}
-                          style={{
-                            opacity: true ? 0.6 : 1,
-                            cursor: true ? "not-allowed" : " default",
-                          }}
-                        >
-                          Partial Upgrade
-                        </button>
-                      )}
+                      <Link
+                        href={{
+                          pathname: `order-summary`,
+                          query: {
+                            type: "renew-plan",
+                            order_id: router?.query?.orderId,
+                            order_sub_id: plan?.order_sub_id,
+                            planId: router?.query?.planId,
+                            licenses: plan?.licenses,
+                          },
+                        }}
+                        className={styles.renewBtn}
+                        type="button"
+                      >
+                        Renew
+                      </Link>
                     </>
                   )}
-                {statusKey === "expiring" && (
-                  <>
-                    <Link
-                      href={{
-                        pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                        query: {
-                          type: "downgrade",
-                          order_id: router?.query?.orderId,
-                          customer_id: customer?.cust_id,
-                          order_sub_id: plan?.order_sub_id,
-                          plan_id: router?.query?.planId,
-                        },
-                      }}
-                      className={styles.upgradeBtn}
-                      type="button"
-                    >
-                      Downgrade
-                    </Link>
-                    <Link
-                      href={{
-                        pathname: `order-summary`,
-                        query: {
-                          type: "renew-plan",
-                          order_id: router?.query?.orderId,
-                          order_sub_id: plan?.order_sub_id,
-                          planId: router?.query?.planId,
-                          licenses: plan?.licenses,
-                        },
-                      }}
-                      className={styles.renewBtn}
-                      type="button"
-                    >
-                      Renew
-                    </Link>
-                  </>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -437,31 +444,37 @@ export default function PlansDetail() {
                 )}
               </ul>
             </div>
-            <button
-              type="button"
-              className={styles.raiseTicketBtn}
-              onClick={() =>
-                router.push({
-                  pathname: "/support/create-new-ticket",
-                  query: {
-                    cust_id: customer?.cust_id,
-                    contact_name: customer?.contact_name,
-                    provider_id: plan?.provider_id,
-                    provider: plan?.provider,
-                    domain: plan?.domain,
-                    plan: plan?.product_name,
-                    planId: plan?.plan_id,
-                    orderId: plan?.order_id,
-                  },
-                })
-              }
-            >
-              <div>
-                <HiOutlineSupport className="me-2" size={22} strokeWidth={1} />
-                <span className="fw-normal">Raise Support Ticket</span>
-              </div>
-              <span className={styles.raiseTicketArrow}>›</span>
-            </button>
+            {canAdd("support") && (
+              <button
+                type="button"
+                className={styles.raiseTicketBtn}
+                onClick={() =>
+                  router.push({
+                    pathname: "/support/create-new-ticket",
+                    query: {
+                      cust_id: customer?.cust_id,
+                      contact_name: customer?.contact_name,
+                      provider_id: plan?.provider_id,
+                      provider: plan?.provider,
+                      domain: plan?.domain,
+                      plan: plan?.product_name,
+                      planId: plan?.plan_id,
+                      orderId: plan?.order_id,
+                    },
+                  })
+                }
+              >
+                <div>
+                  <HiOutlineSupport
+                    className="me-2"
+                    size={22}
+                    strokeWidth={1}
+                  />
+                  <span className="fw-normal">Raise Support Ticket</span>
+                </div>
+                <span className={styles.raiseTicketArrow}>›</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

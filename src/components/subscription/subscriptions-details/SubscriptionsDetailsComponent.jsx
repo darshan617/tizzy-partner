@@ -29,6 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import { IoClose } from "react-icons/io5";
 import { GoPlus } from "react-icons/go";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const planProviderIcons = [
   <svg
@@ -151,6 +152,7 @@ const SubscriptionsDetailsComponent = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState("all");
+  const { canAdd, canDelete, canEdit, canView } = usePermissions();
 
   const [orderCancel, { isLoading: isOrderCancelLoading }] =
     useOrderCancelMutation();
@@ -537,8 +539,9 @@ const SubscriptionsDetailsComponent = () => {
                     </span>
                   </div>
                   <div className={styles.domainBarRight}>
-                    {subscriptionDetails?.status?.toLowerCase() !==
-                      "cancelled" &&
+                    {canEdit("subscriptions") &&
+                      subscriptionDetails?.status?.toLowerCase() !==
+                        "cancelled" &&
                       subscriptionDetails?.plans?.[0]?.provider_id !== 3 &&
                       subscriptionDetails?.can_cancel && (
                         <button
@@ -720,7 +723,8 @@ const SubscriptionsDetailsComponent = () => {
                               </div>
                             </div>
                           </div>
-                          {plan?.status?.toLowerCase() !== "draft" &&
+                          {canEdit("subscriptions") &&
+                            plan?.status?.toLowerCase() !== "draft" &&
                             plan?.status?.toLowerCase() !== "pending" &&
                             plan?.status?.toLowerCase() !== "cancelled" &&
                             plan?.status?.toLowerCase() !== "upgrade pending" &&
@@ -756,189 +760,208 @@ const SubscriptionsDetailsComponent = () => {
                       plan?.status?.toLowerCase() === "expired" ? ( */}
 
                         <div className={`${styles.subActions}`}>
-                          {!plan?.hide_upgrade &&
-                            (plan?.status?.toLowerCase() === "expiring" ||
-                              plan?.status?.toLowerCase() === "expired") && (
-                              <>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    router?.push({
-                                      pathname: "/order-summary",
-                                      query: {
-                                        type: "renew-plan",
-                                        order_id: subscriptionDetails?.order_id,
-                                        order_sub_id: plan?.order_sub_id,
-                                        planId: plan?.plan_id,
-                                        licenses: plan?.licenses,
-                                      },
-                                    })
-                                  }
-                                  className={`${styles.subRenewBtn}`}
-                                >
-                                  <MdAutorenew
-                                    className="me-2"
-                                    size={14}
-                                    style={{ minWidth: "14px" }}
-                                  />
-                                  <span>Renew</span>
-                                </button>
-                              </>
-                            )}
-
-                          {plan?.status?.toLowerCase() !== "draft" &&
-                          plan?.status?.toLowerCase() !== "pending" &&
-                          plan?.status?.toLowerCase() !== "cancelled" &&
-                          plan?.status?.toLowerCase() !== "upgrade pending" &&
-                          plan?.status?.toLowerCase() !== "upgraded" &&
-                          plan?.status?.toLowerCase() !== "downgrade pending" &&
-                          plan?.status?.toLowerCase() !== "downgraded" &&
-                          plan?.status?.toLowerCase() !== "renewal pending" &&
-                          plan?.status?.toLowerCase() !== "cancelled" &&
-                          plan?.status?.toLowerCase() !== "processing" &&
-                          !plan?.hide_upgrade ? (
+                          {canEdit("subscriptions") && (
                             <>
-                              <Link
-                                href={{
-                                  pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                                  query: {
-                                    type: "upgrade",
-                                    order_id: subscriptionDetails?.order_id,
-                                    customer_id:
-                                      router?.query?.customerId ||
-                                      plan?.customer_id,
-                                    plan_id: plan?.plan_id,
-                                    order_sub_id: plan?.order_sub_id,
-                                  },
-                                }}
-                                className={styles.subUpgradeTextLink}
-                                onClick={() => {
-                                  Cookies.remove("customerData");
-                                  Cookies.set(
-                                    "customerData",
-                                    JSON.stringify({
-                                      partner_id: userData?.id,
-                                      customer_id: router?.query?.customerId,
-                                      domain_name: domainName,
-                                    }),
-                                  );
-                                }}
-                              >
-                                Upgrade
-                              </Link>
-                              {plan?.licenses > 1 ? (
-                                <Link
-                                  href={{
-                                    pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                                    query: {
-                                      type: "partial-upgrade",
-                                      order_id: subscriptionDetails?.order_id,
-                                      customer_id:
-                                        router?.query?.customerId ||
-                                        plan?.customer_id,
-                                      plan_id: plan?.plan_id,
-                                      order_sub_id: plan?.order_sub_id,
-                                      licenses: plan?.licenses,
-                                    },
-                                  }}
-                                  className={styles.subUpgradeTextLink}
-                                  onClick={() => {
-                                    Cookies.remove("customerData");
-                                    Cookies.set(
-                                      "customerData",
-                                      JSON.stringify({
-                                        partner_id: userData?.id,
-                                        customer_id: router?.query?.customerId,
-                                        domain_name: domainName,
-                                      }),
-                                    );
-                                  }}
-                                >
-                                  Partial Upgrade
-                                </Link>
-                              ) : (
-                                <button
-                                  className={styles.subUpgradeTextLink}
-                                  disabled={true}
-                                  style={{
-                                    opacity: true ? 0.6 : 1,
-                                    cursor: true ? "not-allowed" : " default",
-                                  }}
-                                >
-                                  Partial Upgrade
-                                </button>
-                              )}
+                              {!plan?.hide_upgrade &&
+                                (plan?.status?.toLowerCase() === "expiring" ||
+                                  plan?.status?.toLowerCase() ===
+                                    "expired") && (
+                                  <>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        router?.push({
+                                          pathname: "/order-summary",
+                                          query: {
+                                            type: "renew-plan",
+                                            order_id:
+                                              subscriptionDetails?.order_id,
+                                            order_sub_id: plan?.order_sub_id,
+                                            planId: plan?.plan_id,
+                                            licenses: plan?.licenses,
+                                          },
+                                        })
+                                      }
+                                      className={`${styles.subRenewBtn}`}
+                                    >
+                                      <MdAutorenew
+                                        className="me-2"
+                                        size={14}
+                                        style={{ minWidth: "14px" }}
+                                      />
+                                      <span>Renew</span>
+                                    </button>
+                                  </>
+                                )}
 
-                              {/* <button
+                              {plan?.status?.toLowerCase() !== "draft" &&
+                              plan?.status?.toLowerCase() !== "pending" &&
+                              plan?.status?.toLowerCase() !== "cancelled" &&
+                              plan?.status?.toLowerCase() !==
+                                "upgrade pending" &&
+                              plan?.status?.toLowerCase() !== "upgraded" &&
+                              plan?.status?.toLowerCase() !==
+                                "downgrade pending" &&
+                              plan?.status?.toLowerCase() !== "downgraded" &&
+                              plan?.status?.toLowerCase() !==
+                                "renewal pending" &&
+                              plan?.status?.toLowerCase() !== "cancelled" &&
+                              plan?.status?.toLowerCase() !== "processing" &&
+                              !plan?.hide_upgrade ? (
+                                <>
+                                  <Link
+                                    href={{
+                                      pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                                      query: {
+                                        type: "upgrade",
+                                        order_id: subscriptionDetails?.order_id,
+                                        customer_id:
+                                          router?.query?.customerId ||
+                                          plan?.customer_id,
+                                        plan_id: plan?.plan_id,
+                                        order_sub_id: plan?.order_sub_id,
+                                      },
+                                    }}
+                                    className={styles.subUpgradeTextLink}
+                                    onClick={() => {
+                                      Cookies.remove("customerData");
+                                      Cookies.set(
+                                        "customerData",
+                                        JSON.stringify({
+                                          partner_id: userData?.id,
+                                          customer_id:
+                                            router?.query?.customerId,
+                                          domain_name: domainName,
+                                        }),
+                                      );
+                                    }}
+                                  >
+                                    Upgrade
+                                  </Link>
+                                  {plan?.licenses > 1 ? (
+                                    <Link
+                                      href={{
+                                        pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                                        query: {
+                                          type: "partial-upgrade",
+                                          order_id:
+                                            subscriptionDetails?.order_id,
+                                          customer_id:
+                                            router?.query?.customerId ||
+                                            plan?.customer_id,
+                                          plan_id: plan?.plan_id,
+                                          order_sub_id: plan?.order_sub_id,
+                                          licenses: plan?.licenses,
+                                        },
+                                      }}
+                                      className={styles.subUpgradeTextLink}
+                                      onClick={() => {
+                                        Cookies.remove("customerData");
+                                        Cookies.set(
+                                          "customerData",
+                                          JSON.stringify({
+                                            partner_id: userData?.id,
+                                            customer_id:
+                                              router?.query?.customerId,
+                                            domain_name: domainName,
+                                          }),
+                                        );
+                                      }}
+                                    >
+                                      Partial Upgrade
+                                    </Link>
+                                  ) : (
+                                    <button
+                                      className={styles.subUpgradeTextLink}
+                                      disabled={true}
+                                      style={{
+                                        opacity: true ? 0.6 : 1,
+                                        cursor: true
+                                          ? "not-allowed"
+                                          : " default",
+                                      }}
+                                    >
+                                      Partial Upgrade
+                                    </button>
+                                  )}
+
+                                  {/* <button
                                 onClick={() => handlePartialUpgrade(plan)}
                                 className={styles.subUpgradeTextLink}
                               >
                                 Partial Upgrade
                               </button> */}
+                                </>
+                              ) : (
+                                <button
+                                  style={{
+                                    width: "fit-content",
+                                    fontSize: "12px",
+                                    cursor: "not-allowed",
+                                    textUnderlineOffset: "3px",
+                                  }}
+                                  className="bg-transparent border-0 p-0 text-decoration-underline text-muted"
+                                >
+                                  Upgrade
+                                </button>
+                              )}
+
+                              {!plan?.hide_upgrade &&
+                                (plan?.status?.toLowerCase() === "expiring" ||
+                                  plan?.status?.toLowerCase() ===
+                                    "expired") && (
+                                  <>
+                                    <Link
+                                      className={styles.downgradeBtn}
+                                      href={{
+                                        pathname: `/services/${getServicePath(plan?.provider_id)}`,
+                                        query: {
+                                          type: "downgrade",
+                                          order_id:
+                                            subscriptionDetails?.order_id,
+                                          customer_id:
+                                            router?.query?.customerId ||
+                                            plan?.customer_id,
+                                          plan_id: plan?.plan_id,
+                                          order_sub_id: plan?.order_sub_id,
+                                        },
+                                      }}
+                                      onClick={() => {
+                                        Cookies.remove("customerData");
+                                        Cookies.set(
+                                          "customerData",
+                                          JSON.stringify({
+                                            partner_id: userData?.id,
+                                            customer_id:
+                                              router?.query?.customerId,
+                                            domain_name: domainName,
+                                          }),
+                                        );
+                                      }}
+                                    >
+                                      Downgrade
+                                    </Link>
+                                  </>
+                                )}
                             </>
-                          ) : (
+                          )}
+                          {canView("subscriptions") && (
                             <button
-                              style={{
-                                width: "fit-content",
-                                fontSize: "12px",
-                                cursor: "not-allowed",
-                                textUnderlineOffset: "3px",
-                              }}
-                              className="bg-transparent border-0 p-0 text-decoration-underline text-muted"
+                              onClick={() =>
+                                router?.push({
+                                  pathname: "/plan-details",
+                                  query: {
+                                    planId: plan?.plan_id,
+                                    orderId: router?.query?.orderId,
+                                  },
+                                })
+                              }
+                              className="btn small btnWhite p-2"
+                              style={{ height: "fit-content" }}
                             >
-                              Upgrade
+                              <BiChevronRight size={14} />
                             </button>
                           )}
-
-                          {!plan?.hide_upgrade &&
-                            (plan?.status?.toLowerCase() === "expiring" ||
-                              plan?.status?.toLowerCase() === "expired") && (
-                              <>
-                                <Link
-                                  className={styles.downgradeBtn}
-                                  href={{
-                                    pathname: `/services/${getServicePath(plan?.provider_id)}`,
-                                    query: {
-                                      type: "downgrade",
-                                      order_id: subscriptionDetails?.order_id,
-                                      customer_id:
-                                        router?.query?.customerId ||
-                                        plan?.customer_id,
-                                      plan_id: plan?.plan_id,
-                                      order_sub_id: plan?.order_sub_id,
-                                    },
-                                  }}
-                                  onClick={() => {
-                                    Cookies.remove("customerData");
-                                    Cookies.set(
-                                      "customerData",
-                                      JSON.stringify({
-                                        partner_id: userData?.id,
-                                        customer_id: router?.query?.customerId,
-                                        domain_name: domainName,
-                                      }),
-                                    );
-                                  }}
-                                >
-                                  Downgrade
-                                </Link>
-                              </>
-                            )}
-                          <button
-                            onClick={() =>
-                              router?.push({
-                                pathname: "/plan-details",
-                                query: {
-                                  planId: plan?.plan_id,
-                                  orderId: router?.query?.orderId,
-                                },
-                              })
-                            }
-                            className="btn small btnWhite p-2"
-                            style={{ height: "fit-content" }}
-                          >
-                            <BiChevronRight size={14} />
-                          </button>
                         </div>
                       </div>
                     </div>

@@ -51,6 +51,7 @@ const Subscriptions = () => {
             icon: <BsPlusCircleDotted size={18} />,
           },
         ]}
+        permissionName="subscriptions"
       />
       <AllSubcriptions
         allSubscriptionsData={allSubscriptionsData?.data?.order_details}
