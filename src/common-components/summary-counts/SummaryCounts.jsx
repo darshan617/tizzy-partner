@@ -334,7 +334,7 @@ export default function SummaryCounts({
       iconClass: "successColor",
       badgeClass: "down",
       icon: <CustomerIcon />,
-      redirectUrl: canView("customers") ? "/customers/create-customer" : null,
+      redirectUrl: canAdd("customers") ? "/customers/create-customer" : null,
     },
 
     "active subscriptions": {
