@@ -76,6 +76,76 @@ const VerifyOtp = () => {
     return newErrors;
   };
 
+  const getDeviceInfo = () => {
+    const userAgent = navigator.userAgent;
+
+    let device_type = "desktop";
+    let platform = "unknown";
+    let device_name = "Unknown";
+
+    // iOS
+    if (/iPhone|iPad|iPod/i.test(userAgent)) {
+      platform = "ios";
+
+      if (/iPad/i.test(userAgent)) {
+        device_type = "tablet";
+        device_name = "iPad";
+      } else {
+        device_type = "mobile";
+        device_name = "iPhone";
+      }
+    }
+
+    // Android
+    else if (/Android/i.test(userAgent)) {
+      platform = "android";
+
+      if (/Mobile/i.test(userAgent)) {
+        device_type = "mobile";
+      } else {
+        device_type = "tablet";
+      }
+
+      device_name = "Android Device";
+    }
+
+    // Windows
+    else if (/Windows/i.test(userAgent)) {
+      platform = "windows";
+      device_type = "desktop";
+      device_name = "Windows PC";
+    }
+
+    // macOS
+    else if (/Macintosh|Mac OS X/i.test(userAgent)) {
+      platform = "macos";
+      device_type = "desktop";
+      device_name = "Mac";
+    }
+
+    // Linux
+    else if (/Linux/i.test(userAgent)) {
+      platform = "linux";
+      device_type = "desktop";
+      device_name = "Linux PC";
+    }
+
+    // Generate persistent device ID
+    let device_id = localStorage.getItem("device_id");
+
+    if (!device_id) {
+      device_id = crypto.randomUUID();
+      localStorage.setItem("device_id", device_id);
+    }
+
+    return {
+      device_id,
+      device_name,
+      device_type,
+      platform,
+    };
+  };
+
   const handleSubmit = async () => {
     const formErrors = validateOtp();
 
@@ -94,7 +164,7 @@ const VerifyOtp = () => {
         });
       } else {
         res = await verifyOtp({
-          body: otpDetails,
+          body: { ...otpDetails, ...getDeviceInfo() },
         });
       }
       console.log(res, "res");
