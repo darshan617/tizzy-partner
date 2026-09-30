@@ -16,33 +16,10 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
-
-const devices = [
-  {
-    name: "iPhone 15 Pro",
-    location: "Dobivali, India",
-    loginTime: "Today, 10:32AM",
-    status: "Active",
-  },
-  {
-    name: "MacBook Pro M2",
-    location: "Dobivali, India",
-    loginTime: "Today, 10:32AM",
-    status: "1 hr ago",
-  },
-  {
-    name: "iPhone 15 Pro",
-    location: "Dobivali, India",
-    loginTime: "Today, 10:32AM",
-    status: "3 hr ago",
-  },
-];
+import { usePartnerUserDeactivateDeviceMutation } from "@/redux/apis/userManagement";
 
 const actionColumns = ["View", "Add", "Edit", "Delete"];
 
-// Maps the API permission row into the UI model:
-// - access = current permission value to save to the API
-// - visibleAccess = which checkboxes are allowed to be clicked
 const mapPermissionsToGroups = (apiPermissions = []) => {
   const groupMap = new Map();
 
@@ -82,526 +59,11 @@ const UserDetail = () => {
   const userData = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
     : null;
-  const permissionsData = [
-    {
-      title: "Catalog Management",
-      permissions: [
-        {
-          name: "Provider",
-          selected: false,
-          key: "provider",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-        {
-          name: "Plan",
-          selected: false,
-          key: "plan",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-        {
-          name: "Variant",
-          selected: false,
-          key: "variant",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      title: "User Management",
-      permissions: [
-        {
-          name: "Users",
-          selected: false,
-          key: "users",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-        {
-          name: "Role",
-          selected: false,
-          key: "role",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-        {
-          name: "Variants",
-          selected: false,
-          key: "variants",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      title: "Master Data Management",
-      permissions: [
-        {
-          name: "Popular Apps",
-          selected: false,
-          key: "popular_apps",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-        {
-          name: "Plan Categories",
-          selected: false,
-          key: "plan_categories",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Create",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-        {
-          name: "Subscriptions",
-          selected: false,
-          key: "subscriptions",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              create: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-        {
-          name: "Partner Approvals",
-          selected: false,
-          key: "partner_approvals",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-        {
-          name: "Renewals",
-          selected: false,
-          key: "renewals",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-        {
-          name: "Transfer Orders",
-          selected: false,
-          key: "transfer_orders",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-        {
-          name: "Ticket List",
-          selected: false,
-          key: "ticket_list",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      title: "System Settings",
-      permissions: [
-        {
-          name: "General Settings",
-          selected: false,
-          key: "general_settings",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      title: "Transaction",
-      permissions: [
-        {
-          name: "Orders",
-          selected: false,
-          key: "orders",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              create: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-        {
-          name: "Billing & Invoices",
-          selected: false,
-          key: "billing_invoices",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-        {
-          name: "Promocode",
-          selected: false,
-          key: "promocode",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-        {
-          name: "Credit Request",
-          selected: false,
-          key: "credit_request",
-          actions: [
-            {
-              name: "View",
-              selected: false,
-              key: "view",
-            },
-            {
-              name: "Add",
-              selected: false,
-              key: "add",
-            },
-            {
-              name: "Edit",
-              selected: false,
-              key: "edit",
-            },
-            {
-              name: "Delete",
-              selected: false,
-              key: "delete",
-            },
-          ],
-        },
-      ],
-    },
-  ];
+
   const { partner_user_id } = useRouter().query;
   const [partnerUserDetail, setPartnerUserDetail] = useState(null);
   const { showToast } = useToast();
   const [permissionGroups, setPermissionGroups] = useState([]);
-
   const [showEditUserPopup, setShowEditUserPopup] = useState(false);
 
   const [getPartnerUserDetail, { isLoading }] =
@@ -610,6 +72,8 @@ const UserDetail = () => {
     useUpdatePartnerUserMutation();
   const [userManagementUpdate, { isLoading: isUserManagementUpdateLoading }] =
     useUserManagementUpdateMutation();
+  const [userDeactivate, { isLoading: isUserDeactivateLoading }] =
+    usePartnerUserDeactivateDeviceMutation();
 
   const buildPermissionPayload = () =>
     permissionGroups.flatMap((group) =>
@@ -804,6 +268,28 @@ const UserDetail = () => {
     togglePermission(groupCategory, itemLabel, accessIndex);
   };
 
+  const handleDeactivate = async () => {
+    try {
+      const res = await userDeactivate({
+        body: {
+          partner_id: userData?.id,
+          partner_user_id: partner_user_id,
+        },
+      }).unwrap();
+      console.log(res?.success);
+
+      if (res?.success) {
+        showToast(res?.message, "success");
+        getPartnerUserDetailData();
+      } else {
+        console.log("error in handleDeactivate", res);
+        showToast(res?.message, "error");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className={`container ${styles.page}`}>
@@ -912,41 +398,46 @@ const UserDetail = () => {
                 <h2 className={styles.cardTitle}>
                   Device &amp; Login Information
                 </h2>
-                <button type="button" className={styles.deactivateBtn}>
+                <button
+                  type="button"
+                  className={styles.deactivateBtn}
+                  onClick={handleDeactivate}
+                >
                   Deactivate
                 </button>
               </div>
 
               <div className={styles.deviceList}>
-                {devices.map((device) => (
-                  <article
-                    key={`${device.name}-${device.status}`}
-                    className={styles.deviceItem}
-                  >
-                    <div className={styles.deviceIcon}>
-                      {device.name === "iPhone 15 Pro" ? (
-                        <FiSmartphone size={24} />
-                      ) : (
-                        <RiMacbookLine size={24} />
-                      )}
-                    </div>
-                    <div className={styles.deviceContent}>
-                      <p className={styles.deviceName}>{device.name}</p>
-                      <p className={styles.deviceMeta}>
-                        {device.location} . {device.loginTime}
-                      </p>
-                    </div>
-                    <span
-                      className={`${styles.deviceStatus} ${
-                        device.status === "Active"
-                          ? styles.deviceStatusActive
-                          : styles.deviceStatusMuted
-                      }`}
-                    >
-                      {device.status}
-                    </span>
-                  </article>
-                ))}
+                {partnerUserDetail?.device_login_info?.devices?.map(
+                  (device, idx) => (
+                    <article key={idx} className={styles.deviceItem}>
+                      <div className={styles.deviceIcon}>
+                        {device?.device_type === "desktop" ? (
+                          <RiMacbookLine size={24} />
+                        ) : (
+                          <FiSmartphone size={24} />
+                        )}
+                      </div>
+                      <div className={styles.deviceContent}>
+                        <p className={styles.deviceName}>
+                          {device?.device_name}
+                        </p>
+                        <p className={styles.deviceMeta}>
+                          {device?.location} . {device?.logged_in_at}
+                        </p>
+                      </div>
+                      <span
+                        className={`${styles.deviceStatus} ${
+                          device?.is_active
+                            ? styles.deviceStatusActive
+                            : styles.deviceStatusMuted
+                        }`}
+                      >
+                        {device?.is_active ? "Active" : "Inactive"}
+                      </span>
+                    </article>
+                  ),
+                )}
               </div>
             </section>
           </div>

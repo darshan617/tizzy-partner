@@ -18,9 +18,21 @@ const userManagementApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["userManagement"],
     }),
-    
+    partnerUserDeactivateDevice: builder.mutation({
+      query: ({ body }) => {
+        return {
+          url: "partner-user-deactivate-device",
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: ["userManagement"],
+    }),
   }),
 });
 
-export const { useGetPartnerUsersMutation, usePartnerUserAddMutation } =
-  userManagementApi;
+export const {
+  useGetPartnerUsersMutation,
+  usePartnerUserAddMutation,
+  usePartnerUserDeactivateDeviceMutation,
+} = userManagementApi;
