@@ -15,7 +15,6 @@ const LoginForm = () => {
   const [errors, setErrors] = useState({});
   const { showToast } = useToast();
   const [inputType, setInputType] = useState("email");
-  console.log("inputType", inputType);
 
   const [sendOtp, { isLoading }] = useSendOtpMutation();
   const validateForm = () => {
