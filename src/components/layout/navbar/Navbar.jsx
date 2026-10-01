@@ -1,29 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
-import {
-  BiChevronDown,
-  BiKey,
-  BiPowerOff,
-  BiSearch,
-  BiX,
-} from "react-icons/bi";
+import { BiChevronDown, BiPowerOff, BiSearch, BiX } from "react-icons/bi";
 import { BsHandbag } from "react-icons/bs";
 import { FiBell, FiPackage, FiTrash2 } from "react-icons/fi";
-import { FaRegCircleUser } from "react-icons/fa6";
 import logo from "@/assets/signup/signupLogo.png";
 import createBtnBg from "@/assets/summary-count/createBtnBg.svg";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import { RxHamburgerMenu } from "react-icons/rx";
 import Link from "next/link";
-import { RiBankLine } from "react-icons/ri";
 import styles from "@/components/layout/navbar/Navbar.module.css";
-import { LuCalendarCog } from "react-icons/lu";
-import { RiUserSettingsLine } from "react-icons/ri";
-
 import { useRouter } from "next/router";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
-import { IoHelpBuoyOutline } from "react-icons/io5";
-import { LuWallet } from "react-icons/lu";
 import { createPortal } from "react-dom";
 import {
   useDeleteNotificationMutation,
@@ -77,8 +64,14 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
 
   const [
     getNotificationList,
-    { data: notificationList, isLoading: isNotificationListLoading },
+    {
+      data: notificationList,
+      isLoading: isNotificationListLoading,
+      isError,
+      error,
+    },
   ] = useGetNotificationListMutation();
+  console.log(isError, error?.status, "🤑🤑");
 
   const { data: balanceAndCartDatas, refetch: balanceCartRefetch } =
     useGetBalanceAndCartDetailsQuery(
@@ -289,6 +282,17 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     }
   };
 
+  useEffect(() => {
+    if (error?.status === 401) {
+      Cookies.remove("userData");
+      Cookies.remove("customerData");
+      Cookies.remove("partnerApproval");
+      Cookies.remove("userToken");
+      localStorage.removeItem("UP");
+      router?.push("/auth/login");
+    }
+  }, [error?.status === 401]);
+
   return (
     <>
       <header className={styles.pageHeader}>
@@ -428,7 +432,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                         </div>
                         <div className={styles.profDesg}>
                           <span className={styles.profID}>
-                            {`Partner ID : ${userInfo?.id || user?.id || "-"}`}
+                            {`${user?.login_as === "partner_user" ? "User ID :" : "Partner ID :"} ${userInfo?.id || user?.id || "-"}`}
                           </span>
                           <div className="statusBadge primaryBg profAdmin ms-1">
                             {user?.login_as?.replace("_", " ")?.toUpperCase()}

@@ -174,7 +174,13 @@ const VerifyOtp = () => {
         const approvalStatus = res?.data?.data?.status;
         const permissions = res?.data?.data?.permissions;
         // Save logged-in user
-        Cookies.set("userData", JSON.stringify(partner));
+        Cookies.set(
+          "userData",
+          JSON.stringify({
+            ...res?.data?.data?.partner,
+            token: res?.data?.data?.token,
+          }),
+        );
 
         // Save partner approval status
         Cookies.set("partnerApproval", approvalStatus);
