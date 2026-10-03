@@ -116,6 +116,15 @@
   background-color: #ffa000;
 }
 
+.open {
+  background-color: #00a00d;
+  color: #fcfcfc;
+}
+.closed {
+  background: #e21146;
+  color: #ffffff;
+}
+
 .contentGrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 380px;
@@ -156,6 +165,251 @@
 .activityCard {
   padding: 20px 18px;
   height: 100%;
+}
+
+.closeTicketPopup {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 10px 20px 14px;
+}
+
+.closeTicketIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border-radius: 50%;
+  background: #fff1f2;
+  color: #dc2626;
+  font-size: 20px;
+}
+
+.closeTicketMessage h3 {
+  margin: 1px 0 6px;
+  color: #1f2937;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.closeTicketMessage p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.closeTicketInputWrap {
+  padding: 0 20px 18px;
+}
+
+.closeTicketInputLabel {
+  display: block;
+  margin-bottom: 6px;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.closeTicketInputLabel span {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.closeTicketInput {
+  display: block;
+  width: 100%;
+  min-height: 84px;
+  padding: 10px 12px;
+  resize: vertical;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  outline: none;
+  color: #1f2937;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+  resize: none;
+}
+
+.closeTicketInput::placeholder {
+  color: #9ca3af;
+}
+
+.closeTicketInput:focus {
+  border-color: var(--primaryColor, #0355ac);
+  box-shadow: 0 0 0 3px rgba(3, 85, 172, 0.12);
+}
+
+.closeTicketInput:disabled {
+  background: #f9fafb;
+  cursor: not-allowed;
+}
+
+.closeTicketActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 0 20px 20px;
+}
+
+.closeTicketCancel,
+.closeTicketConfirm {
+  min-height: 38px;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.closeTicketCancel {
+  border-color: #d1d5db;
+  background: #ffffff;
+  color: #4b5563;
+}
+
+.closeTicketCancel:hover:not(:disabled) {
+  background: #f9fafb;
+}
+
+.closeTicketConfirm {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.closeTicketConfirm:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.closeTicketCancel:disabled,
+.closeTicketConfirm:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.conversationMessage {
+  margin-top: 14px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+.conversationStaff {
+  border-left: 3px solid var(--primaryColor);
+}
+
+.conversationMessageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  padding: 9px 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.conversationAuthor {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.conversationAvatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border: 3px solid var(--primaryColor);
+  border-radius: 50%;
+  color: var(--primaryColor);
+  font-size: 15px;
+}
+
+.conversationAuthorInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+}
+
+.conversationAuthorName {
+  overflow: hidden;
+  max-width: 100%;
+  color: #111827;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversationRole {
+  padding: 2px 5px;
+  border-radius: 2px;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.conversationRoleOwner {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.conversationRoleOperator {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.conversationRoleSystem {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.conversationDate {
+  flex-shrink: 0;
+  color: #6b7280;
+  font-size: 10px;
+  text-align: right;
+}
+
+.conversationBody {
+  padding: 13px 14px;
+  color: #111827;
+  font-size: 12px;
+  line-height: 1.65;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.conversationAttachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.conversationAttachment {
+  color: #0355ac;
+  font-size: 12px;
+  text-decoration: underline;
 }
 
 .customerHeader {
@@ -321,6 +575,129 @@
 
 .actionBtn:hover {
   background: #f4f7fb;
+}
+
+.replyForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.replyFieldLabel {
+  color: #374151;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.replyEmailInput,
+.replyMessageInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1f2937;
+  font: inherit;
+  font-size: 13px;
+}
+
+.replyMessageInput {
+  min-height: 110px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.replyEmailInput:focus,
+.replyMessageInput:focus {
+  border-color: var(--primaryColor, #0355ac);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(3, 85, 172, 0.12);
+}
+
+.replyFileInput {
+  display: none;
+}
+
+.replyAttachmentList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 2px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.replyAttachmentItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 9px;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #4b5563;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.replyAttachmentItem button {
+  flex: 0 0 auto;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.replyAttachmentItem button:disabled {
+  cursor: not-allowed;
+}
+
+.replyFormActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.replyAttachButton,
+.replySendButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.replyAttachButton {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #4b5563;
+}
+
+.replySendButton {
+  border: 1px solid var(--primaryColor, #0355ac);
+  background: var(--primaryColor, #0355ac);
+  color: #ffffff;
+}
+
+.replyAttachButton:disabled,
+.replySendButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 .timeline {
