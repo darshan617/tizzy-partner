@@ -4,7 +4,10 @@ import { FiUser, FiGlobe, FiLayers, FiCalendar, FiBox } from "react-icons/fi";
 import { BsPrinter } from "react-icons/bs";
 import { IoReturnUpForwardOutline } from "react-icons/io5";
 import { useRouter } from "next/router";
-import { useGetTicketDetailMutation } from "@/redux/apis/supportTicketsApi";
+import {
+  useGetTicketConversationMutation,
+  useGetTicketDetailMutation,
+} from "@/redux/apis/supportTicketsApi";
 import Cookies from "js-cookie";
 import { CiMail } from "react-icons/ci";
 import SupportChat from "./SupportChat";
@@ -36,12 +39,18 @@ const TicketDetail = () => {
     ? JSON.parse(Cookies.get("userData"))
     : {};
   const [ticketDetail, setTicketDetail] = useState(null);
+  const [ticketConversation, setTicketConversation] = useState(null);
   const detailCardRef = useRef(null);
   const [detailCardHeight, setDetailCardHeight] = useState(null);
   const { canAdd, canDelete, canEdit, canView } = usePermissions();
+  console.log(ticketConversation, "ticketConversation");
 
   const [getTicketDetail, { isLoading: isGettingTicketDetail }] =
     useGetTicketDetailMutation();
+
+  const [getTicketConversation, { isLoading: isGettingTicketConversation }] =
+    useGetTicketConversationMutation();
+
   useEffect(() => {
     if (router?.query?.ticket_id && router?.isReady) {
       const fetchTicketDetail = async () => {
@@ -59,7 +68,24 @@ const TicketDetail = () => {
           console.log(error, "error");
         }
       };
+      const fetchTicketConversation = async () => {
+        try {
+          const response = await getTicketConversation({
+            body: {
+              partner_id: userData?.id,
+              ticket_id: router?.query?.ticket_id,
+            },
+          });
+          if (response?.data?.success) {
+            setTicketConversation(response?.data?.data?.conversation);
+            console.log(response?.data);
+          }
+        } catch (error) {
+          console.log(error, "error");
+        }
+      };
       fetchTicketDetail();
+      fetchTicketConversation();
     }
   }, [userData?.id, router?.query?.ticket_id, router?.isReady]);
 
@@ -322,6 +348,32 @@ const TicketDetail = () => {
           </section>
           <div className={styles.activityCard}>
             <div className={styles.activityHeader}>
+              <p className={styles.fieldLabel}>Conversation</p>
+            </div>
+            <div className={styles.boder}></div>
+            {ticketConversation?.length > 0 ? (
+              ticketConversation?.map((item, idx) => {
+                return <div>cs</div>;
+              })
+            ) : (
+              <p className="mt-4 mb-2 text-center">No Conversation Available</p>
+            )}
+          </div>
+        </div>
+        {/* {canEdit("support") && (
+          <aside
+            className={styles.chatAside}
+            style={{ height: detailCardHeight || undefined }}
+          >
+            <SupportChat />
+          </aside>
+        )} */}
+        <div
+          className={styles.chatAside}
+          style={{ height: detailCardHeight || undefined }}
+        >
+          <div className={styles.activityCard}>
+            <div className={styles.activityHeader}>
               <p className={styles.fieldLabel}>Activity</p>
             </div>
             <div className={styles.boder}></div>
@@ -351,14 +403,6 @@ const TicketDetail = () => {
             </ul>
           </div>
         </div>
-        {canEdit("support") && (
-          <aside
-            className={styles.chatAside}
-            style={{ height: detailCardHeight || undefined }}
-          >
-            <SupportChat />
-          </aside>
-        )}
       </div>
     </div>
   );

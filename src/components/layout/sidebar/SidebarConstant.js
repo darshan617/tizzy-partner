@@ -125,6 +125,7 @@ export const SIDEBAR_MENU_CONSTANTS = [
     title: "Credit Notes",
     icon: HiOutlineDocumentCurrencyRupee,
     href: "/credit-notes",
+    key: "credit_note",
   },
 ];
 
