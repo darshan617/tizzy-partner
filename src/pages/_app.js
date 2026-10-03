@@ -8,6 +8,7 @@ import Aos from "aos";
 import "aos/dist/aos.css";
 import { ToastProvider } from "@/custom-hooks/toast/ToastProvider";
 import Script from "next/script";
+import PermissionRouteGuard from "@/components/permission-route-gaurd/PermissionRouteGuard";
 {
   /* <Script
   src="https://checkout.razorpay.com/v1/checkout.js"
@@ -117,6 +118,7 @@ export default function App({ Component, pageProps, ...rest }) {
   return (
     <Provider store={store}>
       <ToastProvider>
+        <PermissionRouteGuard />
         <Component {...pageProps} />
       </ToastProvider>
     </Provider>
