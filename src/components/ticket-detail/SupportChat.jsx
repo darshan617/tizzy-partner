@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./SupportChat.module.css";
 import {
-  useGetConvertationMutation,
+  useGetConversationMutation,
   useSendMessageMutation,
 } from "@/redux/apis/supportTicketsApi";
 import Cookies from "js-cookie";
@@ -49,12 +49,11 @@ const SupportChat = () => {
   const [sendMessage, { isLoading: isSendMessageLoading }] =
     useSendMessageMutation();
   const [getMessage, { isLoading: isGetMessageLoading }] =
-    useGetConvertationMutation();
+    useGetConversationMutation();
   const [message, setMessage] = useState("");
   const [chats, setChats] = useState([]);
   const [isAttachMenuOpen, setIsAttachMenuOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  console.log(selectedFiles, "selectedFiles");
 
   const fileInputRef = useRef(null);
   const attachMenuRef = useRef(null);
@@ -64,11 +63,12 @@ const SupportChat = () => {
       const res = await getMessage({
         body: {
           partner_id: userData?.id,
-          ticket_id: router?.query?.ticket_id,
+          partner_user_id: null,
+          // ticket_id: router?.query?.ticket_id,
         },
       });
       if (res?.data?.success) {
-        setChats(res?.data?.data?.conversation);
+        setChats(res?.data?.data);
       }
     } catch (error) {
       console.log(error);
@@ -80,7 +80,7 @@ const SupportChat = () => {
       const formData = new FormData();
 
       formData.append("partner_id", userData?.id);
-      formData.append("ticket_id", router?.query?.ticket_id);
+      formData.append("chat_id", chats?.chat_id);
       formData.append("message", message);
       if (selectedFiles.length > 0) {
         selectedFiles.forEach((file) => {
@@ -157,11 +157,13 @@ const SupportChat = () => {
       {/* Messages */}
       <div className={styles.msgContainer}>
         <div className={styles.messages}>
-          {chats?.length > 0 ? (
-            chats?.map((item, idx) => {
+          {chats?.conversation?.length > 0 ? (
+            chats?.conversation?.map((item, idx) => {
               const messageDate = getMessageDate(item);
               const dateKey = getDateKey(messageDate);
-              const previousDate = getMessageDate(chats[idx - 1]);
+              const previousDate = getMessageDate(
+                chats?.conversation?.[idx - 1],
+              );
               const hasNewDate =
                 idx === 0 || dateKey !== getDateKey(previousDate);
 

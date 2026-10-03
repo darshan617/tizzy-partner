@@ -51,15 +51,15 @@ const supportTicketsApi = apiSlice.injectEndpoints({
     }),
     sendMessage: builder.mutation({
       query: ({ body }) => ({
-        url: `/send-message`,
+        url: `/send-chat-message`,
         method: "POST",
         body: body,
       }),
       invalidatesTags: ["supportTickets"],
     }),
-    getConvertation: builder.mutation({
+    getConversation: builder.mutation({
       query: ({ body }) => ({
-        url: `/get-convertation`,
+        url: `/get-conversation`,
         method: "POST",
         body: body,
       }),
@@ -68,6 +68,22 @@ const supportTicketsApi = apiSlice.injectEndpoints({
     getTicketConversation: builder.mutation({
       query: ({ body }) => ({
         url: `/get-ticket-conversation`,
+        method: "POST",
+        body: body,
+      }),
+      invalidatesTags: ["supportTickets"],
+    }),
+    replyTicket: builder.mutation({
+      query: ({ body }) => ({
+        url: `/reply-ticket`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["supportTickets"],
+    }),
+    closeTicket: builder.mutation({
+      query: ({ body }) => ({
+        url: `/close-ticket`,
         method: "POST",
         body: body,
       }),
@@ -84,7 +100,9 @@ export const {
   useGetTicketDetailMutation,
   useDetailsForSupportMutation,
   useSendMessageMutation,
-  useGetConvertationMutation,
+  useGetConversationMutation,
   useGetTicketConversationMutation,
+  useReplyTicketMutation,
+  useCloseTicketMutation,
 } = supportTicketsApi;
 export default supportTicketsApi;
