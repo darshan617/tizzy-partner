@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "@/components/ticket-detail/TicketDetail.module.css";
 import {
   FiAlertTriangle,
+  FiPaperclip,
+  FiSend,
   FiUser,
   FiGlobe,
   FiLayers,
@@ -14,6 +16,7 @@ import {
   useCloseTicketMutation,
   useGetTicketConversationMutation,
   useGetTicketDetailMutation,
+  useReplyTicketMutation,
 } from "@/redux/apis/supportTicketsApi";
 import Cookies from "js-cookie";
 import { CiMail } from "react-icons/ci";
@@ -94,6 +97,17 @@ const TicketDetail = () => {
   const [detailCardHeight, setDetailCardHeight] = useState(null);
   const { canAdd, canDelete, canEdit, canView } = usePermissions();
   const [closeTicketMessage, setCloseTicketMessage] = useState("");
+  const [isReplyFormVisible, setIsReplyFormVisible] = useState(false);
+  const [replyEmail, setReplyEmail] = useState(userData?.email || "");
+  const effectiveReplyEmail =
+    replyEmail ||
+    ticketDetail?.email ||
+    ticketDetail?.customer_email ||
+    userData?.email ||
+    "";
+  const [replyMessage, setReplyMessage] = useState("");
+  const [replyAttachments, setReplyAttachments] = useState([]);
+  const replyFileInputRef = useRef(null);
 
   const [getTicketDetail, { isLoading: isGettingTicketDetail }] =
     useGetTicketDetailMutation();
@@ -103,6 +117,8 @@ const TicketDetail = () => {
 
   const [closeTicket, { isLoading: isClosingTicket }] =
     useCloseTicketMutation();
+
+  const [replyTicket, { isLoading: isReplying }] = useReplyTicketMutation();
 
   const fetchTicketDetail = async () => {
     try {
@@ -137,6 +153,71 @@ const TicketDetail = () => {
     }
   };
 
+  const handleReplyFilesSelected = (event) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length) {
+      setReplyAttachments((currentFiles) => [...currentFiles, ...files]);
+    }
+    event.target.value = "";
+  };
+
+  const handleRemoveReplyAttachment = (fileIndex) => {
+    setReplyAttachments((currentFiles) =>
+      currentFiles.filter((_, index) => index !== fileIndex),
+    );
+  };
+
+  const handleSendTicketReply = async (event) => {
+    event.preventDefault();
+    const trimmedMessage = replyMessage.trim();
+
+    if (!userData?.id) {
+      showToast(
+        "Unable to identify the partner user. Please sign in again.",
+        "error",
+      );
+      return;
+    }
+    if (!trimmedMessage) {
+      showToast("Please enter a reply message.", "error");
+      return;
+    }
+    if (!effectiveReplyEmail.trim()) {
+      showToast("Please enter an email address.", "error");
+      return;
+    }
+
+    const body = new FormData();
+    body.append("partner_id", String(userData.id));
+    body.append("ticket_id", String(router?.query?.ticket_id || ""));
+    body.append("partner_user_id", String(null));
+    body.append("message", trimmedMessage);
+    body.append("email", effectiveReplyEmail.trim());
+    replyAttachments.forEach((file) => body.append("attachments[]", file));
+
+    try {
+      const response = await replyTicket({ body });
+      if (response?.data?.success) {
+        showToast(
+          response?.data?.message || "Reply sent successfully.",
+          "success",
+        );
+        setReplyMessage("");
+        setReplyAttachments([]);
+        setIsReplyFormVisible(false);
+        await fetchTicketConversation();
+      } else {
+        showToast(
+          response?.data?.message || "Unable to send the reply.",
+          "error",
+        );
+      }
+    } catch (error) {
+      console.error("Ticket reply failed:", error);
+      showToast("Unable to send the reply. Please try again.", "error");
+    }
+  };
+
   const handleCloseTicket = async () => {
     try {
       const response = await closeTicket({
@@ -164,11 +245,47 @@ const TicketDetail = () => {
   };
 
   useEffect(() => {
-    if (router?.query?.ticket_id && router?.isReady) {
-      fetchTicketDetail();
-      fetchTicketConversation();
-    }
-  }, [userData?.id, router?.query?.ticket_id, router?.isReady]);
+    if (!router?.query?.ticket_id || !router?.isReady) return;
+
+    let isCurrent = true;
+    const ticketId = router.query.ticket_id;
+
+    getTicketDetail({
+      body: { partner_id: userData?.id, ticket_id: ticketId },
+    })
+      .unwrap()
+      .then((response) => {
+        if (isCurrent && response?.success) {
+          setTicketDetail(response?.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Ticket detail fetch failed:", error);
+      });
+
+    getTicketConversation({
+      body: { partner_id: userData?.id, ticket_id: ticketId },
+    })
+      .unwrap()
+      .then((response) => {
+        if (isCurrent && response?.success) {
+          setTicketConversation(response?.data?.conversation);
+        }
+      })
+      .catch((error) => {
+        console.error("Ticket conversation fetch failed:", error);
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [
+    getTicketConversation,
+    getTicketDetail,
+    router?.isReady,
+    router?.query?.ticket_id,
+    userData?.id,
+  ]);
 
   useEffect(() => {
     const detailCard = detailCardRef.current;
@@ -422,15 +539,21 @@ const TicketDetail = () => {
                 </div>
               </div>
 
-              <div className={styles.actions}>
-                {/* <button type="button" className={styles.actionBtn}>
+              {ticketDetail?.status !== "Closed" && (
+                <div className={styles.actions}>
+                  {/* <button type="button" className={styles.actionBtn}>
               <BsReply />
               Reply
             </button> */}
-                <button type="button" className={styles.actionBtn}>
-                  <CgMailReply /> Reply
-                </button>
-                {ticketDetail?.status !== "Closed" && (
+
+                  <button
+                    type="button"
+                    className={styles.actionBtn}
+                    onClick={() => setIsReplyFormVisible((visible) => !visible)}
+                    aria-expanded={isReplyFormVisible}
+                  >
+                    <CgMailReply /> Reply
+                  </button>
                   <button
                     type="button"
                     className={styles.actionBtn}
@@ -443,8 +566,95 @@ const TicketDetail = () => {
                   >
                     Close Ticket
                   </button>
-                )}
-              </div>
+                </div>
+              )}
+
+              {isReplyFormVisible && (
+                <form
+                  className={styles.replyForm}
+                  onSubmit={handleSendTicketReply}
+                >
+                  <label
+                    className={styles.replyFieldLabel}
+                    htmlFor="reply-email"
+                  >
+                    Email
+                  </label>
+                  <input
+                    id="reply-email"
+                    type="email"
+                    className={styles.replyEmailInput}
+                    value={effectiveReplyEmail}
+                    onChange={(event) => setReplyEmail(event.target.value)}
+                    placeholder="Email address"
+                    required
+                    disabled={isReplying}
+                  />
+                  <label
+                    className={styles.replyFieldLabel}
+                    htmlFor="ticket-reply-message"
+                  >
+                    Message
+                  </label>
+                  <textarea
+                    id="ticket-reply-message"
+                    className={styles.replyMessageInput}
+                    value={replyMessage}
+                    onChange={(event) => setReplyMessage(event.target.value)}
+                    placeholder="Write your reply..."
+                    rows={5}
+                    required
+                    disabled={isReplying}
+                  />
+                  {replyAttachments.length > 0 && (
+                    <ul className={styles.replyAttachmentList}>
+                      {replyAttachments.map((file, index) => (
+                        <li
+                          key={`${file.name}-${file.lastModified}-${index}`}
+                          className={styles.replyAttachmentItem}
+                        >
+                          <span>{file.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveReplyAttachment(index)}
+                            aria-label={`Remove ${file.name}`}
+                            disabled={isReplying}
+                          >
+                            ×
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <input
+                    ref={replyFileInputRef}
+                    className={styles.replyFileInput}
+                    type="file"
+                    multiple
+                    onChange={handleReplyFilesSelected}
+                    disabled={isReplying}
+                  />
+                  <div className={styles.replyFormActions}>
+                    <button
+                      type="button"
+                      className={styles.replyAttachButton}
+                      onClick={() => replyFileInputRef.current?.click()}
+                      disabled={isReplying}
+                    >
+                      <FiPaperclip />
+                      Attach files
+                    </button>
+                    <button
+                      type="submit"
+                      className={styles.replySendButton}
+                      disabled={isReplying}
+                    >
+                      <FiSend />
+                      {isReplying ? "Sending..." : "Send reply"}
+                    </button>
+                  </div>
+                </form>
+              )}
             </section>
             <div className={styles.activityCard}>
               <div className={styles.activityHeader}>
