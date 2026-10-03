@@ -73,6 +73,14 @@ const supportTicketsApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["supportTickets"],
     }),
+    closeTicket: builder.mutation({
+      query: ({ body }) => ({
+        url: `/close-ticket`,
+        method: "POST",
+        body: body,
+      }),
+      invalidatesTags: ["supportTickets"],
+    }),
   }),
 });
 
@@ -86,5 +94,6 @@ export const {
   useSendMessageMutation,
   useGetConvertationMutation,
   useGetTicketConversationMutation,
+  useCloseTicketMutation,
 } = supportTicketsApi;
 export default supportTicketsApi;
