@@ -167,7 +167,6 @@ const VerifyOtp = () => {
           body: { ...otpDetails, ...getDeviceInfo() },
         });
       }
-      console.log(res, "res");
 
       if (res?.data?.success) {
         const partner = res?.data?.data?.partner;
