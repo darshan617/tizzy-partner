@@ -51,7 +51,7 @@ export default function TransactionSection({ data, isDataLoading }) {
   const [activeTab, setActiveTab] = useState("transactions");
   const [currentData, setCurrentData] = useState(data?.transaction_history);
   const [showAll, setShowAll] = useState(false);
-  const { canView } = usePermissions();
+  const { canView, canAdd } = usePermissions();
 
   useEffect(() => {
     setCurrentData(
@@ -253,6 +253,10 @@ export default function TransactionSection({ data, isDataLoading }) {
     </div>
   );
 
+  const hasPermission = isRenewals
+    ? canView("renewals")
+    : canView("transactions");
+
   return (
     <div className={styles.transactionWrapper}>
       <div className={styles.transactionCard}>
@@ -286,14 +290,23 @@ export default function TransactionSection({ data, isDataLoading }) {
           ) : visibleData?.length > 0 ? (
             <>
               <div className={styles.contentList}>
-                {visibleData?.map((item, index) =>
+                {/* {visibleData?.map((item, index) =>
                   isRenewals
                     ? renderRenewalRow(item, index)
                     : renderTransactionRow(item, index),
+                )} */}
+                {visibleData?.length > 0 && hasPermission ? (
+                  visibleData.map((item, index) =>
+                    isRenewals
+                      ? renderRenewalRow(item, index)
+                      : renderTransactionRow(item, index),
+                  )
+                ) : (
+                  <p className="text-center">No data available</p>
                 )}
               </div>
 
-              {currentData?.length > 5 && (
+              {hasPermission && currentData?.length > 5 && (
                 <button
                   type="button"
                   onClick={() => setShowAll(!showAll)}
