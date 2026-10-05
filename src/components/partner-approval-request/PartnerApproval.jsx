@@ -36,6 +36,22 @@ const PartnerApproval = () => {
       if (res?.data?.success) {
         const status = res?.data?.data?.status;
         Cookies.set("partnerApproval", status);
+        //
+        const existingUserData = Cookies.get("userData");
+        let userData = {};
+
+        try {
+          userData = existingUserData ? JSON.parse(existingUserData) : {};
+        } catch (error) {
+          console.error("Invalid userData cookie:", error);
+        }
+        Cookies.set(
+          "userData",
+          JSON.stringify({
+            ...userData,
+            token: res?.data?.data?.token,
+          }),
+        );
         setAppStatus(status);
         if (status === "approved") {
           router.replace("/dashboard");
