@@ -28,6 +28,14 @@ const userManagementApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["userManagement"],
     }),
+    partnerUserInactive: builder.mutation({
+      query: ({ body }) => ({
+        url: `/partner-user-inactive`,
+        method: "POST",
+        body: body,
+      }),
+      invalidatesTags: ["supportTickets"],
+    }),
   }),
 });
 
@@ -35,4 +43,5 @@ export const {
   useGetPartnerUsersMutation,
   usePartnerUserAddMutation,
   usePartnerUserDeactivateDeviceMutation,
+  usePartnerUserInactiveMutation,
 } = userManagementApi;

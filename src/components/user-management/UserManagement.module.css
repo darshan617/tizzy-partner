@@ -336,6 +336,39 @@
     background: #024a96;
   }
 
+  .deactivateConfirmation {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .deactivateIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border-radius: 50%;
+    background: #fff1f2;
+    color: #dc2626;
+  }
+
+  .deactivateMessage {
+    margin: 1px 0 6px;
+    color: #1f2937;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .deactivateDescription {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
   @media (min-width: 768px) {
     .formGrid {
       grid-template-columns: 1fr 1fr;
