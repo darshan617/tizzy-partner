@@ -9,6 +9,8 @@ import {
   FiLayers,
   FiCalendar,
   FiBox,
+  FiMessageCircle,
+  FiX,
 } from "react-icons/fi";
 import { BsPrinter } from "react-icons/bs";
 import { useRouter } from "next/router";
@@ -93,6 +95,7 @@ const TicketDetail = () => {
   const isPopupVisible = useSelector(selectIsPopupVisible);
   const [ticketDetail, setTicketDetail] = useState(null);
   const [ticketConversation, setTicketConversation] = useState(null);
+  const [isSupportChatOpen, setIsSupportChatOpen] = useState(false);
   const detailCardRef = useRef(null);
   const [detailCardHeight, setDetailCardHeight] = useState(null);
   const { canAdd, canDelete, canEdit, canView } = usePermissions();
@@ -747,6 +750,50 @@ const TicketDetail = () => {
               )}
             </div>
 
+            {/* <div className={styles.activityCard}>
+              <div className={styles.activityHeader}>
+                <p className={styles.fieldLabel}>Activity</p>
+              </div>
+              <div className={styles.boder}></div>
+              <ul className={styles.timeline}>
+                {ticketDetail?.activities?.map((item, idx) => (
+                  <li key={item.id} className={styles.timelineItem}>
+                    <div className={styles.timelineLeft}>
+                      <span className={styles.timelineDate}>{item.date}</span>
+                      <span
+                        className={styles.timelineDot}
+                        style={{
+                          backgroundColor:
+                            activitiesColor?.[idx % activitiesColor.length]
+                              ?.color,
+                        }}
+                      />
+                    </div>
+                    <div className={styles.timelineContent}>
+                      <h3 className={styles.timelineTitle}>{item.title}</h3>
+                      <p className={styles.timelineDesc}>{item.description}</p>
+                      <button type="button" className={styles.timelineBy}>
+                        By {item.by}
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div> */}
+          </div>
+          {/* {canEdit("support") && (
+          <aside
+            className={styles.chatAside}
+            style={{ height: detailCardHeight || undefined }}
+          >
+            <SupportChat />
+          </aside>
+        )} */}
+          <div
+            className={styles.chatAside}
+            style={{ height: detailCardHeight || undefined }}
+          >
+            {/* <SupportChat /> */}
             <div className={styles.activityCard}>
               <div className={styles.activityHeader}>
                 <p className={styles.fieldLabel}>Activity</p>
@@ -778,51 +825,30 @@ const TicketDetail = () => {
               </ul>
             </div>
           </div>
-          {/* {canEdit("support") && (
-          <aside
-            className={styles.chatAside}
-            style={{ height: detailCardHeight || undefined }}
-          >
-            <SupportChat />
-          </aside>
-        )} */}
-          <div
-            className={styles.chatAside}
-            style={{ height: detailCardHeight || undefined }}
-          >
-            <SupportChat />
-            {/* <div className={styles.activityCard}>
-            <div className={styles.activityHeader}>
-              <p className={styles.fieldLabel}>Activity</p>
-            </div>
-            <div className={styles.boder}></div>
-            <ul className={styles.timeline}>
-              {ticketDetail?.activities?.map((item, idx) => (
-                <li key={item.id} className={styles.timelineItem}>
-                  <div className={styles.timelineLeft}>
-                    <span className={styles.timelineDate}>{item.date}</span>
-                    <span
-                      className={styles.timelineDot}
-                      style={{
-                        backgroundColor:
-                          activitiesColor?.[idx % activitiesColor.length]
-                            ?.color,
-                      }}
-                    />
-                  </div>
-                  <div className={styles.timelineContent}>
-                    <h3 className={styles.timelineTitle}>{item.title}</h3>
-                    <p className={styles.timelineDesc}>{item.description}</p>
-                    <button type="button" className={styles.timelineBy}>
-                      By {item.by}
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div> */}
-          </div>
         </div>
+      </div>
+      <div className={styles.supportChatWidget}>
+        {isSupportChatOpen && (
+          <div
+            id="ticket-support-chat"
+            className={styles.supportChatPanel}
+            role="dialog"
+            aria-label="Support chat"
+          >
+            <SupportChat />
+          </div>
+        )}
+        <button
+          type="button"
+          className={styles.supportChatLauncher}
+          onClick={() => setIsSupportChatOpen((isOpen) => !isOpen)}
+          aria-label={
+            isSupportChatOpen ? "Close support chat" : "Open support chat"
+          }
+          aria-expanded={isSupportChatOpen}
+        >
+          {isSupportChatOpen ? <FiX /> : <FiMessageCircle />}
+        </button>
       </div>
       {isPopupVisible === "close-ticket" && (
         <CustomPopup
