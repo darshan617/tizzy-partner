@@ -238,7 +238,7 @@ const SupportChat = () => {
                                   </svg>
 
                                   <Link href={item?.url} target="_blank">
-                                    {item?.filename}
+                                    {item?.name}
                                   </Link>
                                 </div>
                               );
