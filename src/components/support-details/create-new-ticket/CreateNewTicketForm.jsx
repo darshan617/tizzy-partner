@@ -14,7 +14,7 @@ import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import { useRouter } from "next/router";
 
-const MAX_DESCRIPTION_LENGTH = 200;
+// const MAX_DESCRIPTION_LENGTH = 200;
 const MAX_FILE_SIZE_MB = 2;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 const MAX_TOTAL_ATTACHMENTS_MB = 5;
@@ -101,8 +101,8 @@ const CreateNewTicketForm = () => {
     page_no: 1,
     per_page: 100,
   });
-  const remainingCharacters =
-    MAX_DESCRIPTION_LENGTH - formData.description.length;
+  // const remainingCharacters =
+  //   MAX_DESCRIPTION_LENGTH - formData.description.length;
 
   const getTicketDetails = async () => {
     try {
@@ -214,11 +214,7 @@ const CreateNewTicketForm = () => {
     }
 
     const pendingCcEmail = ccEmailInput.trim();
-    if (!formData.cc_emails.length) {
-      newErrors.cc_emails = pendingCcEmail
-        ? "Click Add to include this email"
-        : "At least one CC email is required";
-    } else if (pendingCcEmail) {
+    if (pendingCcEmail) {
       const isValidCcEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pendingCcEmail);
 
       if (!isValidCcEmail) {
@@ -256,12 +252,12 @@ const CreateNewTicketForm = () => {
 
   const handleDescriptionChange = (event) => {
     const { value } = event.target;
-    if (value.length <= MAX_DESCRIPTION_LENGTH) {
-      setFormData((prev) => ({
-        ...prev,
-        description: value,
-      }));
-    }
+    // if (value.length <= MAX_DESCRIPTION_LENGTH) {
+    setFormData((prev) => ({
+      ...prev,
+      description: value,
+    }));
+    // }
     setErrors((prev) => ({
       ...prev,
       description: "",
@@ -777,15 +773,15 @@ const CreateNewTicketForm = () => {
                 ) : (
                   <p className="m-0"></p>
                 )}
-                <p className={styles.charCount}>
+                {/* <p className={styles.charCount}>
                   Remaining {remainingCharacters} Characters
-                </p>
+                </p> */}
               </div>
             </div>
 
             <div className={`${styles.formGroup}`}>
               <label className={styles.label} htmlFor="ticket-cc-email">
-                Add CC<span className={styles.required}>*</span>
+                Add CC
               </label>
               <div className="d-flex gap-2">
                 <input
