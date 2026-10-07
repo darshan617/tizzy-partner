@@ -195,7 +195,7 @@ const TicketDetail = () => {
     const body = new FormData();
     body.append("partner_id", String(userData.id));
     body.append("ticket_id", String(router?.query?.ticket_id || ""));
-    body.append("partner_user_id", String(null));
+    body.append("partner_user_id", String(userData?.partner_user_id || null));
     body.append("message", trimmedMessage);
     body.append("email", effectiveReplyEmail.trim());
     replyAttachments.forEach((file) => body.append("attachments[]", file));

@@ -432,7 +432,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                         </div>
                         <div className={styles.profDesg}>
                           <span className={styles.profID}>
-                            {`${user?.login_as === "partner_user" ? "User ID :" : "Partner ID :"} ${userInfo?.id || user?.id || "-"}`}
+                            {`${user?.login_as === "partner_user" ? "User ID :" : "Partner ID :"} ${user?.login_as === "partner_user" ? user?.partner_user_id : userInfo?.id || user?.id || "-"}`}
                           </span>
                           <div className="statusBadge primaryBg profAdmin ms-1">
                             {user?.login_as?.replace("_", " ")?.toUpperCase()}
