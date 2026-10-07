@@ -54,7 +54,23 @@ const UserManagement = () => {
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "mobile") {
+      const onlyNumbers = value.replace(/\D/g, "");
+
+      setFormData((prev) => ({
+        ...prev,
+        [name]: onlyNumbers,
+      }));
+
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
   const handleCloseAddUser = () => setIsAddUserOpen(false);
   const handleCloseDeactivateUser = () => {
@@ -301,12 +317,13 @@ const UserManagement = () => {
                   </label>
                   <input
                     id="mobile"
-                    type="number"
+                    type="text"
                     name="mobile"
                     className="form-control"
                     required
                     value={formData.mobile}
                     onChange={handleChange}
+                    maxLength={10}
                   />
                 </div>
 
