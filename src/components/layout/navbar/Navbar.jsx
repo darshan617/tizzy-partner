@@ -22,6 +22,7 @@ import { selectUserData } from "@/redux/slices/userSlice";
 import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi";
 import usePermissions from "@/custom-hooks/permissions/usePermissions";
 import { ACCOUNT_MENU_CONSTANTS } from "../sidebar/SidebarConstant";
+import { useSearchQuery } from "@/redux/apis/searchApi";
 
 const formatNotificationTime = (dateString) => {
   if (!dateString) return "";
@@ -61,6 +62,21 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const dropdownRef = useRef(null);
   const userInfo = useSelector(selectUserData);
   const { canAdd, canDelete, canEdit, canView } = usePermissions();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debounceSearch, setDebounceSearch] = useState("");
+
+  const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
+
+  const {
+    currentData: searchData,
+    isFetching: isSearchLoading,
+    isError: isSearchError,
+  } = useSearchQuery({ query: debounceSearch }, { skip: debounceSearch === "" });
+
+  const searchPayload = searchData?.data || searchData;
+  const searchResults = Array.isArray(searchPayload?.list)
+    ? searchPayload.list
+    : searchPayload?.results?.flatMap((item) => item?.items || []) || [];
 
   const [
     getNotificationList,
@@ -71,7 +87,6 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
       error,
     },
   ] = useGetNotificationListMutation();
-  console.log(isError, error?.status, "🤑🤑");
 
   const { data: balanceAndCartDatas, refetch: balanceCartRefetch } =
     useGetBalanceAndCartDetailsQuery(
@@ -293,6 +308,34 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     }
   }, [error?.status === 401]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebounceSearch(searchQuery.trim());
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+  const handleSearchResultClick = (item) => {
+    const type = String(item?.type || "").toLowerCase();
+
+    if (type.includes("ticket")) {
+      router.push(
+        `/support/ticket-details?ticket_id=${encodeURIComponent(
+          item?.ticket_id ?? item?.id ?? "",
+        )}`,
+      );
+    } else if (type.includes("order")) {
+      router.push({
+        pathname: "/order-details",
+        query: { ordId: item?.order_id ?? item?.id },
+      });
+    } else {
+      return;
+    }
+
+    setIsSearchDropdownOpen(false);
+  };
+
   return (
     <>
       <header className={styles.pageHeader}>
@@ -321,11 +364,18 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                       type="text"
                       className={`form-control ${styles.pageSearch}`}
                       placeholder="Search"
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setIsSearchDropdownOpen(Boolean(e.target.value.trim()));
+                      }}
                     />
-                    <button className={styles.searchBtn}>
-                      <Link className="icon" href="#">
-                        <BiSearch size={18} />
-                      </Link>
+                    <button
+                      type="button"
+                      className={styles.searchBtn}
+                      aria-label="Search"
+                    >
+                      <BiSearch size={18} />
                     </button>
                   </search>
                   <button
@@ -335,6 +385,54 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                     data-bs-target="#pageSearchMain"
                     aria-label="Close"
                   ></button>
+                  {isSearchDropdownOpen &&
+                    searchQuery.trim() === debounceSearch &&
+                    debounceSearch &&
+                    searchResults.length > 0 && (
+                      <div className={styles.searchDd}>
+                        {searchResults.map((item, index) => (
+                          <button
+                            type="button"
+                            className={styles.searchResult}
+                            key={`${item?.type || "result"}-${item?.id || index}`}
+                            onClick={() => handleSearchResultClick(item)}
+                          >
+                            <BiSearch
+                              className={styles.searchResultIcon}
+                              size={16}
+                            />
+                            <span className={styles.searchResultText}>
+                              <span className={styles.searchResultTitle}>
+                                {item?.title}
+                              </span>
+                              {item?.subtitle && (
+                                <span className={styles.searchResultSubtitle}>
+                                  {item.subtitle}
+                                </span>
+                              )}
+                            </span>
+                            <span className={styles.searchResultType}>
+                              {item?.type
+                                ? `${String(item.type).charAt(0).toUpperCase()}${String(item.type).slice(1)}`
+                                : ""}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  {isSearchDropdownOpen &&
+                    searchQuery.trim() === debounceSearch &&
+                    debounceSearch &&
+                    !isSearchLoading &&
+                    searchResults.length === 0 && (
+                      <div className={styles.searchDd}>
+                        <p className={styles.searchEmpty}>
+                          {isSearchError
+                            ? "Unable to load search results"
+                            : "No results found"}
+                        </p>
+                      </div>
+                    )}
                 </div>
               </div>
               <div className="col-auto d-flex align-items-center">

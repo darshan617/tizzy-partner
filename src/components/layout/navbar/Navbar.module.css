@@ -22,7 +22,7 @@
 
 .pageSearchBox {
   width: 100%;
-  height: 40px;
+  height: 46px;
   overflow: hidden;
   position: relative;
   border-radius: 50rem;
@@ -32,20 +32,21 @@
   width: 100%;
   height: 100%;
   border: 1px solid var(--borderColor);
-  background-color: #f9f9f9;
+  background-color: #fff;
   border-radius: 50rem;
-  padding-right: 40px;
-  padding-left: 15px;
+  padding-right: 15px;
+  padding-left: 44px;
 }
 
 .searchBtn {
   width: 30px;
   height: 30px;
-  background: #f9f9f9;
+  color: #8290a3;
+  background: transparent;
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 5px;
+  left: 5px;
   margin: auto;
   border: 0;
   border-radius: 50%;
@@ -80,7 +81,82 @@
 }
 
 .pgSearchWrap {
-  /* default styles for pgSearchWrap */
+  position: relative;
+  width: min(390px, 90vw);
+  z-index: 1001;
+}
+.searchDd {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: #ffffff;
+  width: 100%;
+  padding: 0;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.searchResult {
+  width: 100%;
+  min-height: 63px;
+  cursor: pointer;
+  border: 0;
+  border-bottom: 1px solid #edf0f4;
+  background: #fff;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+.searchResult:last-child {
+  border-bottom: 0;
+}
+.searchResult:hover,
+.searchResult:focus-visible {
+  background: #f7f9fc;
+}
+.searchResultIcon {
+  flex: 0 0 auto;
+  color: #0056b3;
+}
+.searchResultText {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.searchResultTitle {
+  overflow: hidden;
+  color: #17202b;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.searchResultSubtitle {
+  overflow: hidden;
+  color: #8290a3;
+  font-size: 11px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.searchResultType {
+  flex: 0 0 auto;
+  color: #0056b3;
+  font-size: 11px;
+  margin-left: 8px;
+}
+.searchEmpty {
+  margin: 0;
+  padding: 16px;
+  color: #8290a3;
+  font-size: 13px;
 }
 
 .profDropdownMenu {
@@ -647,5 +723,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    width: 100%;
   }
 }
