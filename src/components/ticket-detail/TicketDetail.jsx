@@ -158,6 +158,8 @@ const TicketDetail = () => {
 
   const handleReplyFilesSelected = (event) => {
     const files = Array.from(event.target.files || []);
+    console.log(files);
+
     if (files.length) {
       setReplyAttachments((currentFiles) => [...currentFiles, ...files]);
     }
@@ -193,7 +195,7 @@ const TicketDetail = () => {
     const body = new FormData();
     body.append("partner_id", String(userData.id));
     body.append("ticket_id", String(router?.query?.ticket_id || ""));
-    body.append("partner_user_id", String(null));
+    body.append("partner_user_id", String(userData?.partner_user_id || null));
     body.append("message", trimmedMessage);
     body.append("email", effectiveReplyEmail.trim());
     replyAttachments.forEach((file) => body.append("attachments[]", file));
@@ -350,10 +352,28 @@ const TicketDetail = () => {
                     <p className="m-0">{ticketDetail?.customer_name}</p>
                   </div>
                 </div>
-                <div className={styles.metaItem}>
+                <div
+                  className={`${styles.metaItem} d-flex flex-column justify-content-end align-items-end `}
+                >
                   <p className={styles.fieldLabel}>
                     {ticketDetail?.created_on}
                   </p>
+                  {ticketDetail?.status !== "Closed" && (
+                    <button
+                      type="button"
+                      className={styles.actionBtn}
+                      style={{
+                        background: "#ffeded",
+                        border: "1px solid #ffc2c2",
+                        color: "#fc6565",
+                      }}
+                      onClick={() =>
+                        dispatch(setIsPopupVisible("close-ticket"))
+                      }
+                    >
+                      Close Ticket
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -541,14 +561,11 @@ const TicketDetail = () => {
                   )}
                 </div>
               </div>
-
-              {ticketDetail?.status !== "Closed" && (
-                <div className={styles.actions}>
-                  {/* <button type="button" className={styles.actionBtn}>
-              <BsReply />
-              Reply
-            </button> */}
-
+            </section>
+            <div className={styles.activityCard}>
+              <div className={styles.activityHeader}>
+                <p className={styles.fieldLabel}>Conversation</p>
+                {ticketDetail?.status !== "Closed" && (
                   <button
                     type="button"
                     className={styles.actionBtn}
@@ -557,21 +574,8 @@ const TicketDetail = () => {
                   >
                     <CgMailReply /> Reply
                   </button>
-                  <button
-                    type="button"
-                    className={styles.actionBtn}
-                    style={{
-                      background: "#ffeded",
-                      border: "1px solid #ffc2c2",
-                      color: "#fc6565",
-                    }}
-                    onClick={() => dispatch(setIsPopupVisible("close-ticket"))}
-                  >
-                    Close Ticket
-                  </button>
-                </div>
-              )}
-
+                )}
+              </div>
               {isReplyFormVisible && (
                 <form
                   className={styles.replyForm}
@@ -658,11 +662,6 @@ const TicketDetail = () => {
                   </div>
                 </form>
               )}
-            </section>
-            <div className={styles.activityCard}>
-              <div className={styles.activityHeader}>
-                <p className={styles.fieldLabel}>Conversation</p>
-              </div>
               <div className={styles.boder}></div>
               {ticketConversation?.length > 0 ? (
                 ticketConversation.map((item, idx) => {

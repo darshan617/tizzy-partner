@@ -63,7 +63,7 @@ const SupportChat = () => {
       const res = await getMessage({
         body: {
           partner_id: userData?.id,
-          partner_user_id: null,
+          partner_user_id: userData?.partner_user_id || null,
           // ticket_id: router?.query?.ticket_id,
         },
       });

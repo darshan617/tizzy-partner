@@ -433,6 +433,8 @@
   line-height: 1.65;
   white-space: pre-line;
   overflow-wrap: anywhere;
+  max-height: 400px;
+  overflow: auto;
 }
 
 .conversationAttachments {
@@ -575,6 +577,8 @@
   color: #4b5563;
   font-size: 14px;
   line-height: 1.65;
+  max-height: 300px;
+  overflow: auto;
 }
 
 .descriptionBody p {
@@ -750,6 +754,9 @@
   padding: 0 18px 12px;
   border-bottom: 1px solid #eef1f5;
   width: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .timelineItem {
