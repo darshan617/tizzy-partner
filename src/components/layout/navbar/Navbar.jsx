@@ -71,7 +71,10 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     currentData: searchData,
     isFetching: isSearchLoading,
     isError: isSearchError,
-  } = useSearchQuery({ query: debounceSearch }, { skip: debounceSearch === "" });
+  } = useSearchQuery(
+    { query: debounceSearch },
+    { skip: debounceSearch === "" },
+  );
 
   const searchPayload = searchData?.data || searchData;
   const searchResults = Array.isArray(searchPayload?.list)
@@ -326,8 +329,25 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
       );
     } else if (type.includes("order")) {
       router.push({
-        pathname: "/order-details",
-        query: { ordId: item?.order_id ?? item?.id },
+        pathname: "/subscriptions/subscriptions-details",
+        query: {
+          orderId: item?.order_id ?? item?.id,
+          customerId: item?.customer_id,
+        },
+      });
+    } else if (type.includes("customers")) {
+      router.push({
+        pathname: "/customers/customer-details",
+        query: {
+          customerId: item?.customer_id,
+        },
+      });
+    } else if (type.includes("users")) {
+      router.push({
+        pathname: "/user-detail",
+        query: {
+          partner_user_id: item?.id,
+        },
       });
     } else {
       return;
