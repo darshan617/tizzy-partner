@@ -1,14 +1,12 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import styles from "@/components/subscription/all-subscriptions/AllSubscriptions.module.css";
 import { FiFilter, FiGlobe } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import Loader from "@/common-components/loader/Loader";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useGetAllRenewalsListMutation } from "@/redux/apis/renewalsApi";
-import Cookies from "js-cookie";
-import React, { useEffect } from "react";
 import usePermissions from "@/custom-hooks/permissions/usePermissions";
+import PaginationNew from "@/common-components/pagination/PaginationNew";
 
 const statusLabelMap = {
   expiring: "Expiring",
@@ -40,68 +38,55 @@ const formatDueDate = (dateStr) => {
   return `${day}-${month}-${year}`;
 };
 
-const AllRenewals = () => {
+const AllRenewals = ({
+  itemPerPage,
+  paginationData,
+  setCurrentPage,
+  currentPage,
+  renewalsList,
+  isAllRenewalsListLoading,
+  searchQuery,
+  setSearchQuery,
+  selectedStatuses,
+  setSelectedStatuses,
+}) => {
   const router = useRouter();
-  const userData = Cookies.get("userData")
-    ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
-    : {};
   const { canAdd, canDelete, canEdit, canView } = usePermissions();
 
-  const [getAllRenewalsList, { isLoading: isAllRenewalsListLoading }] =
-    useGetAllRenewalsListMutation();
-  const [renewalsList, setRenewalsList] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedStatuses, setSelectedStatuses] = useState([]);
 
-  const fetchAllRenewalsList = async () => {
-    try {
-      const res = await getAllRenewalsList({
-        body: { partner_id: userData?.id },
-      });
-      if (res?.data?.success) {
-        setRenewalsList(res?.data?.data || []);
-      }
-    } catch (error) {
-      console.log("Error", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllRenewalsList();
-  }, []);
+  const pageSize = Number(paginationData?.per_page || itemPerPage) || 1;
+  const pageCount = Math.ceil(Number(paginationData?.total || 0) / pageSize);
+  const pageNumbersArray = Array.from({ length: pageCount }, (_, i) => i + 1);
 
   const toggleStatus = (status) => {
-    setSelectedStatuses((prev) =>
-      prev.includes(status)
-        ? prev.filter((item) => item !== status)
-        : [...prev, status],
-    );
+    setSelectedStatuses((prev) => (prev === status ? "all" : status));
   };
 
-  const filteredRenewals = useMemo(
-    () =>
-      renewalsList?.filter((renewal) => {
-        const q = searchQuery.trim().toLowerCase();
-        const matchesSearch =
-          q === "" ||
-          renewal?.domain?.toLowerCase().includes(q) ||
-          renewal?.plan?.toLowerCase().includes(q) ||
-          renewal?.order_no?.toLowerCase().includes(q) ||
-          renewal?.customer_name?.toLowerCase().includes(q) ||
-          renewal?.email?.toLowerCase().includes(q);
-        const renewalStatus = renewal?.status?.toLowerCase();
-        const matchesStatus =
-          selectedStatuses.length === 0 ||
-          selectedStatuses.includes(renewalStatus);
+  // const filteredRenewals = useMemo(
+  //   () =>
+  //     renewalsList?.filter((renewal) => {
+  //       const q = searchQuery.trim().toLowerCase();
+  //       const matchesSearch =
+  //         q === "" ||
+  //         renewal?.domain?.toLowerCase().includes(q) ||
+  //         renewal?.plan?.toLowerCase().includes(q) ||
+  //         renewal?.order_no?.toLowerCase().includes(q) ||
+  //         renewal?.customer_name?.toLowerCase().includes(q) ||
+  //         renewal?.email?.toLowerCase().includes(q);
+  //       const renewalStatus = renewal?.status?.toLowerCase();
+  //       const matchesStatus =
+  //         selectedStatuses.length === 0 ||
+  //         selectedStatuses.includes(renewalStatus);
 
-        return matchesSearch && matchesStatus;
-      }),
-    [renewalsList, searchQuery, selectedStatuses],
-  );
+  //       return matchesSearch && matchesStatus;
+  //     }),
+  //   [renewalsList, searchQuery, selectedStatuses],
+  // );
 
-  const totalCount = renewalsList.length;
-  const showingCount = filteredRenewals.length;
+  const from = paginationData?.from || 0;
+  const to = paginationData?.to || 0;
+  const totalCount = paginationData?.total || 0;
 
   return (
     <div className="col">
@@ -142,7 +127,7 @@ const AllRenewals = () => {
               >
                 Showing{" "}
                 <span className="fw-medium darkColor">
-                  {showingCount > 0 ? 1 : 0} - {showingCount}
+                  {from} - {to}
                 </span>{" "}
                 from <span className="fw-medium darkColor">{totalCount}</span>{" "}
                 Renewals
@@ -162,20 +147,23 @@ const AllRenewals = () => {
                     <ul className={`${styles.filterGroup} gap-2`} role="group">
                       {statusOrder.map((status) => (
                         <li key={status}>
-                          <input
-                            type="checkbox"
-                            className="btn-check"
-                            id={`renewal_status_${status}`}
-                            autoComplete="off"
-                            checked={selectedStatuses.includes(status)}
-                            onChange={() => toggleStatus(status)}
-                          />
-                          <label
+                          <button
+                            key={status}
                             className={`${styles.filterItem} rounded-pill`}
-                            htmlFor={`renewal_status_${status}`}
+                            onClick={() => toggleStatus(status)}
+                            style={{
+                              backgroundColor:
+                                selectedStatuses === status
+                                  ? "var(--primaryColor)"
+                                  : "",
+                              color:
+                                selectedStatuses === status
+                                  ? "var(--whiteColor)"
+                                  : "var(--darkColor)",
+                            }}
                           >
                             {statusLabelMap[status]}
-                          </label>
+                          </button>
                         </li>
                       ))}
                     </ul>
@@ -211,8 +199,8 @@ const AllRenewals = () => {
               className={`${styles.subscriptionList} d-flex flex-column gap-3 mb-5`}
             >
               {!isAllRenewalsListLoading ? (
-                filteredRenewals.length > 0 ? (
-                  filteredRenewals?.map((renewal, idx) => {
+                renewalsList.length > 0 ? (
+                  renewalsList?.map((renewal, idx) => {
                     const statusKey = renewal.status?.toLowerCase();
 
                     return (
@@ -365,6 +353,12 @@ const AllRenewals = () => {
                 <Loader />
               )}
             </div>
+            <PaginationNew
+              pageNumbersArray={pageNumbersArray}
+              setCurrentPage={setCurrentPage}
+              currentPage={currentPage}
+              itemPerPage={itemPerPage}
+            />
           </div>
         </div>
       </div>
