@@ -18,13 +18,16 @@ import {
   selectIsPopupVisible,
   setIsPopupVisible,
 } from "@/redux/slices/popupSlice";
+import PaginationNew from "@/common-components/pagination/PaginationNew";
+
+const emptyInvoices = [];
 
 const statusLabelMap = {
-  active: "Active",
+  // active: "Active",
   paid: "Paid",
   pending: "Pending",
   overdue: "Overdue",
-  completed: "Completed",
+  // completed: "Completed",
   failed: "Failed",
 };
 
@@ -32,8 +35,8 @@ const statusOrder = [
   "paid",
   "pending",
   "overdue",
-  "active",
-  "completed",
+  // "active",
+  // "completed",
   "failed",
 ];
 
@@ -101,6 +104,14 @@ const AllInvoice = ({
   totalCount,
   fetchInvoiceData,
   paymentAttempts,
+  currentPage,
+  itemPerPage,
+  setCurrentPage,
+  paginationData,
+  searchQuery,
+  setSearchQuery,
+  selectedStatuses,
+  setSelectedStatuses,
 }) => {
   const { showToast } = useToast();
   const router = useRouter();
@@ -109,15 +120,25 @@ const AllInvoice = ({
 
   console.log(isPopupupVisible, "isPopupupVisibleisPopupupVisible");
 
-  const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedStatuses, setSelectedStatuses] = useState("all");
   const [selectedIds, setSelectedIds] = useState([]);
 
-  const invoices = invoiceData || [];
+  const invoices = invoiceData || emptyInvoices;
 
   const toggleStatus = (status) => {
     setSelectedStatuses((prev) => (prev === status ? "all" : status));
+    setSelectedIds([]);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    setSelectedIds([]);
+    setCurrentPage(page);
+  };
+
+  const handleSearchChange = (event) => {
+    setSelectedIds([]);
+    setSearchQuery(event.target.value);
   };
 
   const [
@@ -127,24 +148,12 @@ const AllInvoice = ({
   const [paymentVerify, { isLoading: isPaymentVerifyLoading }] =
     usePaymentVerifyMutation();
 
-  const filteredInvoices = useMemo(() => {
-    const q = searchQuery?.trim()?.toLowerCase();
-
-    return invoices?.filter((invoice) => {
-      const matchesSearch =
-        q === "" ||
-        invoice?.domain_name?.toLowerCase()?.includes(q) ||
-        invoice?.invoice_no?.toLowerCase()?.includes(q) ||
-        invoice?.customer_name?.toLowerCase()?.includes(q) ||
-        invoice?.plan_name?.toLowerCase()?.includes(q);
-
-      const statusKey = getStatusKey(invoice?.status);
-      const matchesStatus =
-        selectedStatuses === "all" || selectedStatuses === statusKey;
-
-      return matchesSearch && matchesStatus;
-    });
-  }, [invoices, searchQuery, selectedStatuses]);
+  const filteredInvoices = invoices;
+  const pageSize = Number(paginationData?.per_page || itemPerPage) || 1;
+  const pageCount =
+    Number(paginationData?.last_page) ||
+    Math.ceil(Number(totalCount || 0) / pageSize);
+  const pageNumbersArray = Array.from({ length: pageCount }, (_, i) => i + 1);
 
   const selectedPayment = useMemo(
     () =>
@@ -303,8 +312,12 @@ const AllInvoice = ({
   };
 
   const resultTotal = totalCount ?? invoices?.length;
-  const showingEnd = filteredInvoices?.length;
-  const showingStart = showingEnd > 0 ? 1 : 0;
+  const showingStart =
+    paginationData?.from ??
+    (filteredInvoices.length > 0 ? (currentPage - 1) * pageSize + 1 : 0);
+  const showingEnd =
+    paginationData?.to ??
+    Math.min((currentPage - 1) * pageSize + filteredInvoices.length, resultTotal);
 
   return (
     <>
@@ -320,7 +333,7 @@ const AllInvoice = ({
                       className={`${styles.pageSearch} form-control`}
                       placeholder="Search Invoice"
                       value={searchQuery}
-                      onChange={(event) => setSearchQuery(event.target.value)}
+                      onChange={handleSearchChange}
                     />
                     <button className={styles.searchBtn} type="button">
                       <svg
@@ -460,13 +473,7 @@ const AllInvoice = ({
               <div className="d-flex flex-column gap-3 mb-4">
                 {!isInvoiceDataLoading ? (
                   filteredInvoices?.length > 0 ? (
-                    filteredInvoices
-                      ?.filter((invoice) =>
-                        selectedStatuses === "all"
-                          ? true
-                          : invoice?.status?.toLowerCase() === selectedStatuses,
-                      )
-                      ?.map((invoice, idx) => (
+                    filteredInvoices?.map((invoice, idx) => (
                         <div
                           key={invoice?.invoice_no || idx}
                           className={`${styles.contentRow} btnDisplay`}
@@ -615,6 +622,12 @@ const AllInvoice = ({
                   <Loader />
                 )}
               </div>
+              <PaginationNew
+                pageNumbersArray={pageNumbersArray}
+                setCurrentPage={handlePageChange}
+                currentPage={currentPage}
+                itemPerPage={itemPerPage}
+              />
             </div>
           </div>
         </div>
