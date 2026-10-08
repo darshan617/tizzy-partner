@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import styles from "./AllCreditNoteList.module.css";
 import { FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
 import Loader from "@/common-components/loader/Loader";
 import DownloadExcel from "@/common-components/download-excel/DownloadExcel";
-import Pagination from "@/common-components/pagination/Pagination";
+import PaginationNew from "@/common-components/pagination/PaginationNew";
 
 const statusLabelMap = {
   credited: "Credited",
@@ -116,48 +116,39 @@ const creditNoteColumns = [
   },
 ];
 
-const AllCreditNoteList = ({ creditNotesList, isLoading }) => {
-  const [searchQuery, setSearchQuery] = useState("");
+const AllCreditNoteList = ({
+  creditNotesList,
+  isLoading,
+  currentPage,
+  itemPerPage,
+  setCurrentPage,
+  paginationData,
+  searchQuery,
+  setSearchQuery,
+  selectedStatuses,
+  setSelectedStatuses,
+}) => {
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedStatuses, setSelectedStatuses] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemPerPage] = useState(10);
 
   const toggleStatus = (status) => {
     setSelectedStatuses((prev) => (prev === status ? "all" : status));
     setCurrentPage(1);
   };
 
-  const filteredCreditNotes = useMemo(() => {
-    const q = searchQuery?.trim()?.toLowerCase();
-
-    return creditNotesList?.filter((note) => {
-      const matchesSearch =
-        q === "" ||
-        note?.credit_note_no?.toLowerCase()?.includes(q) ||
-        note?.order_no?.toLowerCase()?.includes(q) ||
-        String(note?.order_id || "")
-          .toLowerCase()
-          .includes(q) ||
-        note?.wallet_status?.toLowerCase()?.includes(q) ||
-        note?.credit_note_status?.toLowerCase()?.includes(q);
-
-      const statusKey = getStatusKey(note?.credit_note_status);
-      const matchesStatus =
-        selectedStatuses === "all" || selectedStatuses === statusKey;
-
-      return matchesSearch && matchesStatus;
-    });
-  }, [creditNotesList, searchQuery, selectedStatuses]);
-
-  const resultTotal = filteredCreditNotes?.length || 0;
-  const startIndex = (currentPage - 1) * itemPerPage;
-  const paginatedList = filteredCreditNotes?.slice(
-    startIndex,
-    startIndex + itemPerPage,
-  );
-  const showingEnd = Math.min(startIndex + itemPerPage, resultTotal);
-  const showingStart = resultTotal > 0 ? startIndex + 1 : 0;
+  const paginatedList = creditNotesList || [];
+  const pageSize = Number(paginationData?.per_page || itemPerPage) || 1;
+  const resultTotal = Number(paginationData?.total ?? creditNotesList?.length ?? 0);
+  const pageCount =
+    Number(paginationData?.last_page) ||
+    Math.ceil(resultTotal / pageSize);
+  const pageNumbersArray = Array.from({ length: pageCount }, (_, i) => i + 1);
+  const startIndex =
+    paginationData?.from ??
+    (paginatedList.length > 0 ? (currentPage - 1) * pageSize + 1 : 0);
+  const showingEnd =
+    paginationData?.to ??
+    Math.min((currentPage - 1) * pageSize + paginatedList.length, resultTotal);
+  const showingStart = startIndex;
 
   return (
     <div className="col py-4">
@@ -172,10 +163,7 @@ const AllCreditNoteList = ({ creditNotesList, isLoading }) => {
                     className={`${styles.pageSearch} form-control`}
                     placeholder="Search Credit Notes"
                     value={searchQuery}
-                    onChange={(event) => {
-                      setSearchQuery(event.target.value);
-                      setCurrentPage(1);
-                    }}
+                    onChange={(event) => setSearchQuery(event.target.value)}
                   />
                   <button className={styles.searchBtn} type="button">
                     <svg
@@ -270,7 +258,7 @@ const AllCreditNoteList = ({ creditNotesList, isLoading }) => {
           className={`${styles.toolbar} py-2 px-sm-4 px-3 d-flex align-items-center justify-content-end`}
         >
           <DownloadExcel
-            data={filteredCreditNotes}
+          data={paginatedList}
             columns={creditNoteColumns}
             fileName="credit-notes"
             className={styles.downloadListBtn}
@@ -377,10 +365,10 @@ const AllCreditNoteList = ({ creditNotesList, isLoading }) => {
         </div>
       </div>
 
-      <Pagination
-        currentPage={currentPage}
+      <PaginationNew
+        pageNumbersArray={pageNumbersArray}
         setCurrentPage={setCurrentPage}
-        data={filteredCreditNotes}
+        currentPage={currentPage}
         itemPerPage={itemPerPage}
       />
     </div>
