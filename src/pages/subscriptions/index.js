@@ -10,6 +10,10 @@ const Subscriptions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(10);
   const [selectedProviderId, setSelectedProviderId] = useState(null);
+  const [selectedStatuses, setSelectedStatuses] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debounceSearchQuery, setDebounceSearchQuery] = useState("");
+
   const [
     getAllSubscriptions,
     { refetch, isLoading: isAllSubscriptionDataLoading },
@@ -26,6 +30,8 @@ const Subscriptions = () => {
           page_no: currentPage,
           per_page: itemPerPage,
           provider_id: selectedProviderId,
+          status: selectedStatuses,
+          search: debounceSearchQuery,
         },
       });
       if (res?.data?.success) {
@@ -37,7 +43,20 @@ const Subscriptions = () => {
   };
   useEffect(() => {
     fetchAllSubscriptions();
-  }, [currentPage, itemPerPage, selectedProviderId]);
+  }, [
+    currentPage,
+    itemPerPage,
+    selectedProviderId,
+    selectedStatuses,
+    debounceSearchQuery,
+  ]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebounceSearchQuery(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
   return (
     <Layout>
       <SummaryCounts
@@ -63,6 +82,10 @@ const Subscriptions = () => {
         setItemPerPage={setItemPerPage}
         selectedProviderId={selectedProviderId}
         setSelectedProviderId={setSelectedProviderId}
+        setSelectedStatuses={setSelectedStatuses}
+        selectedStatuses={selectedStatuses}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       />
     </Layout>
   );

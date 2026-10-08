@@ -15,6 +15,9 @@ const Customers = () => {
     : {};
   const [currentPage, setCurrentPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(10);
+  const [selectedStatuses, setSelectedStatuses] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debounceSearchQuery, setDebounceSearchQuery] = useState("");
   const {
     data: allCustomers,
     isFetching: isFetchingAllCustomers,
@@ -23,13 +26,21 @@ const Customers = () => {
     partner_id: userData?.id,
     page_no: currentPage,
     per_page: itemPerPage,
+    status: selectedStatuses,
+    search: debounceSearchQuery,
   });
 
   useEffect(() => {
     refetch();
-  }, [currentPage, itemPerPage]);
+  }, [currentPage, itemPerPage, selectedStatuses, debounceSearchQuery]);
 
-  console.log(allCustomers?.data?.customers, "allCustomers");
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebounceSearchQuery(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   return (
     <Layout>
@@ -55,6 +66,10 @@ const Customers = () => {
         setCurrentPage={setCurrentPage}
         setItemPerPage={setItemPerPage}
         paginationData={allCustomers?.data?.pagination}
+        selectedStatuses={selectedStatuses}
+        setSelectedStatuses={setSelectedStatuses}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       />
     </Layout>
   );
