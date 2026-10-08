@@ -81,16 +81,16 @@ const AllRenewals = () => {
 
   const filteredRenewals = useMemo(
     () =>
-      renewalsList.filter((renewal) => {
+      renewalsList?.filter((renewal) => {
         const q = searchQuery.trim().toLowerCase();
         const matchesSearch =
           q === "" ||
-          renewal.domain?.toLowerCase().includes(q) ||
-          renewal.plan?.toLowerCase().includes(q) ||
-          renewal.order_no?.toLowerCase().includes(q) ||
-          renewal.customer_name?.toLowerCase().includes(q) ||
-          renewal.email?.toLowerCase().includes(q);
-        const renewalStatus = renewal.status?.toLowerCase();
+          renewal?.domain?.toLowerCase().includes(q) ||
+          renewal?.plan?.toLowerCase().includes(q) ||
+          renewal?.order_no?.toLowerCase().includes(q) ||
+          renewal?.customer_name?.toLowerCase().includes(q) ||
+          renewal?.email?.toLowerCase().includes(q);
+        const renewalStatus = renewal?.status?.toLowerCase();
         const matchesStatus =
           selectedStatuses.length === 0 ||
           selectedStatuses.includes(renewalStatus);

@@ -31,23 +31,24 @@ export default function CustomerList({
   setCurrentPage,
   setItemPerPage,
   paginationData,
+  setSelectedStatuses,
+  selectedStatuses,
+  setSearchQuery,
+  searchQuery,
 }) {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedStatuses, setSelectedStatuses] = useState("all");
-  const [selectedServices, setSelectedServices] = useState("all");
+  console.log(searchQuery);
 
   const startIndex = (currentPage - 1) * itemPerPage;
-  console.log(startIndex, "ssss");
 
-  const toggleService = (service) => {
-    setSelectedServices((prev) =>
-      prev.includes(service)
-        ? prev.filter((s) => s !== service)
-        : [...prev, service],
-    );
-  };
+  // const toggleService = (service) => {
+  //   setSelectedServices((prev) =>
+  //     prev.includes(service)
+  //       ? prev.filter((s) => s !== service)
+  //       : [...prev, service],
+  //   );
+  // };
 
   function toCamelCase(str) {
     return str
@@ -61,26 +62,26 @@ export default function CustomerList({
     (_, i) => i + 1,
   );
 
-  const filteredCustomers = useMemo(
-    () =>
-      allCustomers?.data?.customers?.filter((customer) => {
-        const q = searchQuery?.trim()?.toLowerCase();
-        const matchesSearch =
-          q === "" ||
-          customer?.company?.toLowerCase()?.includes(q) ||
-          customer?.name?.toLowerCase()?.includes(q) ||
-          customer?.email?.toLowerCase()?.includes(q) ||
-          customer?.mobile?.toLowerCase()?.includes(q) ||
-          customer?.customer_no?.toLowerCase()?.includes(q);
-        const matchesStatus =
-          selectedStatuses === "all"
-            ? true
-            : selectedStatuses === customer?.status?.toLowerCase();
+  // const filteredCustomers = useMemo(
+  //   () =>
+  //     allCustomers?.data?.customers?.filter((customer) => {
+  //       const q = searchQuery?.trim()?.toLowerCase();
+  //       const matchesSearch =
+  //         q === "" ||
+  //         customer?.company?.toLowerCase()?.includes(q) ||
+  //         customer?.name?.toLowerCase()?.includes(q) ||
+  //         customer?.email?.toLowerCase()?.includes(q) ||
+  //         customer?.mobile?.toLowerCase()?.includes(q) ||
+  //         customer?.customer_no?.toLowerCase()?.includes(q);
+  //       const matchesStatus =
+  //         selectedStatuses === "all"
+  //           ? true
+  //           : selectedStatuses === customer?.status?.toLowerCase();
 
-        return matchesSearch && matchesStatus;
-      }),
-    [searchQuery, selectedStatuses, allCustomers?.data?.customers],
-  );
+  //       return matchesSearch && matchesStatus;
+  //     }),
+  //   [searchQuery, selectedStatuses, allCustomers?.data?.customers],
+  // );
 
   return (
     <div className="col">
@@ -246,8 +247,8 @@ export default function CustomerList({
             <div className={`${styles.CustomerList} `}>
               {isFetchingAllCustomers ? (
                 <Loader />
-              ) : filteredCustomers?.length > 0 ? (
-                filteredCustomers
+              ) : allCustomers?.data?.customers?.length > 0 ? (
+                allCustomers?.data?.customers
                   ?.slice(startIndex, startIndex + itemPerPage)
                   ?.map((customer, idx) => (
                     <div
