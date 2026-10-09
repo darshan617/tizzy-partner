@@ -53,7 +53,8 @@
 .deactivateBtn,
 .profileEditBtn,
 .cardEditIcon,
-.saveBtn {
+.saveBtn,
+.activeBtn {
   border: none;
   transition: all 0.2s ease;
 }
@@ -73,10 +74,32 @@
 .deactivateBtn {
   padding: 10px 18px;
   border-radius: 999px;
-  background: linear-gradient(135deg, #ff5f93, #ff6aa6);
+  background: linear-gradient(135deg, #e64a7b, #ff6aa6);
   color: #fff;
   font-size: var(--fs14);
   font-weight: 600;
+}
+.activeBtn {
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1fa31c, #24c221);
+  color: #fff;
+  font-size: var(--fs14);
+  font-weight: 600;
+}
+.userStatusActive {
+  background: #02bc9c;
+  padding: 0 3px;
+  border-radius: 3px;
+  font-size: 10px;
+  margin-left: 5px;
+}
+.userStatusDeactive {
+  background: #ff5f93;
+  padding: 0 3px;
+  border-radius: 3px;
+  font-size: 10px;
+  margin-left: 5px;
 }
 
 .profileCard,
@@ -504,7 +527,8 @@
 .deactivateBtn:hover,
 .profileEditBtn:hover,
 .cardEditIcon:hover,
-.saveBtn:hover {
+.saveBtn:hover,
+.activeBtn:hover {
   transform: translateY(-1px);
 }
 
