@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { IoMdArrowBack } from "react-icons/io";
 import { FiFilter, FiLayers, FiPlus } from "react-icons/fi";
 import Link from "next/link";
@@ -30,6 +30,7 @@ import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import { IoClose } from "react-icons/io5";
 import { GoPlus } from "react-icons/go";
 import usePermissions from "@/custom-hooks/permissions/usePermissions";
+import PaginationNew from "@/common-components/pagination/PaginationNew";
 
 const planProviderIcons = [
   <svg
@@ -148,8 +149,12 @@ const SubscriptionsDetailsComponent = () => {
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
   const [subscriptionDetails, setSubscriptionDetails] = useState(null);
+  const [paginationData, setPaginationData] = useState(null);
   const [reason, setReason] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [debounceSearchQuery, setDebounceSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemPerPage = 10;
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState("all");
   const { canAdd, canDelete, canEdit, canView } = usePermissions();
@@ -167,21 +172,36 @@ const SubscriptionsDetailsComponent = () => {
     setSelectedStatuses((prev) => (prev === statusKey ? "all" : statusKey));
   };
 
-  const fetchSubscriptionDetails = async () => {
-    if (!router?.query?.orderId) return;
+  const fetchSubscriptionDetails = useCallback(async () => {
+    if (!router?.isReady || !router?.query?.orderId) return;
     try {
       const res = await getSubscriptionDetails({
         body: {
           order_id: router?.query?.orderId,
+          search: debounceSearchQuery,
+          page_no: currentPage,
+          per_page: itemPerPage,
         },
       });
       if (res?.data?.success) {
         setSubscriptionDetails(res?.data?.data);
+        setPaginationData(
+          res?.data?.pagination ||
+            res?.data?.data?.pagination ||
+            res?.data?.data?.plans?.pagination ||
+            null,
+        );
       }
     } catch (error) {
       console.log("Error", error);
     }
-  };
+  }, [
+    currentPage,
+    debounceSearchQuery,
+    getSubscriptionDetails,
+    itemPerPage,
+    router,
+  ]);
 
   const handlePartialUpgrade = async (plan) => {
     try {
@@ -239,13 +259,27 @@ const SubscriptionsDetailsComponent = () => {
   };
 
   useEffect(() => {
-    if (router?.isReady) {
+    const timer = setTimeout(() => {
       fetchSubscriptionDetails();
-    }
-  }, [router?.isReady, router?.query?.orderId]);
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [fetchSubscriptionDetails]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebounceSearchQuery(searchQuery);
+      setCurrentPage(1);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const customer = subscriptionDetails?.customer;
-  const plans = subscriptionDetails?.plans || [];
+  const plans = useMemo(
+    () => subscriptionDetails?.plans || [],
+    [subscriptionDetails?.plans],
+  );
   const domainName = subscriptionDetails?.domain_name || plans?.[0]?.domain;
   const periodStart =
     subscriptionDetails?.subscription_start_date ||
@@ -254,33 +288,39 @@ const SubscriptionsDetailsComponent = () => {
     subscriptionDetails?.subscription_end_date ||
     plans?.[0]?.subscription_end_date;
 
-  // Search + status filtering over the current subscription's plans.
+  // Status filtering remains local; search and pagination are handled by the API.
   const filteredPlans = useMemo(() => {
-    const q = searchQuery?.trim()?.toLowerCase() || "";
-
     return plans.filter((plan) => {
-      const matchesSearch =
-        q === "" ||
-        plan?.plan_name?.toLowerCase()?.includes(q) ||
-        String(plan?.subscription_no || "")
-          .toLowerCase()
-          .includes(q) ||
-        String(plan?.order_sub_id || "")
-          .toLowerCase()
-          .includes(q) ||
-        domainName?.toLowerCase()?.includes(q);
-
       const statusKey = getStatusKey(plan?.status);
       const matchesStatus =
         selectedStatuses === "all" || selectedStatuses === statusKey;
 
-      return matchesSearch && matchesStatus;
+      return matchesStatus;
     });
-  }, [plans, searchQuery, selectedStatuses, domainName]);
+  }, [plans, selectedStatuses]);
 
-  const resultTotal = filteredPlans?.length || 0;
-  const itemPerPage = resultTotal;
-  const startIndex = resultTotal > 0 ? 0 : -1;
+  const pageSize = Number(paginationData?.per_page || itemPerPage) || 1;
+  const resultTotal = Number(
+    paginationData?.total ?? subscriptionDetails?.total_count ?? plans.length,
+  );
+  const pageCount =
+    Number(paginationData?.last_page) ||
+    Math.ceil(resultTotal / pageSize);
+  const visiblePageCount = Math.min(pageCount, 5);
+  const firstVisiblePage = Math.max(
+    1,
+    Math.min(currentPage - 2, pageCount - visiblePageCount + 1),
+  );
+  const pageNumbersArray = Array.from(
+    { length: visiblePageCount },
+    (_, index) => firstVisiblePage + index,
+  );
+  const showingStart =
+    paginationData?.from ??
+    (plans.length > 0 ? (currentPage - 1) * pageSize + 1 : 0);
+  const showingEnd =
+    paginationData?.to ??
+    Math.min((currentPage - 1) * pageSize + plans.length, resultTotal);
 
   if (isSubscriptionDetailsLoading) {
     return (
@@ -462,7 +502,7 @@ const SubscriptionsDetailsComponent = () => {
                     >
                       Showing{" "}
                       <span className="fw-medium darkColor">
-                        {startIndex + 1}-{itemPerPage}
+                        {showingStart}-{showingEnd}
                       </span>{" "}
                       from{" "}
                       <span className="fw-medium darkColor">{resultTotal}</span>{" "}
@@ -970,6 +1010,15 @@ const SubscriptionsDetailsComponent = () => {
                   <div className="text-center">
                     <p className="text-muted">No plans found</p>
                   </div>
+                )}
+                {pageNumbersArray.length > 0 && (
+                  <PaginationNew
+                    pageNumbersArray={pageNumbersArray}
+                    setCurrentPage={setCurrentPage}
+                    currentPage={currentPage}
+                    itemPerPage={pageSize}
+                    lastPage={pageCount}
+                  />
                 )}
               </div>
             </div>
