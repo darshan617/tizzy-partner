@@ -17,6 +17,11 @@ import { useRouter } from "next/router";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import { useToast } from "@/custom-hooks/toast/ToastProvider";
 import { usePartnerUserDeactivateDeviceMutation } from "@/redux/apis/userManagement";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectIsPopupVisible,
+  setIsPopupVisible,
+} from "@/redux/slices/popupSlice";
 
 const actionColumns = ["View", "Add", "Edit", "Delete"];
 
@@ -56,6 +61,7 @@ const mapPermissionsToGroups = (apiPermissions = []) => {
 };
 
 const UserDetail = () => {
+  const dispatch = useDispatch();
   const userData = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
     : null;
@@ -65,6 +71,7 @@ const UserDetail = () => {
   const { showToast } = useToast();
   const [permissionGroups, setPermissionGroups] = useState([]);
   const [showEditUserPopup, setShowEditUserPopup] = useState(false);
+  const isPopupVisible = useSelector(selectIsPopupVisible);
 
   const [getPartnerUserDetail, { isLoading }] =
     useGetPartnerUserDetailMutation();
@@ -268,18 +275,20 @@ const UserDetail = () => {
     togglePermission(groupCategory, itemLabel, accessIndex);
   };
 
-  const handleDeactivate = async () => {
+  const handleDeactivate = async (type) => {
     try {
       const res = await userDeactivate({
         body: {
           partner_id: userData?.id,
           partner_user_id: partner_user_id,
+          type: type,
         },
       }).unwrap();
       console.log(res?.success);
 
       if (res?.success) {
         showToast(res?.message, "success");
+        dispatch(setIsPopupVisible(""));
         getPartnerUserDetailData();
       } else {
         console.log("error in handleDeactivate", res);
@@ -341,6 +350,15 @@ const UserDetail = () => {
                   </div>
                   <p className={styles.profileRole}>
                     {partnerUserDetail?.designation ?? "-"}
+                    <span
+                      className={
+                        partnerUserDetail?.status === "active"
+                          ? styles.userStatusActive
+                          : styles.userStatusDeactive
+                      }
+                    >
+                      {partnerUserDetail?.status?.toUpperCase() ?? "-"}
+                    </span>
                   </p>
                 </div>
                 <button
@@ -398,13 +416,23 @@ const UserDetail = () => {
                 <h2 className={styles.cardTitle}>
                   Device &amp; Login Information
                 </h2>
-                <button
-                  type="button"
-                  className={styles.deactivateBtn}
-                  onClick={handleDeactivate}
-                >
-                  Deactivate
-                </button>
+                {partnerUserDetail?.status === "active" ? (
+                  <button
+                    type="button"
+                    className={styles.deactivateBtn}
+                    onClick={() => dispatch(setIsPopupVisible("deactivate"))}
+                  >
+                    Deactivate
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className={styles.activeBtn}
+                    onClick={() => dispatch(setIsPopupVisible("activate"))}
+                  >
+                    Activate
+                  </button>
+                )}
               </div>
 
               <div className={styles.deviceList}>
@@ -656,6 +684,32 @@ const UserDetail = () => {
               </button>
             </div>
           </div>
+        </CustomPopup>
+      )}
+      {isPopupVisible === "deactivate" && (
+        <CustomPopup
+          onClose={() => dispatch(setIsPopupVisible(""))}
+          onPrimary={() => handleDeactivate("deactive")}
+          showFooter={true}
+          primaryText="Confirm Deactivate"
+          title="Confirm Deactivation?"
+          bodyPadding="5px 20px"
+        >
+          Are you sure you want to deactivate this item? You can no longer use
+          it once it is deactivated.
+        </CustomPopup>
+      )}
+      {isPopupVisible === "activate" && (
+        <CustomPopup
+          onClose={() => dispatch(setIsPopupVisible(""))}
+          onPrimary={() => handleDeactivate("active")}
+          showFooter={true}
+          primaryText="Confirm Activate"
+          title="Confirm Active?"
+          bodyPadding="5px 20px"
+        >
+          Are you sure you want to activate this item? Once activated, it will
+          be available for login again.
         </CustomPopup>
       )}
     </>
