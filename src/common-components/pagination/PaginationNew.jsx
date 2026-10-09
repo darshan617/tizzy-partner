@@ -7,6 +7,7 @@ const PaginationNew = ({
   setCurrentPage,
   currentPage,
   itemPerPage,
+  lastPage = pageNumbersArray?.length,
 }) => {
   return (
     <div>
@@ -39,7 +40,7 @@ const PaginationNew = ({
           <button
             className={styles.paginationButton}
             onClick={() => setCurrentPage((prev) => prev + 1)}
-            disabled={currentPage === pageNumbersArray?.length}
+            disabled={currentPage >= lastPage}
           >
             <BiChevronRight size={16} />
           </button>

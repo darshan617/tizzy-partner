@@ -21,6 +21,7 @@ const avatarColorClasses = [
 const statusLabelMap = {
   active: "Active",
   expiring: "Expiring",
+  expired: "Expired",
   pending: "Pending",
   downgraded: "Downgraded",
   // draft: "Draft",
@@ -39,6 +40,7 @@ const statusOrder = [
   // "pending",
   // "draft",
   "expiring",
+  "expired",
   "upgraded",
   "downgraded",
   "renewed",
@@ -73,12 +75,13 @@ const AllSubscriptions = ({
   setItemPerPage,
   setSelectedProviderId,
   selectedProviderId,
+  selectedStatuses,
+  setSelectedStatuses,
+  setSearchQuery,
+  searchQuery,
 }) => {
   const router = useRouter();
-
-  const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedStatuses, setSelectedStatuses] = useState("all");
 
   const pageNumbersArray = Array.from(
     { length: Math.ceil(paginationData?.total / itemPerPage) },
@@ -93,36 +96,36 @@ const AllSubscriptions = ({
     setSelectedProviderId((prev) => (prev === status?.id ? null : status?.id));
   };
 
-  const filteredSubscriptions = useMemo(
-    () =>
-      allSubscriptionsData?.filter((subscription) => {
-        const q = searchQuery?.trim()?.toLowerCase();
-        const matchesSearch =
-          q === "" ||
-          subscription?.domain?.toLowerCase()?.includes(q) ||
-          subscription?.customer_name?.toLowerCase()?.includes(q) ||
-          subscription?.currentPlan?.toLowerCase()?.includes(q) ||
-          subscription?.order_no?.toLowerCase()?.includes(q);
-        const matchesStatus =
-          selectedStatuses === "all"
-            ? true
-            : selectedStatuses === subscription?.status?.toLowerCase();
+  // const filteredSubscriptions = useMemo(
+  //   () =>
+  //     allSubscriptionsData?.filter((subscription) => {
+  //       const q = searchQuery?.trim()?.toLowerCase();
+  //       const matchesSearch =
+  //         q === "" ||
+  //         subscription?.domain?.toLowerCase()?.includes(q) ||
+  //         subscription?.customer_name?.toLowerCase()?.includes(q) ||
+  //         subscription?.currentPlan?.toLowerCase()?.includes(q) ||
+  //         subscription?.order_no?.toLowerCase()?.includes(q);
+  //       const matchesStatus =
+  //         selectedStatuses === "all"
+  //           ? true
+  //           : selectedStatuses === subscription?.status?.toLowerCase();
 
-        return matchesSearch && matchesStatus;
-      }),
-    [searchQuery, selectedStatuses, allSubscriptionsData],
-  );
+  //       return matchesSearch && matchesStatus;
+  //     }),
+  //   [searchQuery, selectedStatuses, allSubscriptionsData],
+  // );
 
-  const finalSubscriptionsList = filteredSubscriptions?.filter(
-    (subscription) => {
-      if (!router?.query?.customerId) return true;
+  // const finalSubscriptionsList = filteredSubscriptions?.filter(
+  //   (subscription) => {
+  //     if (!router?.query?.customerId) return true;
 
-      return (
-        subscription?.customer_id === Number(router?.query?.customerId) &&
-        subscription?.status.toLowerCase() === "active"
-      );
-    },
-  );
+  //     return (
+  //       subscription?.customer_id === Number(router?.query?.customerId) &&
+  //       subscription?.status.toLowerCase() === "active"
+  //     );
+  //   },
+  // );
 
   useEffect(() => {
     setCurrentPage(paginationData?.current_page);
@@ -276,8 +279,8 @@ const AllSubscriptions = ({
               className={`${styles.subscriptionList} d-flex flex-column gap-3 mb-5`}
             >
               {!isAllSubscriptionDataLoading ? (
-                finalSubscriptionsList?.length > 0 ? (
-                  finalSubscriptionsList
+                allSubscriptionsData?.length > 0 ? (
+                  allSubscriptionsData
                     ?.filter((subscription) =>
                       selectedStatuses === "all"
                         ? true

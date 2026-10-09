@@ -1,6 +1,6 @@
 import { useGetTransactionHistoryMutation } from "@/redux/apis/transactionsApi";
 import Cookies from "js-cookie";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
@@ -9,7 +9,7 @@ import styles from "@/components/transactions/TransactionsList.module.css";
 import { useRouter } from "next/router";
 import DownloadExcel from "@/common-components/download-excel/DownloadExcel";
 import { FiGlobe } from "react-icons/fi";
-import Pagination from "@/common-components/pagination/Pagination";
+import PaginationNew from "@/common-components/pagination/PaginationNew";
 import usePermissions from "@/custom-hooks/permissions/usePermissions";
 import Link from "next/link";
 
@@ -57,8 +57,6 @@ const avatarBgClasses = [
   "infoBg",
   "dangerBg",
 ];
-
-const getStatusKey = (status) => (status || "").toString().trim().toLowerCase();
 
 const getBillingStatusClass = (status) => {
   const key = status?.toLowerCase()?.replace(/\s+/g, "");
@@ -124,26 +122,53 @@ const TransactionsList = ({ variant = "default", limit }) => {
 
   const [transactionsList, setTransactionsList] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [paginationData, setPaginationData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debounceSearchQuery, setDebounceSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState("all");
   const [selectedProviderId, setSelectedProviderId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemPerPage = 10;
   const { canAdd, canDelete, canEdit, canView } = usePermissions();
 
   const [getTransactionsList, { isLoading }] =
     useGetTransactionHistoryMutation();
 
-  const fetchTransactionsList = async () => {
+  const fetchTransactionsList = useCallback(async () => {
     try {
       const res = await getTransactionsList({
-        body: { partner_id: userData?.id },
+        body: {
+          partner_id: userData?.id,
+          ...(variant !== "billing" && {
+            page_no: currentPage,
+            per_page: itemPerPage,
+            status: selectedStatuses,
+            search: debounceSearchQuery,
+            provider_id:
+              selectedProviderId === "all" ? "" : selectedProviderId || "",
+          }),
+        },
       });
       if (res?.data?.success) {
-        const list = res?.data?.data?.data || res?.data?.data || [];
+        const responseData = res?.data?.data;
+        const list =
+          responseData?.data ||
+          responseData?.transactions ||
+          responseData?.transaction_data ||
+          responseData;
         const items = Array.isArray(list) ? list : [];
+        const pagination =
+          res?.data?.pagination ||
+          responseData?.pagination ||
+          responseData?.meta ||
+          null;
         setTransactionsList(items);
+        setPaginationData(pagination);
         setTotalCount(
-          res?.data?.data?.total_count ??
+          pagination?.total ??
+            responseData?.total_count ??
+            responseData?.total ??
             res?.data?.total_count ??
             items?.length ??
             0,
@@ -152,51 +177,46 @@ const TransactionsList = ({ variant = "default", limit }) => {
     } catch (error) {
       console.log("Error", error);
     }
-  };
+  }, [
+    currentPage,
+    debounceSearchQuery,
+    getTransactionsList,
+    itemPerPage,
+    selectedProviderId,
+    selectedStatuses,
+    userData?.id,
+    variant,
+  ]);
 
   useEffect(() => {
-    fetchTransactionsList();
-  }, []);
+    const timer = setTimeout(() => {
+      fetchTransactionsList();
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [fetchTransactionsList]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebounceSearchQuery(searchQuery);
+      setCurrentPage(1);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const toggleStatus = (status) => {
     setSelectedStatuses((prev) => (prev === status ? "all" : status));
+    setCurrentPage(1);
   };
 
   const toogleProviderStatus = (id) => {
     setSelectedProviderId((prev) => (prev === id ? "all" : id));
+    setCurrentPage(1);
   };
 
-  const filteredTransactions = useMemo(() => {
-    const q = searchQuery?.trim()?.toLowerCase();
-
-    return transactionsList?.filter((tx) => {
-      const matchesSearch =
-        q === "" ||
-        tx?.domain?.toLowerCase()?.includes(q) ||
-        String(tx?.order_id || "")
-          ?.toLowerCase()
-          ?.includes(q) ||
-        tx?.customer?.toLowerCase()?.includes(q) ||
-        tx?.plan?.toLowerCase()?.includes(q);
-
-      const statusKey = getStatusKey(tx?.status);
-
-      const matchesStatus =
-        selectedStatuses === "all" || selectedStatuses === statusKey;
-      const matchesProvider =
-        selectedProviderId === "all" ||
-        selectedProviderId == null ||
-        tx?.provider_id === selectedProviderId;
-
-      return matchesSearch && matchesStatus && matchesProvider;
-    });
-  }, [
-    transactionsList,
-    searchQuery,
-    selectedStatuses,
-    router?.query?.customerId,
-    selectedProviderId,
-  ]);
+  const transactions = transactionsList;
+  const filteredTransactions = transactions;
 
   const finalTransactionsList = filteredTransactions?.filter((tx) => {
     if (!router?.query?.customerId) return true;
@@ -204,13 +224,23 @@ const TransactionsList = ({ variant = "default", limit }) => {
     return tx?.cust_id === Number(router?.query?.customerId);
   });
 
-  const resultTotal = totalCount || transactionsList?.length || 0;
-  const showingEnd = filteredTransactions?.length || 0;
-  const showingStart = showingEnd > 0 ? 1 : 0;
+  const pageSize = Number(paginationData?.per_page || itemPerPage) || 1;
+  const pageCount =
+    Number(paginationData?.last_page) ||
+    Math.ceil(Number(totalCount || 0) / pageSize);
+  const pageNumbersArray = Array.from({ length: pageCount }, (_, i) => i + 1);
+  const showingStart =
+    paginationData?.from ??
+    (transactions.length > 0 ? (currentPage - 1) * pageSize + 1 : 0);
+  const showingEnd =
+    paginationData?.to ??
+    Math.min((currentPage - 1) * pageSize + transactions.length, totalCount);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemPerPage, setItemPerPage] = useState(10);
-  const startIndex = (currentPage - 1) * itemPerPage;
+  const handlePageChange = (page) => setCurrentPage(page);
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
 
   if (variant === "billing") {
     const billingTransactions =
@@ -355,7 +385,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
                     className={`${styles.pageSearch} form-control`}
                     placeholder="Search Transaction"
                     value={searchQuery}
-                    onChange={(event) => setSearchQuery(event.target.value)}
+                    onChange={handleSearchChange}
                   />
                   <button className={styles.searchBtn} type="button">
                     <svg
@@ -381,10 +411,10 @@ const TransactionsList = ({ variant = "default", limit }) => {
               >
                 Showing{" "}
                 <span className="fw-medium darkColor">
-                  {startIndex + 1}-{startIndex + itemPerPage}
+                  {showingStart}-{showingEnd}
                 </span>{" "}
-                from <span className="fw-medium darkColor">{resultTotal}</span>{" "}
-                {resultTotal === 1 ? "result" : "results"}
+                from <span className="fw-medium darkColor">{totalCount}</span>{" "}
+                {totalCount === 1 ? "result" : "results"}
               </div>
             </div>
           </div>
@@ -429,22 +459,22 @@ const TransactionsList = ({ variant = "default", limit }) => {
                         role="group"
                       >
                         {statusProvider.map((status) => (
-                          <li key={status}>
+                          <li key={status.id}>
                             <button
                               className={`${styles.filterItem} rounded-pill`}
-                              onClick={() => toogleProviderStatus(status?.id)}
+                              onClick={() => toogleProviderStatus(status.id)}
                               style={{
                                 backgroundColor:
-                                  selectedProviderId === status?.id
+                                  selectedProviderId === status.id
                                     ? "var(--primaryColor)"
                                     : "",
                                 color:
-                                  selectedProviderId === status?.id
+                                  selectedProviderId === status.id
                                     ? "var(--whiteColor)"
                                     : "var(--darkColor)",
                               }}
                             >
-                              {status?.name}
+                              {status.name}
                             </button>
                           </li>
                         ))}
@@ -493,116 +523,105 @@ const TransactionsList = ({ variant = "default", limit }) => {
             <div className="d-flex flex-column gap-3 mb-4">
               {!isLoading ? (
                 finalTransactionsList?.length > 0 ? (
-                  finalTransactionsList
-                    ?.filter((tx) =>
-                      selectedStatuses === "all"
-                        ? true
-                        : tx?.status?.toLowerCase() === selectedStatuses,
-                    )
-                    ?.slice(startIndex, startIndex + itemPerPage)
-                    ?.map((tx, idx) => (
-                      <div
-                        key={tx?.order_id || idx}
-                        className={`${styles.contentRow} btnDisplay`}
-                      >
-                        <div
-                          className={`${styles.txRowGrid} py-3 px-md-2 px-3`}
-                        >
-                          <div className={styles.txColDate}>
-                            <div className={styles.txMeta}>
-                              <div className={styles.txDate}>{tx?.date}</div>
-                              <div className={styles.txNumber}>
-                                ORD ID: {tx?.order_no}
-                              </div>
+                  finalTransactionsList?.map((tx, idx) => (
+                    <div
+                      key={tx?.order_id || idx}
+                      className={`${styles.contentRow} btnDisplay`}
+                    >
+                      <div className={`${styles.txRowGrid} py-3 px-md-2 px-3`}>
+                        <div className={styles.txColDate}>
+                          <div className={styles.txMeta}>
+                            <div className={styles.txDate}>{tx?.date}</div>
+                            <div className={styles.txNumber}>
+                              ORD ID: {tx?.order_no}
                             </div>
-                          </div>
-
-                          <div className={styles.txColDomain}>
-                            <div className="d-flex align-items-center">
-                              <div
-                                className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
-                              >
-                                {tx?.company_name?.charAt(0)?.toUpperCase() ||
-                                  "-"}
-                              </div>
-                              <div className="ps-2 min-w-0">
-                                <div className={styles.txDomainName}>
-                                  {tx?.company_name}
-                                  <div className={styles.txDomainNameText}>
-                                    <FiGlobe
-                                      className={styles.txDomainNameIcon}
-                                      width={16}
-                                      height={16}
-                                    />
-                                    {tx?.domain_name}
-                                  </div>
-                                </div>
-                                {tx?.status?.toLowerCase() !== "pending" && (
-                                  <div className={styles.txDesc}>
-                                    Received payment for invoice no.
-                                    {tx?.invoice_no?.bill_no_full}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className={styles.txColPlan}>
-                            <div className={styles.txMeta}>
-                              <div className={styles.txPlanName}>
-                                {tx?.plan}
-                              </div>
-                              <div className={styles.categoryName}>
-                                {tx?.order_category}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className={styles.txColStatus}>
-                            <span
-                              className={`${styles.statusBadge} ${styles[tx?.status?.toLowerCase()]}`}
-                            >
-                              {tx?.status}
-                            </span>
-                          </div>
-
-                          <div className={styles.txColAmount}>
-                            <span className={styles.amountValue}>
-                              {formatAmount(tx?.amount)}
-                            </span>
-                          </div>
-
-                          <div className={styles.txColArrow}>
-                            <button
-                              className={styles.viewDetailsBtn}
-                              onClick={() =>
-                                router.push({
-                                  pathname: "/transactions/transaction-details",
-                                  query: {
-                                    order_id: tx?.order_id,
-                                  },
-                                })
-                              }
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="icon me-0"
-                              >
-                                <path d="m9 18 6-6-6-6" />
-                              </svg>
-                            </button>
                           </div>
                         </div>
+
+                        <div className={styles.txColDomain}>
+                          <div className="d-flex align-items-center">
+                            <div
+                              className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
+                            >
+                              {tx?.company_name?.charAt(0)?.toUpperCase() ||
+                                "-"}
+                            </div>
+                            <div className="ps-2 min-w-0">
+                              <div className={styles.txDomainName}>
+                                {tx?.company_name}
+                                <div className={styles.txDomainNameText}>
+                                  <FiGlobe
+                                    className={styles.txDomainNameIcon}
+                                    width={16}
+                                    height={16}
+                                  />
+                                  {tx?.domain_name}
+                                </div>
+                              </div>
+                              {tx?.status?.toLowerCase() !== "pending" && (
+                                <div className={styles.txDesc}>
+                                  Received payment for invoice no.
+                                  {tx?.invoice_no?.bill_no_full}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className={styles.txColPlan}>
+                          <div className={styles.txMeta}>
+                            <div className={styles.txPlanName}>{tx?.plan}</div>
+                            <div className={styles.categoryName}>
+                              {tx?.order_category}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className={styles.txColStatus}>
+                          <span
+                            className={`${styles.statusBadge} ${styles[tx?.status?.toLowerCase()]}`}
+                          >
+                            {tx?.status}
+                          </span>
+                        </div>
+
+                        <div className={styles.txColAmount}>
+                          <span className={styles.amountValue}>
+                            {formatAmount(tx?.amount)}
+                          </span>
+                        </div>
+
+                        <div className={styles.txColArrow}>
+                          <button
+                            className={styles.viewDetailsBtn}
+                            onClick={() =>
+                              router.push({
+                                pathname: "/transactions/transaction-details",
+                                query: {
+                                  order_id: tx?.order_id,
+                                },
+                              })
+                            }
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="icon me-0"
+                            >
+                              <path d="m9 18 6-6-6-6" />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
-                    ))
+                    </div>
+                  ))
                 ) : (
                   <p className="text-center m-0">No Transaction Data</p>
                 )
@@ -610,15 +629,15 @@ const TransactionsList = ({ variant = "default", limit }) => {
                 <Loader />
               )}
             </div>
+            <PaginationNew
+              pageNumbersArray={pageNumbersArray}
+              setCurrentPage={handlePageChange}
+              currentPage={currentPage}
+              itemPerPage={itemPerPage}
+            />
           </div>
         </div>
       </div>
-      <Pagination
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        data={finalTransactionsList}
-        itemPerPage={itemPerPage}
-      />
     </div>
   );
 };
