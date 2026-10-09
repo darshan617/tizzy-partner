@@ -1,164 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
-import {
-  FiArrowRight,
-  FiChevronLeft,
-  FiChevronRight,
-  FiFilter,
-} from "react-icons/fi";
+import { useState } from "react";
+import { FiChevronLeft, FiChevronRight, FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import styles from "./SupportList.module.css";
-import { useGetTicketsMutation } from "@/redux/apis/supportTicketsApi";
-import Cookies from "js-cookie";
 import Loader from "@/common-components/loader/Loader";
-import { useRouter } from "next/router";
+import PaginationNew from "@/common-components/pagination/PaginationNew";
 import Link from "next/link";
 import { TiAttachment } from "react-icons/ti";
 import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
-const tickets = [
-  {
-    id: "SUP2523",
-    status: "Active",
-    priority: "Medium Priority",
-    title: "Can't access dashboard after update",
-    plan: "Tizzy® Mail Enterprise – 100 GB",
-    domain: "ganeshenterprises.com",
-    createdAt: "20 Mar, 2026",
-    initial: "G",
-  },
-  {
-    id: "SUP2523",
-    status: "In Process",
-    priority: "High Priority",
-    title: "Incorrect invoice total shown",
-    plan: "Tizzy® Mail Enterprise – 100 GB",
-    domain: "goyalinfotech.com",
-    createdAt: "20 Mar, 2026",
-    initial: "G",
-  },
-  {
-    id: "SUP2523",
-    status: "In Process",
-    priority: "High Priority",
-    title: "Incorrect invoice total shown",
-    plan: "Tizzy® Mail Enterprise – 100 GB",
-    domain: "goyalinfotech.com",
-    createdAt: "20 Mar, 2026",
-    initial: "G",
-  },
-  {
-    id: "SUP2523",
-    status: "Resolved",
-    priority: "Low Priority",
-    title: "Cannot change account email, updated twice from admin",
-    plan: "Tizzy® Mail Enterprise – 100 GB",
-    domain: "kingstonmarketing.net",
-    createdAt: "20 Mar, 2026",
-    initial: "K",
-  },
-  {
-    id: "SUP2523",
-    status: "Active",
-    priority: "Medium Priority",
-    title: "Can't access dashboard after update",
-    plan: "Tizzy® Mail Enterprise – 100 GB",
-    domain: "pinchthewallet.com",
-    createdAt: "20 Mar, 2026",
-    initial: "P",
-  },
-  {
-    id: "SUP2523",
-    status: "Active",
-    priority: "Medium Priority",
-    title: "Can't access dashboard after update",
-    plan: "Tizzy® Mail Enterprise – 100 GB",
-    domain: "pinchthewallet.com",
-    createdAt: "20 Mar, 2026",
-    initial: "P",
-  },
-  {
-    id: "SUP2523",
-    status: "Active",
-    priority: "High Priority",
-    title: "Incorrect invoice total shown, Duplicated invoice",
-    plan: "Tizzy® Mail Enterprise – 100 GB",
-    domain: "lorealpharma.in",
-    createdAt: "20 Mar, 2026",
-    initial: "K",
-  },
-  {
-    id: "SUP2523",
-    status: "In Process",
-    priority: "Low Priority",
-    title: "Cannot change account email, updated twice from admin",
-    plan: "Tizzy® Mail Enterprise – 100 GB",
-    domain: "ganeshenterprises.com",
-    createdAt: "20 Mar, 2026",
-    initial: "G",
-  },
-  {
-    id: "SUP2523",
-    status: "In Process",
-    priority: "Low Priority",
-    title: "Cannot change account email, updated twice from admin",
-    plan: "Tizzy® Mail Enterprise – 100 GB",
-    domain: "ganeshenterprises.com",
-    createdAt: "20 Mar, 2026",
-    initial: "G",
-  },
-  {
-    id: "SUP2523",
-    status: "Active",
-    priority: "Medium Priority",
-    title: "Can't access dashboard after update",
-    plan: "Tizzy® Mail Enterprise – 100 GB",
-    domain: "goyalinfotech.com",
-    createdAt: "20 Mar, 2026",
-    initial: "G",
-  },
-  {
-    id: "SUP2523",
-    status: "Resolved",
-    priority: "High Priority",
-    title: "Incorrect invoice total shown",
-    plan: "Tizzy® Mail Enterprise – 100 GB",
-    domain: "kingstonmarketing.net",
-    createdAt: "20 Mar, 2026",
-    initial: "K",
-  },
-  {
-    id: "SUP2523",
-    status: "Resolved",
-    priority: "High Priority",
-    title: "Incorrect invoice total shown",
-    plan: "Tizzy® Mail Enterprise – 100 GB",
-    domain: "kingstonmarketing.net",
-    createdAt: "20 Mar, 2026",
-    initial: "K",
-  },
-  {
-    id: "SUP2523",
-    status: "Resolved",
-    priority: "High Priority",
-    title: "Incorrect invoice total shown",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
-    domain: "kingstonmarketing.net",
-    createdAt: "20 Mar, 2026",
-    initial: "T",
-  },
-  {
-    id: "SUP2523",
-    status: "Resolved",
-    priority: "High Priority",
-    title: "Incorrect invoice total shown",
-    plan: "Tizzy® Mail Enterprise - 100 GB",
-    domain: "kingstonmarketing.net",
-    createdAt: "20 Mar, 2026",
-    initial: "T",
-  },
-];
-
-const statusFilters = ["All", "Active", "In Process", "Resolved"];
+const statusFilters = ["All", "Open", "In Process", "Resolved"];
 const priorityFilters = ["All", "High", "Medium", "Low"];
 const avatarToneClasses = [
   "avatarGreen",
@@ -168,39 +18,57 @@ const avatarToneClasses = [
   "avatarRose",
 ];
 
-const SupportList = ({ ticketsData, isLoading }) => {
-  const [searchQuery, setSearchQuery] = useState("");
+const SupportList = ({
+  ticketsData,
+  isLoading,
+  currentPage,
+  setCurrentPage,
+  itemPerPage,
+  paginationData,
+  totalCount,
+  searchQuery,
+  setSearchQuery,
+  selectedStatus,
+  setSelectedStatus,
+  selectedPriority,
+  setSelectedPriority,
+}) => {
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState("All");
-  const [selectedPriority, setSelectedPriority] = useState("All");
-  const currentPage = 1;
-  const itemsPerPage = 12;
-  const totalTickets = 124000;
-  const router = useRouter();
-  const { canAdd, canDelete, canEdit, canView } = usePermissions();
-  const filteredTickets = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
+  const { canView } = usePermissions();
 
-    return ticketsData?.filter((ticket) => {
-      const matchesSearch =
-        query === "" ||
-        ticket?.ticket_no?.toLowerCase().includes(query) ||
-        ticket?.description?.toLowerCase().includes(query) ||
-        ticket?.service?.toLowerCase().includes(query) ||
-        ticket?.domain?.toLowerCase().includes(query);
+  const paginatedTickets = ticketsData || [];
+  const pageSize = Number(paginationData?.per_page || itemPerPage) || 1;
+  const resultTotal = Number(totalCount || 0);
+  const pageCount =
+    Number(paginationData?.last_page) || Math.ceil(resultTotal / pageSize);
+  const visiblePageCount = Math.min(pageCount, 5);
+  const firstVisiblePage = Math.max(
+    1,
+    Math.min(currentPage - 2, pageCount - visiblePageCount + 1),
+  );
+  const pageNumbersArray = Array.from(
+    { length: visiblePageCount },
+    (_, index) => firstVisiblePage + index,
+  );
+  const showingStart =
+    paginationData?.from ??
+    (paginatedTickets.length > 0 ? (currentPage - 1) * pageSize + 1 : 0);
+  const showingEnd =
+    paginationData?.to ??
+    Math.min(
+      (currentPage - 1) * pageSize + paginatedTickets.length,
+      resultTotal,
+    );
 
-      const matchesStatus =
-        selectedStatus === "All" || ticket?.status === selectedStatus;
-      const matchesPriority =
-        selectedPriority === "All" || ticket?.priority === selectedPriority;
+  const handleStatusChange = (status) => {
+    setSelectedStatus(status.toLowerCase());
+    setCurrentPage(1);
+  };
 
-      return matchesSearch && matchesStatus && matchesPriority;
-    });
-  }, [ticketsData, searchQuery, selectedPriority, selectedStatus]);
-
-  const paginatedTickets = filteredTickets?.slice(0, itemsPerPage);
-  const showingStart = paginatedTickets?.length ? 1 : 0;
-  const showingEnd = paginatedTickets?.length;
+  const handlePriorityChange = (priority) => {
+    setSelectedPriority(priority.toLowerCase());
+    setCurrentPage(1);
+  };
 
   return (
     <section className={`${styles.wrapper} sectionCard`}>
@@ -243,10 +111,7 @@ const SupportList = ({ ticketsData, isLoading }) => {
               <span className="fw-medium darkColor">
                 {showingStart} - {showingEnd}
               </span>{" "}
-              from{" "}
-              <span className="fw-medium darkColor">
-                {ticketsData?.length || 0}
-              </span>{" "}
+              from <span className="fw-medium darkColor">{totalCount}</span>{" "}
               Tickets
             </div>
           </div>
@@ -267,14 +132,14 @@ const SupportList = ({ ticketsData, isLoading }) => {
                         <button
                           type="button"
                           className={`${styles.filterItem} rounded-pill`}
-                          onClick={() => setSelectedStatus(status)}
+                          onClick={() => handleStatusChange(status)}
                           style={{
                             backgroundColor:
-                              selectedStatus === status
+                              selectedStatus === status.toLowerCase()
                                 ? "var(--primaryColor)"
                                 : "",
                             color:
-                              selectedStatus === status
+                              selectedStatus === status.toLowerCase()
                                 ? "var(--whiteColor)"
                                 : "var(--darkColor)",
                           }}
@@ -294,14 +159,14 @@ const SupportList = ({ ticketsData, isLoading }) => {
                         <button
                           type="button"
                           className={`${styles.filterItem} rounded-pill`}
-                          onClick={() => setSelectedPriority(priority)}
+                          onClick={() => handlePriorityChange(priority)}
                           style={{
                             backgroundColor:
-                              selectedPriority === priority
+                              selectedPriority === priority.toLowerCase()
                                 ? "var(--primaryColor)"
                                 : "",
                             color:
-                              selectedPriority === priority
+                              selectedPriority === priority.toLowerCase()
                                 ? "var(--whiteColor)"
                                 : "var(--darkColor)",
                           }}
@@ -439,35 +304,15 @@ const SupportList = ({ ticketsData, isLoading }) => {
           <div className="text-center">No tickets found</div>
         )}
 
-        {/* <div className={styles.pagination}>
-          <button
-            type="button"
-            className={styles.pageNav}
-            aria-label="Previous page"
-          >
-            <FiChevronLeft size={16} />
-          </button>
-
-          {[1, 2, 3, 4, 5].map((page) => (
-            <button
-              key={page}
-              type="button"
-              className={`${styles.pageButton} ${
-                page === currentPage ? styles.pageButtonActive : ""
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-
-          <button
-            type="button"
-            className={styles.pageNav}
-            aria-label="Next page"
-          >
-            <FiChevronRight size={16} />
-          </button>
-        </div> */}
+        {pageNumbersArray.length > 0 && (
+          <PaginationNew
+            pageNumbersArray={pageNumbersArray}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+            itemPerPage={pageSize}
+            lastPage={pageCount}
+          />
+        )}
       </div>
     </section>
   );

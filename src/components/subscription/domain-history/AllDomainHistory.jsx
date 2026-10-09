@@ -4,7 +4,7 @@ import breadcrumbStyles from "@/components/customers/customers-details/CustomerD
 import Cookies from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { GoShareAndroid } from "react-icons/go";
 import { IoMdArrowBack } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
@@ -14,6 +14,7 @@ import DownloadExcel from "@/common-components/download-excel/DownloadExcel";
 import { FaArrowRight, FaChevronRight, FaGlobe } from "react-icons/fa";
 import { FiFilter } from "react-icons/fi";
 import { RiGlobalLine } from "react-icons/ri";
+import PaginationNew from "@/common-components/pagination/PaginationNew";
 
 const TizzyIcon = () => (
   <svg
@@ -135,56 +136,97 @@ const HISTORY_STATUS = [
 
 const AllDomainHistory = () => {
   const router = useRouter();
-  const domains = router?.query?.domains?.split(",").filter(Boolean) || [];
+  const domainNamesQuery = router?.query?.domains;
+  const domains = useMemo(
+    () => domainNamesQuery?.split(",").filter(Boolean) || [],
+    [domainNamesQuery],
+  );
   const customerId = router?.query?.customerId;
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedStatuses, setSelectedStatuses] = useState("all");
+  const [debounceSearchQuery, setDebounceSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemPerPage = 10;
 
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
   const [domainHistory, setDomainHistory] = useState([]);
+  const [paginationData, setPaginationData] = useState(null);
 
   const [getDomainHistory, { isLoading: isGetDomainHistoryLoading }] =
     useGetDomainHistoryMutation();
 
-  const handleGetDomainHistory = async () => {
+  const handleGetDomainHistory = useCallback(async () => {
     try {
       if (!router?.isReady || domains?.length === 0) return;
       const res = await getDomainHistory({
         body: {
           partner_id: userData?.id,
           domain_names: domains,
+          page_no: currentPage,
+          per_page: itemPerPage,
+          search: debounceSearchQuery,
         },
       });
       if (res?.data?.success || res?.data?.status) {
-        setDomainHistory(res?.data?.data || []);
+        const responseData = res?.data?.data || [];
+        const firstDomain = Array.isArray(responseData)
+          ? responseData[0]
+          : null;
+        setDomainHistory(responseData);
+        setPaginationData(
+          res?.data?.pagination ||
+            res?.data?.data?.pagination ||
+            firstDomain?.pagination ||
+            firstDomain?.history_pagination ||
+            null,
+        );
       }
     } catch (error) {
       console.log("error", error);
     }
-  };
+  }, [
+    currentPage,
+    debounceSearchQuery,
+    domains,
+    getDomainHistory,
+    itemPerPage,
+    router,
+    userData?.id,
+  ]);
 
   useEffect(() => {
-    handleGetDomainHistory();
-  }, [router?.isReady, router?.query?.domains]);
+    const timer = setTimeout(() => {
+      handleGetDomainHistory();
+    }, 0);
 
-  const filteredCustomers = useMemo(
-    () =>
-      domainHistory?.filter((domain) => {
-        const q = searchQuery?.trim()?.toLowerCase();
-        const matchesSearch =
-          q === "" ||
-          domain?.domain_name?.toLowerCase()?.includes(q) ||
-          domain?.plan_name?.toLowerCase()?.includes(q) ||
-          domain?.price?.toLowerCase()?.includes(q) ||
-          domain?.license?.toLowerCase()?.includes(q) ||
-          domain?.period?.toLowerCase()?.includes(q);
+    return () => clearTimeout(timer);
+  }, [handleGetDomainHistory]);
 
-        return matchesSearch;
-      }),
-    [searchQuery, domainHistory],
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebounceSearchQuery(searchQuery);
+      setCurrentPage(1);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const pageSize = Number(paginationData?.per_page || itemPerPage) || 1;
+  const reportedPageCount =
+    Number(paginationData?.last_page) ||
+    Math.ceil(Number(paginationData?.total || 0) / pageSize);
+  const pageCount =
+    reportedPageCount ||
+    (domainHistory.some((domain) => domain?.history?.length > 0) ? 1 : 0);
+  const visiblePageCount = Math.min(pageCount, 5);
+  const firstVisiblePage = Math.max(
+    1,
+    Math.min(currentPage - 2, pageCount - visiblePageCount + 1),
+  );
+  const pageNumbersArray = Array.from(
+    { length: visiblePageCount },
+    (_, index) => firstVisiblePage + index,
   );
 
   const pageTitle = customerId
@@ -234,61 +276,85 @@ const AllDomainHistory = () => {
 
       <div className="col">
         {domainHistory?.length > 0 ? (
-          domainHistory?.map((domainItem) => (
-            <>
-              <div className={`${styles.filtersMain}`}>
-                {/* Search & Count Header */}
-                <div className={`${styles.filtersHeader} border-bottom`}>
-                  <div className="row align-items-center justify-content-between">
-                    <div className="col-sm-auto order-sm-2">
-                      <search className={`${styles.pageSearchBox}`}>
-                        <input
-                          type="text"
-                          className={`${styles.pageSearch} form-control`}
-                          placeholder="Search Customers"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                        <button className={`${styles.searchBtn}`}>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="icon"
-                          >
-                            <circle cx="11" cy="11" r="8" />
-                            <path d="m21 21-4.3-4.3" />
-                          </svg>
-                        </button>
-                      </search>
-                    </div>
-                    <div
-                      className={`${styles.searchCount} col-sm-auto order-sm-1 text-center my-2 my-sm-2 `}
-                    >
-                      <h2 className={styles.domainTitle}>
-                        <RiGlobalLine size={16} className={styles.domainIcon} />{" "}
-                        {domainItem?.domain_name}
-                      </h2>
-                      Showing{" "}
-                      <span className="fw-medium darkColor">
-                        1 - {filteredCustomers?.length}
-                      </span>{" "}
-                      from{" "}
-                      <span className="fw-medium darkColor">
-                        {filteredCustomers?.length}
-                      </span>{" "}
-                      Subscriptions
-                    </div>
-                  </div>
-                </div>
+          <>
+            {domainHistory?.map((domainItem) => {
+              const history = domainItem?.history || [];
+              const domainPagination =
+                domainItem?.pagination ||
+                (domains.length === 1 ? paginationData : null);
+              const pageOffset = (currentPage - 1) * pageSize;
+              const domainTotal =
+                domainPagination?.total ?? pageOffset + history.length;
+              const startIndex =
+                domainPagination?.from ??
+                (history.length > 0 ? pageOffset + 1 : 0);
+              const endIndex =
+                domainPagination?.to ??
+                (history.length > 0 ? pageOffset + history.length : 0);
 
-                <div className={`${styles.filterWrapper} `}>
+              return (
+                <React.Fragment key={domainItem?.domain_name}>
+                  <div className={`${styles.filtersMain}`}>
+                    {/* Search & Count Header */}
+                    <div className={`${styles.filtersHeader} border-bottom`}>
+                      <div className="row align-items-center justify-content-between">
+                        <div className="col-sm-auto order-sm-2">
+                          <search className={`${styles.pageSearchBox}`}>
+                            <input
+                              type="text"
+                              className={`${styles.pageSearch} form-control`}
+                              placeholder="Search Domain History"
+                              value={searchQuery}
+                              onChange={(event) => {
+                                setSearchQuery(event.target.value);
+                              }}
+                            />
+                            <button
+                              type="button"
+                              className={`${styles.searchBtn}`}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="icon"
+                              >
+                                <circle cx="11" cy="11" r="8" />
+                                <path d="m21 21-4.3-4.3" />
+                              </svg>
+                            </button>
+                          </search>
+                        </div>
+                        <div
+                          className={`${styles.searchCount} col-sm-auto order-sm-1 text-center my-2 my-sm-2 `}
+                        >
+                          <h2 className={styles.domainTitle}>
+                            <RiGlobalLine
+                              size={16}
+                              className={styles.domainIcon}
+                            />{" "}
+                            {domainItem?.domain_name}
+                          </h2>
+                          Showing{" "}
+                          <span className="fw-medium darkColor">
+                            {startIndex} - {endIndex}
+                          </span>{" "}
+                          from{" "}
+                          <span className="fw-medium darkColor">
+                            {domainTotal}
+                          </span>{" "}
+                          Subscriptions
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* <div className={`${styles.filterWrapper} `}>
                   <div
                     className={`collapse${filterOpen ? " show" : ""}`}
                     id="filterSection"
@@ -361,116 +427,130 @@ const AllDomainHistory = () => {
                       </>
                     )}
                   </button>
-                </div>
-              </div>
-              <div
-                key={domainItem?.domain_name}
-                className={`${styles.historyCard} ${styles.sectionCard} ${styles.domainSection}`}
-              >
-                <div className={styles.cardHeader}>
-                  {/* <div className={styles.titleGroup}>
+                </div> */}
+                  </div>
+                  <div
+                    key={domainItem?.domain_name}
+                    className={`${styles.historyCard} ${styles.sectionCard} ${styles.domainSection}`}
+                  >
+                    <div className={styles.cardHeader}>
+                      {/* <div className={styles.titleGroup}>
                   <p className={styles.sectionLabel}>SUBSCRIPTION HISTORY :</p>
                   <h2 className={styles.pageTitle}>
                     {domainItem?.domain_name}
                   </h2>
                 </div> */}
-                  <div className={styles.historyBtn}>
-                    {/* <button type="button" className="shareBtn small">
+                      <div className={styles.historyBtn}>
+                        {/* <button type="button" className="shareBtn small">
                     <GoShareAndroid size={16} /> Share
                   </button> */}
-                    <DownloadExcel
-                      data={domainItem?.history}
-                      columns={domainHistoryColumns}
-                      fileName={`${domainItem?.domain_name}-history`}
-                      className="downloadBtn small"
-                      buttonText="Download"
-                    />
-                  </div>
-                </div>
-
-                {domainItem?.history?.length > 0 ? (
-                  domainItem?.history?.map((item) => (
-                    <div className={styles.historyRow} key={item?.id}>
-                      <div className={styles.colDateMeta}>
-                        <p className={styles.txDate}>20 Mar 2026</p>
-                        <span className={styles.txIdBadge}>
-                          {item?.order_no || "-"}
-                        </span>
+                        <DownloadExcel
+                          data={domainItem?.history}
+                          columns={domainHistoryColumns}
+                          fileName={`${domainItem?.domain_name}-history`}
+                          className="downloadBtn small"
+                          buttonText="Download"
+                        />
                       </div>
-
-                      <div className={styles.rowLeft}>
-                        <div className={styles.statusIcon}>
-                          {getPlanIcon(
-                            item?.plan_name,
-                            domainItem?.domain_name,
-                          )}
-                        </div>
-                        <div className={styles.productInfo}>
-                          <p className={styles.productName}>
-                            {item?.plan_name || "-"}
-                          </p>
-                          <p className={styles.productPrice}>
-                            ₹{item?.price || "-"}{" "}
-                            <span className={styles.productPricePer}>
-                              Per User / Per Year
-                            </span>
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className={styles.rowGrid}>
-                        <div className={styles.rowValue}>
-                          <span className={styles.fieldLabel}>
-                            Enrollment Type
-                          </span>
-                          <span className={styles.valueText}>
-                            {item?.order_category || "-"}
-                          </span>
-                        </div>
-                        <div className={styles.rowValue}>
-                          <span className={styles.fieldLabel}>License</span>
-                          <span className={styles.valueText}>
-                            {item?.license ?? "-"}
-                          </span>
-                        </div>
-                        <div className={styles.rowValue}>
-                          <span className={styles.fieldLabel}>Period</span>
-                          <span className={styles.valueText}>
-                            {item?.period ||
-                              (item?.start_date && item?.end_date
-                                ? `${item.start_date} - ${item.end_date}`
-                                : "-")}
-                          </span>
-                        </div>
-                      </div>
-
-                      <span className={styles.statusLabel}>
-                        {formatHistoryStatus(item?.status)}
-                      </span>
-                      <button
-                        className="bg-transparent border-0"
-                        onClick={() =>
-                          router?.push({
-                            pathname: "/plan-details",
-                            query: {
-                              planId: item?.plan_id,
-                              orderId: item?.order_id,
-                            },
-                          })
-                        }
-                      >
-                        <FaChevronRight size={12} className={styles.colArrow} />
-                      </button>
                     </div>
-                  ))
-                ) : (
-                  <p className={styles.emptyState}>
-                    No history found for this domain.
-                  </p>
-                )}
-              </div>
-            </>
-          ))
+
+                    {history?.length > 0 ? (
+                      history?.map((item) => (
+                        <div className={styles.historyRow} key={item?.id}>
+                          <div className={styles.colDateMeta}>
+                            <p className={styles.txDate}>20 Mar 2026</p>
+                            <span className={styles.txIdBadge}>
+                              {item?.order_no || "-"}
+                            </span>
+                          </div>
+
+                          <div className={styles.rowLeft}>
+                            <div className={styles.statusIcon}>
+                              {getPlanIcon(
+                                item?.plan_name,
+                                domainItem?.domain_name,
+                              )}
+                            </div>
+                            <div className={styles.productInfo}>
+                              <p className={styles.productName}>
+                                {item?.plan_name || "-"}
+                              </p>
+                              <p className={styles.productPrice}>
+                                ₹{item?.price || "-"}{" "}
+                                <span className={styles.productPricePer}>
+                                  Per User / Per Year
+                                </span>
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className={styles.rowGrid}>
+                            <div className={styles.rowValue}>
+                              <span className={styles.fieldLabel}>
+                                Enrollment Type
+                              </span>
+                              <span className={styles.valueText}>
+                                {item?.order_category || "-"}
+                              </span>
+                            </div>
+                            <div className={styles.rowValue}>
+                              <span className={styles.fieldLabel}>License</span>
+                              <span className={styles.valueText}>
+                                {item?.license ?? "-"}
+                              </span>
+                            </div>
+                            <div className={styles.rowValue}>
+                              <span className={styles.fieldLabel}>Period</span>
+                              <span className={styles.valueText}>
+                                {item?.period ||
+                                  (item?.start_date && item?.end_date
+                                    ? `${item.start_date} - ${item.end_date}`
+                                    : "-")}
+                              </span>
+                            </div>
+                          </div>
+
+                          <span className={styles.statusLabel}>
+                            {formatHistoryStatus(item?.status)}
+                          </span>
+                          <button
+                            className="bg-transparent border-0"
+                            onClick={() =>
+                              router?.push({
+                                pathname: "/plan-details",
+                                query: {
+                                  planId: item?.plan_id,
+                                  orderId: item?.order_id,
+                                },
+                              })
+                            }
+                          >
+                            <FaChevronRight
+                              size={12}
+                              className={styles.colArrow}
+                            />
+                          </button>
+                        </div>
+                      ))
+                    ) : (
+                      <p className={styles.emptyState}>
+                        No history found for this domain.
+                      </p>
+                    )}
+                  </div>
+                </React.Fragment>
+              );
+            })}
+            {pageNumbersArray?.length > 0 && (
+              <PaginationNew
+                pageNumbersArray={pageNumbersArray}
+                setCurrentPage={setCurrentPage}
+                currentPage={currentPage}
+                itemPerPage={pageSize}
+                lastPage={pageCount}
+              />
+            )}
+          </>
         ) : (
           <div className={`${styles.sectionCard} ${styles.emptyState}`}>
             No subscription history available.
