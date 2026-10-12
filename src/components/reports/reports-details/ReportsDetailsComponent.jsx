@@ -77,6 +77,8 @@ const ReportsDetailsComponent = () => {
     partner_id: userData?.id,
     page_no: 1,
     per_page: 100,
+    status: "",
+    search: "",
   });
 
   const router = useRouter();
