@@ -243,6 +243,8 @@ const CommonOrderSummary = () => {
       partner_id: userData?.id,
       page_no: "",
       per_page: "",
+      status: "",
+      search: "",
     },
     {
       skip:
