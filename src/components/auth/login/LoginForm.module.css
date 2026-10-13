@@ -133,3 +133,88 @@
   font-size: 12px;
   margin-top: 4px;
 }
+
+.alreadyLoginPopup {
+  color: #252b36;
+}
+
+.alreadyLoginMessage {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 26px;
+}
+
+.deviceIcon {
+  display: flex;
+  flex: 0 0 46px;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #e8f1fc;
+  color: #0966c6;
+}
+
+.alreadyLoginPrimaryText {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.alreadyLoginSecondaryText {
+  margin: 0;
+  color: #8190a8;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.alreadyLoginActions {
+  display: flex;
+  gap: 13px;
+}
+
+.cancelLoginButton,
+.continueLoginButton {
+  flex: 1;
+  min-height: 46px;
+  border: 0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancelLoginButton {
+  background: #e8f1fc;
+  color: #0864c2;
+}
+
+.continueLoginButton {
+  background: #1263c4;
+  color: #ffffff;
+}
+
+.cancelLoginButton:hover {
+  background: #dceafa;
+}
+
+.continueLoginButton:hover {
+  background: #0e57ad;
+}
+
+@media (max-width: 420px) {
+  .alreadyLoginMessage {
+    gap: 10px;
+  }
+
+  .alreadyLoginPrimaryText {
+    font-size: 13px;
+  }
+
+  .alreadyLoginSecondaryText {
+    font-size: 12px;
+  }
+}
