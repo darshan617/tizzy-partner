@@ -304,8 +304,7 @@ const SubscriptionsDetailsComponent = () => {
     paginationData?.total ?? subscriptionDetails?.total_count ?? plans.length,
   );
   const pageCount =
-    Number(paginationData?.last_page) ||
-    Math.ceil(resultTotal / pageSize);
+    Number(paginationData?.last_page) || Math.ceil(resultTotal / pageSize);
   const visiblePageCount = Math.min(pageCount, 5);
   const firstVisiblePage = Math.max(
     1,
