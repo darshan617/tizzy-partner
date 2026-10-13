@@ -23,6 +23,7 @@ import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi
 import usePermissions from "@/custom-hooks/permissions/usePermissions";
 import { ACCOUNT_MENU_CONSTANTS } from "../sidebar/SidebarConstant";
 import { useSearchQuery } from "@/redux/apis/searchApi";
+import { useLogoutMutation } from "@/redux/apis/logoutApi";
 
 const formatNotificationTime = (dateString) => {
   if (!dateString) return "";
@@ -103,6 +104,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     { isLoading: isMarkNotificationAsReadLoading },
   ] = useMarkNotificationAsReadMutation();
   const [deleteNotification] = useDeleteNotificationMutation();
+  const [logout, { isLoading: isLogouting }] = useLogoutMutation();
 
   const navmenu = ACCOUNT_MENU_CONSTANTS?.filter?.((item) =>
     canView(item?.key),
@@ -123,14 +125,23 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     setIsClient(true);
   }, []);
 
-  const handleSignOut = () => {
-    Cookies.remove("userData");
-    Cookies.remove("customerData");
-    Cookies.remove("partnerApproval");
-    Cookies.remove("userToken");
-    localStorage.removeItem("UP");
-    router?.push("/auth/login");
-    showToast("Signed Out successfully", "success");
+  const handleSignOut = async () => {
+    try {
+      const res = await logout({
+        body: {},
+      });
+      if (res?.data?.success) {
+        Cookies.remove("userData");
+        Cookies.remove("customerData");
+        Cookies.remove("partnerApproval");
+        Cookies.remove("userToken");
+        localStorage.removeItem("UP");
+        router?.push("/auth/login");
+        showToast("Signed Out successfully", "success");
+      }
+    } catch (error) {
+      console.log(error, "error in handlelogout");
+    }
   };
 
   useEffect(() => {
@@ -612,7 +623,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                             size={20}
                             strokeWidth={0}
                           />
-                          <span>Sign Out</span>
+                          <span>{isLogouting ? "Loading..." : "Sign Out"}</span>
                         </button>
                       </div>
                     </div>
