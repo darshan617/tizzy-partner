@@ -130,11 +130,21 @@ const VerifyOtp = () => {
       device_name = "Linux PC";
     }
 
-    // Generate persistent device ID
+    // Generate persistent device ID (randomUUID needs HTTPS; fallback for HTTP hosts)
     let device_id = localStorage.getItem("device_id");
 
     if (!device_id) {
-      device_id = crypto.randomUUID();
+      if (typeof crypto?.randomUUID === "function") {
+        device_id = crypto.randomUUID();
+      } else {
+        const bytes = crypto.getRandomValues(new Uint8Array(16));
+        bytes[6] = (bytes[6] & 0x0f) | 0x40;
+        bytes[8] = (bytes[8] & 0x3f) | 0x80;
+        device_id = [...bytes]
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("")
+          .replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5");
+      }
       localStorage.setItem("device_id", device_id);
     }
 
@@ -208,6 +218,18 @@ const VerifyOtp = () => {
       }
     } catch (error) {
       console.log(error);
+      console.error("OTP verification failed:", error);
+
+      console.error("Error details:", {
+        message: error?.message,
+        status: error?.status,
+        data: error?.data,
+      });
+
+      showToast(
+        error?.data?.message || error?.message || "Failed to verify email",
+        "error",
+      );
       showToast("Failed to verify email", "error");
     }
   };
