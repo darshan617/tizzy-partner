@@ -24,7 +24,7 @@ import usePermissions from "@/custom-hooks/permissions/usePermissions";
 import { ACCOUNT_MENU_CONSTANTS } from "../sidebar/SidebarConstant";
 import { useSearchQuery } from "@/redux/apis/searchApi";
 import {
-  logoutOnPageExit,
+  clearLogoutPending,
   useLogoutMutation,
 } from "@/redux/apis/logoutApi";
 
@@ -64,7 +64,6 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const [notificationFilter, setNotificationFilter] = useState("all");
   const [isClient, setIsClient] = useState(false);
   const dropdownRef = useRef(null);
-  const logoutRequestedRef = useRef(false);
   const userInfo = useSelector(selectUserData);
   const { canAdd, canDelete, canEdit, canView } = usePermissions();
   const [searchQuery, setSearchQuery] = useState("");
@@ -129,41 +128,13 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     setIsClient(true);
   }, []);
 
-  useEffect(() => {
-    const handlePageHide = (event) => {
-      if (event.persisted) return;
-      if (logoutRequestedRef.current) return;
-
-      const cookie = Cookies.get("userData");
-      if (!cookie) return;
-
-      let token;
-      try {
-        token = JSON.parse(cookie)?.token;
-      } catch (error) {
-        console.error("Invalid userData cookie during sign out:", error);
-        return;
-      }
-
-      if (!token) return;
-
-      logoutRequestedRef.current = true;
-      logoutOnPageExit(token).catch((error) => {
-        console.error("Failed to sign out when leaving the page:", error);
-      });
-    };
-
-    window.addEventListener("pagehide", handlePageHide);
-    return () => window.removeEventListener("pagehide", handlePageHide);
-  }, []);
-
   const handleSignOut = async () => {
-    logoutRequestedRef.current = true;
     try {
       const res = await logout({
         body: {},
       });
       if (res?.data?.success) {
+        clearLogoutPending();
         Cookies.remove("userData");
         Cookies.remove("customerData");
         Cookies.remove("partnerApproval");
@@ -171,12 +142,9 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
         localStorage.removeItem("UP");
         router?.push("/auth/login");
         showToast("Signed Out successfully", "success");
-      } else {
-        logoutRequestedRef.current = false;
       }
     } catch (error) {
-      logoutRequestedRef.current = false;
-      console.log(error, "error in handleSignOut");
+      console.log(error, "error in handlelogout");
     }
   };
 
@@ -349,6 +317,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
 
   useEffect(() => {
     if (error?.status === 401) {
+      clearLogoutPending();
       Cookies.remove("userData");
       Cookies.remove("customerData");
       Cookies.remove("partnerApproval");
