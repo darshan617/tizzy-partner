@@ -13,6 +13,7 @@ import {
 } from "@/redux/slices/popupSlice";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
 import { FiSmartphone } from "react-icons/fi";
+import { flushPendingLogout } from "@/redux/apis/logoutApi";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -54,6 +55,10 @@ const LoginForm = () => {
     setErrors({});
 
     try {
+      //cursor code
+      // If browser was closed earlier, finish backend logout before login check
+      await flushPendingLogout();
+      //cursor code
       const res = await sendOtp({
         body: {
           ...(inputType === "mobile"
