@@ -23,10 +23,11 @@ import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi
 import usePermissions from "@/custom-hooks/permissions/usePermissions";
 import { ACCOUNT_MENU_CONSTANTS } from "../sidebar/SidebarConstant";
 import { useSearchQuery } from "@/redux/apis/searchApi";
-import {
-  logoutOnPageExit,
-  useLogoutMutation,
-} from "@/redux/apis/logoutApi";
+import { useLogoutMutation } from "@/redux/apis/logoutApi";
+// import {
+//   logoutOnPageExit,
+//   useLogoutMutation,
+// } from "@/redux/apis/logoutApi";
 
 const formatNotificationTime = (dateString) => {
   if (!dateString) return "";
@@ -64,7 +65,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
   const [notificationFilter, setNotificationFilter] = useState("all");
   const [isClient, setIsClient] = useState(false);
   const dropdownRef = useRef(null);
-  const logoutRequestedRef = useRef(false);
+  // const logoutRequestedRef = useRef(false);
   const userInfo = useSelector(selectUserData);
   const { canAdd, canDelete, canEdit, canView } = usePermissions();
   const [searchQuery, setSearchQuery] = useState("");
@@ -129,36 +130,58 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
     setIsClient(true);
   }, []);
 
-  useEffect(() => {
-    const handlePageHide = (event) => {
-      if (event.persisted) return;
-      if (logoutRequestedRef.current) return;
+  // useEffect(() => {
+  //   const handlePageHide = (event) => {
+  //     if (event.persisted) return;
+  //     if (logoutRequestedRef.current) return;
 
-      const cookie = Cookies.get("userData");
-      if (!cookie) return;
+  //     const cookie = Cookies.get("userData");
+  //     if (!cookie) return;
 
-      let token;
-      try {
-        token = JSON.parse(cookie)?.token;
-      } catch (error) {
-        console.error("Invalid userData cookie during sign out:", error);
-        return;
-      }
+  //     let token;
+  //     try {
+  //       token = JSON.parse(cookie)?.token;
+  //     } catch (error) {
+  //       console.error("Invalid userData cookie during sign out:", error);
+  //       return;
+  //     }
 
-      if (!token) return;
+  //     if (!token) return;
 
-      logoutRequestedRef.current = true;
-      logoutOnPageExit(token).catch((error) => {
-        console.error("Failed to sign out when leaving the page:", error);
-      });
-    };
+  //     logoutRequestedRef.current = true;
+  //     logoutOnPageExit(token).catch((error) => {
+  //       console.error("Failed to sign out when leaving the page:", error);
+  //     });
+  //   };
 
-    window.addEventListener("pagehide", handlePageHide);
-    return () => window.removeEventListener("pagehide", handlePageHide);
-  }, []);
+  //   window.addEventListener("pagehide", handlePageHide);
+  //   return () => window.removeEventListener("pagehide", handlePageHide);
+  // }, []);
+
+  // const handleSignOut = async () => {
+  //   logoutRequestedRef.current = true;
+  //   try {
+  //     const res = await logout({
+  //       body: {},
+  //     });
+  //     if (res?.data?.success) {
+  //       Cookies.remove("userData");
+  //       Cookies.remove("customerData");
+  //       Cookies.remove("partnerApproval");
+  //       Cookies.remove("userToken");
+  //       localStorage.removeItem("UP");
+  //       router?.push("/auth/login");
+  //       showToast("Signed Out successfully", "success");
+  //     } else {
+  //       logoutRequestedRef.current = false;
+  //     }
+  //   } catch (error) {
+  //     logoutRequestedRef.current = false;
+  //     console.log(error, "error in handleSignOut");
+  //   }
+  // };
 
   const handleSignOut = async () => {
-    logoutRequestedRef.current = true;
     try {
       const res = await logout({
         body: {},
@@ -171,12 +194,9 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
         localStorage.removeItem("UP");
         router?.push("/auth/login");
         showToast("Signed Out successfully", "success");
-      } else {
-        logoutRequestedRef.current = false;
       }
     } catch (error) {
-      logoutRequestedRef.current = false;
-      console.log(error, "error in handleSignOut");
+      console.log(error, "error in handlelogout");
     }
   };
 
