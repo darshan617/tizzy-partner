@@ -89,7 +89,6 @@ const OrderSummaryCard = ({
   const [isUploadPo, setIsUploadPo] = useState(false);
   const [poNumber, setPoNumber] = useState("");
   const [poError, setPoError] = useState(false);
-  console.log(isUploadPo, "isUploadPo");
 
   const providerId = Number(cartDetails?.[0]?.plan?.provider_id);
   const skipDomainVerification = providerId === 2;
@@ -129,8 +128,12 @@ const OrderSummaryCard = ({
   const [creditRequest, { isLoading: isLoadingCreditRequest }] =
     useCreditRequestMutation();
 
-  const [generateNewOrder, { isLoading: isGeneratingNewOrder }] =
-    useGenerateNewOrderMutation();
+  const [
+    generateNewOrder,
+    { isLoading: isGeneratingNewOrder, isError, error },
+  ] = useGenerateNewOrderMutation();
+
+  console.log("is", isError, error);
 
   const [generateUpgradeOrder, { isLoading: isGeneratingUpgradeOrder }] =
     useGenerateUpgradeOrderMutation();
@@ -1338,6 +1341,7 @@ const OrderSummaryCard = ({
                   }
                 }}
               />
+
               {poError && (
                 <p className={styles.errorText}>PO Number is required.</p>
               )}
@@ -1362,6 +1366,11 @@ const OrderSummaryCard = ({
                   }
                 }}
               />
+              {error?.status === "FETCH_ERROR" && (
+                <p className={styles.errorText}>
+                  File size should be 2MB to 4MB
+                </p>
+              )}
 
               {uploadPoPdf && (
                 <>
