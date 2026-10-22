@@ -15,7 +15,7 @@ const signupApi = apiSlice.injectEndpoints({
     searchGstin: builder?.mutation({
       query: ({ body }) => {
         return {
-          url: "https://superadmin.tizzygroup.com/api/v1/search-gstin",
+          url: "https://stagingsuperadmin.tizzygroup.com/api/v1/search-gstin",
           method: "POST",
           body: body,
         };

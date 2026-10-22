@@ -65,7 +65,7 @@ export const logoutOnPageExit = (token, { keepalive = true } = {}) => {
     body: JSON.stringify({}),
     keepalive,
   }).then((response) => {
-    if (!response.ok) {
+    if (!response.ok && response.status !== 401) {
       throw new Error(`Logout request failed with status ${response.status}`);
     }
   });
