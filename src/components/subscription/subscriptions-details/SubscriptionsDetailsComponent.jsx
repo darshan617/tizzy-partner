@@ -435,28 +435,30 @@ const SubscriptionsDetailsComponent = () => {
                   </div>
                 </div>
 
-                <div className="d-flex flex-column flex-sm-row gap-3 gap-sm-5 ms-lg-auto">
-                  <div>
-                    <small className="d-block textLight mb-1">Email</small>
-                    <Link
-                      href={`mailto:${customer?.email || "#"}`}
-                      className="text-body text-decoration-none"
-                    >
-                      {customer?.email || "-"}
-                    </Link>
+                {canView("customers") && (
+                  <div className="d-flex flex-column flex-sm-row gap-3 gap-sm-5 ms-lg-auto">
+                    <div>
+                      <small className="d-block textLight mb-1">Email</small>
+                      <Link
+                        href={`mailto:${customer?.email || "#"}`}
+                        className="text-body text-decoration-none"
+                      >
+                        {customer?.email || "-"}
+                      </Link>
+                    </div>
+                    <div>
+                      <small className="d-block textLight mb-1">
+                        Contact No.
+                      </small>
+                      <Link
+                        href={`tel:${customer?.mobile || ""}`}
+                        className="text-body text-decoration-none"
+                      >
+                        {customer?.mobile || "-"}
+                      </Link>
+                    </div>
                   </div>
-                  <div>
-                    <small className="d-block textLight mb-1">
-                      Contact No.
-                    </small>
-                    <Link
-                      href={`tel:${customer?.mobile || ""}`}
-                      className="text-body text-decoration-none"
-                    >
-                      {customer?.mobile || "-"}
-                    </Link>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>

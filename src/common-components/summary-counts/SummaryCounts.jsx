@@ -307,6 +307,7 @@ export default function SummaryCounts({
   const userData = Cookies.get("userData")
     ? JSON.parse(decodeURIComponent(Cookies.get("userData")))
     : {};
+  const [permissions, setPermissions] = useState([]);
   const { canView, canAdd, canDelete, canEdit } = usePermissions();
 
   const [asOnDate, setAsOnDate] = useState("");
@@ -319,7 +320,20 @@ export default function SummaryCounts({
       }),
     );
   }, []);
-  const count = countData;
+
+  useEffect(() => {
+    const storedPermissions = localStorage.getItem("UP");
+
+    if (storedPermissions) {
+      try {
+        const parsedPermissions = JSON.parse(storedPermissions);
+        setPermissions(parsedPermissions);
+      } catch (error) {
+        console.error("Error parsing permissions:", error);
+        setPermissions([]);
+      }
+    }
+  }, []);
 
   const summaryCardConfig = {
     "total revenue": {
@@ -328,6 +342,7 @@ export default function SummaryCounts({
       badgeClass: "up",
       icon: <TotalRevenue />,
       redirectUrl: null,
+      permissionKey: "revenue",
     },
     "active customers": {
       boxClass: "successGrad",
@@ -335,6 +350,7 @@ export default function SummaryCounts({
       badgeClass: "down",
       icon: <CustomerIcon />,
       redirectUrl: canAdd("customers") ? "/customers/create-customer" : null,
+      permissionKey: "customers",
     },
 
     "active subscriptions": {
@@ -347,6 +363,7 @@ export default function SummaryCounts({
       redirectUrl: canView("subscriptions")
         ? "/services/google-workspace"
         : null,
+      permissionKey: "subscriptions",
     },
     "total subscriptions": {
       boxClass:
@@ -358,6 +375,7 @@ export default function SummaryCounts({
       redirectUrl: canView("subscriptions")
         ? "/services/google-workspace"
         : null,
+      permissionKey: "subscriptions",
     },
 
     "renewals this month": {
@@ -366,6 +384,7 @@ export default function SummaryCounts({
       badgeClass: "down",
       icon: <RenewalIcon />,
       redirectUrl: null,
+      permissionKey: "renewals",
     },
 
     "inactive customers": {
@@ -374,6 +393,7 @@ export default function SummaryCounts({
       badgeClass: "up",
       icon: <InactiveCustomerIcon />,
       redirectUrl: null,
+      permissionKey: "customers",
     },
 
     "closed customers": {
@@ -382,6 +402,7 @@ export default function SummaryCounts({
       badgeClass: "up",
       icon: <ClosedCustomerIcon />,
       redirectUrl: null,
+      permissionKey: "customers",
     },
 
     "expiring subscriptions": {
@@ -390,6 +411,7 @@ export default function SummaryCounts({
       badgeClass: "up",
       icon: <CustomerIcon />,
       redirectUrl: null,
+      permissionKey: "subscriptions",
     },
 
     "expired subscriptions": {
@@ -398,6 +420,7 @@ export default function SummaryCounts({
       badgeClass: "up",
       icon: <CustomerIcon />,
       redirectUrl: null,
+      permissionKey: "subscriptions",
     },
     "paid invoices": {
       boxClass: "successGrad",
@@ -405,6 +428,7 @@ export default function SummaryCounts({
       badgeClass: "up",
       icon: <PaidInvoiceIcon />,
       redirectUrl: null,
+      permissionKey: "invoices",
     },
     "pending invoices": {
       boxClass: "warningGrad",
@@ -412,6 +436,7 @@ export default function SummaryCounts({
       badgeClass: "up",
       icon: <UploadInvoiceIcon />,
       redirectUrl: null,
+      permissionKey: "invoices",
     },
     "overdue invoices": {
       boxClass: "dangerGrad",
@@ -419,6 +444,7 @@ export default function SummaryCounts({
       badgeClass: "up",
       icon: <DraftInvoiceIcon />,
       redirectUrl: null,
+      permissionKey: "invoices",
     },
     "total tickets": {
       boxClass: "successGrad",
@@ -426,6 +452,7 @@ export default function SummaryCounts({
       badgeClass: "up",
       icon: <PaidInvoiceIcon />,
       redirectUrl: "/services/google-workspace",
+      permissionKey: "support",
     },
     "open tickets": {
       boxClass: "secondaryGrad",
@@ -433,6 +460,7 @@ export default function SummaryCounts({
       badgeClass: "down",
       icon: <DraftInvoiceIcon />,
       redirectUrl: null,
+      permissionKey: "support",
     },
     "pending tickets": {
       boxClass: "warningGrad",
@@ -440,6 +468,7 @@ export default function SummaryCounts({
       badgeClass: "up",
       icon: <DraftInvoiceIcon />,
       redirectUrl: null,
+      permissionKey: "support",
     },
     "resolved tickets": {
       boxClass: "dangerGrad",
@@ -447,6 +476,7 @@ export default function SummaryCounts({
       badgeClass: "up",
       icon: <UploadInvoiceIcon />,
       redirectUrl: null,
+      permissionKey: "support",
     },
     // "escalated tickets": {
     //   boxClass: "dangerGrad",
@@ -468,6 +498,7 @@ export default function SummaryCounts({
         />
       ),
       redirectUrl: null,
+      permissionKey: "credit_note",
     },
     "pending wallet credit": {
       boxClass: "warningGrad",
@@ -477,6 +508,7 @@ export default function SummaryCounts({
         <Image src={creditWallet} alt="pending wallet" width={28} height={28} />
       ),
       redirectUrl: null,
+      permissionKey: "credit_note",
     },
     "credited to wallet": {
       boxClass: "secondaryGrad",
@@ -491,6 +523,7 @@ export default function SummaryCounts({
         />
       ),
       redirectUrl: null,
+      permissionKey: "credit_note",
     },
     "total credited amount": {
       boxClass: "successGrad",
@@ -500,6 +533,7 @@ export default function SummaryCounts({
         <Image src={totalCredit} alt="pending wallet" width={28} height={28} />
       ),
       redirectUrl: null,
+      permissionKey: "credit_note",
     },
   };
 
@@ -550,12 +584,16 @@ export default function SummaryCounts({
                 const normalizedKey = card?.key?.trim().toLowerCase();
                 const config = summaryCardConfig[normalizedKey];
 
-                console.log(normalizedKey, "normalizedKey");
-
                 if (!config) return null;
 
                 return (
-                  <div key={index} className="col pt-4 m-0">
+                  <div
+                    key={index}
+                    className="col pt-4 m-0"
+                    style={{
+                      display: canView(config?.permissionKey) ? "" : "none",
+                    }}
+                  >
                     <div
                       className={`${styles.statBox} ${styles[config.boxClass]}`}
                     >

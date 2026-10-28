@@ -114,8 +114,6 @@ const OrderSummaryCard = ({
   ).toFixed(2);
 
   const isInsufficient = _creditBalance_ < totals;
-  console.log("isInsufficient", isInsufficient);
-  console.log("totals", totals);
 
   const discountedAmount = (discountedPercent / 100) * total;
 

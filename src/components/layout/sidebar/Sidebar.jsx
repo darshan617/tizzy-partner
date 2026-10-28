@@ -332,7 +332,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                 </div>
               )}
 
-              {creditsCard}
+              {canView("revenue") && creditsCard}
             </div>
           </>
         )}

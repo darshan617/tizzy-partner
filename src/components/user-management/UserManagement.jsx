@@ -197,7 +197,7 @@ const UserManagement = () => {
             <table className={styles.userTable}>
               <thead>
                 <tr>
-                  <th className={styles.colSrNo}>SR. NO.</th>
+                  <th className={styles.colSrNo}>Employee Id</th>
                   <th className={styles.colUserName}>User Name</th>
                   <th className={styles.colStatus}>Status</th>
                   <th className={styles.colAction}>Action</th>
@@ -232,7 +232,9 @@ const UserManagement = () => {
                         </div>
                       </td>
                       <td className={styles.colStatus}>
-                        <span className="statusBadge subtleSuccess">
+                        <span
+                          className={`statusBadge ${user?.status?.toLowerCase() === "active" ? "subtleSuccess" : "subtleDanger"}`}
+                        >
                           {user?.status}
                         </span>
                       </td>

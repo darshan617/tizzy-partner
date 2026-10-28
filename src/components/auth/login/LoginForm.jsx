@@ -96,7 +96,9 @@ const LoginForm = () => {
           dispatch(setUserData({ email: input }));
         }
       } else {
-        showToast(res?.data?.message, "error");
+        console.log(res);
+
+        showToast(res?.error?.data?.message, "error");
       }
     } catch (error) {
       console.log(error, "error in handleSubmit");
