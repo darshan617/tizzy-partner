@@ -160,17 +160,23 @@ export default function PlansDetail() {
               </div>
             </div>
 
-            <div className={styles.infoBlock}>
-              <div className={styles.infoLabel}>Email</div>
-              <div className={styles.infoValue}>{customer?.email || "-"}</div>
-            </div>
+            {canView("customers") && (
+              <>
+                <div className={styles.infoBlock}>
+                  <div className={styles.infoLabel}>Email</div>
+                  <div className={styles.infoValue}>
+                    {customer?.email || "-"}
+                  </div>
+                </div>
 
-            <div className={styles.infoBlock}>
-              <div className={styles.infoLabel}>Contact No.</div>
-              <div className={styles.infoValue}>
-                {customer?.contact_no || "-"}
-              </div>
-            </div>
+                <div className={styles.infoBlock}>
+                  <div className={styles.infoLabel}>Contact No.</div>
+                  <div className={styles.infoValue}>
+                    {customer?.contact_no || "-"}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
 

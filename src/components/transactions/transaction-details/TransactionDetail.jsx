@@ -102,20 +102,25 @@ export default function TransactionDetails() {
                     </div>
                   </div>
 
-                  <div className={styles.infoBlock}>
-                    <div className={styles.infoLabel}>Email</div>
-                    <div className={styles.infoValue}>
-                      {transactionData?.customer_information?.email || "-"}{" "}
-                    </div>
-                  </div>
+                  {canView("customers") && (
+                    <>
+                      <div className={styles.infoBlock}>
+                        <div className={styles.infoLabel}>Email</div>
+                        <div className={styles.infoValue}>
+                          {transactionData?.customer_information?.email ||
+                            "-"}{" "}
+                        </div>
+                      </div>
 
-                  <div className={styles.infoBlock}>
-                    <div className={styles.infoLabel}>Contact No.</div>
-                    <div className={styles.infoValue}>
-                      {transactionData?.customer_information?.contact_no ||
-                        "-"}{" "}
-                    </div>
-                  </div>
+                      <div className={styles.infoBlock}>
+                        <div className={styles.infoLabel}>Contact No.</div>
+                        <div className={styles.infoValue}>
+                          {transactionData?.customer_information?.contact_no ||
+                            "-"}{" "}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 

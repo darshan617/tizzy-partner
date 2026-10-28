@@ -66,10 +66,15 @@ const dashboard = ({ partner_id, partner_name }) => {
         data={dashboardData?.data}
         isDataLoading={isDashboardLoading}
       />
-      <SalesReport
-        data={dashboardData?.data}
-        isDataLoading={isDashboardLoading}
-      />
+      {canView(
+        "revenue" && (
+          <SalesReport
+            data={dashboardData?.data}
+            isDataLoading={isDashboardLoading}
+          />
+        ),
+      )}
+
       {canView("support") && <Support />}
     </Layout>
   );
