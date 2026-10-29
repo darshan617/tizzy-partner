@@ -29,7 +29,7 @@ export default function TransactionDetails() {
     ? JSON.parse(Cookies.get("userData"))
     : null;
   const [transactionData, setTransactionData] = useState(null);
-  const { canView } = usePermissions();
+  const { canView, loginAs } = usePermissions();
 
   const transactionDetails = async () => {
     try {
@@ -129,15 +129,18 @@ export default function TransactionDetails() {
                   <span className={styles.cardHeaderTitle}>
                     Payment &amp; Billing
                   </span>
-                  <a
-                    href={
-                      transactionData?.payment_and_billing?.download_invoice_url
-                    }
-                    target="_blank"
-                    className={styles.invoiceLink}
-                  >
-                    <BsDownload /> Invoice
-                  </a>
+                  {canView("invoices") && (
+                    <a
+                      href={
+                        transactionData?.payment_and_billing
+                          ?.download_invoice_url
+                      }
+                      target="_blank"
+                      className={styles.invoiceLink}
+                    >
+                      <BsDownload /> Invoice
+                    </a>
+                  )}
                 </div>
 
                 <div className={styles.divider} />
@@ -383,16 +386,18 @@ export default function TransactionDetails() {
                     <LiaFileInvoiceSolid size={20} /> Invoice &amp; E-Invoice
                     Details
                   </span>
-                  <a
-                    href={
-                      transactionData?.invoice_and_einvoice
-                        ?.download_invoice_url
-                    }
-                    target="_blank"
-                    className={styles.invoiceLink}
-                  >
-                    <BsDownload /> Invoice
-                  </a>
+                  {canView("invoices") && (
+                    <a
+                      href={
+                        transactionData?.invoice_and_einvoice
+                          ?.download_invoice_url
+                      }
+                      target="_blank"
+                      className={styles.invoiceLink}
+                    >
+                      <BsDownload /> Invoice
+                    </a>
+                  )}
                 </div>
 
                 <div className={styles.divider} />

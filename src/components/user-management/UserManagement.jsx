@@ -154,9 +154,12 @@ const UserManagement = () => {
         showToast(res?.message, "success");
         handleCloseDeactivateUser();
         getPartnerUsersList();
+      } else {
+        showToast(res?.error?.data?.message, "error");
       }
     } catch (error) {
       console.log(error, "error in handleDeleteUser");
+      showToast(error?.data?.message, "error");
     }
   };
 

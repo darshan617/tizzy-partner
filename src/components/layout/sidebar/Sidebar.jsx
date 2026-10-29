@@ -88,7 +88,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
       <div>
         <div className={`${styles.sideMenuHead} mb-2`}>MENU</div>
         <ul className={`${styles.iconRailList} d-flex flex-column gap-1`}>
-          {SIDEBAR_MENU_CONSTANTS?.map((menu, idx) => {
+          {sidebarMenu?.map((menu, idx) => {
             const ICON = menu?.icon || "";
             const isActive = router?.pathname === menu?.href;
             return (
@@ -105,41 +105,48 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
           })}
         </ul>
       </div>
+      {canAdd("subscriptions") && (
+        <div>
+          <div className={`${styles.sideMenuHead} mb-2`}>SERVICES</div>
+          <ul className={`${styles.iconRailList} d-flex flex-column gap-1`}>
+            {SIDEBAR_SERVICES_CONSTANTS?.map((menu, idx) => {
+              const isActive =
+                `/services/${router?.query?.slug}` === menu?.href;
+              return (
+                <li key={idx}>
+                  <Link
+                    href={menu?.href}
+                    className={`${styles.iconRailItem} ${isActive ? styles.iconRailItemActive : ""}`}
+                    title={menu?.title}
+                  >
+                    <span className={styles.iconRailService}>
+                      {menu?.image}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
 
-      <div>
-        <div className={`${styles.sideMenuHead} mb-2`}>SERVICES</div>
-        <ul className={`${styles.iconRailList} d-flex flex-column gap-1`}>
-          {SIDEBAR_SERVICES_CONSTANTS?.map((menu, idx) => {
-            const isActive = `/services/${router?.query?.slug}` === menu?.href;
-            return (
-              <li key={idx}>
-                <Link
-                  href={menu?.href}
-                  className={`${styles.iconRailItem} ${isActive ? styles.iconRailItemActive : ""}`}
-                  title={menu?.title}
-                >
-                  <span className={styles.iconRailService}>{menu?.image}</span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-      <div>
-        <div className={`${styles.sideMenuSupport} mb-2`}>SUPPORT</div>
-        <ul className={`${styles.iconRailList} d-flex flex-column gap-1`}>
-          <li>
-            <Link
-              href="/support"
-              className={`${styles.iconRailItem} ${router?.pathname === "/support" ? styles.iconRailItemActive : ""}`}
-            >
-              <span className={styles.iconRailService}>
-                <LuMessageCircleQuestion size={18} />
-              </span>
-            </Link>
-          </li>
-        </ul>
-      </div>
+      {canView("support") && (
+        <div>
+          <div className={`${styles.sideMenuSupport} mb-2`}>SUPPORT</div>
+          <ul className={`${styles.iconRailList} d-flex flex-column gap-1`}>
+            <li>
+              <Link
+                href="/support"
+                className={`${styles.iconRailItem} ${router?.pathname === "/support" ? styles.iconRailItemActive : ""}`}
+              >
+                <span className={styles.iconRailService}>
+                  <LuMessageCircleQuestion size={18} />
+                </span>
+              </Link>
+            </li>
+          </ul>
+        </div>
+      )}
     </div>
   );
 
@@ -162,7 +169,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
           );
         })}
       </ul>
-      {creditsCard}
+      {canView("revenue") && creditsCard}
     </div>
   );
 

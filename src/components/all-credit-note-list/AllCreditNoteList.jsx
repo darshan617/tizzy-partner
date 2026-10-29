@@ -6,6 +6,7 @@ import { MdOutlineFileDownload } from "react-icons/md";
 import Loader from "@/common-components/loader/Loader";
 import DownloadExcel from "@/common-components/download-excel/DownloadExcel";
 import PaginationNew from "@/common-components/pagination/PaginationNew";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const statusLabelMap = {
   credited: "Credited",
@@ -129,7 +130,7 @@ const AllCreditNoteList = ({
   setSelectedStatuses,
 }) => {
   const [filterOpen, setFilterOpen] = useState(false);
-
+  const { loginAs } = usePermissions();
   const toggleStatus = (status) => {
     setSelectedStatuses((prev) => (prev === status ? "all" : status));
     setCurrentPage(1);
@@ -137,10 +138,11 @@ const AllCreditNoteList = ({
 
   const paginatedList = creditNotesList || [];
   const pageSize = Number(paginationData?.per_page || itemPerPage) || 1;
-  const resultTotal = Number(paginationData?.total ?? creditNotesList?.length ?? 0);
+  const resultTotal = Number(
+    paginationData?.total ?? creditNotesList?.length ?? 0,
+  );
   const pageCount =
-    Number(paginationData?.last_page) ||
-    Math.ceil(resultTotal / pageSize);
+    Number(paginationData?.last_page) || Math.ceil(resultTotal / pageSize);
   const pageNumbersArray = Array.from({ length: pageCount }, (_, i) => i + 1);
   const startIndex =
     paginationData?.from ??
@@ -254,17 +256,19 @@ const AllCreditNoteList = ({
           </div>
         </div>
 
-        <div
-          className={`${styles.toolbar} py-2 px-sm-4 px-3 d-flex align-items-center justify-content-end`}
-        >
-          <DownloadExcel
-          data={paginatedList}
-            columns={creditNoteColumns}
-            fileName="credit-notes"
-            className={styles.downloadListBtn}
-            buttonText="Download List"
-          />
-        </div>
+        {loginAs !== "partner_user" && (
+          <div
+            className={`${styles.toolbar} py-2 px-sm-4 px-3 d-flex align-items-center justify-content-end`}
+          >
+            <DownloadExcel
+              data={paginatedList}
+              columns={creditNoteColumns}
+              fileName="credit-notes"
+              className={styles.downloadListBtn}
+              buttonText="Download List"
+            />
+          </div>
+        )}
 
         <div className={styles.listScrollArea}>
           <div className="px-sm-4 px-3">
@@ -303,7 +307,14 @@ const AllCreditNoteList = ({
 
                         <div className="col-6 col-md-3 col-sm-4 col-lg-3">
                           <div className={styles.walletBlock}>
-                            <span style={{fontSize: '12px', color: "rgba(155, 166, 183, 1)"}}>Order Type</span>
+                            <span
+                              style={{
+                                fontSize: "12px",
+                                color: "rgba(155, 166, 183, 1)",
+                              }}
+                            >
+                              Order Type
+                            </span>
                             {/* <span
                               className={`${styles.statusBadge} ${getWalletStatusClass(note?.wallet_status)}`}
                             >
@@ -320,13 +331,18 @@ const AllCreditNoteList = ({
                           </div>
                         </div>
 
-                        <div className="d-flex flex-column gap-2 col-6 col-md-2 col-lg-2 text-md-center align-items-center" >
+                        <div className="d-flex flex-column gap-2 col-6 col-md-2 col-lg-2 text-md-center align-items-center">
                           <span
                             className={`${styles.statusBadge} ${getCreditStatusClass(note?.credit_note_status)}`}
                           >
                             {formatLabel(note?.credit_note_status)}
                           </span>
-                          <span style={{fontSize: "12px", color: "rgba(155, 166, 183, 1)"}}>
+                          <span
+                            style={{
+                              fontSize: "12px",
+                              color: "rgba(155, 166, 183, 1)",
+                            }}
+                          >
                             {formatLabel(note?.wallet_status)}
                           </span>
                         </div>
