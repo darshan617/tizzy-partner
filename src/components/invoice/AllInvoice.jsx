@@ -19,6 +19,7 @@ import {
   setIsPopupVisible,
 } from "@/redux/slices/popupSlice";
 import PaginationNew from "@/common-components/pagination/PaginationNew";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const emptyInvoices = [];
 
@@ -117,8 +118,7 @@ const AllInvoice = ({
   const router = useRouter();
   const isPopupupVisible = useSelector(selectIsPopupVisible);
   const dispatch = useDispatch();
-
-  console.log(isPopupupVisible, "isPopupupVisibleisPopupupVisible");
+  const { canAdd, canView, canEdit } = usePermissions();
 
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
@@ -317,7 +317,10 @@ const AllInvoice = ({
     (filteredInvoices.length > 0 ? (currentPage - 1) * pageSize + 1 : 0);
   const showingEnd =
     paginationData?.to ??
-    Math.min((currentPage - 1) * pageSize + filteredInvoices.length, resultTotal);
+    Math.min(
+      (currentPage - 1) * pageSize + filteredInvoices.length,
+      resultTotal,
+    );
 
   return (
     <>
@@ -474,90 +477,91 @@ const AllInvoice = ({
                 {!isInvoiceDataLoading ? (
                   filteredInvoices?.length > 0 ? (
                     filteredInvoices?.map((invoice, idx) => (
-                        <div
-                          key={invoice?.invoice_no || idx}
-                          className={`${styles.contentRow} btnDisplay`}
-                        >
-                          <div className="row align-items-center g-0">
-                            <div className={`${styles.ckbCol} col-auto`}>
-                              <input
-                                type="checkbox"
-                                className="form-check-input"
-                                checked={selectedIds?.includes(
-                                  invoice?.invoice_id,
-                                )}
-                                onChange={() =>
-                                  toggleSelectOne(invoice?.invoice_id)
-                                }
-                                disabled={
+                      <div
+                        key={invoice?.invoice_no || idx}
+                        className={`${styles.contentRow} btnDisplay`}
+                      >
+                        <div className="row align-items-center g-0">
+                          <div className={`${styles.ckbCol} col-auto`}>
+                            <input
+                              type="checkbox"
+                              className="form-check-input"
+                              checked={selectedIds?.includes(
+                                invoice?.invoice_id,
+                              )}
+                              onChange={() =>
+                                toggleSelectOne(invoice?.invoice_id)
+                              }
+                              disabled={
+                                invoice?.status?.toLowerCase() === "paid" ||
+                                invoice?.status?.toLowerCase() ===
+                                  "cancelled" ||
+                                paymentAttempts?.payment_link_expired
+                              }
+                              style={{
+                                cursor:
                                   invoice?.status?.toLowerCase() === "paid" ||
                                   invoice?.status?.toLowerCase() ===
                                     "cancelled" ||
                                   paymentAttempts?.payment_link_expired
-                                }
-                                style={{
-                                  cursor:
-                                    invoice?.status?.toLowerCase() === "paid" ||
-                                    invoice?.status?.toLowerCase() ===
-                                      "cancelled" ||
-                                    paymentAttempts?.payment_link_expired
-                                      ? "not-allowed"
-                                      : "pointer",
-                                }}
-                              />
-                            </div>
+                                    ? "not-allowed"
+                                    : "pointer",
+                              }}
+                            />
+                          </div>
 
-                            <div className="col">
-                              <div className="row align-items-center py-3 px-3">
-                                <div className="col-lg-2 col-md-3 col-12 mb-2 mb-md-0">
-                                  <div className={styles.invoiceMeta}>
-                                    <div className={styles.crDate}>
-                                      {invoice?.date}
-                                    </div>
-                                    <div className={styles.crNumber}>
-                                      {invoice?.invoice_no}
-                                    </div>
+                          <div className="col">
+                            <div className="row align-items-center py-3 px-3">
+                              <div className="col-lg-2 col-md-3 col-12 mb-2 mb-md-0">
+                                <div className={styles.invoiceMeta}>
+                                  <div className={styles.crDate}>
+                                    {invoice?.date}
+                                  </div>
+                                  <div className={styles.crNumber}>
+                                    {invoice?.invoice_no}
                                   </div>
                                 </div>
+                              </div>
 
-                                <div className="col-lg-4 col-md-5 col-12 mb-2 mb-md-0">
-                                  <div className="d-flex align-items-center">
-                                    <div
-                                      className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
-                                    >
-                                      {invoice?.domain_name
-                                        ?.charAt(0)
-                                        ?.toUpperCase()}
-                                    </div>
-                                    <div className="ps-2 min-w-0">
-                                      <div className={styles.crDomainName}>
-                                        {invoice?.domain_name}
-                                      </div>
-                                      <div className={`${styles.crName} mt-1`}>
-                                        {invoice?.plan_name}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                <div className="col-lg-2 col-md-2 col-6 text-md-left">
-                                  <span
-                                    className={`${styles.statusBadge} ${getStatusBadgeClass(invoice?.status)}`}
+                              <div className="col-lg-4 col-md-5 col-12 mb-2 mb-md-0">
+                                <div className="d-flex align-items-center">
+                                  <div
+                                    className={`avatarSmall flex-shrink-0 ${avatarBgClasses[idx % avatarBgClasses.length]}`}
                                   >
-                                    {invoice?.status}
-                                  </span>
+                                    {invoice?.domain_name
+                                      ?.charAt(0)
+                                      ?.toUpperCase()}
+                                  </div>
+                                  <div className="ps-2 min-w-0">
+                                    <div className={styles.crDomainName}>
+                                      {invoice?.domain_name}
+                                    </div>
+                                    <div className={`${styles.crName} mt-1`}>
+                                      {invoice?.plan_name}
+                                    </div>
+                                  </div>
                                 </div>
+                              </div>
 
-                                <div className="col-lg-2 col-md-2 col-6 text-md-left  ">
-                                  <span className={styles.amountValue}>
-                                    {invoice?.formatted_amount ||
-                                      `₹ ${Number(invoice?.amount || 0).toFixed(2)}`}
-                                  </span>
-                                </div>
-
-                                <div
-                                  className={`col-lg-2 col-md-12 col-12 ${styles.actionsCol} mt-2 mt-lg-0`}
+                              <div className="col-lg-2 col-md-2 col-6 text-md-left">
+                                <span
+                                  className={`${styles.statusBadge} ${getStatusBadgeClass(invoice?.status)}`}
                                 >
+                                  {invoice?.status}
+                                </span>
+                              </div>
+
+                              <div className="col-lg-2 col-md-2 col-6 text-md-left  ">
+                                <span className={styles.amountValue}>
+                                  {invoice?.formatted_amount ||
+                                    `₹ ${Number(invoice?.amount || 0).toFixed(2)}`}
+                                </span>
+                              </div>
+
+                              <div
+                                className={`col-lg-2 col-md-12 col-12 ${styles.actionsCol} mt-2 mt-lg-0`}
+                              >
+                                {canEdit("invoices") ? (
                                   <div>
                                     <button
                                       type="button"
@@ -597,24 +601,39 @@ const AllInvoice = ({
                                       </p>
                                     )}
                                   </div>
+                                ) : (
+                                  <div>
+                                    <button
+                                      type="button"
+                                      className={styles.payNowBtn}
+                                      disabled={true}
+                                      style={{
+                                        cursor: "not-allowed",
+                                        backgroundColor: "#02499662",
+                                      }}
+                                    >
+                                      Pay Now
+                                    </button>
+                                  </div>
+                                )}
 
-                                  <Link
-                                    href={`${invoice?.invoice_pdf_url}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={styles.downloadBtn}
-                                    aria-label="Download invoice"
-                                  >
-                                    <MdOutlineFileDownload
-                                      className={styles.downloadBtnIcon}
-                                    />
-                                  </Link>
-                                </div>
+                                <Link
+                                  href={`${invoice?.invoice_pdf_url}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={styles.downloadBtn}
+                                  aria-label="Download invoice"
+                                >
+                                  <MdOutlineFileDownload
+                                    className={styles.downloadBtnIcon}
+                                  />
+                                </Link>
                               </div>
                             </div>
                           </div>
                         </div>
-                      ))
+                      </div>
+                    ))
                   ) : (
                     <p className="text-center m-0">No Invoice Data</p>
                   )

@@ -16,6 +16,7 @@ import CustomDropdown from "@/common-components/custom-dropdown/CustomDropdown";
 import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import Link from "next/link";
 import { IoMdArrowBack } from "react-icons/io";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const AVAILABLE_YEARS = [2026, 2025, 2024, 2023];
 
@@ -88,6 +89,7 @@ const ReportsDetailsComponent = () => {
   const [isExporting, setIsExporting] = useState(false);
   const chartRef = useRef(null);
   const downloadMenuRef = useRef(null);
+  const { loginAs } = usePermissions();
 
   const [dateRange, setDateRange] = useState({
     fromDate: "",
@@ -719,40 +721,41 @@ const ReportsDetailsComponent = () => {
                 </div>
               </div>
             </div>
+            {loginAs !== "partner_user" && (
+              <div className={styles.downloadWrap} ref={downloadMenuRef}>
+                <button
+                  type="button"
+                  className={styles.downloadBtn}
+                  onClick={() => setIsDownloadOpen((prev) => !prev)}
+                  disabled={!reportData || isLoading || isExporting}
+                >
+                  <MdOutlineFileDownload size={16} />
+                  {isExporting ? "Downloading..." : "Download Report"}
+                  <FiChevronDown size={14} />
+                </button>
 
-            <div className={styles.downloadWrap} ref={downloadMenuRef}>
-              <button
-                type="button"
-                className={styles.downloadBtn}
-                onClick={() => setIsDownloadOpen((prev) => !prev)}
-                disabled={!reportData || isLoading || isExporting}
-              >
-                <MdOutlineFileDownload size={16} />
-                {isExporting ? "Downloading..." : "Download Report"}
-                <FiChevronDown size={14} />
-              </button>
-
-              {isDownloadOpen && (
-                <div className={styles.downloadMenu}>
-                  <button
-                    type="button"
-                    className={styles.downloadOption}
-                    onClick={() => handleDownload("pdf")}
-                  >
-                    <IoDocumentTextOutline size={16} />
-                    Download PDF
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.downloadOption}
-                    onClick={() => handleDownload("excel")}
-                  >
-                    <RiFileExcel2Line size={16} />
-                    Download Excel
-                  </button>
-                </div>
-              )}
-            </div>
+                {isDownloadOpen && (
+                  <div className={styles.downloadMenu}>
+                    <button
+                      type="button"
+                      className={styles.downloadOption}
+                      onClick={() => handleDownload("pdf")}
+                    >
+                      <IoDocumentTextOutline size={16} />
+                      Download PDF
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.downloadOption}
+                      onClick={() => handleDownload("excel")}
+                    >
+                      <RiFileExcel2Line size={16} />
+                      Download Excel
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <p className={styles.cardSubtitle}>
