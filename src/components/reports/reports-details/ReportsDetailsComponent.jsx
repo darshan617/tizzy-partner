@@ -17,6 +17,14 @@ import { useGetAllCustomersQuery } from "@/redux/apis/customerApi";
 import Link from "next/link";
 import { IoMdArrowBack } from "react-icons/io";
 import usePermissions from "@/custom-hooks/permissions/usePermissions";
+import CustomPopup from "@/common-components/custom-popup/CustomPopup";
+import otpStyles from "@/components/auth/verify-otp/VerifyOtp.module.css";
+import {
+  useGetDownloadReportApiMutation,
+  useResendDownloadReportApiMutation,
+  useVerifyDownloadReportApiMutation,
+} from "@/redux/apis/downloadReportOtpApi";
+import { useToast } from "@/custom-hooks/toast/ToastProvider";
 
 const AVAILABLE_YEARS = [2026, 2025, 2024, 2023];
 
@@ -87,9 +95,23 @@ const ReportsDetailsComponent = () => {
   const [reportData, setReportData] = useState(null);
   const [isDownloadOpen, setIsDownloadOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [isDownloadPopupVisible, setIsDownloadPopupVisible] = useState(false);
+  const [isDownloadVisible, setIsDownloadVisible] = useState(false);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [sessionId, setSessionId] = useState("");
+  const [pendingFormat, setPendingFormat] = useState(null);
+  const [resendCountdown, setResendCountdown] = useState(0);
   const chartRef = useRef(null);
   const downloadMenuRef = useRef(null);
+  const otpInputsRef = useRef([]);
   const { loginAs } = usePermissions();
+  const { showToast } = useToast();
+  const [getDownloadReportOtpApi, { isLoading: isGettingOtp }] =
+    useGetDownloadReportApiMutation();
+  const [verifyDownloadReportOtpApi, { isLoading: isVerifyingOtp }] =
+    useVerifyDownloadReportApiMutation();
+  const [resendDownloadReportOtp, { isLoading: isResendingOtp }] =
+    useResendDownloadReportApiMutation();
 
   const [dateRange, setDateRange] = useState({
     fromDate: "",
@@ -564,20 +586,139 @@ const ReportsDetailsComponent = () => {
   const handleDownload = async (format) => {
     if (!reportData || isExporting) return;
 
-    setIsExporting(true);
     setIsDownloadOpen(false);
+    setPendingFormat(format);
 
     try {
-      if (format === "excel") {
+      const response = await getDownloadReportOtpApi({
+        body: {
+          partner_id: userData?.id,
+        },
+      }).unwrap();
+
+      if (response?.success) {
+        setSessionId(response?.session || "");
+        setOtp(["", "", "", "", "", ""]);
+        setIsDownloadPopupVisible(true);
+        setIsDownloadVisible(false);
+        setResendCountdown(10);
+        showToast(response?.message || "OTP sent successfully", "success");
+      } else {
+        showToast(response?.message || "Failed to send OTP", "error");
+      }
+    } catch (error) {
+      showToast(
+        error?.data?.message || error?.message || "Failed to send OTP",
+        "error",
+      );
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    try {
+      const response = await verifyDownloadReportOtpApi({
+        body: {
+          partner_id: userData?.id,
+          otp: otp.join(""),
+          session_id: sessionId,
+        },
+      }).unwrap();
+
+      if (response?.success) {
+        setIsDownloadVisible(true);
+        setOtp(["", "", "", "", "", ""]);
+        showToast(response?.message || "OTP verified successfully", "success");
+      } else {
+        showToast(response?.message || "Failed to verify OTP", "error");
+      }
+    } catch (error) {
+      showToast(
+        error?.data?.message || error?.message || "Failed to verify OTP",
+        "error",
+      );
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      const response = await resendDownloadReportOtp({
+        body: {
+          partner_id: userData?.id,
+        },
+      }).unwrap();
+
+      if (response?.success) {
+        setOtp(["", "", "", "", "", ""]);
+        setResendCountdown(10);
+        showToast(response?.message || "OTP resent successfully", "success");
+      } else {
+        showToast(response?.message || "Failed to resend OTP", "error");
+      }
+    } catch (error) {
+      showToast(
+        error?.data?.message || error?.message || "Failed to resend OTP",
+        "error",
+      );
+    }
+  };
+
+  const handleOtpChange = (value, index) => {
+    if (!/^\d?$/.test(value)) return;
+
+    setOtp((currentOtp) => {
+      const nextOtp = [...currentOtp];
+      nextOtp[index] = value;
+      return nextOtp;
+    });
+
+    if (value && index < otpInputsRef.current.length - 1) {
+      otpInputsRef.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpPaste = (event) => {
+    event.preventDefault();
+    const pastedOtp = event.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, 6);
+    setOtp([...pastedOtp, "", "", "", "", "", ""].slice(0, 6));
+    otpInputsRef.current[Math.min(pastedOtp.length, 5)]?.focus();
+  };
+
+  const handleOtpKeyDown = (event, index) => {
+    if (event.key === "Backspace" && !otp[index] && index > 0) {
+      otpInputsRef.current[index - 1]?.focus();
+    }
+  };
+
+  const downloadVerifiedReport = async () => {
+    if (!pendingFormat || isExporting) return;
+
+    setIsExporting(true);
+    try {
+      if (pendingFormat === "excel") {
         await downloadExcel();
       } else {
         await downloadPdf();
       }
+      setIsDownloadPopupVisible(false);
+      setIsDownloadVisible(false);
+      setPendingFormat(null);
     } catch (error) {
       console.error("Failed to download report:", error);
+      showToast(error?.message || "Failed to download report", "error");
     } finally {
       setIsExporting(false);
     }
+  };
+
+  const closeDownloadPopup = () => {
+    setIsDownloadPopupVisible(false);
+    setIsDownloadVisible(false);
+    setOtp(["", "", "", "", "", ""]);
+    setSessionId("");
+    setPendingFormat(null);
   };
 
   useEffect(() => {
@@ -585,6 +726,27 @@ const ReportsDetailsComponent = () => {
       getReportDetails();
     }
   }, [selectedProvider, filterActiveTab]);
+
+  useEffect(() => {
+    if (isDownloadPopupVisible && !isDownloadVisible) {
+      const timer = setTimeout(() => {
+        otpInputsRef.current?.[0]?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isDownloadPopupVisible, isDownloadVisible]);
+
+  useEffect(() => {
+    if (!isDownloadPopupVisible || isDownloadVisible || resendCountdown === 0) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setResendCountdown((seconds) => Math.max(0, seconds - 1));
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [isDownloadPopupVisible, isDownloadVisible, resendCountdown]);
 
   return (
     <>
@@ -727,10 +889,20 @@ const ReportsDetailsComponent = () => {
                   type="button"
                   className={styles.downloadBtn}
                   onClick={() => setIsDownloadOpen((prev) => !prev)}
-                  disabled={!reportData || isLoading || isExporting}
+                  disabled={
+                    !reportData ||
+                    isLoading ||
+                    isExporting ||
+                    isGettingOtp ||
+                    isVerifyingOtp
+                  }
                 >
                   <MdOutlineFileDownload size={16} />
-                  {isExporting ? "Downloading..." : "Download Report"}
+                  {isGettingOtp
+                    ? "Sending OTP..."
+                    : isExporting
+                      ? "Downloading..."
+                      : "Download Report"}
                   <FiChevronDown size={14} />
                 </button>
 
@@ -1156,6 +1328,85 @@ const ReportsDetailsComponent = () => {
                 )}
         </div>
       </div>
+      {isDownloadPopupVisible &&
+        (isDownloadVisible ? (
+          <CustomPopup
+            onClose={closeDownloadPopup}
+            title="Download Report"
+            description="Your report is ready to download. Please click the button below."
+            maxWidth="480px"
+            bodyPadding="24px"
+          >
+            <div className={otpStyles.otpWrapper}>
+              <button
+                type="button"
+                className={otpStyles.confirmBtn}
+                onClick={downloadVerifiedReport}
+                disabled={isExporting}
+              >
+                {isExporting ? "Downloading..." : "Download Report"}
+              </button>
+            </div>
+          </CustomPopup>
+        ) : (
+          <CustomPopup
+            onClose={closeDownloadPopup}
+            title="OTP Verification"
+            description={`Enter the 6-digit verification code sent on your ${userData?.email} to continue.`}
+            maxWidth="480px"
+            bodyPadding="24px"
+          >
+            <div className={otpStyles.otpWrapper}>
+              <p className={otpStyles.label}>
+                Verification code <span>*</span>
+              </p>
+              <div className={otpStyles.otpContainer} onPaste={handleOtpPaste}>
+                {otp.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(element) => {
+                      otpInputsRef.current[index] = element;
+                    }}
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete={index === 0 ? "one-time-code" : "off"}
+                    maxLength={1}
+                    aria-label={`OTP digit ${index + 1}`}
+                    className={otpStyles.otpInput}
+                    value={digit}
+                    onChange={(event) =>
+                      handleOtpChange(event.target.value, index)
+                    }
+                    onKeyDown={(event) => handleOtpKeyDown(event, index)}
+                  />
+                ))}
+              </div>
+              <p className={otpStyles.resend}>
+                Didn’t receive a code?{" "}
+                <button
+                  type="button"
+                  className={otpStyles.resendBtn}
+                  onClick={handleResendOtp}
+                  disabled={resendCountdown > 0 || isResendingOtp}
+                >
+                  {isResendingOtp
+                    ? "Resending..."
+                    : resendCountdown > 0
+                      ? `Resend in 00:${String(resendCountdown).padStart(2, "0")}`
+                      : "Resend OTP"}
+                </button>
+              </p>
+              <button
+                type="button"
+                className={otpStyles.confirmBtn}
+                onClick={handleVerifyOtp}
+                disabled={otp.some((digit) => !digit) || isVerifyingOtp}
+              >
+                {isVerifyingOtp ? "Verifying..." : "Verify OTP"}
+              </button>
+            </div>
+          </CustomPopup>
+        ))}
     </>
   );
 };
