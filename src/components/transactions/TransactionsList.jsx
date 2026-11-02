@@ -130,7 +130,7 @@ const TransactionsList = ({ variant = "default", limit }) => {
   const [selectedProviderId, setSelectedProviderId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemPerPage = 10;
-  const { canAdd, canDelete, canEdit, canView } = usePermissions();
+  const { canAdd, canDelete, canEdit, canView, loginAs } = usePermissions();
 
   const [getTransactionsList, { isLoading }] =
     useGetTransactionHistoryMutation();
@@ -506,17 +506,19 @@ const TransactionsList = ({ variant = "default", limit }) => {
           </div>
         </div>
 
-        <div
-          className={`${styles.toolbar} py-2 px-sm-4 px-3 d-flex align-items-center justify-content-end`}
-        >
-          <DownloadExcel
-            data={finalTransactionsList}
-            columns={transactionColumns}
-            fileName="transaction-history"
-            className={styles.downloadListBtn}
-            buttonText="Download List"
-          />
-        </div>
+        {loginAs !== "partner_user" && (
+          <div
+            className={`${styles.toolbar} py-2 px-sm-4 px-3 d-flex align-items-center justify-content-end`}
+          >
+            <DownloadExcel
+              data={finalTransactionsList}
+              columns={transactionColumns}
+              fileName="transaction-history"
+              className={styles.downloadListBtn}
+              buttonText="Download List"
+            />
+          </div>
+        )}
 
         <div className={styles.listScrollArea}>
           <div className="py-4 px-sm-4 px-3">

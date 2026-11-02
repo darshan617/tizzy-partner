@@ -24,6 +24,7 @@ import {
 } from "@/redux/slices/popupSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useGenerateNewOrderMutation } from "@/redux/apis/draftPoApi";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const toDomainArray = (value) => {
   if (Array.isArray(value)) return value.filter(Boolean);
@@ -68,6 +69,7 @@ const OrderSummaryCard = ({
   console.log("uploadPoPdf", uploadPoPdf);
   console.log("cartDetails", cartDetails);
   const dispatch = useDispatch();
+  const { canView } = usePermissions();
   const isPopupVisible = useSelector(selectIsPopupVisible);
   const router = useRouter();
   const { showToast } = useToast();
@@ -114,8 +116,6 @@ const OrderSummaryCard = ({
   ).toFixed(2);
 
   const isInsufficient = _creditBalance_ < totals;
-  console.log("isInsufficient", isInsufficient);
-  console.log("totals", totals);
 
   const discountedAmount = (discountedPercent / 100) * total;
 
@@ -402,7 +402,9 @@ const OrderSummaryCard = ({
         router?.push({
           pathname: "/draft-po",
           query: {
-            pl: res?.data?.data?.po_link,
+            pl: canView("customers")
+              ? res?.data?.data?.po_link
+              : res?.data?.data?.po_masked_document_url,
             sr: res?.data?.data?.sign_required === "yes" ? true : false,
             ordId: res?.data?.data?.ordId,
           },

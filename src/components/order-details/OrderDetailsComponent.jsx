@@ -23,6 +23,7 @@ import {
   setIsPopupVisible,
 } from "@/redux/slices/popupSlice";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 
 const formatCurrency = (value, wantToShowRupee = true) =>
   wantToShowRupee
@@ -62,7 +63,7 @@ const OrderDetailsComponent = () => {
   const isPopupVisible = useSelector(selectIsPopupVisible);
   const [orderData, setOrderData] = useState(null);
   const [isPurchaseConfirmed, setIsPurchaseConfirmed] = useState(false);
-  console.log("orderData", orderData);
+  const { canView } = usePermissions();
 
   const userData = Cookies.get("userData")
     ? JSON.parse(Cookies.get("userData"))
@@ -116,6 +117,7 @@ const OrderDetailsComponent = () => {
   const domainName = firstPlan?.domain_name || "-";
   const orderNo = orderData?.order_no || "-";
   const poLink = poDetails?.final_po_link || orderData?.final_po_link || "";
+  const poLinkMasked = poDetails?.po_masked_document_url || "";
 
   const breadcrumbItems = [
     { label: "Order Summary", href: "/order-summary" },
@@ -365,8 +367,8 @@ const OrderDetailsComponent = () => {
                   <Box size={18} />
                   Order Summary
                 </h3>
-                {poLink ? (
-                  <a
+                {/* {poLink ? (
+                  <Link
                     href={poLink}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -374,13 +376,22 @@ const OrderDetailsComponent = () => {
                   >
                     PO
                     <ArrowUpRight size={14} />
-                  </a>
+                  </Link>
                 ) : (
                   <span className={styles.poLink}>
                     PO
                     <ArrowUpRight size={14} />
                   </span>
-                )}
+                )} */}
+                <Link
+                  href={canView("customers") ? poLink : poLinkMasked}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.poLink}
+                >
+                  PO
+                  <ArrowUpRight size={14} />
+                </Link>
               </div>
               <div className={styles.sideBody}>
                 <div className={styles.kvRow}>

@@ -137,6 +137,14 @@
   flex-direction: column;
   gap: 16px;
   min-width: 0;
+  align-items: start;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
 }
 
 .contentGrid > aside {

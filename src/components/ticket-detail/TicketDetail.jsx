@@ -213,10 +213,11 @@ const TicketDetail = () => {
         await fetchTicketConversation();
       } else {
         showToast(
-          response?.data?.message || "Unable to send the reply.",
+          response?.error?.data?.message || "Unable to send the reply.",
           "error",
         );
       }
+      console.log(response);
     } catch (error) {
       console.error("Ticket reply failed:", error);
       showToast("Unable to send the reply. Please try again.", "error");

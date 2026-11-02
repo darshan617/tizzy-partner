@@ -44,6 +44,7 @@ import autoTable from "jspdf-autotable";
 import { AiOutlineRise } from "react-icons/ai";
 import { BiSupport } from "react-icons/bi";
 import CustomDropdown from "@/common-components/custom-dropdown/CustomDropdown";
+import usePermissions from "@/custom-hooks/permissions/usePermissions";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const formatRevenue = (value) =>
@@ -171,6 +172,7 @@ const ReportsComponent = () => {
     toDate: "",
   });
   const today = new Date().toISOString().split("T")[0];
+  const { loginAs } = usePermissions();
 
   const [getReports, { isLoading, isError, error }] = useGetReportsMutation();
   const [isExporting, setIsExporting] = useState(false);
@@ -892,27 +894,29 @@ const ReportsComponent = () => {
             </div>
           </div>
 
-          <div className={styles.actions}>
-            {/* <button className={styles.btnPrimary}>Generate Report</button> */}
-            <button
-              type="button"
-              className={styles.btnGhost}
-              onClick={() => handleExport("pdf")}
-              disabled={!reportData || isLoading || isExporting}
-            >
-              <IoDocumentTextOutline />
-              {isExporting ? "Exporting..." : "Export PDF"}
-            </button>
-            <button
-              type="button"
-              className={styles.btnGhost}
-              onClick={() => handleExport("excel")}
-              disabled={!reportData || isLoading || isExporting}
-            >
-              <RiFileExcel2Line />
-              {isExporting ? "Exporting..." : "Export Excel"}
-            </button>
-          </div>
+          {loginAs !== "partner_user" && (
+            <div className={styles.actions}>
+              {/* <button className={styles.btnPrimary}>Generate Report</button> */}
+              <button
+                type="button"
+                className={styles.btnGhost}
+                onClick={() => handleExport("pdf")}
+                disabled={!reportData || isLoading || isExporting}
+              >
+                <IoDocumentTextOutline />
+                {isExporting ? "Exporting..." : "Export PDF"}
+              </button>
+              <button
+                type="button"
+                className={styles.btnGhost}
+                onClick={() => handleExport("excel")}
+                disabled={!reportData || isLoading || isExporting}
+              >
+                <RiFileExcel2Line />
+                {isExporting ? "Exporting..." : "Export Excel"}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
