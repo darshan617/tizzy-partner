@@ -98,7 +98,6 @@ const NotificationsSettingComponent = () => {
       });
       console.log(res, "res");
       if (res?.data?.success) {
-        console.log(res?.data?.data, "res?.data?.data");
         setSelectedChannels(res?.data?.data);
       }
     } catch (error) {
