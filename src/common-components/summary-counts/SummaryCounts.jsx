@@ -462,6 +462,13 @@ export default function SummaryCounts({
       redirectUrl: null,
       permissionKey: "support",
     },
+    "open tickets": {
+      boxClass: "secondaryGrad",
+      iconClass: "secondaryColor",
+      badgeClass: "down",
+      icon: <DraftInvoiceIcon />,
+      redirectUrl: null,
+    },
     "pending tickets": {
       boxClass: "warningGrad",
       iconClass: "warningColor",
