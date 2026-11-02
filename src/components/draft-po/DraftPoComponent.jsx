@@ -17,6 +17,12 @@ import Image from "next/image";
 const DraftPoComponent = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  console.log(router?.query?.pl, "router?.query?.pl");
+
+  const poPreviewUrl =
+    typeof router?.query?.pl === "string"
+      ? `/api/draft-po?url=${encodeURIComponent(router.query.pl)}`
+      : "";
   const esignRequired = router?.query?.sr === "true";
   const isPopupVisible = useSelector(selectIsPopupVisible);
   // const handleGenerateNewOrder = async () => {
@@ -59,7 +65,6 @@ const DraftPoComponent = () => {
           >
             <BiCheckCircle /> Draft PO Generated Successfully{" "}
           </div>
-          
         </div>
         <div className={styles.draftPoBackButtonContainer}>
           <button className={styles.backButton} onClick={() => router.back()}>
@@ -67,12 +72,14 @@ const DraftPoComponent = () => {
           </button>
         </div>
         <div className={`${styles.draftPoIframeContainer} sectionCard mb-0`}>
-       
           <iframe
-            src={`${router.query.pl}#toolbar=0&view=FitH`}
+            src={
+              poPreviewUrl ? `${poPreviewUrl}#toolbar=0&view=FitH` : undefined
+            }
+            title="Draft purchase order preview"
             allowFullScreen
           />
-           
+
           {/* <Image
             src={`${router?.query?.pl}`}
             alt="draft po"
@@ -140,7 +147,8 @@ const DraftPoComponent = () => {
         >
           <div className={styles.previewPopup}>
             <iframe
-              src={`${router?.query?.pl}#toolbar=0`}
+              src={poPreviewUrl ? `${poPreviewUrl}#toolbar=0` : undefined}
+              title="Draft purchase order preview"
               allowFullScreen
               style={{
                 height: "453px",

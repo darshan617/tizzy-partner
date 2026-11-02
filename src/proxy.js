@@ -55,10 +55,17 @@ export function proxy(request) {
   const isAuthRoute = authRoutes.includes(pathname);
   const isApprovalRoute = pathname === approvalRoute;
 
+  // if (!token) {
+  //   return isAuthRoute
+  //     ? NextResponse.next()
+  //     : NextResponse.redirect(new URL("/auth/login", request.url));
+  // }
   if (!token) {
-    return isAuthRoute
-      ? NextResponse.next()
-      : NextResponse.redirect(new URL("/auth/login", request.url));
+    if (pathname === "/" || !isAuthRoute) {
+      return NextResponse.redirect(new URL("/auth/login", request.url));
+    }
+
+    return NextResponse.next();
   }
 
   if (isAuthRoute) {

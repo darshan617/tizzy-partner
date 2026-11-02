@@ -23,10 +23,7 @@ import { useGetBalanceAndCartDetailsQuery } from "@/redux/apis/balanceAndCartApi
 import usePermissions from "@/custom-hooks/permissions/usePermissions";
 import { ACCOUNT_MENU_CONSTANTS } from "../sidebar/SidebarConstant";
 import { useSearchQuery } from "@/redux/apis/searchApi";
-import {
-  clearLogoutPending,
-  useLogoutMutation,
-} from "@/redux/apis/logoutApi";
+import { clearLogoutPending, useLogoutMutation } from "@/redux/apis/logoutApi";
 
 const formatNotificationTime = (dateString) => {
   if (!dateString) return "";
@@ -741,6 +738,9 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen, balanceAndCartData }) => {
                             ? styles.notificationItemUnread
                             : ""
                         }`}
+                        style={{
+                          display: !canView(notification?.module_key) && "none",
+                        }}
                         onClick={(e) => {
                           handleMarkNotificationAsRead(notification, e);
                         }}

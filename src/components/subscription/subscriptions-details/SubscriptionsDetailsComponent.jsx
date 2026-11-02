@@ -621,7 +621,11 @@ const SubscriptionsDetailsComponent = () => {
                       </button>
                     ) : (
                       <Link
-                        href={subscriptionDetails?.po_link || "#"}
+                        href={
+                          canView("customers")
+                            ? subscriptionDetails?.po_link || "#"
+                            : subscriptionDetails?.po_masked_document_url || "#"
+                        }
                         target="_blank"
                         rel="noopener noreferrer"
                         className={styles.viewPoLink}
