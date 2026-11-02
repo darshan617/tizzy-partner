@@ -623,7 +623,7 @@ const SubscriptionsDetailsComponent = () => {
                       <Link
                         href={
                           canView("customers")
-                            ? subscriptionDetails?.po_link
+                            ? subscriptionDetails?.po_link || "#"
                             : subscriptionDetails?.po_masked_document_url || "#"
                         }
                         target="_blank"
