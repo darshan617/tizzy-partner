@@ -54,6 +54,7 @@ export const apiSlice = createApi({
     "reports",
     "search",
     "logout",
+    "downloadReportOtpApi",
   ],
   endpoints: (builder) => ({}),
 });

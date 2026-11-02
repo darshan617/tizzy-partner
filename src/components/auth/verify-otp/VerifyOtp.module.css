@@ -125,6 +125,14 @@
   border: none;
   outline: none;
   color: var(--primaryColor);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.resendBtn:disabled {
+  color: #9ba6b7;
+  cursor: not-allowed;
 }
 
 @media (max-width: 480px) {

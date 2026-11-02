@@ -10,8 +10,8 @@ const creditNote = apiSlice.injectEndpoints({
           body: body,
         };
       },
+      invalidatesTags: ["creditNotes"],
     }),
-    invalidatesTags: ["creditNotes"],
   }),
 });
 
