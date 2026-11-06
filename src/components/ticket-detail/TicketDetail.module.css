@@ -120,6 +120,7 @@
   background-color: #00a00d;
   color: #fcfcfc;
 }
+
 .closed {
   background: #e21146;
   color: #ffffff;
@@ -147,7 +148,7 @@
   min-width: 0;
 }
 
-.contentGrid > aside {
+.contentGrid>aside {
   min-height: 0;
   display: flex;
 }
