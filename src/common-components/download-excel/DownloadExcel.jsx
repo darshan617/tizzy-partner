@@ -71,6 +71,8 @@ const DownloadExcel = ({
         setIsDownloadVisible(true);
         setOtp(["", "", "", "", "", ""]);
         showToast(res?.data?.message, "success");
+      } else {
+        showToast(res?.error?.data?.message, "error");
       }
     } catch (error) {
       console.log(error, "error");

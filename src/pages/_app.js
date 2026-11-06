@@ -9,7 +9,11 @@ import "aos/dist/aos.css";
 import { ToastProvider } from "@/custom-hooks/toast/ToastProvider";
 import Script from "next/script";
 import PermissionRouteGuard from "@/components/permission-route-gaurd/PermissionRouteGuard";
-import { flushPendingLogout, markLogoutPending } from "@/redux/apis/logoutApi";
+import {
+  flushPendingLogout,
+  handleBrowserCloseLogout,
+  syncAuthTokenBackup,
+} from "@/redux/apis/logoutApi";
 {
   /* <Script
   src="https://checkout.razorpay.com/v1/checkout.js"
@@ -31,21 +35,40 @@ export default function App({ Component, pageProps, ...rest }) {
     script.async = true;
     document.body.appendChild(script);
   }, []);
-  //cursor code
-  // Browser close clears session cookies but not localStorage.
-  // Save token on pagehide; on next visit without cookies, call logout API.
+  // Browser close: remember the token. Logout API runs on the next visit
+  // only if the session cookie is gone. Refresh and in-app URL changes
+  // (including opening /auth/login while already signed in) keep the session.
   useEffect(() => {
     flushPendingLogout();
+    syncAuthTokenBackup();
 
-    const handlePageHide = (event) => {
+    const syncTimer = window.setInterval(syncAuthTokenBackup, 10000);
+
+    const onPageHide = (event) => {
       if (event.persisted) return;
-      markLogoutPending();
+      handleBrowserCloseLogout();
     };
 
-    window.addEventListener("pagehide", handlePageHide);
-    return () => window.removeEventListener("pagehide", handlePageHide);
+    const onBeforeUnload = () => {
+      handleBrowserCloseLogout();
+    };
+
+    const onVisibilityChange = () => {
+      // Tab switch only — do not logout
+      syncAuthTokenBackup();
+    };
+
+    window.addEventListener("pagehide", onPageHide);
+    window.addEventListener("beforeunload", onBeforeUnload);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      window.clearInterval(syncTimer);
+      window.removeEventListener("pagehide", onPageHide);
+      window.removeEventListener("beforeunload", onBeforeUnload);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
   }, []);
-  //cursor code
   // useEffect(() => {
   //   const handleContextMenu = (e) => e.preventDefault();
 
