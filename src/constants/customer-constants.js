@@ -7,8 +7,8 @@ export const CUSTOMER_STATUS = [
     key: "inactive",
     label: "Inactive",
   },
-  {
-    key: "closed",
-    label: "Closed",
-  },
+  // {
+  //   key: "closed",
+  //   label: "Closed",
+  // },
 ];
