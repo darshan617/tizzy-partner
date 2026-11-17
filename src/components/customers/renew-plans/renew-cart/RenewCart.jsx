@@ -351,7 +351,8 @@ const RenewCart = ({
 
                                   if (
                                     value >= minLicenses &&
-                                    value <= maxLicenses
+                                    (customerLimit == null ||
+                                      value <= Number(customerLimit))
                                   ) {
                                     if (listMode) {
                                       onLineLicensesChange?.(lineKey, value);
