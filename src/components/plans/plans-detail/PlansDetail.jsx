@@ -92,6 +92,15 @@ export default function PlansDetail() {
   const customer = planDetails?.customer_information || {};
   const subscription = planDetails?.subscription_details || {};
   const plan = Array.isArray(planDetails?.plans) ? planDetails.plans[0] : {};
+  console.log(plan, "ssssssssssssss");
+
+  const hideActions =
+    plan?.hide_upgrade ||
+    plan?.hide_add_license ||
+    plan?.hide_downgrade ||
+    plan?.hide_partial_upgrade ||
+    plan?.hide_renew;
+
   const planActions = plan?.actions || {};
   const timeline = Array.isArray(planDetails?.timeline)
     ? planDetails.timeline
@@ -249,14 +258,12 @@ export default function PlansDetail() {
                             },
                           });
                         }}
-                        disabled={isProcessingOrCancelled || plan?.hide_upgrade}
+                        disabled={isProcessingOrCancelled || hideActions}
                         style={{
                           opacity:
-                            isProcessingOrCancelled || plan?.hide_upgrade
-                              ? 0.5
-                              : 1,
+                            isProcessingOrCancelled || hideActions ? 0.5 : 1,
                           cursor:
-                            isProcessingOrCancelled || plan?.hide_upgrade
+                            isProcessingOrCancelled || hideActions
                               ? "not-allowed"
                               : "pointer",
                         }}
@@ -297,7 +304,7 @@ export default function PlansDetail() {
 
               {canEdit("subscriptions") && (
                 <div className="d-flex justify-content-end gap-2 mt-3">
-                  {plan?.hide_upgrade && (
+                  {hideActions && (
                     <p
                       className="mb-0"
                       style={{ fontSize: "14px", color: "#ff9800" }}
@@ -310,7 +317,7 @@ export default function PlansDetail() {
                     statusKey !== "downgrade pending" &&
                     statusKey !== "cancelled" &&
                     statusKey !== "renewal pending" &&
-                    !plan?.hide_upgrade && (
+                    !hideActions && (
                       <>
                         <Link
                           href={{
