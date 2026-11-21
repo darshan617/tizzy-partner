@@ -298,6 +298,7 @@ const SubscriptionsDetailsComponent = () => {
       return matchesStatus;
     });
   }, [plans, selectedStatuses]);
+  console.log(filteredPlans, "sssss");
 
   const pageSize = Number(paginationData?.per_page || itemPerPage) || 1;
   const resultTotal = Number(
@@ -682,7 +683,11 @@ const SubscriptionsDetailsComponent = () => {
                               ₹ {plan?.subtotal ?? "-"}{" "}
                               {/* <span>Per User / Per Year</span> */}
                             </small>
-                            {plan?.hide_upgrade && (
+                            {(plan?.hide_upgrade ||
+                              plan?.hide_renew ||
+                              plan?.hide_add_license ||
+                              plan?.hide_downgrade ||
+                              plan?.hide_partial_upgrade) && (
                               <p
                                 className=" mb-0"
                                 style={{ fontSize: "12px", color: "#ff9800" }}
@@ -780,7 +785,11 @@ const SubscriptionsDetailsComponent = () => {
                             plan?.status?.toLowerCase() !== "renewal pending" &&
                             plan?.status?.toLowerCase() !== "cancelled" &&
                             plan?.status?.toLowerCase() !== "processing" &&
-                            !plan?.hide_upgrade && (
+                            !plan?.hide_upgrade &&
+                            !plan?.hide_renew &&
+                            !plan?.hide_add_license &&
+                            !plan?.hide_downgrade &&
+                            !plan?.hide_partial_upgrade && (
                               <button
                                 className={styles.addLicenseBtn}
                                 onClick={() => {
@@ -808,6 +817,11 @@ const SubscriptionsDetailsComponent = () => {
                           {canEdit("subscriptions") && (
                             <>
                               {!plan?.hide_upgrade &&
+                                !plan?.hide_upgrade &&
+                                !plan?.hide_renew &&
+                                !plan?.hide_add_license &&
+                                !plan?.hide_downgrade &&
+                                !plan?.hide_partial_upgrade &&
                                 (plan?.status?.toLowerCase() === "expiring" ||
                                   plan?.status?.toLowerCase() ===
                                     "expired") && (
@@ -852,7 +866,12 @@ const SubscriptionsDetailsComponent = () => {
                                 "renewal pending" &&
                               plan?.status?.toLowerCase() !== "cancelled" &&
                               plan?.status?.toLowerCase() !== "processing" &&
-                              !plan?.hide_upgrade ? (
+                              !plan?.hide_upgrade &&
+                              !plan?.hide_upgrade &&
+                              !plan?.hide_renew &&
+                              !plan?.hide_add_license &&
+                              !plan?.hide_downgrade &&
+                              !plan?.hide_partial_upgrade ? (
                                 <>
                                   <Link
                                     href={{
@@ -952,6 +971,11 @@ const SubscriptionsDetailsComponent = () => {
                               )}
 
                               {!plan?.hide_upgrade &&
+                                !plan?.hide_upgrade &&
+                                !plan?.hide_renew &&
+                                !plan?.hide_add_license &&
+                                !plan?.hide_downgrade &&
+                                !plan?.hide_partial_upgrade &&
                                 (plan?.status?.toLowerCase() === "expiring" ||
                                   plan?.status?.toLowerCase() ===
                                     "expired") && (
