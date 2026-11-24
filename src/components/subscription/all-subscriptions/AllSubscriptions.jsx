@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { BiChevronLeft, BiChevronRight, BiUser } from "react-icons/bi";
 import PaginationNew from "@/common-components/pagination/PaginationNew";
+import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarConstant";
 
 const avatarColorClasses = [
   "avatarRed",
@@ -344,6 +345,16 @@ const AllSubscriptions = ({
 
                               <div className={styles.planCol}>
                                 <div className={styles.crName}>
+                                  <span className={styles.providerLogo}>
+                                    {SIDEBAR_SERVICES_CONSTANTS.find(
+                                      (service) =>
+                                        service?.id ===
+                                        Number(
+                                          subscription?.provider_id ??
+                                            subscription?.plans?.[0]?.provider_id,
+                                        ),
+                                    )?.image || "-"}
+                                  </span>
                                   <span className={styles.crNameText}>
                                     {subscription?.currentPlan}
                                   </span>

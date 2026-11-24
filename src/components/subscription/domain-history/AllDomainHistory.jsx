@@ -15,6 +15,7 @@ import { FaArrowRight, FaChevronRight, FaGlobe } from "react-icons/fa";
 import { FiFilter } from "react-icons/fi";
 import { RiGlobalLine } from "react-icons/ri";
 import PaginationNew from "@/common-components/pagination/PaginationNew";
+import { SIDEBAR_SERVICES_CONSTANTS } from "@/components/layout/sidebar/SidebarConstant";
 
 const TizzyIcon = () => (
   <svg
@@ -83,7 +84,12 @@ const formatPrice = (price) => {
   return `₹ ${amount.toFixed(2)}`;
 };
 
-const getPlanIcon = (planName = "", domainName = "") => {
+const getPlanIcon = (providerId, planName = "", domainName = "") => {
+  const provider = SIDEBAR_SERVICES_CONSTANTS.find(
+    (service) => service.id === Number(providerId),
+  );
+  if (provider?.image) return provider.image;
+
   const text = `${planName} ${domainName}`.toLowerCase();
   if (text.includes("microsoft") || text.includes("onmicrosoft")) {
     return <MicrosoftIcon />;
@@ -458,7 +464,7 @@ const AllDomainHistory = () => {
                       history?.map((item) => (
                         <div className={styles.historyRow} key={item?.id}>
                           <div className={styles.colDateMeta}>
-                            <p className={styles.txDate}>20 Mar 2026</p>
+                            <p className={styles.txDate}>{item?.end_date}</p>
                             <span className={styles.txIdBadge}>
                               {item?.order_no || "-"}
                             </span>
@@ -467,6 +473,7 @@ const AllDomainHistory = () => {
                           <div className={styles.rowLeft}>
                             <div className={styles.statusIcon}>
                               {getPlanIcon(
+                                item?.provider_id,
                                 item?.plan_name,
                                 domainItem?.domain_name,
                               )}
