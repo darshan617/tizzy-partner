@@ -105,6 +105,13 @@
   flex-shrink: 0;
 }
 
+.statusIcon svg {
+  width: 24px;
+  height: 24px;
+  max-width: 24px;
+  max-height: 24px;
+}
+
 .statusLabel {
   display: inline-flex;
   margin-bottom: 0.35rem;
