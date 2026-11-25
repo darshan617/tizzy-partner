@@ -165,6 +165,10 @@ const NotificationsSettingComponent = () => {
                 </div>
                 <div className={styles.channelsWrapper}>
                   {item?.channels?.map((channel, idx) => {
+                    const isChannelDisabled =
+                      channel?.name === "Email" ||
+                      isSavingSettings ||
+                      !canEdit("notifications_settings");
                     return (
                       <label className={styles.channelOption}>
                         <input
@@ -172,16 +176,9 @@ const NotificationsSettingComponent = () => {
                           checked={selectedChannels[channel?.key]}
                           name={channel?.key}
                           onChange={(e) => handleChannelChange(e, idx)}
-                          disabled={
-                            isSavingSettings ||
-                            !canEdit("notifications_settings")
-                          }
+                          disabled={isChannelDisabled}
                           style={{
-                            cursor:
-                              isSavingSettings ||
-                              !canEdit("notifications_settings")
-                                ? "not-allowed"
-                                : "pointer",
+                            cursor: isChannelDisabled ? "not-allowed" : "pointer",
                           }}
                         />
                         <span>{channel?.name}</span>
