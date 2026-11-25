@@ -4,7 +4,7 @@ const faqApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getPartnerFaqs: builder.query({
       query: () => ({
-        url: "/faqs?audience=partner&category=subscriptions",
+        url: "/faqs?audience=partner",
         method: "GET",
       }),
     }),
