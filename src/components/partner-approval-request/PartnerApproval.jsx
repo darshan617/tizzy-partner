@@ -22,7 +22,6 @@ const PartnerApproval = () => {
   }
   const [countdown, setCountdown] = useState(10);
   const [appStatus, setAppStatus] = useState(false);
-  console.log(appStatus, "Apppp");
 
   const [getPartnerApprovalRequest, { isLoading }] =
     useGetPartnerApprovalRequestMutation();
@@ -155,7 +154,10 @@ const PartnerApproval = () => {
                 Checking status in <strong>{countdown}s</strong>
               </span>
             </div>
-            <Link href={"#"} className={styles.contactBtn}>
+            <Link
+              href={"mailto:support@tizzycloud.com"}
+              className={styles.contactBtn}
+            >
               <BiSupport size={20} className="me-2" /> Contact Support
             </Link>
           </>
