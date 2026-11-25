@@ -4,7 +4,7 @@ import Link from "next/link";
 import logo from "@/assets/signup/logo-1.png";
 import leftImage from "@/assets/images/cuate.png";
 import rightImage from "@/assets/images/cuate-1.png";
-import { FaQuestionCircle, FaQuestionCircleOutlined, FaRegQuestionCircle, FaSearch } from "react-icons/fa";
+import { FaRegQuestionCircle, FaSearch } from "react-icons/fa";
 import { BiChevronDown } from "react-icons/bi";
 import { FiMail, FiMapPin } from "react-icons/fi";
 import {
@@ -17,6 +17,7 @@ import {
 import { FaXTwitter } from "react-icons/fa6";
 import Image from "next/image";
 import CustomPopup from "@/common-components/custom-popup/CustomPopup";
+import { useGetPartnerFaqsQuery } from "@/redux/apis/faqApi";
 
 const EMAIL_CONTACTS = [
   {
@@ -74,55 +75,18 @@ const SOCIAL_LINKS = [
   },
 ];
 
-const FAQ_ITEMS = [
-  {
-    id: "renew-plan",
-    question: "How to renew my plan?",
-    answer: "-",
-  },
-  {
-    id: "upgrade-plan",
-    question: "How to upgrade my plan?",
-    answer: "-",
-  },
-  {
-    id: "payment-failed",
-    question: "Why is my payment not successful?",
-    answer: "-",
-  },
-  {
-    id: "credit-system",
-    question: "How does the credit system work?",
-    answer: "-",
-  },
-  {
-    id: "downgrade-plan",
-    question: "Can I downgrade my plan?",
-    answer: "-",
-  },
-  {
-    id: "credit-balance",
-    question: "How do I check my credit balance?",
-    answer: "-",
-  },
-  {
-    id: "renewal-vs-upgrade",
-    question: "What is the difference between renewal and upgrade?",
-    answer: "-",
-  },
-  {
-    id: "upgrade-before-expiry",
-    question: "Can I upgrade my plan before expiry?",
-    answer: "-",
-  },
-];
-
 const HelpCenter = () => {
-  const [activeTab, setActiveTab] = useState("help-center");
   const [openFaqId, setOpenFaqId] = useState(null);
   const [isRaiseQueryOpen, setIsRaiseQueryOpen] = useState(false);
   const [querySubject, setQuerySubject] = useState("");
   const [queryMessage, setQueryMessage] = useState("");
+  const {
+    data: faqResponse,
+    isLoading: isFaqsLoading,
+    isError: isFaqsError,
+    refetch: refetchFaqs,
+  } = useGetPartnerFaqsQuery();
+  const faqItems = faqResponse?.data || [];
 
   const toggleFaq = (id) => {
     setOpenFaqId((current) => (current === id ? null : id));
@@ -268,30 +232,49 @@ const HelpCenter = () => {
         </div>
 
         <div className={styles.faqAccordion}>
-          {FAQ_ITEMS.map((item) => {
-            const isOpen = openFaqId === item.id;
-            return (
-              <div key={item.id} className={styles.faqItem}>
-                <button
-                  type="button"
-                  className={styles.faqTrigger}
-                  aria-expanded={isOpen}
-                  onClick={() => toggleFaq(item.id)}
-                >
-                  <span className={styles.faqQuestion}>{item.question}</span>
-                  <BiChevronDown
-                    className={`${styles.faqChevron} ${
-                      isOpen ? styles.faqChevronOpen : ""
-                    }`}
-                    aria-hidden="true"
-                  />
-                </button>
-                {isOpen && (
-                  <div className={styles.faqAnswer}>{item.answer}</div>
-                )}
-              </div>
-            );
-          })}
+          {isFaqsLoading ? (
+            <p className={styles.faqStatus}>Loading FAQs...</p>
+          ) : isFaqsError || faqResponse?.success === false ? (
+            <div className={styles.faqStatus} role="alert">
+              <p>Unable to load FAQs.</p>
+              <button
+                type="button"
+                className={styles.faqRetry}
+                onClick={refetchFaqs}
+              >
+                Try again
+              </button>
+            </div>
+          ) : faqItems.length === 0 ? (
+            <p className={styles.faqStatus}>No FAQs available.</p>
+          ) : (
+            faqItems.map((item) => {
+              const isOpen = openFaqId === item.id;
+              return (
+                <div key={item.id} className={styles.faqItem}>
+                  <button
+                    type="button"
+                    className={styles.faqTrigger}
+                    aria-expanded={isOpen}
+                    onClick={() => toggleFaq(item.id)}
+                  >
+                    <span className={styles.faqQuestion}>
+                      {item.question}
+                    </span>
+                    <BiChevronDown
+                      className={`${styles.faqChevron} ${
+                        isOpen ? styles.faqChevronOpen : ""
+                      }`}
+                      aria-hidden="true"
+                    />
+                  </button>
+                  {isOpen && (
+                    <div className={styles.faqAnswer}>{item.answer}</div>
+                  )}
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 
