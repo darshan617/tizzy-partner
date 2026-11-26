@@ -189,65 +189,71 @@ const AllSubscriptions = ({
               id="filterSection"
             >
               <div className="p-sm-4 p-3">
-                <div className="row g-4 mb-4">
-                  <div className={`${styles.filterPart} col-auto`}>
-                    <span className={styles.filterHead}>Status :</span>
-                    <div className="d-flex align-items-start">
-                      <ul
-                        className={`${styles.filterGroup} gap-2`}
-                        role="group"
-                      >
-                        {statusOrder.map((status) => (
-                          <li key={status}>
-                            <button
-                              key={status}
-                              className={`${styles.filterItem} rounded-pill`}
-                              onClick={() => toggleStatus(status)}
-                              style={{
-                                backgroundColor:
-                                  selectedStatuses === status
-                                    ? "var(--primaryColor)"
-                                    : "",
-                                color:
-                                  selectedStatuses === status
-                                    ? "var(--whiteColor)"
-                                    : "var(--darkColor)",
-                              }}
-                            >
-                              {statusLabelMap[status]}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                      <ul
-                        className={`${styles.filterGroup} gap-2`}
-                        role="group"
-                      >
-                        {statusProvider.map((status) => (
-                          <li key={status}>
-                            <button
-                              className={`${styles.filterItem} rounded-pill`}
-                              onClick={() => {
-                                // setSelectedProviderId(status?.id);
-                                toogleProviderStatus(status);
-                              }}
-                              style={{
-                                backgroundColor:
-                                  selectedProviderId === status?.id
-                                    ? "var(--primaryColor)"
-                                    : "",
-                                color:
-                                  selectedProviderId === status?.id
-                                    ? "var(--whiteColor)"
-                                    : "var(--darkColor)",
-                              }}
-                            >
-                              {status?.name}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                <div className="row g-4 mb-4 align-items-start">
+                  {/* Status Filter */}
+                  <div className={`${styles.filterPart} col-lg-8 col-12`}>
+                    <span className={`${styles.filterHead} d-block mb-2`}>
+                      Status :
+                    </span>
+
+                    <ul
+                      className={`${styles.filterGroup} d-flex flex-wrap gap-2 m-0 p-0`}
+                      role="group"
+                    >
+                      {statusOrder.map((status) => (
+                        <li key={status}>
+                          <button
+                            className={`${styles.filterItem} rounded-pill`}
+                            onClick={() => toggleStatus(status)}
+                            style={{
+                              backgroundColor:
+                                selectedStatuses === status
+                                  ? "var(--primaryColor)"
+                                  : "",
+                              color:
+                                selectedStatuses === status
+                                  ? "var(--whiteColor)"
+                                  : "var(--darkColor)",
+                            }}
+                          >
+                            {statusLabelMap[status]}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Provider Filter */}
+                  <div className={`${styles.filterPart} col-lg-4 col-12`}>
+                    <span className={`${styles.filterHead} d-block mb-2`}>
+                      Providers :
+                    </span>
+
+                    <ul
+                      className={`${styles.filterGroup} d-flex flex-wrap gap-2 m-0 p-0`}
+                      role="group"
+                    >
+                      {statusProvider.map((status) => (
+                        <li key={status?.id}>
+                          <button
+                            className={`${styles.filterItem} rounded-pill`}
+                            onClick={() => toogleProviderStatus(status)}
+                            style={{
+                              backgroundColor:
+                                selectedProviderId === status?.id
+                                  ? "var(--primaryColor)"
+                                  : "",
+                              color:
+                                selectedProviderId === status?.id
+                                  ? "var(--whiteColor)"
+                                  : "var(--darkColor)",
+                            }}
+                          >
+                            {status?.name}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -351,7 +357,8 @@ const AllSubscriptions = ({
                                         service?.id ===
                                         Number(
                                           subscription?.provider_id ??
-                                            subscription?.plans?.[0]?.provider_id,
+                                            subscription?.plans?.[0]
+                                              ?.provider_id,
                                         ),
                                     )?.image || "-"}
                                   </span>
