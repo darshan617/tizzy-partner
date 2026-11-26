@@ -105,7 +105,24 @@
   font-size: 13px;
   font-weight: 500;
   line-height: 1.2;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.priorityBtn.high {
+  border-color: var(--dangerSubtleColor);
+  color: var(--dangerColor);
+}
+
+.priorityBtn.med {
+  border-color: var(--warningSubtleColor);
+  color: var(--warningColor);
+}
+
+.priorityBtn.low {
+  border-color: var(--infoSubtleColor);
+  color: var(--infoColor);
 }
 
 .priorityBtn:hover {
@@ -163,7 +180,8 @@
 .attachmentItem {
   position: relative;
   display: inline-block;
-
+  border: 1.5px solid var(--borderColor);
+  border-radius: 4px;
 }
 
 .attachmentsBtn {
@@ -213,7 +231,7 @@
   background: var(--primaryColor);
   color: #fff;
   border: none;
-  border-radius: .375rem;
+  border-radius: 0.375rem;
   padding: 10px 20px;
   cursor: pointer;
 }

@@ -733,13 +733,13 @@ const CreateNewTicketForm = () => {
               <div className={styles.priorityGroup}>
                 {priorityOptions.map((priority) => (
                   <button
-                    key={priority}
-                    type="button"
                     className={`${styles.priorityBtn} ${
                       formData.priority === priority
                         ? styles.priorityActive
                         : ""
-                    }`}
+                    } ${priority === "High" ? styles.high : priority === "Medium" ? styles.med : styles.low}`}
+                    key={priority}
+                    type="button"
                     onClick={() => handlePriorityChange(priority)}
                   >
                     {priority}
@@ -862,7 +862,7 @@ const CreateNewTicketForm = () => {
               onChange={handleChange}
               accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip"
             />
-            <p className="text-warning small mt-1 m-0">
+            <p className="text-secondary small mt-1 m-0">
               Note: jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,txt,zip are
               supported.
             </p>
